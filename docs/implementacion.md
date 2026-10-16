@@ -47,3 +47,17 @@ Integrados Whistle y Needle en workers WebAssembly con modelos versionados y ver
 Validación: 13 pruebas de reglas/persistencia/resolución, 2 recorridos manuales de navegador y 2 recorridos con modelos reales, en Chromium móvil y escritorio. Los últimos incluyen segunda inferencia tras recargar sin red y sin nuevas peticiones de modelos, liberación de pistas, permiso denegado, mantener pulsado y edición manual simultánea. Se revisaron capturas de la interfaz. Los audios son sintéticos y el evento se revisa/corrige explícitamente: estas pruebas no certifican exactitud de reconocimiento.
 
 Siguen pendientes los demás bloques enumerados arriba, en especial arrastre, gestión completa de catálogo/partidos, desgloses estadísticos e integración y validación nativa.
+
+### Idiomas, bienvenida y exclusiones (16 de octubre de 2026)
+
+- Interfaz traducida a español, inglés, alemán, francés, italiano, neerlandés y polaco. Primera selección a partir del navegador (español si no está soportado), modificable en bienvenida y Ajustes. Preferencia local; las claves de datos y copias no dependen del idioma.
+- Idioma de voz independiente y persistente, seleccionable antes de preparar/grabar. Los siete idiomas usan el mismo Whistle; no hay siete descargas. Needle recibe el idioma de captura y las reglas de perspectiva multilingües, conservando los valores canónicos del esquema.
+- Galería de cinco pasos en el primer uso: filosofía, preparación de voz, grabar/revisar/guardar, perspectiva y exclusiones. Se puede omitir o volver a abrir desde Ajustes. No graba ni descarga sin acción del usuario.
+- Tres contadores por partido de 120 segundos, identificados por equipo y dorsal. Activar, parar/reanudar y liberar. Se sincronizan con las pausas del reloj, conservan el tiempo pendiente al cambiar de periodo y se detienen al finalizar el partido. Se guardan en IndexedDB y en la copia JSON; las copias anteriores sin contadores siguen siendo válidas.
+- A cero aparece «Puede volver». Sonido opcional, habilitado mediante un gesto, una vez por contador mientras la vista del partido está abierta. No se garantiza sonido con la pantalla bloqueada, la pestaña suspendida o tras abandonar esa vista. Al volver a abrir el partido, el tiempo restante se recalcula y el aviso visual continúa hasta liberar el contador.
+- Activar un contador no crea estadísticas: la exclusión estadística se registra como evento manual o por voz. Liberar un contador activo pide confirmación; liberar uno vencido es inmediato.
+
+- Compatibilidad HTTP: la generación de UUID usa `crypto.randomUUID()` cuando existe y UUID v4 con `crypto.getRandomValues()` en contextos HTTP. Verificada creación y persistencia de equipos, jugadores, partidos, eventos y contadores sobre la IP de Tailscale.
+- Acceso al servidor: `server.allowedHosts` y `preview.allowedHosts` se establecen en `true`, por petición expresa del usuario. HTTPS permanece fuera de este cambio.
+
+Validación de este bloque: 18 pruebas de dominio, persistencia, idiomas, UUID sin `randomUUID` y configuración de voz; 8 recorridos Chromium en móvil/escritorio, incluidos captura con modelos reales, segunda inferencia sin red, bienvenida y tres exclusiones. Compilación de producción correcta. Además se verificó el recorrido manual y su persistencia sobre HTTP real en Tailscale sin `crypto.randomUUID`. La prueba acústica automatizada usa una muestra sintética española; no certifica precisión con voces nativas de los otros seis idiomas ni en un pabellón.

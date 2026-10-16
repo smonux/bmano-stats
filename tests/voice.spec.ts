@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { resolve } from 'node:path';
 import { DEFAULT_MODEL, DEFAULT_SPEECH_MODEL } from 'cactus-needle';
 const models=process.env.VOICE_MODELS_DIR;
+test.beforeEach(async({page})=>{await page.addInitScript(()=>{localStorage.setItem('handball-language','es');localStorage.setItem('handball-welcome-v1','done');});});
 test('real Whistle and Needle: microphone to reviewed event, then reload offline',async({page,context},testInfo)=>{
  test.skip(!models,'Set VOICE_MODELS_DIR to a folder containing the pinned needle3.cact and whistle.cact models.');
  test.setTimeout(180000);

@@ -54,3 +54,27 @@ test('backup roundtrip retains pending events; corrupt import leaves data intact
  const invalid=structuredClone(backup); invalid.events[0].matchId='missing'; await expect(repo.importBackup(invalid)).rejects.toThrow(); expect(await db.events.count()).toBe(2);
  await repo.deleteMatch(match.id); expect((await stats()).teams).toEqual({});
 });
+
+test('three suspension timers survive backup and follow pauses, individual stops and period changes', async () => {
+ const {vi}=await import('vitest');const {exclusionRemaining}=await import('../domain/exclusions');
+ let now=Date.now();const mock=vi.spyOn(Date,'now').mockImplementation(()=>now);
+ const read=async()=> (await db.matches.get(match.id))!;
+ try {
+  for(let slot=0;slot<3;slot++)await repo.exclusion(match.id,slot,'start',{teamId:slot===1?match.visitorTeamId:match.localTeamId,dorsal:slot+7});
+  await expect(repo.exclusion(match.id,3,'start',{teamId:match.localTeamId,dorsal:4})).rejects.toThrow();
+  await expect(repo.exclusion(match.id,0,'start',{teamId:match.localTeamId,dorsal:4})).rejects.toThrow();
+  now+=30000;await repo.clock(match.id,'pause');expect((await read()).exclusions?.[0]?.remainingMs).toBe(90000);
+  now+=60000;expect(exclusionRemaining((await read()).exclusions![0]!)).toBe(90000);
+  await repo.exclusion(match.id,1,'pause');await repo.clock(match.id,'resume');
+  now+=20000;await repo.clock(match.id,'period');
+  const next=await read();expect(next.clock.period).toBe(2);expect(next.exclusions?.map(t=>t?.remainingMs)).toEqual([70000,90000,70000]);
+  const backup=await repo.exportBackup();await repo.importBackup(JSON.parse(JSON.stringify(backup)));expect((await read()).exclusions).toEqual(next.exclusions);
+  const invalid=structuredClone(backup);invalid.matches[0].exclusions![0]!.teamId='other';await expect(repo.importBackup(invalid)).rejects.toThrow();expect((await read()).exclusions).toEqual(next.exclusions);
+  now+=70000;expect(exclusionRemaining((await read()).exclusions![0]!)).toBe(0);
+  expect(exclusionRemaining((await read()).exclusions![1]!)).toBe(90000);
+  await repo.exclusion(match.id,0,'clear');expect((await read()).exclusions![0]).toBeNull();
+  await repo.clock(match.id,'finish');const done=await read();expect(done.exclusions![1]).toMatchObject({running:false,startedAt:null,remainingMs:90000});
+  await expect(repo.exclusion(match.id,0,'start',{teamId:match.localTeamId,dorsal:9})).rejects.toThrow();
+  expect(await db.events.count()).toBe(0);
+ } finally {mock.mockRestore();}
+});

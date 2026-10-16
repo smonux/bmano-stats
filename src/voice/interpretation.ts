@@ -1,11 +1,24 @@
+import { tr, type Language } from '../i18n';
 import { z } from 'zod';
 import { definitions, elapsed, relatedTeam, type EventType, type Match, type Snapshot } from '../domain/model';
 import type { EventDraft } from '../data/database';
 
 // Perspective is independent of the venue. Existing v1 storage keys retain their names.
-export const perspectiveRule = 'Perspectiva de quien graba: nuestro, nuestra, nuestros, nuestras, nosotros, nosotras y mi equipo siempre son equipo1. Ellos, ellas, rival, contrario, suyo, suya, suyos, suyas y su equipo siempre son equipo2. Equipo1 y equipo2 NO significan local y visitante. No deduzcas el equipo por el lugar del partido. Si no se menciona equipo, usa desconocido.';
-const firstTeamWords = ['equipo1','equipo 1','equipo uno','primer equipo','nuestro','nuestra','nuestros','nuestras','nosotros','nosotras','mi equipo','nuestro equipo'];
-const secondTeamWords = ['equipo2','equipo 2','equipo dos','segundo equipo','ellos','ellas','rival','rivales','contrario','contraria','contrarios','contrarias','suyo','suya','suyos','suyas','su equipo','el rival','equipo rival','el contrario'];
+export const perspectiveRule = 'Recorder perspective: own team=equipo1, opponents=equipo2, NEVER home/away. If team is not mentioned use desconocido.';
+export function perspectiveFor(language: Language) {
+  const words: Record<Language,string> = {
+    es:'nuestro/nuestra/nosotros/mi equipo=equipo1; ellos/rival/contrario/suyo/su equipo=equipo2.',
+    en:'our/us/we/my team=equipo1; they/their/opponent=equipo2.',
+    de:'unser/wir/uns=equipo1; sie/ihr/Gegner=equipo2.',
+    fr:'notre/nos/nous=equipo1; eux/leur/adversaire=equipo2.',
+    it:'nostro/nostra/noi=equipo1; loro/avversario=equipo2.',
+    nl:'ons/onze/wij=equipo1; zij/hun/tegenstander=equipo2.',
+    pl:'nasz/nasza/my=equipo1; oni/ich/rywal=equipo2.',
+  };
+  return perspectiveRule+' '+words[language];
+}
+const firstTeamWords = ['our','ours','us','we','our team','my team','team1','team 1','unser','unsere','unseren','unser team','wir','uns','notre','nos','nous','notre equipe','nostro','nostra','nostri','nostre','noi','nostra squadra','ons','onze','wij','we','ons team','nasz','nasza','nasze','nasi','my','nas','nasza druzyna','equipo1','equipo 1','equipo uno','primer equipo','nuestro','nuestra','nuestros','nuestras','nosotros','nosotras','mi equipo','nuestro equipo'];
+const secondTeamWords = ['they','them','their','theirs','opponent','opponents','their team','team2','team 2','sie','ihre','ihr','gegner','gegnerisch','eux','elles','leur','leurs','adversaire','adversaires','loro','avversario','avversari','avversaria','zij','ze','hun','tegenstander','tegenstanders','oni','one','ich','rywal','rywalka','przeciwnik','przeciwnicy','equipo2','equipo 2','equipo dos','segundo equipo','ellos','ellas','rival','rivales','contrario','contraria','contrarios','contrarias','suyo','suya','suyos','suyas','su equipo','el rival','equipo rival','el contrario'];
 
 const spokenTypes = {
   gol: 'goal', parada: 'save', fallo: 'miss', perdida: 'loss', recuperacion: 'recovery',
@@ -21,19 +34,19 @@ export const proposalSchema = z.object({
 });
 export const extractionSchema = {
   type: 'object', properties: {
-    evento: {type:'string',enum:[...Object.keys(spokenTypes),'desconocido'],description:'Tipo de jugada. fallo=tiro fallado; penalti_cometido=conceder 7m. desconocido si no hay una sola jugada.'},
-    equipo: {type:'string',enum:['equipo1','equipo2','nuestro','rival','desconocido'],description:'Equipo del jugador principal. '+perspectiveRule},
-    dorsal: {type:'integer',minimum:0,maximum:99,description:'Dorsal del jugador principal, solo si se dice.'},
-    nombre: {type:'string',description:'Nombre literal del jugador principal, solo si se dice.'},
-    dorsal_relacionado: {type:'integer',minimum:0,maximum:99,description:'Dorsal del asistente en gol, lanzador rival en parada o participante rival relacionado.'},
-    nombre_relacionado: {type:'string',description:'Nombre literal del participante relacionado.'},
-    penalti: {type:'boolean',description:'True si el gol, parada o fallo es de siete metros.'},
-    azul: {type:'boolean',description:'True si se menciona tarjeta azul.'},
-    infraccion: {type:'string',enum:['Pasos','Dobles','Pisando'],description:'Subtipo de infracción mencionado.'},
+    evento: {type:'string',enum:[...Object.keys(spokenTypes),'desconocido'],description:'Canonical event: gol=goal, parada=goalkeeper save, fallo=missed shot, perdida=turnover, recuperacion=ball recovery, penalti_cometido=conceded penalty, exclusion=two-minute suspension, amarilla=yellow card, descalificacion=disqualification, pasivo=passive play, infraccion=rule violation. desconocido=unknown or not exactly one play.'},
+    equipo: {type:'string',enum:['equipo1','equipo2','nuestro','rival','desconocido'],description:'Primary player team. '+perspectiveRule},
+    dorsal: {type:'integer',minimum:0,maximum:99,description:'Primary player shirt number, only if mentioned.'},
+    nombre: {type:'string',description:'Literal primary player name, only if mentioned.'},
+    dorsal_relacionado: {type:'integer',minimum:0,maximum:99,description:'Shirt number of assist provider for a goal, opponent shooter for a save, or related opponent.'},
+    nombre_relacionado: {type:'string',description:'Literal related player name.'},
+    penalti: {type:'boolean',description:'True if the goal, save or miss is a seven-metre penalty.'},
+    azul: {type:'boolean',description:'True if a blue card is mentioned.'},
+    infraccion: {type:'string',enum:['Pasos','Dobles','Pisando'],description:'Violation: Pasos=steps, Dobles=double dribble, Pisando=goal area violation.'},
   }, required:['evento','equipo'], additionalProperties:false,
 } as const;
-export function schemaForTeams(names:string[]) {
-  return {...extractionSchema,properties:{...extractionSchema.properties,equipo:{...extractionSchema.properties.equipo,enum:[...new Set([...extractionSchema.properties.equipo.enum,...names])],description:extractionSchema.properties.equipo.description+' Nombres en orden de perspectiva: '+JSON.stringify({equipo1:names[0],equipo2:names[1]})}}};
+export function schemaForTeams(names:string[], language:Language='es') {
+  return {...extractionSchema,properties:{...extractionSchema.properties,equipo:{...extractionSchema.properties.equipo,enum:[...new Set([...extractionSchema.properties.equipo.enum,...names])],description:perspectiveFor(language)+' Team names in recorder perspective order: '+JSON.stringify({equipo1:names[0],equipo2:names[1]})}}};
 }
 export function selectProposal(result: {success:boolean;function_calls:{name:string;arguments:unknown}[];suppressed_calls:{name:string;arguments:unknown}[];confidence:number|null;validation?:{ungrounded?:string[];negation?:boolean}}) {
   if(!result.success || result.validation?.ungrounded?.length || result.validation?.negation) return {proposal:null,warnings:['La interpretación no está respaldada por la frase. Completa el evento a partir de la transcripción.']};
@@ -46,7 +59,7 @@ export type CaptureContext = { match: Match; data: Snapshot; period: number; min
 export function captureContext(match: Match, data: Snapshot): CaptureContext {
   return {match,data,period:match.clock.period,minute:Math.min(999,Math.floor(elapsed(match.clock)/60000))};
 }
-export const normalize = (value: string) => value.toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+export const normalize = (value: string) => value.toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ł/g,'l').replace(/[^\p{L}0-9]+/gu,' ').trim();
 export function resolveTeam(reference: string, context: CaptureContext): string | null {
   const key=normalize(reference), {match,data}=context;
   if (!key) return null;
@@ -80,10 +93,10 @@ export function toVoiceDraft(rawText: string, proposal: unknown, context: Captur
   if(!draft.teamId) warnings.push('Equipo sin resolver. No se ha supuesto equipo 1 ni equipo 2.');
   if(draft.type && draft.type!=='passive') {
     draft.primaryDorsal=resolveDorsal(principal,draft.teamId,context.data);
-    if(principal&&!draft.primaryDorsal) warnings.push(`«${principal}» no identifica un jugador único: se atribuirá a Desconocido.`);
+    if(principal&&!draft.primaryDorsal) warnings.push(tr('«{player}» no identifica un jugador único: se atribuirá a Desconocido.',{player:principal}));
     if(definitions[draft.type].related && draft.teamId) {
       draft.relatedDorsal=resolveDorsal(relacionado,relatedTeam(context.match,draft.type,draft.teamId),context.data);
-      if(relacionado&&!draft.relatedDorsal) warnings.push(`Participante relacionado «${relacionado}» sin resolver.`);
+      if(relacionado&&!draft.relatedDorsal) warnings.push(tr('Participante relacionado «{player}» sin resolver.',{player:relacionado}));
     }
     if(definitions[draft.type].penalty && p.penalti) draft.metadata.penalty=true;
     if(draft.type==='disqualification'&&p.azul) draft.metadata.blue=true;

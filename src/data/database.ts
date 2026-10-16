@@ -1,3 +1,5 @@
+import { createId } from '../domain/id';
+import { exclusionRemaining } from '../domain/exclusions';
 import Dexie, { type EntityTable } from 'dexie';
 import { changeClock, cleanEvent, eventSchema, nameKey, relatedTeam, unknownId, validateBackup, type Backup, type GameEvent, type Match, type Player, type Snapshot, type Team } from '../domain/model';
 
@@ -24,7 +26,7 @@ export function repository(database = db) {
     if (!name || name.length > 100) throw new Error('Introduce un nombre de equipo de hasta 100 caracteres.');
     const key = nameKey(name);
     if (await database.teams.where('nameKey').equals(key).first()) throw new Error('Ya existe un equipo con ese nombre. Selecciónalo del catálogo.');
-    const team: Team = { id: crypto.randomUUID(), name, nameKey: key, ...stamps() };
+    const team: Team = { id: createId(), name, nameKey: key, ...stamps() };
     await database.teams.add(team);
     await database.players.add({ id: unknownId(team.id), teamId: team.id, dorsal: null, name: 'Desconocido', isUnknown: true, ...stamps() });
     return team;
@@ -39,7 +41,7 @@ export function repository(database = db) {
       return existing.id;
     }
     if (!await database.teams.get(teamId)) throw new Error('No se encontró el equipo.');
-    const player: Player = { id: crypto.randomUUID(), teamId, dorsal, name: '', isUnknown: false, ...stamps() };
+    const player: Player = { id: createId(), teamId, dorsal, name: '', isUnknown: false, ...stamps() };
     await database.players.add(player);
     return player.id;
   }
@@ -68,7 +70,7 @@ export function repository(database = db) {
         const a = await resolve(local), b = await resolve(visitor);
         if (!a || !b || a.deletedAt !== null || b.deletedAt !== null || a.id === b.id) throw new Error('Elige dos equipos distintos.');
         if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || new Date(date + 'T12:00:00Z').toISOString().slice(0, 10) !== date) throw new Error('Introduce una fecha válida.');
-        const match: Match = { id: crypto.randomUUID(), localTeamId: a.id, visitorTeamId: b.id, date, status: 'active', clock: { period: 1, elapsedMs: 0, startedAt: Date.now() }, ...stamps() };
+        const match: Match = { id: createId(), localTeamId: a.id, visitorTeamId: b.id, date, status: 'active', clock: { period: 1, elapsedMs: 0, startedAt: Date.now() }, ...stamps() };
         await database.matches.add(match); return match;
       });
     },
@@ -85,7 +87,7 @@ export function repository(database = db) {
         const cfg = draft.type;
         const primary = cfg && cfg !== 'passive' && draft.teamId ? await resolvePlayer(draft.teamId, draft.primaryDorsal) : null;
         const secondary = cfg && draft.teamId && ['goal','save','recovery','penalty','exclusion','disqualification'].includes(cfg) ? await resolvePlayer(relatedTeam(match, cfg, draft.teamId), draft.relatedDorsal) : null;
-        const event = cleanEvent(eventSchema.parse({ ...draft, id: old?.id ?? crypto.randomUUID(), primaryPlayerId: primary, relatedPlayerId: secondary, createdAt: old?.createdAt ?? Date.now(), updatedAt: Math.max(Date.now(), (old?.updatedAt ?? 0) + 1), deletedAt: null, orderKey: old?.orderKey ?? Math.max(0, ...events.map(e => e.orderKey)) + 1, schemaVersion: 1 }));
+        const event = cleanEvent(eventSchema.parse({ ...draft, id: old?.id ?? createId(), primaryPlayerId: primary, relatedPlayerId: secondary, createdAt: old?.createdAt ?? Date.now(), updatedAt: Math.max(Date.now(), (old?.updatedAt ?? 0) + 1), deletedAt: null, orderKey: old?.orderKey ?? Math.max(0, ...events.map(e => e.orderKey)) + 1, schemaVersion: 1 }));
         // Editing minute changes its chronological position; tie order is stable.
         await database.events.put(event); return event;
       });
@@ -97,6 +99,22 @@ export function repository(database = db) {
       return database.transaction('rw', database.matches, async () => {
         const match = await database.matches.get(id); if (!match || match.deletedAt !== null) throw new Error('Partido no disponible.');
         await database.matches.put(changeClock(match, action));
+      });
+    },
+    async exclusion(id: string, slot: number, action: 'start'|'pause'|'resume'|'clear', player?: {teamId:string;dorsal:number}) {
+      if (!Number.isInteger(slot) || slot < 0 || slot > 2) throw new Error('Temporizador de exclusión inválido.');
+      return database.transaction('rw', database.matches, async () => {
+        const match = await database.matches.get(id);
+        if (!match || match.deletedAt !== null || match.status !== 'active') throw new Error('Partido no disponible.');
+        const timers = [...(match.exclusions ?? [null,null,null])];
+        const timer = timers[slot], now = Date.now();
+        if (action === 'start') {
+          if (timer) throw new Error('Libera el contador antes de usarlo de nuevo.');
+          if (!player || ![match.localTeamId,match.visitorTeamId].includes(player.teamId) || !Number.isInteger(player.dorsal) || player.dorsal < 0 || player.dorsal > 99) throw new Error('Elige equipo y dorsal.');
+          timers[slot] = {id:createId(),...player,remainingMs:120000,running:true,startedAt:match.clock.startedAt === null ? null : now};
+        } else if (action === 'clear') timers[slot] = null;
+        else if (timer) timers[slot] = {...timer,remainingMs:exclusionRemaining(timer,now),running:action==='resume',startedAt:action==='resume' && match.clock.startedAt !== null && exclusionRemaining(timer,now)>0 ? now : null};
+        await database.matches.update(id,{exclusions:timers,updatedAt:now});
       });
     },
     async deleteMatch(id: string) {

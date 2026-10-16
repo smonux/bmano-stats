@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+test.beforeEach(async({page})=>{await page.addInitScript(()=>{Object.defineProperty(Crypto.prototype,'randomUUID',{configurable:true,value:undefined});localStorage.setItem('handball-language','es');localStorage.setItem('handball-welcome-v1','done');});});
 test('manual match lifecycle persists and works offline',async({page,context},testInfo)=>{
  const errors:string[]=[]; page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/'); await page.getByRole('button',{name:/Nuevo partido/}).click();

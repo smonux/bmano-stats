@@ -38,3 +38,10 @@ test('multiple, ungrounded and negated calls remain pending; one withheld candid
  expect(selectProposal({...accepted,confidence:0.1}).warnings.join(' ')).toContain('confianza baja');
  for(const change of [{success:false},{function_calls:[]},{suppressed_calls:accepted.function_calls},{function_calls:[...accepted.function_calls,...accepted.function_calls]},{validation:{ungrounded:['equipo']}},{validation:{negation:true}}]) expect(selectProposal({...accepted,...change}).proposal).toBeNull();
 });
+
+test('recorder perspective resolves across all seven Whistle languages without assuming venue',()=>{
+ for(const word of ['our','us','unser','wir','notre','nous','nostro','noi','ons','wij','nasz','my'])expect(resolveTeam(word,context)).toBe('a');
+ for(const word of ['their','opponent','Gegner','sie','eux','leur','loro','avversario','hun','tegenstander','oni','rywal'])expect(resolveTeam(word,context)).toBe('b');
+ for(const word of ['home','away','Heim','domicile','casa','thuis','gospodarz'])expect(resolveTeam(word,context)).toBeNull();
+ const polish={...data,players:[...data.players,{...data.players[0],id:'pl',name:'Łukasz',dorsal:4}]};expect(resolveDorsal('łukasz','a',polish)).toBe('4');
+});

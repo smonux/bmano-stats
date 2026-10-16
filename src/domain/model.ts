@@ -1,3 +1,4 @@
+import { syncExclusions } from './exclusions';
 import { z } from 'zod';
 
 export const eventTypes = ['goal', 'save', 'miss', 'loss', 'recovery', 'penalty', 'exclusion', 'yellow', 'disqualification', 'passive', 'infraction'] as const;
@@ -21,7 +22,8 @@ const base = { id, createdAt: stamp, updatedAt: stamp, deletedAt: stamp.nullable
 export const teamSchema = z.object({ ...base, name: z.string().trim().min(1).max(100), nameKey: z.string().min(1) });
 export const playerSchema = z.object({ ...base, teamId: id, dorsal: z.number().int().min(0).max(99).nullable(), name: z.string().max(100), isUnknown: z.boolean() });
 export const clockSchema = z.object({ period: z.number().int().min(1), elapsedMs: stamp, startedAt: stamp.nullable() });
-export const matchSchema = z.object({ ...base, localTeamId: id, visitorTeamId: id, date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), status: z.enum(['active', 'done']), clock: clockSchema });
+export const exclusionSchema = z.object({ id, teamId: id, dorsal: z.number().int().min(0).max(99), remainingMs: z.number().min(0).max(120000), running: z.boolean(), startedAt: stamp.nullable() });
+export const matchSchema = z.object({ ...base, localTeamId: id, visitorTeamId: id, date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), status: z.enum(['active', 'done']), clock: clockSchema, exclusions: z.array(exclusionSchema.nullable()).length(3).optional() });
 export const metadataSchema = z.object({ penalty: z.boolean().optional(), blue: z.boolean().optional(), infraction: z.enum(['Pasos', 'Dobles', 'Pisando']).optional() });
 export const eventSchema = z.object({ ...base, schemaVersion: z.literal(1), matchId: id, type: z.enum(eventTypes).nullable(), teamId: id.nullable(), primaryPlayerId: id.nullable(), relatedPlayerId: id.nullable(), period: z.number().int().min(1), minute: z.number().int().min(0).max(999), orderKey: z.number().int().nonnegative(), metadata: metadataSchema, rawText: z.string().max(10000), note: z.string().max(10000) });
 export type Team = z.infer<typeof teamSchema>;
@@ -69,7 +71,7 @@ export function changeClock(match: Match, action: 'pause' | 'resume' | 'period' 
   if (action === 'resume' && clock.startedAt === null) clock.startedAt = now;
   if (action === 'pause' || action === 'finish') clock = { ...clock, elapsedMs: elapsed(clock, now), startedAt: null };
   if (action === 'period') clock = { period: clock.period + 1, elapsedMs: 0, startedAt: now };
-  return { ...match, clock, status: action === 'finish' ? 'done' : 'active', updatedAt: now };
+  return { ...match, exclusions: syncExclusions(match, clock.startedAt !== null, now, action === 'finish'), clock, status: action === 'finish' ? 'done' : 'active', updatedAt: now };
 }
 
 export function validateBackup(input: unknown): Backup {
@@ -93,6 +95,7 @@ export function validateBackup(input: unknown): Backup {
     keys.add(key);
   }
   for (const m of data.matches) {
+    for (const timer of m.exclusions ?? []) if (timer && (![m.localTeamId,m.visitorTeamId].includes(timer.teamId) || (timer.startedAt !== null && (!timer.running || m.clock.startedAt === null || m.status === 'done')))) throw new Error('Temporizador de exclusión inválido.');
     if (!teams.has(m.localTeamId) || !teams.has(m.visitorTeamId) || m.localTeamId === m.visitorTeamId || (m.status === 'done' && m.clock.startedAt !== null)) throw new Error('Partido inválido en la copia.');
     if (new Date(m.date + 'T12:00:00Z').toISOString().slice(0, 10) !== m.date) throw new Error('Fecha de partido inválida.');
   }

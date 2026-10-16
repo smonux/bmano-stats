@@ -54,3 +54,13 @@ Si Chromium ya está instalado, se puede indicar su ejecutable con `CHROMIUM_PAT
 - `tests`: pruebas del recorrido de usuario.
 - [Especificación de diseño](docs/diseno/diseno.md).
 - [Wireframes y fuentes](docs/diseno/wireframes/index.html).
+
+## Idiomas y uso durante el partido
+
+La interfaz y la voz pueden usar idiomas distintos: español, inglés, alemán, francés, italiano, neerlandés y polaco. El idioma de la interfaz se cambia en Ajustes o en la galería de bienvenida; el de captura, en el panel de voz. Los siete comparten el mismo Whistle descargado.
+
+La bienvenida aparece en el primer uso y se puede reabrir en Ajustes. Explica cómo preparar la voz, registrar una jugada, revisar el borrador y trabajar desde la perspectiva de quien graba.
+
+Cada partido tiene tres contadores de exclusión de dos minutos con equipo y dorsal. Se guardan localmente y en las copias, siguen las pausas del reloj y pueden pararse individualmente. A cero muestran «Puede volver». El sonido es opcional y requiere mantener abierta la vista del partido. La exclusión estadística se registra como evento aparte.
+
+Vite acepta cualquier nombre de host (`allowedHosts: true`) en desarrollo y vista previa.

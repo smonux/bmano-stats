@@ -45,3 +45,11 @@ La revisión de esta entrega detectó errores de transcripción con muestras sin
 Verificación adicional: el arranque con `npm run dev` también carga y prepara los dos modelos reales en Chromium. No requiere ajustes especiales del servidor de desarrollo para los workers o WebAssembly.
 
 Compatibilidad: los campos `localTeamId` y `visitorTeamId` del formato de almacenamiento v1 conservan sus nombres para leer copias existentes, pero representan respectivamente la primera y segunda posición. La interfaz ahora las identifica como equipo 1 (nuestro) y equipo 2 (rival). En partidos antiguos se conserva el orden existente; no se intercambian los equipos ni las estadísticas.
+
+## Idiomas
+
+Whistle admite español (`es`), inglés (`en`), alemán (`de`), francés (`fr`), italiano (`it`), neerlandés (`nl`) y polaco (`pl`), según la [ficha oficial](https://huggingface.co/Cactus-Compute/whistle). El único modelo descargado cubre los siete idiomas. La interfaz dispone del mismo conjunto, pero el idioma hablado se selecciona por separado en el panel de voz y se conserva en este navegador.
+
+La captura pasa el idioma elegido a Whistle y al prompt de Needle, con vocabulario deportivo específico. El esquema de salida conserva sus claves originales para evitar cambios en estadísticas y copias. Las formas equivalentes a «nosotros/nuestro» se resuelven como equipo 1; «ellos/rival/suyo», como equipo 2, independientemente del campo. El ejemplo de voz sigue el idioma hablado aunque la interfaz use otro.
+
+La cobertura de configuración, esquema y resolución de perspectiva se verifica para los siete idiomas. La prueba de audio real automatizada sigue usando una muestra sintética española: no equivale a validar precisión acústica ni de interpretación con hablantes nativos de los otros seis idiomas o ruido de pabellón. Todas las propuestas se revisan antes de guardar.
