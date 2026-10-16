@@ -1,0 +1,92 @@
+{
+  "browser": "chromium",
+  "date": "2026-10-16T15:43:51.586Z",
+  "results": [
+    {
+      "variant": "current",
+      "text": "Parada rival, dorsal uno, lanzamiento de nuestro dorsal nueve.",
+      "loadMs": 5545.100000023842,
+      "totalMs": 34232.299999952316,
+      "schemaCharacters": 1996,
+      "systemCharacters": 381,
+      "calls": [
+        {
+          "ms": 34230.89999997616,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "registrar_jugada",
+                "arguments": {
+                  "evento": "parada",
+                  "dorsal": 1,
+                  "nombre": "Dorsal",
+                  "penalti": true,
+                  "nombre_relacionado": "Dorsal",
+                  "dorsal_relacionado": 9,
+                  "infraccion": "Pasos",
+                  "azul": true,
+                  "equipo": "Rival"
+                }
+              }
+            ],
+            "reasoning": "evento='parada' from 'Parada rival'; dorsal=1 from 'uno'; nombre='Dorsal' from 'dorsal'; penalti=true from 'lanzamiento'; penalti=true from 'nuestro'; nombre='Dorsal' from 'nuestro'; penalti=true from 'nueve'.",
+            "confidence": 0.0002,
+            "prefill_tps": 30.3,
+            "decode_tps": 18.2,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "variant": "optimized",
+      "text": "Parada rival, dorsal uno, lanzamiento de nuestro dorsal nueve.",
+      "loadMs": 1658.6000000238419,
+      "totalMs": 7675.299999952316,
+      "schemaCharacters": 454,
+      "systemCharacters": 89,
+      "calls": [
+        {
+          "ms": 7669.599999904633,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "parada",
+                "arguments": {
+                  "equipo": "parada",
+                  "dorsal": 1,
+                  "dorsal_relacionado": 9
+                }
+              }
+            ],
+            "reasoning": "parada: 'parada rival' -> equipment, 'dorsal 1' -> dorsal, 'lanzamiento de nuestro dorsal 9' -> lanzamiento.",
+            "confidence": 0.0846,
+            "prefill_tps": 41.5,
+            "decode_tps": 31.4,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

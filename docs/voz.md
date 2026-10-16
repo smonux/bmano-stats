@@ -55,3 +55,9 @@ Whistle admite español (`es`), inglés (`en`), alemán (`de`), francés (`fr`),
 La captura pasa el idioma elegido a Whistle y al prompt de Needle, con vocabulario deportivo específico. El esquema de salida conserva sus claves originales para evitar cambios en estadísticas y copias. Las formas equivalentes a «nosotros/nuestro» se resuelven como equipo 1; «ellos/rival/suyo», como equipo 2, independientemente del campo. El ejemplo de voz sigue el idioma hablado aunque la interfaz use otro.
 
 La cobertura de configuración, esquema y resolución de perspectiva se verifica para los siete idiomas. La prueba de audio real automatizada sigue usando una muestra sintética española: no equivale a validar precisión acústica ni de interpretación con hablantes nativos de los otros seis idiomas o ruido de pabellón. Todas las propuestas se revisan antes de guardar.
+
+## Interpretación y latencia
+
+La captura usa una ruta literal para una acción inequívoca y normaliza solo números dictados tras marcadores explícitos de dorsal. Needle recibe los campos necesarios para esa acción; los demás no entran en el esquema. Frases negadas, con varias acciones o sin un prefijo claro pasan al esquema general. La perspectiva explícita de la cláusula principal se resuelve localmente con las mismas reglas, sin confundir al jugador relacionado. Se conservan las comprobaciones del modelo y la revisión antes de guardar.
+
+El editor muestra los segundos empleados por Whistle y Needle. La [investigación reproducible](benchmarks/needle/LEEME.md) recoge los esquemas comparados, tiempos, errores observados y límites: en dos frases españolas pasó de unos 34 segundos a 6–8 segundos en Chromium del servidor. No se extrapola esa cifra a Android físico ni a todos los idiomas/frases.

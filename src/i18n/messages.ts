@@ -2663,5 +2663,21 @@ export const catalog: Record<string, readonly string[]> = {
     "Un’azione per registrazione. Tieni premuto per parlare e rilascia per finire. Whistle trascrive, Needle propone; tu controlli e salvi. L’inserimento manuale resta disponibile.",
     "Eén actie per opname. Houd ingedrukt om te spreken en laat los om te stoppen. Whistle transcribeert, Needle stelt voor; jij controleert en slaat op. Handmatige invoer blijft beschikbaar.",
     "Jedna akcja na nagranie. Przytrzymaj, aby mówić, i puść, aby zakończyć. Whistle transkrybuje, Needle proponuje; Ty sprawdzasz i zapisujesz. Wpisywanie ręczne nadal jest dostępne."
+  ],
+  "Whistle: {whistle} s · Needle: {needle} s": [
+    "Whistle: {whistle} s · Needle: {needle} s",
+    "Whistle: {whistle} s · Needle: {needle} s",
+    "Whistle: {whistle} s · Needle: {needle} s",
+    "Whistle: {whistle} s · Needle: {needle} s",
+    "Whistle: {whistle} s · Needle: {needle} s",
+    "Whistle: {whistle} s · Needle: {needle} s"
+  ],
+  "No hay permiso para el micrófono. Revisa los permisos de este sitio y los permisos de micrófono del navegador en el dispositivo. Vuelve a intentarlo.": [
+    "Microphone permission denied. Check permissions for this site and the browser’s microphone permission on your device. Try again.",
+    "Mikrofonzugriff verweigert. Berechtigungen für diese Seite und den Mikrofonzugriff des Browsers auf dem Gerät prüfen. Erneut versuchen.",
+    "Microphone non autorisé. Vérifiez les autorisations du site et celles du microphone du navigateur sur l’appareil. Réessayez.",
+    "Microfono non autorizzato. Controlla i permessi del sito e del microfono del browser sul dispositivo. Riprova.",
+    "Geen microfoontoegang. Controleer rechten voor deze site en de microfoonrechten van de browser op het apparaat. Probeer opnieuw.",
+    "Brak uprawnienia do mikrofonu. Sprawdź uprawnienia witryny i mikrofonu przeglądarki na urządzeniu. Spróbuj ponownie."
   ]
 };

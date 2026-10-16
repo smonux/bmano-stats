@@ -1,0 +1,45 @@
+{
+  "browser": "chromium",
+  "date": "2026-10-16T15:38:32.413Z",
+  "results": [
+    {
+      "variant": "routed-normalized",
+      "text": "Gol nuestro, dorsal siete.",
+      "loadMs": 3168.1999999284744,
+      "totalMs": 5931.5,
+      "schemaCharacters": 320,
+      "systemCharacters": 83,
+      "calls": [
+        {
+          "ms": 5931.399999976158,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "gol",
+                "arguments": {
+                  "equipo": "nuestro",
+                  "dorsal": 7
+                }
+              }
+            ],
+            "reasoning": "'Gol' -> tool gol; 'nuestro' -> description 'Gol'; 'nuestro' -> description 'Nuestro'; '7' -> dorsal 7.",
+            "confidence": 0.0218,
+            "prefill_tps": 42.5,
+            "decode_tps": 35.6,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

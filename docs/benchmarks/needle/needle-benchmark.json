@@ -1,0 +1,157 @@
+{
+  "browser": "chromium",
+  "date": "2026-10-16T15:34:35.270Z",
+  "results": [
+    {
+      "variant": "current",
+      "text": "Gol nuestro, dorsal siete.",
+      "loadMs": 5501.700000047684,
+      "totalMs": 34574.799999952316,
+      "schemaCharacters": 1996,
+      "systemCharacters": 381,
+      "calls": [
+        {
+          "ms": 34574.39999997616,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "registrar_jugada",
+                "arguments": {
+                  "evento": "gol",
+                  "penalti": true,
+                  "nombre": "siete",
+                  "nombre_relacionado": "Siete",
+                  "azul": true,
+                  "infraccion": "Pasos",
+                  "equipo": "nuestro"
+                }
+              }
+            ],
+            "reasoning": "'Gol' -> evento gol; 'dorsal' -> dorsal 7; 'siete' -> penalti true; 'siete' -> penalti true; 'siete' -> penalti true; 'siete' -> penalti true",
+            "confidence": 0.0011,
+            "prefill_tps": 30.2,
+            "decode_tps": 14.5,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "variant": "compact",
+      "text": "Gol nuestro, dorsal siete.",
+      "loadMs": 1632.8000000715256,
+      "totalMs": 15004.5,
+      "schemaCharacters": 908,
+      "systemCharacters": 83,
+      "calls": [
+        {
+          "ms": 15004.5,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "registrar_jugada",
+                "arguments": {
+                  "evento": "gol",
+                  "equipo": "equipo2",
+                  "nombre": "siete"
+                }
+              }
+            ],
+            "reasoning": "'Gol' -> evento 'gol'; 'nuestro' -> equipo 'nuestro'; 'dorsal siete' -> dorsal 7; 'siete' -> nombre 'siete'.",
+            "confidence": 0.0163,
+            "prefill_tps": 37.6,
+            "decode_tps": 19.9,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "variant": "staged",
+      "text": "Gol nuestro, dorsal siete.",
+      "loadMs": 1576.5,
+      "totalMs": 17782.399999976158,
+      "schemaCharacters": 967,
+      "systemCharacters": 83,
+      "calls": [
+        {
+          "ms": 5929,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "registrar_jugada",
+                "arguments": {
+                  "evento": "gol"
+                }
+              }
+            ],
+            "reasoning": "'Gol' -> evento 'gol'; 'dorsal siete' -> description 'dorsal siete'.",
+            "confidence": 0.0166,
+            "prefill_tps": 42.4,
+            "decode_tps": 33.4,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        },
+        {
+          "ms": 11853,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "registrar_jugada",
+                "arguments": {
+                  "equipo": "equipo1",
+                  "nombre": "siete"
+                }
+              }
+            ],
+            "reasoning": "'Gol nuestro' -> equipo1; 'dorsal siete' -> dorsal_relacionado 7; 'siete' -> nombre 'siete'.",
+            "confidence": 0.0219,
+            "prefill_tps": 39.9,
+            "decode_tps": 18.4,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

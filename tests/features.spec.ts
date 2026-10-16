@@ -37,6 +37,6 @@ test('three independent suspension timers persist, pause with match clock and si
  await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:info.outputPath('exclusions.png'),fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await slots.nth(0).getByRole('button',{name:'Liberar'}).click();await expect(slots.nth(0).getByRole('button',{name:'Activar'})).toBeVisible();
  await expect(page.getByLabel('Marcador 0 a 0')).toBeVisible();await expect(page.locator('.event-card')).toHaveCount(0);
- await expect(page.getByRole('button',{name:'Mantén pulsado para hablar'})).toBeVisible({timeout:30000});await expect(page.getByRole('button',{name:'Grabar con un toque'})).toHaveCount(0);
+ await expect(page.getByRole('button',{name:'Mantén pulsado para hablar'})).toBeEnabled({timeout:30000});await expect(page.getByRole('button',{name:'Grabar con un toque'})).toHaveCount(0);
  await page.evaluate(async()=>{for(const key of await caches.keys())if(key.startsWith('cactus-needle-'))await caches.delete(key);});await page.reload();await expect(page.getByRole('alert').filter({hasText:'Cactus no está cargado'})).toBeVisible();await expect(page.getByRole('button',{name:'Mantén pulsado para hablar'})).toBeDisabled();
 });

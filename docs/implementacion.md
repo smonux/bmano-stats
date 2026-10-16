@@ -70,3 +70,13 @@ Validación de este bloque: 18 pruebas de dominio, persistencia, idiomas, UUID s
 - Rueda de eventos con scroll/snap, opciones visibles, teclado y selección directa. Sin combo oculto.
 - Reloj mm:ss y tres exclusiones de 66 px de alto integradas en la cabecera. Dorsal opcional, compatible con copias anteriores.
 - Corregida la navegación por equipos y partidos en idiomas distintos del español: las rutas permanecen estables.
+
+### Latencia de Needle
+
+Medición reproducible en WebAssembly: esquema original de 1.996 caracteres y sistema de 381 frente a herramientas específicas de 342–454 caracteres y hechos de 89. Dos frases de gol/parada pasaron de 34,2–34,6 s a 6,0–7,7 s; dos llamadas completas por fases fueron más lentas que una extracción compacta. Los datos originales y los errores de extracción se conservan en `docs/benchmarks/needle/`.
+
+Se aplica una fase local conservadora de ruta, normalización de dorsales y perspectiva literal antes de una sola inferencia reducida. Las respuestas conservan sus advertencias y la revisión humana; la transcripción literal se conserva. Se muestran los tiempos de Whistle y Needle en el editor. La mejora medida no certifica precisión ni rendimiento en un Android físico.
+
+Validación final del flujo directo y de la optimización: 31 pruebas de código y 8 recorridos de navegador superados. Los recorridos con modelos reales comprueban preparación previa, permiso explícito, pulsación mantenida con teclado y puntero, edición manual concurrente, revisión y guardado, recarga offline sin peticiones adicionales de modelos y liberación de pistas. Se comprobaron las capturas de móvil/escritorio.
+
+La revisión visual posterior corrigió el centrado inicial de la rueda cuando el editor abre una propuesta ya rellenada: se posiciona después de `showModal`. Los cuatro recorridos manual/voz de móvil y escritorio se repitieron y pasaron con una comprobación explícita del centrado.

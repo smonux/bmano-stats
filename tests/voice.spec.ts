@@ -19,7 +19,7 @@ test('real Whistle and Needle: microphone to reviewed event, then reload offline
  await prepareMatchVoice(page);
  const preparation=page.getByRole('region',{name:'Preparación de voz'});await preparation.getByRole('button',{name:'Comprobar micrófono'}).click();await expect(preparation.getByRole('button',{name:'Micrófono comprobado'})).toBeVisible();
  await page.getByRole('button',{name:'Iniciar partido'}).click();
- const talk=page.getByRole('button',{name:'Mantén pulsado para hablar'});await expect(talk).toBeVisible();await expect(page.getByRole('button',{name:'Grabar con un toque'})).toHaveCount(0);await talk.focus();await page.keyboard.down('Space');await expect(page.getByRole('button',{name:/Grabando ·/})).toBeVisible();
+ const talk=page.getByRole('button',{name:'Mantén pulsado para hablar'});await expect(talk).toBeEnabled({timeout:30000});await expect(page.getByRole('button',{name:'Grabar con un toque'})).toHaveCount(0);await talk.focus();await page.keyboard.down('Space');await expect(page.getByRole('button',{name:/Grabando ·/})).toBeVisible();
  // Record one complete, synthetic Spanish utterance from Chromium's fake microphone.
  await page.waitForTimeout(6500);await page.keyboard.up('Space');
  await page.getByRole('button',{name:'Evento manual',exact:true}).click();
@@ -27,7 +27,7 @@ test('real Whistle and Needle: microphone to reviewed event, then reload offline
  await expect(page.getByText('Propuesta lista. Termina la edición manual para revisarla.')).toBeVisible({timeout:60000});
  await page.getByRole('dialog').getByRole('button',{name:'Cancelar',exact:true}).click();
  const editor=page.getByRole('dialog',{name:'Nuevo evento'});await expect(editor).toBeVisible({timeout:10000});
- await expect(editor.getByText(/Transcripción original/)).toBeVisible();
+ await expect(editor.getByText(/Transcripción original/)).toBeVisible();await expect.poll(()=>editor.getByRole('listbox',{name:'Evento',exact:true}).evaluate(el=>{const selected=el.querySelector('[aria-selected=true]')!;const a=selected.getBoundingClientRect(),b=el.getBoundingClientRect();return Math.abs(a.top+a.height/2-b.top-b.height/2);})).toBeLessThan(2);
  await testInfo.attach('propuesta-real.json',{body:JSON.stringify({transcripcion:await page.locator('.voice-transcript').first().textContent(),tipo:await editor.getByRole('listbox',{name:'Evento',exact:true}).getByRole('option',{selected:true}).textContent(),equipo:await editor.getByLabel('Equipo',{exact:true}).inputValue(),dorsal:await editor.getByLabel('Dorsal principal',{exact:true}).inputValue()}),contentType:'application/json'});
  // Recognition is a proposal: explicitly review/correct it before committing.
  await selectEvent(page,'Gol');
@@ -37,7 +37,7 @@ test('real Whistle and Needle: microphone to reviewed event, then reload offline
  await page.screenshot({path:testInfo.outputPath('voz-revision.png'),fullPage:true});
  await editor.getByRole('button',{name:'Guardar evento',exact:true}).click();await expect(page.getByLabel('Marcador 1 a 0')).toBeVisible();
  await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>navigator.serviceWorker.controller!==null);
- const downloads=modelRequests;await context.setOffline(true);await page.reload();await expect(page.getByRole('button',{name:'Mantén pulsado para hablar'})).toBeVisible({timeout:30000});
+ const downloads=modelRequests;await context.setOffline(true);await page.reload();await expect(page.getByRole('button',{name:'Mantén pulsado para hablar'})).toBeEnabled({timeout:30000});
  const hold=page.getByRole('button',{name:'Mantén pulsado para hablar'});await hold.hover();await page.mouse.down();await expect(page.getByRole('button',{name:/Grabando ·/})).toBeVisible();await page.waitForTimeout(6500);await page.mouse.up();await expect(editor).toBeVisible({timeout:40000});await expect(editor.getByText(/Transcripción original/)).toBeVisible();
  await editor.getByRole('button',{name:'Cancelar',exact:true}).click();await expect(page.getByLabel('Marcador 1 a 0')).toBeVisible();
  expect(modelRequests).toBe(downloads);
