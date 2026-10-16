@@ -101,7 +101,7 @@ export function repository(database = db) {
         await database.matches.put(changeClock(match, action));
       });
     },
-    async exclusion(id: string, slot: number, action: 'start'|'pause'|'resume'|'clear', player?: {teamId:string;dorsal:number}) {
+    async exclusion(id: string, slot: number, action: 'start'|'pause'|'resume'|'clear', player?: {teamId:string;dorsal:number|null}) {
       if (!Number.isInteger(slot) || slot < 0 || slot > 2) throw new Error('Temporizador de exclusión inválido.');
       return database.transaction('rw', database.matches, async () => {
         const match = await database.matches.get(id);
@@ -110,7 +110,7 @@ export function repository(database = db) {
         const timer = timers[slot], now = Date.now();
         if (action === 'start') {
           if (timer) throw new Error('Libera el contador antes de usarlo de nuevo.');
-          if (!player || ![match.localTeamId,match.visitorTeamId].includes(player.teamId) || !Number.isInteger(player.dorsal) || player.dorsal < 0 || player.dorsal > 99) throw new Error('Elige equipo y dorsal.');
+          if (!player || ![match.localTeamId,match.visitorTeamId].includes(player.teamId) || (player.dorsal!==null && (!Number.isInteger(player.dorsal) || player.dorsal < 0 || player.dorsal > 99))) throw new Error('Elige equipo y dorsal.');
           timers[slot] = {id:createId(),...player,remainingMs:120000,running:true,startedAt:match.clock.startedAt === null ? null : now};
         } else if (action === 'clear') timers[slot] = null;
         else if (timer) timers[slot] = {...timer,remainingMs:exclusionRemaining(timer,now),running:action==='resume',startedAt:action==='resume' && match.clock.startedAt !== null && exclusionRemaining(timer,now)>0 ? now : null};

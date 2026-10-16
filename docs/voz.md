@@ -2,15 +2,17 @@
 
 ## Uso
 
-Dentro de un partido, abre **Voz** y pulsa **Preparar voz local**. Se descargan unos 53 MB la primera vez. Los modelos se verifican y se almacenan en la caché del navegador cuando está disponible. Se necesita HTTPS o localhost, WebAssembly, workers y AudioWorklet.
+Antes de iniciar el partido, elige el **Idioma de voz** y pulsa **Cargar Cactus · 53 MB** en Nuevo partido o Ajustes. La descarga se hace una vez por navegador y origen. Se comprueba la presencia real de Whistle y Needle en caché y el SDK verifica su integridad al cargarlos; no se usa una marca de localStorage como prueba. No se puede iniciar un partido sin haber elegido idioma y preparado los modelos. Se necesita HTTPS o localhost, WebAssembly, workers y AudioWorklet.
+
+El botón **Comprobar micrófono** solicita permiso antes del partido y cierra inmediatamente las pistas. Funciona independientemente de la descarga. Si se deniega, se muestra el error y se puede reintentar. La publicación actual por Tailscale Serve es HTTPS; no se presupone que un fallo de Firefox se deba a HTTP.
 
 La perspectiva de quien graba es fija: «nuestro/nosotros» y sus variantes siempre son el equipo 1; «ellos/ellas/rival/contrario/suyo/su equipo» y sus variantes siempre son el equipo 2. No depende de quién juega en casa. Needle recibe esta regla y el resolvedor aplica la misma correspondencia. No hay selector de referencia. También se aceptan los nombres exactos de los equipos; «local» y «visitante» por sí solos no determinan la perspectiva.
 
-Mantén pulsado para hablar y suelta para terminar, o usa **Grabar con un toque** y **Terminar grabación**. El límite es 20 segundos. Di una sola jugada: «gol nuestro, dorsal siete». El tiempo y minuto se toman al comenzar la captura, sin esperar al reconocimiento.
+Durante el partido, **Voz** es directamente el botón push to talk: mantén pulsado para hablar y suelta para terminar. No abre paneles ni permite grabar con un toque. En teclado se mantiene Espacio o Intro. El límite es 20 segundos. Di una sola jugada: «gol nuestro, dorsal siete». El tiempo y minuto se toman al comenzar la captura, sin esperar al reconocimiento.
 
-Whistle transcribe en español. Needle propone los campos y el editor permite revisarlos. El marcador solo cambia al guardar. Si la interpretación falla, se conserva el texto y se abre un borrador pendiente. Una única propuesta retenida por baja confianza puede mostrarse como borrador con advertencia explícita; nunca se ejecuta ni se guarda sin confirmación. Las respuestas múltiples, negadas o marcadas como no respaldadas por el texto no rellenan los campos. Los nombres se comparan dentro del equipo correcto, sin aproximación; un nombre ambiguo o inexistente queda sin dorsal. Los dorsales nuevos se crean al guardar, usando las mismas transacciones de la entrada manual.
+Whistle transcribe en el idioma elegido antes del partido. Needle propone los campos y el editor permite revisarlos. El marcador solo cambia al guardar. Si la interpretación falla, se conserva el texto y se abre un borrador pendiente. Una única propuesta retenida por baja confianza puede mostrarse como borrador con advertencia explícita; nunca se ejecuta ni se guarda sin confirmación. Las respuestas múltiples, negadas o marcadas como no respaldadas por el texto no rellenan los campos. Los nombres se comparan dentro del equipo correcto, sin aproximación; un nombre ambiguo o inexistente queda sin dorsal. Los dorsales nuevos se crean al guardar, usando las mismas transacciones de la entrada manual.
 
-La transcripción literal se guarda en `rawText`, separada de la nota editable. El audio no se guarda ni se envía a un servicio de transcripción. Cerrar el panel o salir del partido libera el micrófono y los workers. Los modelos deben cargarse de nuevo en memoria al reabrir el panel; la descarga se reutiliza si sigue en caché.
+La transcripción literal se guarda en `rawText`, separada de la nota editable. El audio no se guarda ni se envía a un servicio de transcripción. Soltar el botón cierra el micrófono antes de transcribir. Cancelar el gesto o salir del partido libera las pistas. Los modelos preparados se reutilizan en memoria entre pantallas; abandonar una inferencia termina sus workers. Tras recargar, en el partido se cargan solo archivos existentes en caché. Si faltan, se deshabilita la voz, aparece una alerta y se enlaza a preparación; no se descargan modelos en mitad del encuentro.
 
 ## Integración
 
@@ -48,7 +50,7 @@ Compatibilidad: los campos `localTeamId` y `visitorTeamId` del formato de almace
 
 ## Idiomas
 
-Whistle admite español (`es`), inglés (`en`), alemán (`de`), francés (`fr`), italiano (`it`), neerlandés (`nl`) y polaco (`pl`), según la [ficha oficial](https://huggingface.co/Cactus-Compute/whistle). El único modelo descargado cubre los siete idiomas. La interfaz dispone del mismo conjunto, pero el idioma hablado se selecciona por separado en el panel de voz y se conserva en este navegador.
+Whistle admite español (`es`), inglés (`en`), alemán (`de`), francés (`fr`), italiano (`it`), neerlandés (`nl`) y polaco (`pl`), según la [ficha oficial](https://huggingface.co/Cactus-Compute/whistle). El único modelo descargado cubre los siete idiomas. La interfaz dispone del mismo conjunto, pero el idioma hablado se selecciona por separado en la preparación previa al partido y se conserva en este navegador.
 
 La captura pasa el idioma elegido a Whistle y al prompt de Needle, con vocabulario deportivo específico. El esquema de salida conserva sus claves originales para evitar cambios en estadísticas y copias. Las formas equivalentes a «nosotros/nuestro» se resuelven como equipo 1; «ellos/rival/suyo», como equipo 2, independientemente del campo. El ejemplo de voz sigue el idioma hablado aunque la interfaz use otro.
 

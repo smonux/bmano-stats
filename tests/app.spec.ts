@@ -1,12 +1,14 @@
+import { serveModels, prepareMatchVoice, selectEvent } from './voice-helpers';
 import {test,expect} from '@playwright/test';
 test.beforeEach(async({page})=>{await page.addInitScript(()=>{Object.defineProperty(Crypto.prototype,'randomUUID',{configurable:true,value:undefined});localStorage.setItem('handball-language','es');localStorage.setItem('handball-welcome-v1','done');});});
 test('manual match lifecycle persists and works offline',async({page,context},testInfo)=>{
+ test.setTimeout(90000);await serveModels(context);
  const errors:string[]=[]; page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/'); await page.getByRole('button',{name:/Nuevo partido/}).click();
  for(const label of ['Equipo 1 (nuestro)','Equipo 2 (rival)']) {const group=page.getByRole('group',{name:label,exact:true}); await group.getByRole('button',{name:'Nuevo',exact:true}).click(); await page.getByLabel(label,{exact:true}).fill(label==='Equipo 1 (nuestro)'?'Águilas':'Leones');}
- await page.getByRole('button',{name:'Iniciar partido'}).click(); await expect(page.getByLabel('Marcador 0 a 0')).toBeVisible();
+ await expect(page.getByRole('button',{name:'Iniciar partido'})).toBeDisabled();await prepareMatchVoice(page);await page.getByRole('button',{name:'Iniciar partido'}).click(); await expect(page.getByLabel('Marcador 0 a 0')).toBeVisible();
  await page.getByRole('button',{name:'Evento manual',exact:true}).click(); let dialog=page.getByRole('dialog');
- await dialog.getByLabel('Evento',{exact:true}).selectOption('goal'); await dialog.getByLabel('Equipo',{exact:true}).selectOption({label:'Águilas'}); await dialog.getByRole('button',{name:'Guardar evento',exact:true}).click();
+ await expect(dialog.getByRole('combobox',{name:'Evento',exact:true})).toHaveCount(0);const wheel=dialog.getByRole('listbox',{name:'Evento',exact:true});await wheel.focus();await wheel.press('ArrowDown');await expect(wheel.getByRole('option',{name:'Gol',exact:true})).toHaveAttribute('aria-selected','true');await wheel.press('ArrowDown');await expect(wheel.getByRole('option',{name:'Parada',exact:true})).toHaveAttribute('aria-selected','true');await selectEvent(page,'Gol'); await dialog.getByLabel('Equipo',{exact:true}).selectOption({label:'Águilas'}); await dialog.getByRole('button',{name:'Guardar evento',exact:true}).click();
  await expect(page.getByLabel('Marcador 1 a 0')).toBeVisible(); await expect(page.getByText('Registrado · sin identificar',{exact:false})).toBeVisible();
  await page.getByRole('button',{name:'Editar',exact:true}).click(); dialog=page.getByRole('dialog'); await dialog.getByLabel('Dorsal principal',{exact:true}).fill('7'); await dialog.getByRole('button',{name:'Guardar evento',exact:true}).click();
  await expect(page.getByText('Águilas · #7',{exact:false})).toBeVisible();

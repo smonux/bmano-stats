@@ -2479,5 +2479,189 @@ export const catalog: Record<string, readonly string[]> = {
     "Copia non valida. Verifica che il file sia una copia di questa app.",
     "Ongeldige back-up. Controleer of het bestand van deze app komt.",
     "Nieprawidłowa kopia. Sprawdź, czy plik pochodzi z tej aplikacji."
+  ],
+  "Preparación de voz": [
+    "Voice preparation",
+    "Spracheingabe vorbereiten",
+    "Préparation vocale",
+    "Preparazione vocale",
+    "Spraak voorbereiden",
+    "Przygotowanie głosu"
+  ],
+  "Prepara la voz antes del partido": [
+    "Prepare voice before the match",
+    "Spracheingabe vor dem Spiel vorbereiten",
+    "Préparez la voix avant le match",
+    "Prepara la voce prima della partita",
+    "Bereid spraak voor de wedstrijd voor",
+    "Przygotuj głos przed meczem"
+  ],
+  "Cactus listo": [
+    "Cactus ready",
+    "Cactus bereit",
+    "Cactus prêt",
+    "Cactus pronto",
+    "Cactus klaar",
+    "Cactus gotowy"
+  ],
+  "Cactus no está cargado en este navegador. Elige el idioma y carga los modelos antes de iniciar el partido.": [
+    "Cactus is not loaded in this browser. Choose a language and load the models before starting the match.",
+    "Cactus ist in diesem Browser nicht geladen. Sprache wählen und Modelle vor Spielbeginn laden.",
+    "Cactus n’est pas chargé dans ce navigateur. Choisissez la langue et chargez les modèles avant de démarrer le match.",
+    "Cactus non è caricato in questo browser. Scegli la lingua e carica i modelli prima di iniziare la partita.",
+    "Cactus is niet geladen in deze browser. Kies een taal en laad de modellen voordat je de wedstrijd start.",
+    "Cactus nie jest załadowany w tej przeglądarce. Wybierz język i załaduj modele przed rozpoczęciem meczu."
+  ],
+  "Los modelos están en local. Cárgalos antes del partido.": [
+    "Models are stored locally. Load them before the match.",
+    "Modelle sind lokal gespeichert. Vor dem Spiel laden.",
+    "Les modèles sont stockés localement. Chargez-les avant le match.",
+    "I modelli sono salvati localmente. Caricali prima della partita.",
+    "Modellen zijn lokaal opgeslagen. Laad ze voor de wedstrijd.",
+    "Modele są zapisane lokalnie. Załaduj je przed meczem."
+  ],
+  "Elige el idioma de voz": [
+    "Choose voice language",
+    "Aufnahmesprache wählen",
+    "Choisissez la langue vocale",
+    "Scegli la lingua vocale",
+    "Kies de spraaktaal",
+    "Wybierz język głosu"
+  ],
+  "Cargando modelos…": [
+    "Loading models…",
+    "Modelle werden geladen…",
+    "Chargement des modèles…",
+    "Caricamento modelli…",
+    "Modellen laden…",
+    "Ładowanie modeli…"
+  ],
+  "Cargar Cactus · 53 MB": [
+    "Load Cactus · 53 MB",
+    "Cactus laden · 53 MB",
+    "Charger Cactus · 53 Mo",
+    "Carica Cactus · 53 MB",
+    "Cactus laden · 53 MB",
+    "Załaduj Cactus · 53 MB"
+  ],
+  "Solicitando permiso…": [
+    "Requesting permission…",
+    "Berechtigung wird angefragt…",
+    "Demande d’autorisation…",
+    "Richiesta permesso…",
+    "Toestemming vragen…",
+    "Żądanie uprawnienia…"
+  ],
+  "Micrófono comprobado": [
+    "Microphone checked",
+    "Mikrofon geprüft",
+    "Microphone vérifié",
+    "Microfono verificato",
+    "Microfoon gecontroleerd",
+    "Mikrofon sprawdzony"
+  ],
+  "Comprobar micrófono": [
+    "Check microphone",
+    "Mikrofon prüfen",
+    "Vérifier le microphone",
+    "Verifica microfono",
+    "Microfoon controleren",
+    "Sprawdź mikrofon"
+  ],
+  "Permiso concedido. El micrófono se ha cerrado; solo se abrirá mientras mantengas pulsado para hablar.": [
+    "Permission granted. Microphone closed; it will only open while you hold to talk.",
+    "Berechtigung erteilt. Mikrofon geschlossen; es öffnet sich nur beim Gedrückthalten zum Sprechen.",
+    "Autorisation accordée. Microphone fermé ; il ne s’ouvrira que pendant l’appui pour parler.",
+    "Permesso concesso. Microfono chiuso; si aprirà solo mentre tieni premuto per parlare.",
+    "Toestemming verleend. Microfoon gesloten; hij opent alleen terwijl je ingedrukt houdt om te spreken.",
+    "Uprawnienie przyznane. Mikrofon zamknięty; otworzy się tylko podczas przytrzymywania przycisku mówienia."
+  ],
+  "La descarga necesita conexión una vez. La voz funciona con los modelos locales; mantén pulsado para hablar y suelta para terminar.": [
+    "Download once online. Voice uses local models; hold to talk and release to finish.",
+    "Einmal online herunterladen. Spracheingabe nutzt lokale Modelle; zum Sprechen gedrückt halten und zum Beenden loslassen.",
+    "Téléchargez une fois en ligne. La voix utilise les modèles locaux ; maintenez pour parler et relâchez pour terminer.",
+    "Scarica una volta online. La voce usa modelli locali; tieni premuto per parlare e rilascia per finire.",
+    "Download eenmaal online. Spraak gebruikt lokale modellen; houd ingedrukt om te spreken en laat los om te stoppen.",
+    "Pobierz raz online. Głos używa lokalnych modeli; przytrzymaj, aby mówić, i puść, aby zakończyć."
+  ],
+  "Elige el idioma de voz antes de cargar Cactus.": [
+    "Choose voice language before loading Cactus.",
+    "Vor dem Laden von Cactus die Aufnahmesprache wählen.",
+    "Choisissez la langue vocale avant de charger Cactus.",
+    "Scegli la lingua vocale prima di caricare Cactus.",
+    "Kies de spraaktaal voordat je Cactus laadt.",
+    "Wybierz język głosu przed załadowaniem Cactus."
+  ],
+  "Los modelos no se han guardado en este navegador. Libera espacio y vuelve a cargarlos antes del partido.": [
+    "Models were not saved in this browser. Free space and reload them before the match.",
+    "Modelle wurden nicht gespeichert. Speicher freigeben und vor dem Spiel erneut laden.",
+    "Les modèles n’ont pas été sauvegardés. Libérez de l’espace et rechargez-les avant le match.",
+    "I modelli non sono stati salvati. Libera spazio e ricaricali prima della partita.",
+    "Modellen zijn niet opgeslagen. Maak ruimte vrij en laad ze opnieuw voor de wedstrijd.",
+    "Modele nie zostały zapisane. Zwolnij miejsce i załaduj je ponownie przed meczem."
+  ],
+  "Carga Cactus y elige el idioma antes de iniciar el partido.": [
+    "Load Cactus and choose a language before starting the match.",
+    "Cactus laden und Sprache vor Spielbeginn wählen.",
+    "Chargez Cactus et choisissez la langue avant de démarrer le match.",
+    "Carica Cactus e scegli la lingua prima di iniziare la partita.",
+    "Laad Cactus en kies een taal voordat je de wedstrijd start.",
+    "Załaduj Cactus i wybierz język przed rozpoczęciem meczu."
+  ],
+  "El navegador no considera segura esta página. Abre la dirección HTTPS de Tailscale para usar el micrófono.": [
+    "The browser does not consider this page secure. Open the Tailscale HTTPS address to use the microphone.",
+    "Der Browser stuft diese Seite nicht als sicher ein. Für das Mikrofon die HTTPS-Adresse von Tailscale öffnen.",
+    "Le navigateur ne considère pas cette page sécurisée. Ouvrez l’adresse HTTPS de Tailscale pour le microphone.",
+    "Il browser non considera sicura questa pagina. Apri l’indirizzo HTTPS di Tailscale per usare il microfono.",
+    "De browser beschouwt deze pagina niet als veilig. Open het HTTPS-adres van Tailscale voor de microfoon.",
+    "Przeglądarka nie uważa tej strony za bezpieczną. Otwórz adres HTTPS Tailscale, aby używać mikrofonu."
+  ],
+  "Este navegador no ofrece acceso al micrófono. Revisa los permisos de Firefox y del sistema para esta página.": [
+    "This browser does not provide microphone access. Check Firefox and system permissions for this page.",
+    "Dieser Browser bietet keinen Mikrofonzugriff. Firefox- und Systemberechtigungen für diese Seite prüfen.",
+    "Ce navigateur ne donne pas accès au microphone. Vérifiez les autorisations Firefox et système pour cette page.",
+    "Questo browser non offre accesso al microfono. Controlla i permessi di Firefox e del sistema per questa pagina.",
+    "Deze browser biedt geen microfoontoegang. Controleer Firefox- en systeemrechten voor deze pagina.",
+    "Ta przeglądarka nie udostępnia mikrofonu. Sprawdź uprawnienia Firefoksa i systemu dla tej strony."
+  ],
+  "Este navegador no admite la grabación necesaria. Actualiza Firefox y vuelve a intentarlo.": [
+    "This browser does not support the required recording. Update Firefox and retry.",
+    "Dieser Browser unterstützt die Aufnahme nicht. Firefox aktualisieren und erneut versuchen.",
+    "Ce navigateur ne prend pas en charge l’enregistrement requis. Mettez Firefox à jour et réessayez.",
+    "Questo browser non supporta la registrazione necessaria. Aggiorna Firefox e riprova.",
+    "Deze browser ondersteunt de vereiste opname niet. Werk Firefox bij en probeer opnieuw.",
+    "Ta przeglądarka nie obsługuje wymaganego nagrywania. Zaktualizuj Firefoksa i spróbuj ponownie."
+  ],
+  "Preparar voz": [
+    "Prepare voice",
+    "Spracheingabe vorbereiten",
+    "Préparer la voix",
+    "Prepara voce",
+    "Spraak voorbereiden",
+    "Przygotuj głos"
+  ],
+  "Reloj del partido": [
+    "Match clock",
+    "Spieluhr",
+    "Chronomètre du match",
+    "Cronometro partita",
+    "Wedstrijdklok",
+    "Zegar meczu"
+  ],
+  "Dorsal (opcional)": [
+    "Shirt number (optional)",
+    "Rückennummer (optional)",
+    "Numéro (facultatif)",
+    "Numero (facoltativo)",
+    "Rugnummer (optioneel)",
+    "Numer (opcjonalny)"
+  ],
+  "Una jugada por grabación. Mantén pulsado para hablar y suelta para terminar. Whistle transcribe y Needle propone; tú revisas y guardas. La entrada manual sigue disponible.": [
+    "One play per recording. Hold to talk and release to finish. Whistle transcribes and Needle proposes; you review and save. Manual entry stays available.",
+    "Eine Aktion pro Aufnahme. Zum Sprechen gedrückt halten, zum Beenden loslassen. Whistle transkribiert, Needle schlägt vor; du prüfst und speicherst. Manuelle Eingabe bleibt verfügbar.",
+    "Une action par enregistrement. Maintenez pour parler et relâchez pour terminer. Whistle transcrit, Needle propose ; vous vérifiez et enregistrez. La saisie manuelle reste disponible.",
+    "Un’azione per registrazione. Tieni premuto per parlare e rilascia per finire. Whistle trascrive, Needle propone; tu controlli e salvi. L’inserimento manuale resta disponibile.",
+    "Eén actie per opname. Houd ingedrukt om te spreken en laat los om te stoppen. Whistle transcribeert, Needle stelt voor; jij controleert en slaat op. Handmatige invoer blijft beschikbaar.",
+    "Jedna akcja na nagranie. Przytrzymaj, aby mówić, i puść, aby zakończyć. Whistle transkrybuje, Needle proponuje; Ty sprawdzasz i zapisujesz. Wpisywanie ręczne nadal jest dostępne."
   ]
 };

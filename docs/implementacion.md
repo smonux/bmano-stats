@@ -61,3 +61,12 @@ Siguen pendientes los demás bloques enumerados arriba, en especial arrastre, ge
 - Acceso al servidor: `server.allowedHosts` y `preview.allowedHosts` se establecen en `true`, por petición expresa del usuario. HTTPS permanece fuera de este cambio.
 
 Validación de este bloque: 18 pruebas de dominio, persistencia, idiomas, UUID sin `randomUUID` y configuración de voz; 8 recorridos Chromium en móvil/escritorio, incluidos captura con modelos reales, segunda inferencia sin red, bienvenida y tres exclusiones. Compilación de producción correcta. Además se verificó el recorrido manual y su persistencia sobre HTTP real en Tailscale sin `crypto.randomUUID`. La prueba acústica automatizada usa una muestra sintética española; no certifica precisión con voces nativas de los otros seis idiomas ni en un pabellón.
+
+### Preparación y controles de pista
+
+- Modelos e idioma se preparan antes del partido. Alerta si faltan los archivos locales; el botón de inicio exige idioma y modelos cargados. Se inspecciona CacheStorage y se verifica al cargar; no se confía en una preferencia booleana. Tras recargar en un partido solo se carga desde caché.
+- Comprobación explícita del micrófono antes de la descarga o del partido; solicita permiso y cierra las pistas inmediatamente. Verificada la API real en Firefox de escritorio sobre el HTTPS de Tailscale, con audio simulado, error de permiso y reintento. No se ha probado un Android físico.
+- Voz es el botón de grabación mantenida de la barra de captura. No hay menú previo ni modo de grabación con un toque. Reutiliza los modelos preparados y conserva la revisión antes de guardar.
+- Rueda de eventos con scroll/snap, opciones visibles, teclado y selección directa. Sin combo oculto.
+- Reloj mm:ss y tres exclusiones de 66 px de alto integradas en la cabecera. Dorsal opcional, compatible con copias anteriores.
+- Corregida la navegación por equipos y partidos en idiomas distintos del español: las rutas permanecen estables.

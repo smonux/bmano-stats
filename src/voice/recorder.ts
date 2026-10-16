@@ -1,3 +1,4 @@
+import { microphoneProblem } from './readiness';
 export type Recording = {samples:Float32Array;sampleRate:number};
 export class VoiceRecorder {
   private stream?:MediaStream;
@@ -11,7 +12,7 @@ export class VoiceRecorder {
   private done?:()=>void;
   private timer?:ReturnType<typeof setTimeout>;
   async start(limit:()=>void) {
-    if(!globalThis.isSecureContext || !navigator.mediaDevices?.getUserMedia || !globalThis.AudioWorkletNode) throw new Error('La grabación necesita HTTPS o localhost y un navegador con AudioWorklet.');
+    const problem=microphoneProblem();if(problem)throw new Error(problem);
     // Construct/resume in the user gesture for Safari and mobile autoplay policies.
     this.context=new AudioContext();
     const resume=this.context.resume();

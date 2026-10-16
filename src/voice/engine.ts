@@ -11,9 +11,9 @@ export class VoiceEngine {
   private whistle?: WhistleSession;
   private controller = new AbortController();
   get ready() { return Boolean(this.needle && this.whistle); }
-  async prepare(progress: (text: string) => void) {
+  async prepare(progress: (text: string) => void, offline = !navigator.onLine) {
     if(this.ready) return;
-    const options = (name: string) => ({offline:!navigator.onLine,abortSignal:this.controller.signal,onDownloadProgress:({percentage,loaded}:{percentage?:number;loaded:number})=>progress(`${name}: ${percentage!==undefined?Math.round(percentage)+' %':(loaded/1e6).toFixed(1)+' MB'}`)});
+    const options = (name: string) => ({offline,abortSignal:this.controller.signal,onDownloadProgress:({percentage,loaded}:{percentage?:number;loaded:number})=>progress(`${name}: ${percentage!==undefined?Math.round(percentage)+' %':(loaded/1e6).toFixed(1)+' MB'}`)});
     try {
       progress(tr('Cargando Whistle…')); this.whistle=await createWhistle(options('Whistle'));
       progress(tr('Cargando Needle…')); this.needle=await createNeedle({...options('Needle'),stateless:true,system:`Extract one handball action spoken in ${this.language}. Return only the tool schema's canonical values, preserving literal player names. Never execute actions or invent unmentioned facts. `+perspectiveFor(this.language),maxOutputTokens:256});

@@ -1,87 +1,70 @@
-import { savedVoiceLanguage, voiceKeywords } from '../i18n/voice';
-import { languages, type Language, tr } from '../i18n';
 import { useEffect, useRef, useState } from 'react';
-import { Mic, Square, X } from 'lucide-react';
+import { Mic } from 'lucide-react';
 import type { Match, Snapshot } from '../domain/model';
-import { VoiceEngine, voiceError } from '../voice/engine';
+import { tr } from '../i18n';
+import { voiceKeywords } from '../i18n/voice';
+import { voiceError } from '../voice/engine';
 import { VoiceRecorder } from '../voice/recorder';
+import { microphoneProblem } from '../voice/readiness';
+import { useVoiceSetup, prepareVoice, preparedEngine, discardVoiceEngine } from '../voice/setup';
 import { captureContext, toVoiceDraft, type CaptureContext } from '../voice/interpretation';
 import { EventEditor } from './EventEditor';
 import { ErrorMessage } from './ui';
-type Phase = 'idle'|'loading'|'ready'|'permission'|'recording'|'transcribing'|'interpreting'|'review';
-type Result = ReturnType<typeof toVoiceDraft>;
-export function VoiceCapture({match,data,allowReview,close}:{match:Match;data:Snapshot;allowReview:boolean;close:()=>void}) {
-  const [voiceLanguage,setVoiceLanguage]=useState(savedVoiceLanguage);
-  const [phase,setPhase]=useState<Phase>('idle'), [status,setStatus]=useState(''), [error,setError]=useState('');
-  const [result,setResult]=useState<Result|null>(null), [raw,setRaw]=useState('');
-  const [seconds,setSeconds]=useState(0);
-  const engine=useRef<VoiceEngine|null>(null), recorder=useRef<VoiceRecorder|null>(null);
-  const alive=useRef(true), lock=useRef(false), held=useRef(false), capture=useRef<CaptureContext|null>(null);
-  const stopRef=useRef<()=>void>(()=>{});
-  useEffect(()=>{alive.current=true;return()=>{alive.current=false;recorder.current?.cancel();void engine.current?.close();};},[]);
-  useEffect(()=>{if(phase!=='recording') return;const start=Date.now();const timer=setInterval(()=>setSeconds(Math.min(20,Math.floor((Date.now()-start)/1000))),200);return()=>clearInterval(timer);},[phase]);
-  const prepare=async()=>{
-    if(lock.current) return; lock.current=true;setError('');setPhase('loading');
-    const current=new VoiceEngine(voiceLanguage);engine.current=current;
-    try {await current.prepare(text=>{if(alive.current)setStatus(text);});if(alive.current)setPhase('ready');}
-    catch(e){if(alive.current){setError(voiceError(e,true));setPhase('idle');}}
-    finally{lock.current=false;}
-  };
-  const stop=async()=>{
-    if(!recorder.current || lock.current) return;
-    lock.current=true;setPhase('transcribing');setStatus(tr("Whistle está transcribiendo…"));
-    try {
-      const audio=await recorder.current.stop();recorder.current=null;
-      if(!alive.current) return;
-      if(audio.samples.length<audio.sampleRate*.25) throw new Error(tr("La grabación es demasiado corta. Mantén pulsado hasta terminar la jugada."));
-      const c=capture.current!;
-      const keywords=[...c.data.teams.filter(t=>[c.match.localTeamId,c.match.visitorTeamId].includes(t.id)).map(t=>t.name),...c.data.players.filter(p=>[c.match.localTeamId,c.match.visitorTeamId].includes(p.teamId)&&!p.isUnknown&&!p.deletedAt&&p.name).map(p=>p.name),...voiceKeywords[voiceLanguage]].map(word=>word.replace(/[\r\n]/g,' ').trim()).filter(Boolean).slice(0,80);
-      const transcript=await engine.current!.transcribe(audio.samples,audio.sampleRate,keywords);
-      if(!alive.current) return;
-      const text=transcript.text.trim();
-      if(!text) throw new Error(tr("No se ha reconocido voz. Acércate al micrófono y vuelve a intentarlo."));
-      setRaw(text);setPhase('interpreting');setStatus(tr("Needle está interpretando la jugada…"));
-      let interpreted:unknown=null;let warnings:string[]=[];
-      try{const response=await engine.current!.interpret(text,[c.match.localTeamId,c.match.visitorTeamId].map(id=>c.data.teams.find(t=>t.id===id)!.name));interpreted=response.proposal;warnings=response.warnings;}catch(e){await engine.current?.close();engine.current=null;if(alive.current)setError(voiceError(e));}
-      if(alive.current){const result=toVoiceDraft(text,interpreted,c);result.warnings.unshift(...warnings);setResult(result);setPhase('review');}
-    }catch(e){await engine.current?.close();engine.current=null;if(alive.current){setError(voiceError(e));setPhase('idle');}}
-    finally{lock.current=false;}
-  };
-  stopRef.current=()=>{void stop();};
-  const start=async(hold=false)=>{
-    if(lock.current || phase!=='ready') return;
-    held.current=hold;lock.current=true;setError('');setRaw('');setResult(null);setSeconds(0);setPhase('permission');
-    capture.current=captureContext(match,data);
-    const mic=new VoiceRecorder();recorder.current=mic;
-    try {
-      const started=await mic.start(()=>stopRef.current());
-      if(!alive.current){mic.cancel();return;}
-      lock.current=false;
-      if(started){setPhase('recording');if(hold&&!held.current) await stop();}
-      else setPhase('ready');
-    } catch(e){if(alive.current){setError(voiceError(e));setPhase('ready');}recorder.current=null;}
-    finally{lock.current=false;}
-  };
-  const release=()=>{held.current=false;if(phase==='recording')void stop();};
-  const cancel=()=>{recorder.current?.cancel();void engine.current?.close();close();};
-  const teamName=(id:string)=>data.teams.find(t=>t.id===id)?.name??'';
-  return <section className="voice-panel panel" aria-label={tr("Captura por voz")}>
-    <div className="section-heading"><h2><Mic size={20}/> {tr("Captura por voz")} <span className="small-tag">{tr("En pruebas")}</span></h2><button className="icon-button" aria-label={tr("Cerrar captura por voz")} onClick={cancel}><X size={20}/></button></div>
-    <p className="muted">{tr("Una jugada por grabación, hasta 20 segundos. Revisa el resultado antes de guardarlo.")}</p>
-    <p className="caption">{tr('Desde tu perspectiva: «nuestro/nosotros» = equipo 1 ({ours}); «ellos/rival/suyo» = equipo 2 ({theirs}). No depende de quién juega en casa.',{ours:teamName(match.localTeamId),theirs:teamName(match.visitorTeamId)})}</p>
-    <label>{tr('Idioma de voz')}<select aria-label={tr('Idioma de voz')} value={voiceLanguage} disabled={!['idle','ready'].includes(phase)} onChange={e=>{const value=e.target.value as Language;setVoiceLanguage(value);try{localStorage.setItem('handball-voice-language',value);}catch{}void engine.current?.close();engine.current=null;setPhase('idle');}}>{Object.entries(languages).map(([code,name])=><option key={code} value={code}>{name}</option>)}</select></label><p className="caption">{tr('Ejemplo: «gol nuestro, dorsal siete». También puedes usar el nombre del equipo.',{},voiceLanguage)}</p>
-    {phase==='idle'&&<><p>{tr("Prepara Whistle y Needle (unos 53 MB). La primera descarga necesita conexión; después se reutilizan si el navegador conserva la caché. El audio se procesa aquí y se descarta tras transcribirlo.")}</p><button className="primary" onClick={()=>void prepare()}>{tr("Preparar voz local")}</button></>}
-    {phase==='loading'&&<p role="status">{status}</p>}
-    {['ready','permission','recording'].includes(phase)&&<div className="voice-controls">
-      <button className={`primary hold-to-talk ${phase==='recording'?'recording':''}`} aria-disabled={phase==='permission'} onPointerDown={e=>{if(e.button!==0||phase!=='ready')return;e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);void start(true);}} onPointerUp={release} onPointerCancel={()=>{if(phase==='recording'||phase==='permission'){held.current=false;recorder.current?.cancel();recorder.current=null;setPhase('ready');}}} onLostPointerCapture={release} onKeyDown={e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();void start(true);}}} onKeyUp={e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();release();}}}>
-        <Mic size={20}/>{phase==='recording'?tr('Grabando · {seconds} s',{seconds})+(held.current?tr(' · suelta para terminar'):''):phase==='permission'?tr("Abriendo micrófono…"):tr("Mantén pulsado para hablar")}
-      </button>
-      <button disabled={phase==='permission'} onClick={()=>phase==='recording'?void stop():void start()}>{phase==='recording'?<><Square size={16}/> {tr("Terminar grabación")}</>:tr("Grabar con un toque")}</button>
-    </div>}
-    {['transcribing','interpreting'].includes(phase)&&<p role="status">{status} {tr("Puedes seguir usando la entrada manual.")}</p>}
-    {raw&&<p className="voice-transcript"><strong>{tr("Transcripción original")}</strong><span>«{raw}»</span></p>}
-    <ErrorMessage text={error}/>
-    {phase==='review'&&result&&<><ul className="voice-warnings">{result.warnings.map(w=><li key={w}>{tr(w)}</li>)}</ul><button onClick={()=>{setResult(null);setRaw('');setPhase(engine.current?.ready?'ready':'idle');}}>{tr("Otra grabación")}</button>{allowReview?<EventEditor data={data} match={match} initialDraft={result.draft} voiceWarnings={result.warnings} close={()=>{setResult(null);setPhase(engine.current?.ready?'ready':'idle');}}/>:<p role="status">{tr("Propuesta lista. Termina la edición manual para revisarla.")}</p>}</>}
-    {phase==='recording'&&<span className="sr-only" role="status">{tr("Micrófono activo. Máximo veinte segundos.")}</span>}
-  </section>;
+type Phase='ready'|'permission'|'recording'|'transcribing'|'interpreting'|'review';
+type Result=ReturnType<typeof toVoiceDraft>;
+export function VoiceCapture({match,data,allowReview}:{match:Match;data:Snapshot;allowReview:boolean}) {
+ const setup=useVoiceSetup();
+ const [phase,setPhase]=useState<Phase>('ready'),[status,setStatus]=useState(''),[error,setError]=useState('');
+ const [result,setResult]=useState<Result|null>(null),[seconds,setSeconds]=useState(0);
+ const recorder=useRef<VoiceRecorder|null>(null),alive=useRef(true),lock=useRef(false),held=useRef(false),processing=useRef(false);
+ const capture=useRef<CaptureContext|null>(null),stopRef=useRef<()=>void>(()=>{});
+ useEffect(()=>{alive.current=true;return()=>{alive.current=false;recorder.current?.cancel();if(processing.current)void discardVoiceEngine();};},[]);
+ useEffect(()=>{if(setup.phase==='cached')void prepareVoice(false);},[setup.phase]);
+ useEffect(()=>{if(phase!=='recording')return;const start=Date.now();const timer=setInterval(()=>setSeconds(Math.min(20,Math.floor((Date.now()-start)/1000))),200);return()=>clearInterval(timer);},[phase]);
+ const stop=async()=>{
+  if(!recorder.current||lock.current)return;
+  lock.current=true;processing.current=true;setPhase('transcribing');setStatus(tr('Whistle está transcribiendo…'));
+  try {
+   const audio=await recorder.current.stop();recorder.current=null;if(!alive.current)return;
+   if(audio.samples.length<audio.sampleRate*.25)throw new Error(tr('La grabación es demasiado corta. Mantén pulsado hasta terminar la jugada.'));
+   const c=capture.current!, engine=preparedEngine();
+   const keywords=[...c.data.teams.filter(t=>[c.match.localTeamId,c.match.visitorTeamId].includes(t.id)).map(t=>t.name),...c.data.players.filter(p=>[c.match.localTeamId,c.match.visitorTeamId].includes(p.teamId)&&!p.isUnknown&&!p.deletedAt&&p.name).map(p=>p.name),...voiceKeywords[setup.language]].map(w=>w.replace(/[\r\n]/g,' ').trim()).filter(Boolean).slice(0,80);
+   const transcript=await engine.transcribe(audio.samples,audio.sampleRate,keywords);if(!alive.current)return;
+   const text=transcript.text.trim();if(!text)throw new Error(tr('No se ha reconocido voz. Acércate al micrófono y vuelve a intentarlo.'));
+   setPhase('interpreting');setStatus(tr('Needle está interpretando la jugada…'));
+   let proposal:unknown=null,warnings:string[]=[];
+   try{const response=await engine.interpret(text,[c.match.localTeamId,c.match.visitorTeamId].map(id=>c.data.teams.find(t=>t.id===id)!.name));proposal=response.proposal;warnings=response.warnings;}
+   catch(e){await discardVoiceEngine();if(alive.current)setError(voiceError(e));}
+   if(alive.current){const value=toVoiceDraft(text,proposal,c);value.warnings.unshift(...warnings);setResult(value);setPhase('review');}
+  }catch(e){await discardVoiceEngine();if(alive.current){setError(voiceError(e));setPhase('ready');}}
+  finally{lock.current=false;processing.current=false;}
+ };
+ stopRef.current=()=>{held.current=false;void stop();};
+ const start=async()=>{
+  if(lock.current||phase!=='ready'||setup.phase!=='ready')return;
+  held.current=true;lock.current=true;setError('');setResult(null);setSeconds(0);setPhase('permission');capture.current=captureContext(match,data);
+  const mic=new VoiceRecorder();recorder.current=mic;
+  try {
+   const started=await mic.start(()=>stopRef.current());if(!alive.current){mic.cancel();return;}
+   lock.current=false;
+   if(started){setPhase('recording');if(!held.current)await stop();}else setPhase('ready');
+  }catch(e){if(alive.current){setError(voiceError(e));setPhase('ready');}recorder.current=null;}
+  finally{lock.current=false;}
+ };
+ const release=()=>{held.current=false;if(phase==='recording')void stop();};
+ const cancelRecording=()=>{if(!['recording','permission'].includes(phase))return;held.current=false;recorder.current?.cancel();recorder.current=null;setPhase('ready');};
+ const ready=setup.phase==='ready',problem=microphoneProblem();
+ return <><button className={`hold-to-talk ${phase==='recording'?'recording':''}`} aria-label={phase==='recording'?tr('Grabando · {seconds} s',{seconds}):tr('Mantén pulsado para hablar')} disabled={!ready||Boolean(problem)||['transcribing','interpreting','review'].includes(phase)} aria-disabled={phase==='permission'}
+   onPointerDown={e=>{if(e.button!==0||phase!=='ready')return;e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);void start();}}
+   onPointerUp={release} onPointerCancel={cancelRecording} onLostPointerCapture={release}
+   onKeyDown={e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();void start();}}} onKeyUp={e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();release();}}} onBlur={release}>
+   <Mic size={20}/>{phase==='recording'?tr('Grabando · {seconds} s',{seconds}):phase==='permission'?tr('Solicitando permiso…'):tr('Voz')}
+  </button>
+  {setup.phase==='loading'&&<p className="capture-status" role="status">{tr('Cargando modelos…')} {setup.progress}</p>}
+  {!ready&&setup.phase!=='loading'&&<div className="capture-status" role="alert">{tr('Cactus no está cargado en este navegador. Elige el idioma y carga los modelos antes de iniciar el partido.')} <a href="#/ajustes">{tr('Preparar voz')}</a></div>}
+  {(problem||error||setup.error)&&<div className="capture-status"><ErrorMessage text={problem||error||setup.error}/></div>}
+  {['transcribing','interpreting'].includes(phase)&&<p className="capture-status" role="status">{status} {tr('Puedes seguir usando la entrada manual.')}</p>}
+  {phase==='review'&&result&&(allowReview?<EventEditor data={data} match={match} initialDraft={result.draft} voiceWarnings={result.warnings} close={()=>{setResult(null);setPhase('ready');}}/>:<p className="capture-status" role="status">{tr('Propuesta lista. Termina la edición manual para revisarla.')}</p>)}
+  {phase==='recording'&&<span className="sr-only" role="status">{tr('Micrófono activo. Máximo veinte segundos.')}</span>}
+ </>;
 }

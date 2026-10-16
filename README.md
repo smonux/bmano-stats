@@ -57,10 +57,10 @@ Si Chromium ya está instalado, se puede indicar su ejecutable con `CHROMIUM_PAT
 
 ## Idiomas y uso durante el partido
 
-La interfaz y la voz pueden usar idiomas distintos: español, inglés, alemán, francés, italiano, neerlandés y polaco. El idioma de la interfaz se cambia en Ajustes o en la galería de bienvenida; el de captura, en el panel de voz. Los siete comparten el mismo Whistle descargado.
+La interfaz y la voz pueden usar idiomas distintos: español, inglés, alemán, francés, italiano, neerlandés y polaco. El idioma de la interfaz se cambia en Ajustes o en la galería de bienvenida; el de captura, en la preparación previa al partido. Cactus se descarga y prepara antes de iniciar el partido; durante el juego el botón Voz es push to talk directo, sin panel adicional. Los siete comparten el mismo Whistle descargado.
 
 La bienvenida aparece en el primer uso y se puede reabrir en Ajustes. Explica cómo preparar la voz, registrar una jugada, revisar el borrador y trabajar desde la perspectiva de quien graba.
 
-Cada partido tiene tres contadores de exclusión de dos minutos con equipo y dorsal. Se guardan localmente y en las copias, siguen las pausas del reloj y pueden pararse individualmente. A cero muestran «Puede volver». El sonido es opcional y requiere mantener abierta la vista del partido. La exclusión estadística se registra como evento aparte.
+Cada partido tiene tres contadores de exclusión de dos minutos con equipo y dorsal opcional. Se guardan localmente y en las copias, siguen las pausas del reloj y pueden pararse individualmente. El reloj del partido muestra minutos y segundos. A cero muestran «Puede volver». El sonido es opcional y requiere mantener abierta la vista del partido. La exclusión estadística se registra como evento aparte.
 
 Vite acepta cualquier nombre de host (`allowedHosts: true`) en desarrollo y vista previa.

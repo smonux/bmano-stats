@@ -78,3 +78,9 @@ test('three suspension timers survive backup and follow pauses, individual stops
   expect(await db.events.count()).toBe(0);
  } finally {mock.mockRestore();}
 });
+
+test('suspension timer accepts an unknown shirt number and preserves it in backups',async()=>{
+ await repo.exclusion(match.id,0,'start',{teamId:match.localTeamId,dorsal:null});
+ const backup=await repo.exportBackup();expect(backup.matches[0].exclusions![0]!.dorsal).toBeNull();
+ await repo.importBackup(JSON.parse(JSON.stringify(backup)));expect((await db.matches.get(match.id))!.exclusions![0]).toMatchObject({teamId:match.localTeamId,dorsal:null});
+});
