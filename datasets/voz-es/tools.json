@@ -1,0 +1,80 @@
+[
+  {
+    "name": "registrar_jugada",
+    "description": "Extrae una sola jugada de balonmano afirmada. Conserva solo los datos explícitos. Una frase ajena al juego, negada o con varias jugadas no genera llamadas.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "evento": {
+          "type": "string",
+          "enum": [
+            "gol",
+            "parada",
+            "fallo",
+            "perdida",
+            "recuperacion",
+            "penalti_cometido",
+            "exclusion",
+            "amarilla",
+            "descalificacion",
+            "pasivo",
+            "infraccion",
+            "desconocido"
+          ],
+          "description": "Canonical event: gol=goal, parada=goalkeeper save, fallo=missed shot, perdida=turnover, recuperacion=ball recovery, penalti_cometido=conceded penalty, exclusion=two-minute suspension, amarilla=yellow card, descalificacion=disqualification, pasivo=passive play, infraccion=rule violation. desconocido=unknown or not exactly one play."
+        },
+        "equipo": {
+          "type": "string",
+          "enum": [
+            "equipo1",
+            "equipo2",
+            "desconocido"
+          ],
+          "description": "Equipo del participante principal desde quien graba: nuestro/nosotros/mi equipo=equipo1; ellos/rival/contrario/suyo=equipo2. Sin referencia al equipo: desconocido. Local y visitante no determinan la perspectiva."
+        },
+        "dorsal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 99,
+          "description": "Primary player shirt number, only if mentioned."
+        },
+        "nombre": {
+          "type": "string",
+          "description": "Literal primary player name, only if mentioned."
+        },
+        "dorsal_relacionado": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 99,
+          "description": "Shirt number of assist provider for a goal, opponent shooter for a save, or related opponent."
+        },
+        "nombre_relacionado": {
+          "type": "string",
+          "description": "Literal related player name."
+        },
+        "penalti": {
+          "type": "boolean",
+          "description": "True if the goal, save or miss is a seven-metre penalty."
+        },
+        "azul": {
+          "type": "boolean",
+          "description": "True if a blue card is mentioned."
+        },
+        "infraccion": {
+          "type": "string",
+          "enum": [
+            "Pasos",
+            "Dobles",
+            "Pisando"
+          ],
+          "description": "Violation: Pasos=steps, Dobles=double dribble, Pisando=goal area violation."
+        }
+      },
+      "required": [
+        "evento",
+        "equipo"
+      ],
+      "additionalProperties": false
+    }
+  }
+]

@@ -12,6 +12,8 @@
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "dataset:build": "node scripts/build-voice-dataset.mjs",
+    "dataset:check": "node scripts/build-voice-dataset.mjs --check",
     "check": "tsc -b"
   },
   "engines": {
