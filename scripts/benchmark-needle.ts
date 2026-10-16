@@ -11,9 +11,9 @@ const properties={
  nombre:{type:'string'},nombre_relacionado:{type:'string'},penalti:{type:'boolean'},azul:{type:'boolean'},infraccion:{type:'string',enum:['Pasos','Dobles','Pisando']},
 };
 export type Variant='current'|'compact'|'staged'|'routed'|'routed-normalized'|'optimized';
-export async function benchmark(variant:Variant,text:string) {
+export async function benchmark(variant:Variant,text:string,model?:{model:string;modelSha256:string}) {
  const system=variant==='optimized'?captureFacts('es'):variant==='current'?`Extract one handball action spoken in es. Return only the tool schema's canonical values, preserving literal player names. Never execute actions or invent unmentioned facts. `+perspectiveFor('es'):'deporte: balonmano; idioma: es; equipo1: La Jota (nosotros); equipo2: Rival (ellos)';
- const started=performance.now();const needle=await createNeedle({stateless:true,system,maxOutputTokens:256});const loadMs=performance.now()-started;
+ const started=performance.now();const needle=await createNeedle({...model,stateless:true,system,maxOutputTokens:256});const loadMs=performance.now()-started;
  const calls:unknown[]=[];let schemaCharacters=0;
  const run=async(schema:object,maxNewTokens=256)=>{
   const tools={registrar_jugada:{description:variant==='current'?'Extract a single handball play from the recording language. Copy only explicitly mentioned facts.':'Una jugada de balonmano.',inputSchema:schema}};

@@ -1,5 +1,7 @@
 # Investigación de latencia de Needle (16 de octubre de 2026)
 
+Ampliación posterior: [modelos de 4, 8 y 12 capas y esquema fijo, sin entrenamiento](MODELOS-LIGEROS.md). La mejora mediante búsqueda de frases literales propuesta después de esta investigación fue retirada a petición del usuario; no se incorporó al código.
+
 Se midió inferencia real del motor WebAssembly en Chromium, sobre este servidor Linux x86-64. No son tiempos de Android. Pesos fijados por `cactus-needle` 0.3.0, Needle revisión `2ae11323dc000f5e70c49f7403efa6af12ba9e67`. Sin inferencias concurrentes de voz. La carga del modelo se midió por separado y se excluye de la tabla; en la aplicación ocurre antes del partido.
 
 Cada resultado es una ejecución por variante y frase: no es un estudio de precisión ni una distribución de latencias. Los JSON anexos incluyen los argumentos originales del modelo, sus advertencias, tasas de prefill/decode y tiempos de carga/inferencia. Las propuestas de estas muestras quedaron retenidas por la baja confianza del modelo. La revisión humana sigue siendo obligatoria.

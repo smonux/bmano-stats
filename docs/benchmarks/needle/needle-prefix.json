@@ -1,0 +1,255 @@
+{
+  "runtime": "Node.js / bundled WASM (not a browser measurement)",
+  "date": "2026-10-16T17:00:37.748Z",
+  "modelPath": "/tmp/bmano-voice/needle3.cact",
+  "training": false,
+  "tools": {
+    "registrar_jugada": {
+      "description": "Extract a single handball play from the recording language. Copy only explicitly mentioned facts.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "evento": {
+            "type": "string",
+            "enum": [
+              "gol",
+              "parada",
+              "fallo",
+              "perdida",
+              "recuperacion",
+              "penalti_cometido",
+              "exclusion",
+              "amarilla",
+              "descalificacion",
+              "pasivo",
+              "infraccion",
+              "desconocido"
+            ],
+            "description": "Canonical event: gol=goal, parada=goalkeeper save, fallo=missed shot, perdida=turnover, recuperacion=ball recovery, penalti_cometido=conceded penalty, exclusion=two-minute suspension, amarilla=yellow card, descalificacion=disqualification, pasivo=passive play, infraccion=rule violation. desconocido=unknown or not exactly one play."
+          },
+          "equipo": {
+            "type": "string",
+            "description": "Recorder perspective: own team=equipo1, opponents=equipo2, NEVER home/away. If team is not mentioned use desconocido. nuestro/nuestra/nosotros/mi equipo=equipo1; ellos/rival/contrario/suyo/su equipo=equipo2. Or copy the mentioned team name verbatim."
+          },
+          "dorsal": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 99,
+            "description": "Primary player shirt number, only if mentioned."
+          },
+          "nombre": {
+            "type": "string",
+            "description": "Literal primary player name, only if mentioned."
+          },
+          "dorsal_relacionado": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 99,
+            "description": "Shirt number of assist provider for a goal, opponent shooter for a save, or related opponent."
+          },
+          "nombre_relacionado": {
+            "type": "string",
+            "description": "Literal related player name."
+          },
+          "penalti": {
+            "type": "boolean",
+            "description": "True if the goal, save or miss is a seven-metre penalty."
+          },
+          "azul": {
+            "type": "boolean",
+            "description": "True if a blue card is mentioned."
+          },
+          "infraccion": {
+            "type": "string",
+            "enum": [
+              "Pasos",
+              "Dobles",
+              "Pisando"
+            ],
+            "description": "Violation: Pasos=steps, Dobles=double dribble, Pisando=goal area violation."
+          }
+        },
+        "required": [
+          "evento",
+          "equipo"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "system": "locale:es; sport:handball",
+  "results": [
+    {
+      "phase": "warmup",
+      "elapsedMs": 9660.262256,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "registrar_jugada",
+            "arguments": {
+              "evento": "penalti_cometido",
+              "equipo": "penalti",
+              "dorsal": 99,
+              "nombre": "final",
+              "penalti": true,
+              "dorsal_relacionado": 50,
+              "nombre_relacionado": ":99,",
+              "infraccion": "Pasos"
+            }
+          }
+        ],
+        "reasoning": "'penalti' -> evento penalti_cometido; 'final' -> fallo; 'perdida' -> fallo; 'recuperacion' -> penalti_cometido; 'penalti' -> penalti_cometido; 'final' -> fallo",
+        "confidence": 0.0004,
+        "prefill_tps": 35.7,
+        "decode_tps": 17.5,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [
+            "registrar_jugada.equipo",
+            "registrar_jugada.dorsal",
+            "registrar_jugada.nombre",
+            "registrar_jugada.dorsal_relacionado",
+            "registrar_jugada.nombre_relacionado"
+          ],
+          "negation": false
+        }
+      }
+    },
+    {
+      "text": "Gol nuestro, dorsal siete.",
+      "elapsedMs": 7607.017494,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "registrar_jugada",
+            "arguments": {
+              "evento": "gol",
+              "penalti": true,
+              "nombre": "siete",
+              "nombre_relacionado": "siete",
+              "equipo": "siete"
+            }
+          }
+        ],
+        "reasoning": "'Gol' -> evento 'gol'; 'dorsal' -> dorsal 7; 'siete' -> penalti true; 'siete' -> penalti true; 'siete' -> penalti true",
+        "confidence": 0.0029,
+        "prefill_tps": 35.6,
+        "decode_tps": 19.1,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "text": "Acaba de marcar el siete de los nuestros.",
+      "elapsedMs": 2741.27895,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "registrar_jugada",
+            "arguments": {
+              "evento": "fallo",
+              "equipo": "parada"
+            }
+          }
+        ],
+        "reasoning": "'marcar el siete' -> evento 'fallo'. 'siete de los nuestros' -> evento 'fallo'.",
+        "confidence": 0.017,
+        "prefill_tps": 35.9,
+        "decode_tps": 31.5,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "text": "Parada rival, dorsal uno, lanzamiento de nuestro dorsal nueve.",
+      "elapsedMs": 7385.231924,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "registrar_jugada",
+            "arguments": {
+              "evento": "parada",
+              "equipo": "dorsal",
+              "nombre": "nuestro",
+              "penalti": true,
+              "nombre_relacionado": "nuestro"
+            }
+          }
+        ],
+        "reasoning": "evento='parada' from 'Parada rival'; equipo='dorsal' from 'dorsal uno'; nombre='nuestro' from 'nuestro'; penalti=true from 'lanzamiento'; penalti=true from 'lanzamiento'; nombre='nuestro' from 'nuestro'.",
+        "confidence": 0.0001,
+        "prefill_tps": 35.6,
+        "decode_tps": 24.6,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "text": "Exclusión de dos minutos para el rival.",
+      "elapsedMs": 5716.892411000001,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "registrar_jugada",
+            "arguments": {
+              "evento": "penalti_cometido",
+              "equipo": "fallo",
+              "dorsal": 99,
+              "nombre": "Rival"
+            }
+          }
+        ],
+        "reasoning": "'Exclusión de dos minutos' -> evento 'penalti_cometido', 'dos minutos' -> description 'dos minutos', 'rival' -> perdida 'fallo'.",
+        "confidence": 0.0042,
+        "prefill_tps": 35.9,
+        "decode_tps": 20.4,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [
+            "registrar_jugada.dorsal"
+          ],
+          "negation": false
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,538 @@
+{
+  "runtime": "Node.js / bundled WASM (not a browser measurement)",
+  "date": "2026-10-16T16:58:56.842Z",
+  "training": false,
+  "tools": {
+    "record_play": {
+      "description": "Record one handball play.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "goal",
+              "save",
+              "miss",
+              "loss",
+              "recovery",
+              "penalty",
+              "exclusion",
+              "yellow",
+              "disqualification",
+              "passive",
+              "infraction",
+              "unknown"
+            ]
+          },
+          "team": {
+            "type": "string",
+            "enum": [
+              "our",
+              "opponent",
+              "unknown"
+            ],
+            "description": "Team performing the action, from the recorder perspective."
+          },
+          "shirt": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 99,
+            "description": "Primary player shirt number."
+          },
+          "related": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 99,
+            "description": "Assist provider for goal; opposing player for other actions."
+          },
+          "name": {
+            "type": "string",
+            "description": "Primary player name, verbatim."
+          },
+          "related_name": {
+            "type": "string",
+            "description": "Related player name, verbatim."
+          },
+          "penalty": {
+            "type": "boolean",
+            "description": "Seven metre shot."
+          },
+          "blue": {
+            "type": "boolean",
+            "description": "Blue card."
+          },
+          "infraction": {
+            "type": "string",
+            "enum": [
+              "steps",
+              "double_dribble",
+              "goal_area"
+            ]
+          }
+        },
+        "required": [
+          "action",
+          "team"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "results": [
+    {
+      "depth": 20,
+      "text": "Gol nuestro, dorsal siete.",
+      "expected": {
+        "action": "goal",
+        "team": "our",
+        "shirt": 7
+      },
+      "elapsedMs": 12300.889051,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "record_play",
+            "arguments": {
+              "action": "save",
+              "team": "our",
+              "name": "Siete",
+              "related_name": "Gol",
+              "penalty": false,
+              "blue": false,
+              "infraction": "steps"
+            }
+          }
+        ],
+        "reasoning": "'Gol nuestro' -> action 'save', 'dorsal siete' -> shirt 7, team 'our', 'siete' -> player_name 'Siete', 'gol' -> player_name 'Gol'",
+        "confidence": 0.0019,
+        "prefill_tps": 43.6,
+        "decode_tps": 20.5,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      },
+      "requiredFieldsCorrect": false,
+      "correct": false
+    },
+    {
+      "depth": 20,
+      "text": "Acaba de marcar el siete de los nuestros.",
+      "expected": {
+        "action": "goal",
+        "team": "our",
+        "shirt": 7
+      },
+      "elapsedMs": 2373.8614799999996,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "record_play",
+            "arguments": {
+              "action": "save",
+              "team": "our",
+              "shirt": 7
+            }
+          }
+        ],
+        "reasoning": "'marcar' -> action 'save'; 'siete de los nuestros' -> team 'our', shirt 7; no other details.",
+        "confidence": 0.0058,
+        "prefill_tps": 43,
+        "decode_tps": 33.4,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [
+            "record_play.shirt"
+          ],
+          "negation": false
+        }
+      },
+      "requiredFieldsCorrect": false,
+      "correct": false
+    },
+    {
+      "depth": 20,
+      "text": "Parada rival, dorsal uno, lanzamiento de nuestro dorsal nueve.",
+      "expected": {
+        "action": "save",
+        "team": "opponent",
+        "shirt": 1,
+        "related": 9
+      },
+      "elapsedMs": 3188.2663730000004,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "record_play",
+            "arguments": {
+              "action": "penalty",
+              "team": "our",
+              "shirt": 1
+            }
+          }
+        ],
+        "reasoning": "'Parada rival' -> action 'penalty', team 'our', 'dorsal uno' -> shirt 1, 'lanzamiento de nuestro dorsal nueve' -> related 2",
+        "confidence": 0.0141,
+        "prefill_tps": 42.7,
+        "decode_tps": 33.9,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      },
+      "requiredFieldsCorrect": false,
+      "correct": false
+    },
+    {
+      "depth": 20,
+      "text": "Exclusi\u00f3n de dos minutos para el rival.",
+      "expected": {
+        "action": "exclusion",
+        "team": "opponent"
+      },
+      "elapsedMs": 2870.568620000002,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "record_play",
+            "arguments": {
+              "action": "exclusion",
+              "team": "our",
+              "shirt": 2,
+              "related": 2
+            }
+          }
+        ],
+        "reasoning": "'Exclusi\u00f3n' -> action 'exclusion'; 'rival' -> team 'our'; 'dos minutos' -> shirt 2; 'para el rival' -> related 2; no other params.",
+        "confidence": 0.0164,
+        "prefill_tps": 43,
+        "decode_tps": 34.1,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [
+            "record_play.shirt",
+            "record_play.related"
+          ],
+          "negation": false
+        }
+      },
+      "requiredFieldsCorrect": false,
+      "correct": false
+    },
+    {
+      "depth": 12,
+      "text": "Gol nuestro, dorsal siete.",
+      "expected": {
+        "action": "goal",
+        "team": "our",
+        "shirt": 7
+      },
+      "elapsedMs": 5745.0756500000025,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "record_play",
+            "arguments": {
+              "action": "disqualification",
+              "team": "our",
+              "related_name": "siete",
+              "infraction": "steps",
+              "name": "Gol"
+            }
+          }
+        ],
+        "reasoning": "'dorsal siete' -> action 'disqualification'; 'Gol nuestro' -> team 'Gol'; 'siete' -> related_name 'siete'; no other fields.",
+        "confidence": 0.0184,
+        "prefill_tps": 72.4,
+        "decode_tps": 54,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      },
+      "requiredFieldsCorrect": false,
+      "correct": false
+    },
+    {
+      "depth": 12,
+      "text": "Acaba de marcar el siete de los nuestros.",
+      "expected": {
+        "action": "goal",
+        "team": "our",
+        "shirt": 7
+      },
+      "elapsedMs": 1570.1797420000003,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "record_play",
+            "arguments": {
+              "action": "goal",
+              "team": "our"
+            }
+          }
+        ],
+        "reasoning": "'Acaba' -> action 'Acaba'; 'marcar el siete de los nuestros' -> team 'Marcos'; no specific player name or description, omit optional fields.",
+        "confidence": 0.0368,
+        "prefill_tps": 72.8,
+        "decode_tps": 54.5,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      },
+      "requiredFieldsCorrect": false,
+      "correct": false
+    },
+    {
+      "depth": 12,
+      "text": "Parada rival, dorsal uno, lanzamiento de nuestro dorsal nueve.",
+      "expected": {
+        "action": "save",
+        "team": "opponent",
+        "shirt": 1,
+        "related": 9
+      },
+      "elapsedMs": 3495.983782000003,
+      "result": {
+        "type": "call",
+        "success": false,
+        "error": "tool call truncated: token budget exhausted",
+        "error_code": "truncated",
+        "reason": "runtime_failure",
+        "function_calls": [],
+        "suppressed_calls": [],
+        "reasoning": "'parada rival' -> action 'disqualification'; 'dorsal' -> team 'dorsal'; 'lanzamiento de nuestro dorsal nueve' -> related_name 'Nueve'; 'lanzamiento de nuestro dorsal nueve' -> related_name 'Nueve'.",
+        "confidence": 0.0128,
+        "prefill_tps": 71.8,
+        "decode_tps": 50,
+        "peak_ram_mb": 0
+      },
+      "requiredFieldsCorrect": false,
+      "correct": false
+    },
+    {
+      "depth": 12,
+      "text": "Exclusi\u00f3n de dos minutos para el rival.",
+      "expected": {
+        "action": "exclusion",
+        "team": "opponent"
+      },
+      "elapsedMs": 2756.3872730000003,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "record_play",
+            "arguments": {
+              "action": "exclusion",
+              "team": "opponent",
+              "shirt": 0,
+              "related": 20,
+              "infraction": "steps",
+              "name": "rival",
+              "blue": false
+            }
+          }
+        ],
+        "reasoning": "'exclusi\u00f3n de dos minutos' -> action 'exclusi\u00f3n de dos minutos'; 'rival' -> team 'rival'; 'rival' -> related_name 'rival'; no other fields.",
+        "confidence": 0.0236,
+        "prefill_tps": 72.9,
+        "decode_tps": 42.3,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [
+            "record_play.shirt",
+            "record_play.related"
+          ],
+          "negation": false
+        }
+      },
+      "requiredFieldsCorrect": true,
+      "correct": false
+    },
+    {
+      "depth": 8,
+      "text": "Gol nuestro, dorsal siete.",
+      "expected": {
+        "action": "goal",
+        "team": "our",
+        "shirt": 7
+      },
+      "elapsedMs": 4019.7318430000014,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "record_play",
+            "arguments": {
+              "action": "goal",
+              "team": "our",
+              "shirt": 1,
+              "related_name": "siete",
+              "blue": false,
+              "infraction": "steps"
+            }
+          }
+        ],
+        "reasoning": "'Gol nuestro' -> action 'gol'; 'dorsal' -> team 'Dorsal'; 'siete' -> shift 1; 'siete' -> event 'siete'",
+        "confidence": 0.0283,
+        "prefill_tps": 108.9,
+        "decode_tps": 68.9,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      },
+      "requiredFieldsCorrect": false,
+      "correct": false
+    },
+    {
+      "depth": 8,
+      "text": "Acaba de marcar el siete de los nuestros.",
+      "expected": {
+        "action": "goal",
+        "team": "our",
+        "shirt": 7
+      },
+      "elapsedMs": 1280.6645290000015,
+      "result": {
+        "type": "call",
+        "success": false,
+        "error": "tool call truncated: token budget exhausted",
+        "error_code": "truncated",
+        "reason": "runtime_failure",
+        "function_calls": [],
+        "suppressed_calls": [],
+        "reasoning": "'Acaba de marcar el siete de los nuestros' -> record_play action 'Acaba de marcar el siete de los nuestros'; 'los nuestros' -> team 'los'; 'los nuestros' -> action 'los'; no team specified -> omit.",
+        "confidence": 0.0392,
+        "prefill_tps": 108.8,
+        "decode_tps": 83.6,
+        "peak_ram_mb": 0
+      },
+      "requiredFieldsCorrect": false,
+      "correct": false
+    },
+    {
+      "depth": 8,
+      "text": "Parada rival, dorsal uno, lanzamiento de nuestro dorsal nueve.",
+      "expected": {
+        "action": "save",
+        "team": "opponent",
+        "shirt": 1,
+        "related": 9
+      },
+      "elapsedMs": 4390.0159029999995,
+      "result": {
+        "type": "call",
+        "success": false,
+        "error": "tool call truncated: token budget exhausted",
+        "error_code": "truncated",
+        "reason": "runtime_failure",
+        "function_calls": [],
+        "suppressed_calls": [],
+        "reasoning": "'parada rival' -> action 'parada'; 'dorsal' -> team 'Dorsal'; 'lanzamiento de nuestro dorsal nueve' -> shirt 'lanzamiento de nuestro dorsal nueve'; 'lanzamiento de nuestro dorsal nueve' -> team 'Dorsal', shirt 'lanzamiento de nuestro dorsal nueve'",
+        "confidence": 0.0036,
+        "prefill_tps": 107.8,
+        "decode_tps": 51.6,
+        "peak_ram_mb": 0
+      },
+      "requiredFieldsCorrect": false,
+      "correct": false
+    },
+    {
+      "depth": 8,
+      "text": "Exclusi\u00f3n de dos minutos para el rival.",
+      "expected": {
+        "action": "exclusion",
+        "team": "opponent"
+      },
+      "elapsedMs": 1394.4242589999994,
+      "result": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "record_play",
+            "arguments": {
+              "action": "exclusion",
+              "team": "our",
+              "shirt": 0,
+              "related_name": "rival",
+              "infraction": "steps"
+            }
+          }
+        ],
+        "reasoning": "'Exclusi\u00f3n de dos minutos' -> record_play action 'exclusi\u00f3n de dos minutos'; 'rival' -> team 'Rival'; 'rival' -> shift 'rival'.",
+        "confidence": 0.0318,
+        "prefill_tps": 108.4,
+        "decode_tps": 77.9,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [
+            "record_play.shirt"
+          ],
+          "negation": false
+        }
+      },
+      "requiredFieldsCorrect": false,
+      "correct": false
+    }
+  ]
+}

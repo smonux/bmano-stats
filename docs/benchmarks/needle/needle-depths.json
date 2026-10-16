@@ -1,0 +1,327 @@
+{
+  "browser": "chromium",
+  "date": "2026-10-16T16:56:24.943Z",
+  "results": [
+    {
+      "variant": "optimized",
+      "text": "Gol nuestro, dorsal siete.",
+      "loadMs": 3208.100000023842,
+      "totalMs": 6049.699999928474,
+      "schemaCharacters": 342,
+      "systemCharacters": 89,
+      "calls": [
+        {
+          "ms": 6045.400000095367,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "gol",
+                "arguments": {
+                  "equipo": "nuestro",
+                  "dorsal": 7
+                }
+              }
+            ],
+            "reasoning": "'Gol' -> gol; 'nuestro' -> description 'Gol'; 'nuestro' -> difficulty 'nuestro'; '7' -> difficulty '7'.",
+            "confidence": 0.0071,
+            "prefill_tps": 42.4,
+            "decode_tps": 35.5,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        }
+      ],
+      "depth": 20,
+      "modelBytes": 35335380,
+      "modelSha256": "c9d915eca282ed42d1a09b143b592adb4cc6744ffe2d294adf5cfc5548170c38"
+    },
+    {
+      "variant": "optimized",
+      "text": "Parada rival, portero uno, lanzamiento nuestro del nueve.",
+      "loadMs": 1653.2000000476837,
+      "totalMs": 8604,
+      "schemaCharacters": 614,
+      "systemCharacters": 89,
+      "calls": [
+        {
+          "ms": 8603.5,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "parada",
+                "arguments": {
+                  "equipo": "rival",
+                  "nombre": "nuestro"
+                }
+              }
+            ],
+            "reasoning": "'Parada rival' -> equipo 'rival'; 'portero uno' -> nombre 'nuestro'; 'lanzamiento nuestro del nueve' -> dorsal 9.",
+            "confidence": 0.0138,
+            "prefill_tps": 40.3,
+            "decode_tps": 34.3,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        }
+      ],
+      "depth": 20,
+      "modelBytes": 35335380,
+      "modelSha256": "c9d915eca282ed42d1a09b143b592adb4cc6744ffe2d294adf5cfc5548170c38"
+    },
+    {
+      "variant": "optimized",
+      "text": "Gol nuestro, dorsal siete.",
+      "loadMs": 859.6000000238419,
+      "totalMs": 1219.0999999046326,
+      "schemaCharacters": 342,
+      "systemCharacters": 89,
+      "calls": [
+        {
+          "ms": 1218.8999999761581,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "gol",
+                "arguments": {
+                  "equipo": "gol",
+                  "dorsal": 7
+                }
+              }
+            ],
+            "reasoning": "Golly is 'gol'; 'dorsal 7' -> 'gol'; '7' -> '7'.",
+            "confidence": 0.0874,
+            "prefill_tps": 212.8,
+            "decode_tps": 126.4,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        }
+      ],
+      "depth": 4,
+      "modelBytes": 9762644,
+      "modelSha256": "e0879f368849483a5bb9a93990afff2f983eb7ba60e4fa40dd224dffe3ec94ef"
+    },
+    {
+      "variant": "optimized",
+      "text": "Parada rival, portero uno, lanzamiento nuestro del nueve.",
+      "loadMs": 517,
+      "totalMs": 1839.6000000238419,
+      "schemaCharacters": 614,
+      "systemCharacters": 89,
+      "calls": [
+        {
+          "ms": 1839.2999999523163,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [
+              {
+                "name": "parada",
+                "arguments": {}
+              }
+            ],
+            "suppressed_calls": [],
+            "reasoning": "'Parada rival' -> no params; 'piera rival' -> no params; 'lanzamiento nuestro del nuevo' -> no params; 'lanzamiento nuestro del nuevo' -> no params; no params.",
+            "confidence": 0.1743,
+            "prefill_tps": 203.7,
+            "decode_tps": 129.3,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        }
+      ],
+      "depth": 4,
+      "modelBytes": 9762644,
+      "modelSha256": "e0879f368849483a5bb9a93990afff2f983eb7ba60e4fa40dd224dffe3ec94ef"
+    },
+    {
+      "variant": "optimized",
+      "text": "Gol nuestro, dorsal siete.",
+      "loadMs": 1387.5,
+      "totalMs": 2153.2000000476837,
+      "schemaCharacters": 342,
+      "systemCharacters": 89,
+      "calls": [
+        {
+          "ms": 2152.5,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [
+              {
+                "name": "gol",
+                "arguments": {
+                  "equipo": "Gol",
+                  "dorsal": 7
+                }
+              }
+            ],
+            "suppressed_calls": [],
+            "reasoning": "Equipo 'Gol' from query; dorsal 7.",
+            "confidence": 0.1861,
+            "prefill_tps": 101.3,
+            "decode_tps": 76.4,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        }
+      ],
+      "depth": 8,
+      "modelBytes": 16155796,
+      "modelSha256": "5affba0c9dca9640adf6af141b22486865cb3079427f0077c968a401176c2037"
+    },
+    {
+      "variant": "optimized",
+      "text": "Parada rival, portero uno, lanzamiento nuestro del nueve.",
+      "loadMs": 734.3999999761581,
+      "totalMs": 4060,
+      "schemaCharacters": 614,
+      "systemCharacters": 89,
+      "calls": [
+        {
+          "ms": 4058.3000000715256,
+          "result": {
+            "type": "call",
+            "success": false,
+            "error": "tool call truncated: token budget exhausted",
+            "error_code": "truncated",
+            "reason": "runtime_failure",
+            "function_calls": [],
+            "suppressed_calls": [],
+            "reasoning": "'Parada' -> equipo 'Parada'; 'lanzamiento nuestro del nueve' -> dorsal_relacionado 2; 'lanzamiento nuestro del nueve' -> nombre_relacionado 2; 'nombre' -> nombre_relacionado 2; 'lanzamiento nuestro del nue",
+            "confidence": 0.0049,
+            "prefill_tps": 101.9,
+            "decode_tps": 75.9,
+            "peak_ram_mb": 0
+          }
+        }
+      ],
+      "depth": 8,
+      "modelBytes": 16155796,
+      "modelSha256": "5affba0c9dca9640adf6af141b22486865cb3079427f0077c968a401176c2037"
+    },
+    {
+      "variant": "optimized",
+      "text": "Gol nuestro, dorsal siete.",
+      "loadMs": 1969.0999999046326,
+      "totalMs": 3462.7000000476837,
+      "schemaCharacters": 342,
+      "systemCharacters": 89,
+      "calls": [
+        {
+          "ms": 3460.100000023842,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [
+              {
+                "name": "gol",
+                "arguments": {
+                  "equipo": "nuestro",
+                  "dorsal": 7
+                }
+              }
+            ],
+            "suppressed_calls": [],
+            "reasoning": "Gol. 'nuestro' -> equipo 'nuestro'. 'dorsal 7' -> dorsal 7.",
+            "confidence": 0.6331,
+            "prefill_tps": 72,
+            "decode_tps": 55.3,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        }
+      ],
+      "depth": 12,
+      "modelBytes": 22549012,
+      "modelSha256": "3d3d00da7dee03b79a83be72015714bf1aa8f556786b9215c991fe54ff47bfcd"
+    },
+    {
+      "variant": "optimized",
+      "text": "Parada rival, portero uno, lanzamiento nuestro del nueve.",
+      "loadMs": 1026.1000000238419,
+      "totalMs": 6301.600000023842,
+      "schemaCharacters": 614,
+      "systemCharacters": 89,
+      "calls": [
+        {
+          "ms": 6301.100000023842,
+          "result": {
+            "type": "call",
+            "success": true,
+            "error": null,
+            "error_code": null,
+            "reason": null,
+            "function_calls": [],
+            "suppressed_calls": [
+              {
+                "name": "parada",
+                "arguments": {
+                  "equipo": "nuestro",
+                  "nombre": "nuestro"
+                }
+              }
+            ],
+            "reasoning": "Equipo 'nuestro' from 'partero'; dorsal 'nuestro' from 'lanzamiento nuestro del nueve'; nombre 'nuestro' from 'nuestro'.",
+            "confidence": 0.0423,
+            "prefill_tps": 67.9,
+            "decode_tps": 35.2,
+            "peak_ram_mb": null,
+            "validation": {
+              "ungrounded": [],
+              "negation": false
+            }
+          }
+        }
+      ],
+      "depth": 12,
+      "modelBytes": 22549012,
+      "modelSha256": "3d3d00da7dee03b79a83be72015714bf1aa8f556786b9215c991fe54ff47bfcd"
+    }
+  ]
+}
