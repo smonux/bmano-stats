@@ -2,7 +2,7 @@
 
 ## Uso
 
-Antes de iniciar el partido, elige el **Idioma de voz** y pulsa **Cargar Cactus · 53 MB** en Nuevo partido o Ajustes. La descarga se hace una vez por navegador y origen. Se comprueba la presencia real de Whistle y Needle en caché y el SDK verifica su integridad al cargarlos; no se usa una marca de localStorage como prueba. No se puede iniciar un partido sin haber elegido idioma y preparado los modelos. Se necesita HTTPS o localhost, WebAssembly, workers y AudioWorklet.
+Antes de iniciar el partido, elige el **Idioma de voz** y pulsa **Cargar Cactus** en Nuevo partido o Ajustes. La descarga se hace una vez por navegador y origen. Se comprueba la presencia real de Whistle y Needle en caché y el SDK verifica su integridad al cargarlos; no se usa una marca de localStorage como prueba. No se puede iniciar un partido sin haber elegido idioma y preparado los modelos. Se necesita HTTPS o localhost, WebAssembly, workers y AudioWorklet.
 
 El botón **Comprobar micrófono** solicita permiso antes del partido y cierra inmediatamente las pistas. Funciona independientemente de la descarga. Si se deniega, se muestra el error y se puede reintentar. La publicación actual por Tailscale Serve es HTTPS; no se presupone que un fallo de Firefox se deba a HTTP.
 
@@ -61,3 +61,12 @@ La cobertura de configuración, esquema y resolución de perspectiva se verifica
 La captura usa una ruta literal para una acción inequívoca y normaliza solo números dictados tras marcadores explícitos de dorsal. Needle recibe los campos necesarios para esa acción; los demás no entran en el esquema. Frases negadas, con varias acciones o sin un prefijo claro pasan al esquema general. La perspectiva explícita de la cláusula principal se resuelve localmente con las mismas reglas, sin confundir al jugador relacionado. Se conservan las comprobaciones del modelo y la revisión antes de guardar.
 
 El editor muestra los segundos empleados por Whistle y Needle. La [investigación reproducible](benchmarks/needle/LEEME.md) recoge los esquemas comparados, tiempos, errores observados y límites: en dos frases españolas pasó de unos 34 segundos a 6–8 segundos en Chromium del servidor. No se extrapola esa cifra a Android físico ni a todos los idiomas/frases.
+
+
+## Selección de Needle
+
+Hay una única preferencia de modelo, compartida por Nuevo partido y Ajustes: 4, 8, 12 o 20 capas de Needle, con 12 por defecto. Se conserva en `handball-needle-depth`. La configuración no cambia Whistle ni añade un selector para él.
+
+Las variantes pequeñas se sirven desde `dist/models/`, tienen nombres con hash y pasan la misma verificación SHA-256 del SDK. Cada archivo tiene su propia entrada de CacheStorage; conservar 20 capas no basta para marcar 12 como preparado. Elegir una variante requiere cargarla explícitamente antes del partido. Cambiar entre variantes ya descargadas reutiliza la caché, también sin conexión. Whistle conserva su revisión y caché originales.
+
+Los archivos se preparan sin entrenamiento mediante `scripts/prepare-needle-models.mjs` y `scripts/needle-depths.py`. El primer script verifica el archivo base y el tamaño/hash de todas las salidas, y se ejecuta antes de desarrollo o compilación. Las variantes se distribuyen como archivos estáticos, no dentro del JavaScript ni en la precarga de todas las variantes.

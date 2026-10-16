@@ -2,12 +2,13 @@ import { tr, type Language } from '../i18n';
 import { createNeedle, createWhistle } from 'cactus-needle/browser';
 import { selectProposal } from './interpretation';
 import { captureFacts, toolForPlay } from './routing';
+import { DEFAULT_NEEDLE_DEPTH, needleModel, type NeedleDepth } from './models';
 type NeedleSession = Awaited<ReturnType<typeof createNeedle>>;
 type WhistleSession = Awaited<ReturnType<typeof createWhistle>>;
 
 /** Reused from pre-match preparation. Closing cancels workers and active inference. */
 export class VoiceEngine {
-  constructor(private language: Language = 'es') {}
+  constructor(private language: Language = 'es', private depth:NeedleDepth = DEFAULT_NEEDLE_DEPTH) {}
   private needle?: NeedleSession;
   private whistle?: WhistleSession;
   private controller = new AbortController();
@@ -17,7 +18,8 @@ export class VoiceEngine {
     const options = (name: string) => ({offline,abortSignal:this.controller.signal,onDownloadProgress:({percentage,loaded}:{percentage?:number;loaded:number})=>progress(`${name}: ${percentage!==undefined?Math.round(percentage)+' %':(loaded/1e6).toFixed(1)+' MB'}`)});
     try {
       progress(tr('Cargando Whistle…')); this.whistle=await createWhistle(options('Whistle'));
-      progress(tr('Cargando Needle…')); this.needle=await createNeedle({...options('Needle'),stateless:true,system:captureFacts(this.language),maxOutputTokens:192});
+      const model=needleModel(this.depth);
+      progress(tr('Cargando Needle…')); this.needle=await createNeedle({...options('Needle'),model:model.url,modelSha256:model.sha256,stateless:true,system:captureFacts(this.language),maxOutputTokens:192});
       progress(tr('Modelos listos en este dispositivo.'));
     } catch(error) {await this.close(); throw error;}
   }

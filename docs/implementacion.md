@@ -14,7 +14,7 @@ Primera entrega funcional basada en `diseno/diseno.md`. No representa la impleme
 | Orden | Tiempo, minuto y orden de inserción como desempate. Editar minuto recoloca la acción. Arrastre y restricciones por vecinos pendientes. |
 | Reloj | Tiempo transcurrido calculado a partir de marcas temporales; independiente de los minutos de eventos. Continúa al cerrar la vista salvo pausa o finalización. |
 | Pasivo | Estadística de equipo separada; no suma pérdida. Decisión provisional del diseño. |
-| Copias | JSON versión 1 con validación de estructura, referencias, dorsales y campos compatibles. Reemplazo completo confirmado; sin fusión. |
+| Copias | Exportación ZIP con JSON versión 1; restauración ZIP o JSON, con validación de estructura, referencias, dorsales y campos compatibles. Reemplazo completo confirmado; sin fusión. |
 | Eliminación | Borrado lógico de eventos y partidos; el partido elimina también sus eventos del cómputo. No hay papelera visible todavía. |
 
 ## Reglas incluidas
@@ -80,3 +80,14 @@ Se aplica una fase local conservadora de ruta, normalización de dorsales y pers
 Validación final del flujo directo y de la optimización: 31 pruebas de código y 8 recorridos de navegador superados. Los recorridos con modelos reales comprueban preparación previa, permiso explícito, pulsación mantenida con teclado y puntero, edición manual concurrente, revisión y guardado, recarga offline sin peticiones adicionales de modelos y liberación de pistas. Se comprobaron las capturas de móvil/escritorio.
 
 La revisión visual posterior corrigió el centrado inicial de la rueda cuando el editor abre una propuesta ya rellenada: se posiciona después de `showModal`. Los cuatro recorridos manual/voz de móvil y escritorio se repitieron y pasaron con una comprobación explícita del centrado.
+
+
+## Descargas, copias e informes de partido
+
+- Selector único de Needle (4/8/12/20 capas), 12 por defecto, persistente entre pantallas y recargas. Archivo y hash de la variante elegida alcanzan el worker. Whistle mantiene su configuración. Los modelos reducidos se generan sin entrenamiento y se incluyen como archivos estáticos en `dist/models/`; no se descargan todos al abrir la página.
+- La copia completa exporta un ZIP estándar con `handball-stats.json`: equipos, jugadores, partidos, eventos, texto original y exclusiones. Restaurar admite ese ZIP o el JSON anterior, mantiene el resumen y confirmación y valida referencias antes de reemplazar los datos. Se comprueba el límite de 20 MB tanto para el archivo como para el JSON descomprimido. Se rechazan ZIPs ambiguos con varias copias JSON.
+- Informe PDF en partidos en curso y finalizados: totales de ambos equipos, jugadores con estadísticas, tanteo acumulado por periodo y registro de eventos ascendente. Tablas paginadas, fuentes con los caracteres de los siete idiomas y colores amarillo/negro. La interfaz conserva el orden descendente de su registro.
+- La generación del PDF se ejecuta en un worker, se invalida al cambiar los datos y prepara un archivo para compartir con un gesto del usuario. Sin soporte de Web Share para archivos, se descarga. Las fuentes se conservan en la precarga de la aplicación para generar informes sin conexión.
+- Los recorridos de navegador sirven `dist/` con un servidor estático temporal, que se cierra al terminar. Los servidores Vite de desarrollo y vista previa siguen parados.
+
+Validación de esta ampliación: 42 pruebas de código superadas; recorridos de móvil y escritorio con los cuatro modelos reales, una sola descarga de Whistle, persistencia y recarga sin conexión, restauración ZIP/JSON con confirmación, y compartir/descargar PDF de partido en curso y finalizado sin conexión. Se renderizaron e inspeccionaron el informe normal y uno con 120 eventos y nombres largos para comprobar paginación, orden y ausencia de solapamientos.

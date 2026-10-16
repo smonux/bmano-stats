@@ -42,3 +42,14 @@
 @media(max-width:760px){.app-main:has(.match-header){padding:12px 12px 100px}.match-page-title h1{font-size:18px}.match-page-title .page-heading{margin-bottom:8px}.match-header{padding:9px 9px 0}.scoreboard{margin-bottom:5px}.scoreboard h2{font-size:13px}.score{font-size:30px}.scoreboard .eyebrow{font-size:7px;letter-spacing:.6px}.clock-row>div{font-size:10px;gap:5px}.clock-row .minute{font-size:18px}.clock-actions button{font-size:10px;min-height:32px;padding:4px 7px}.timer-digits{font-size:17px}.exclusion-heading h2{font-size:10px}.exclusion-heading button{font-size:9px}.match-header .tabs button{font-size:12px}.scroll-wheel [role=option]{font-size:12px}.capture-bar{bottom:72px}.voice-panel h2{font-size:17px}.event-top{align-items:center}}
 
 .capture-bar{flex-wrap:wrap}.capture-bar>.hold-to-talk{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.capture-status{flex:0 0 100%;font-size:11px;line-height:1.4;margin:0;padding:5px 3px}.capture-status .error{margin:0!important;padding:6px}.capture-status a{color:var(--ink);font-weight:700}
+
+.score-charts{margin-top:24px;border-top:1px solid var(--line);padding-top:18px}
+.score-charts h3{font-size:16px}.score-charts .caption{margin:5px 0 10px}
+.score-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;margin:10px 0}
+.score-legend span{display:flex;gap:6px;align-items:center;overflow-wrap:anywhere}.score-legend i{width:23px;flex-shrink:0}
+.own-line{border-top:3px solid #d8b500;outline:1px solid #766500}.opponent-line{border-top:3px dashed #171717}
+.period-charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.period-charts figure{margin:0;min-width:0;border:1px solid var(--line);border-radius:9px;padding:10px;background:#fff}
+.period-charts figcaption{font-size:12px;font-weight:600;margin-bottom:5px}.period-charts svg{display:block;width:100%;height:auto;overflow:visible}.period-charts text{font-size:9px;fill:#626262;font-family:inherit}
+.share-match-pdf{margin-top:20px}.share-match-pdf .caption{margin:6px 0}.spin{animation:report-spin 1s linear infinite}@keyframes report-spin{to{transform:rotate(360deg)}}
+@media(max-width:760px){.period-charts{grid-template-columns:1fr}.share-match-pdf>button{width:100%}}
+@media(prefers-reduced-motion:reduce){.spin{animation-duration:2s}}

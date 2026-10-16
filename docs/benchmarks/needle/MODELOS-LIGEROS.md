@@ -1,6 +1,6 @@
 # Needle con menos capas: pruebas sin entrenamiento
 
-16 de octubre de 2026. Se mantienen los pesos de producción de 20 capas. No se ha entrenado, generado un dataset, llamado a la plataforma de entrenamiento ni subido datos. Tampoco se incorpora reconocimiento por frases literales ni se sustituye la interpretación por reglas.
+16 de octubre de 2026. Tras estas pruebas, por petición del usuario, la aplicación permite elegir 4, 8, 12 o 20 capas y usa 12 por defecto. Whistle mantiene su modelo original. No se ha entrenado, generado un dataset, llamado a la plataforma de entrenamiento ni subido datos. Tampoco se incorpora reconocimiento por frases literales ni se sustituye la interpretación por reglas.
 
 ## Qué hay disponible
 
@@ -73,4 +73,4 @@ VOICE_MODELS_DIR="$PWD/node_modules/.cache/voice-models" \
 node node_modules/.cache/benchmark-prefix-node.mjs
 ```
 
-Los `.cact` experimentales se generaron en `/tmp/bmano-voice/depths`; no se publicaron ni se incorporaron al directorio `dist`. No hay nuevos procesos de entrenamiento ni servidores en ejecución. El próximo cambio del modelo necesita comparar precisión con una batería representativa, además de medir en el Android del usuario; cualquier entrenamiento queda pendiente de autorización explícita.
+Los `.cact` experimentales se generaron inicialmente en `/tmp/bmano-voice/depths`. Ahora `npm run models:prepare` los genera de forma reproducible y verifica sus tamaños y hashes; la compilación los incorpora a `dist/models/` para la descarga explícita de la variante seleccionada. No hay nuevos procesos de entrenamiento ni servidores en ejecución. El próximo cambio del modelo necesita comparar precisión con una batería representativa, además de medir en el Android del usuario; cualquier entrenamiento queda pendiente de autorización explícita.

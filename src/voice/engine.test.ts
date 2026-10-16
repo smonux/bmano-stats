@@ -3,7 +3,17 @@ import { languages } from '../i18n';
 const mocks=vi.hoisted(()=>({transcribe:vi.fn(async(_audio:unknown,_options:unknown)=>({text:'test'})),complete:vi.fn(async(_text:string,_options:unknown)=>({success:true,function_calls:[],suppressed_calls:[],confidence:0})),createNeedle:vi.fn(),createWhistle:vi.fn()}));
 vi.mock('cactus-needle/browser',()=>({createNeedle:mocks.createNeedle,createWhistle:mocks.createWhistle}));
 import { VoiceEngine } from './engine';
+import { NEEDLE_DEPTHS, needleModel } from './models';
 beforeEach(()=>{vi.clearAllMocks();mocks.createWhistle.mockResolvedValue({transcribe:mocks.transcribe,close:async()=>{}});mocks.createNeedle.mockResolvedValue({complete:mocks.complete,close:async()=>{}});});
+test('the chosen weights and hash reach Needle, while Whistle keeps its existing options',async()=>{
+ for(const depth of NEEDLE_DEPTHS){
+  const engine=new VoiceEngine('es',depth);await engine.prepare(()=>{},true);
+  expect(mocks.createNeedle.mock.lastCall?.[0]).toMatchObject({model:needleModel(depth).url,modelSha256:needleModel(depth).sha256,offline:true});
+  expect(mocks.createWhistle.mock.lastCall?.[0]).toMatchObject({offline:true});
+  expect(mocks.createWhistle.mock.lastCall?.[0]).not.toHaveProperty('model');
+  expect(mocks.createWhistle.mock.lastCall?.[0]).not.toHaveProperty('modelSha256');await engine.close();
+ }
+});
 test('all supported speech languages reach Whistle and Needle without changing canonical event schema',async()=>{
  for(const code of Object.keys(languages) as (keyof typeof languages)[]) {
   const engine=new VoiceEngine(code);await engine.prepare(()=>{});await engine.transcribe(new Float32Array(100),16000,['example']);await engine.interpret('example',['La Jota','Rival']);

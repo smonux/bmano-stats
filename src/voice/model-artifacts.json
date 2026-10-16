@@ -1,0 +1,30 @@
+{
+  "needleSource": {
+    "revision": "2ae11323dc000f5e70c49f7403efa6af12ba9e67",
+    "size": 35335380,
+    "sha256": "c9d915eca282ed42d1a09b143b592adb4cc6744ffe2d294adf5cfc5548170c38",
+    "url": "https://huggingface.co/Cactus-Compute/needle3/resolve/2ae11323dc000f5e70c49f7403efa6af12ba9e67/needle3.cact"
+  },
+  "needleArtifacts": {
+    "4": {
+      "size": 9762644,
+      "sha256": "e0879f368849483a5bb9a93990afff2f983eb7ba60e4fa40dd224dffe3ec94ef",
+      "file": "needle3-4l-e0879f368849.cact"
+    },
+    "8": {
+      "size": 16155796,
+      "sha256": "5affba0c9dca9640adf6af141b22486865cb3079427f0077c968a401176c2037",
+      "file": "needle3-8l-5affba0c9dca.cact"
+    },
+    "12": {
+      "size": 22549012,
+      "sha256": "3d3d00da7dee03b79a83be72015714bf1aa8f556786b9215c991fe54ff47bfcd",
+      "file": "needle3-12l-3d3d00da7dee.cact"
+    },
+    "20": {
+      "size": 35335380,
+      "sha256": "c9d915eca282ed42d1a09b143b592adb4cc6744ffe2d294adf5cfc5548170c38",
+      "file": null
+    }
+  }
+}

@@ -4,6 +4,8 @@ dist/
 *.tsbuildinfo
 test-results/
 playwright-report/
+public/models/*.cact
+public/models/*.tmp
 
 # Local credentials and agent configuration
 .env
