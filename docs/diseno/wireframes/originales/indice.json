@@ -1,0 +1,146 @@
+[
+  {
+    "id": "C1.13",
+    "source": "https://chatgpt.com/share/6ad1044d-1eec-83eb-ba8a-3ef2d458b76f",
+    "file": "originales/C1.13.dil.md",
+    "description": "Mantendría **las cuatro cajas que propones**. No veo ninguna otra imprescindible para la pantalla principal."
+  },
+  {
+    "id": "C1.19",
+    "source": "https://chatgpt.com/share/6ad1044d-1eec-83eb-ba8a-3ef2d458b76f",
+    "file": "originales/C1.19.dil.md",
+    "description": "De acuerdo. **Nuevo partido** queda reducido a lo esencial."
+  },
+  {
+    "id": "C1.29",
+    "source": "https://chatgpt.com/share/6ad1044d-1eec-83eb-ba8a-3ef2d458b76f",
+    "file": "originales/C1.29.dil.md",
+    "description": "Tiene sentido. El caso habitual es que **el delegado conoce y tiene configurado su equipo, pero del rival inicialmente solo conoce el nombre**."
+  },
+  {
+    "id": "C1.34",
+    "source": "https://chatgpt.com/share/6ad1044d-1eec-83eb-ba8a-3ef2d458b76f",
+    "file": "originales/C1.34.dil.md",
+    "description": "Volvemos al diseño anterior. Dos equipos, sin preguntar por separado si jugamos como local o visitante."
+  },
+  {
+    "id": "C1.42",
+    "source": "https://chatgpt.com/share/6ad1044d-1eec-83eb-ba8a-3ef2d458b76f",
+    "file": "originales/C1.42.dil.md",
+    "description": "Nuevo partido"
+  },
+  {
+    "id": "C1.47",
+    "source": "https://chatgpt.com/share/6ad1044d-1eec-83eb-ba8a-3ef2d458b76f",
+    "file": "originales/C1.47.dil.md",
+    "description": "Nuevo partido"
+  },
+  {
+    "id": "C1.52",
+    "source": "https://chatgpt.com/share/6ad1044d-1eec-83eb-ba8a-3ef2d458b76f",
+    "file": "originales/C1.52.dil.md",
+    "description": "Equipos"
+  },
+  {
+    "id": "C1.57",
+    "source": "https://chatgpt.com/share/6ad1044d-1eec-83eb-ba8a-3ef2d458b76f",
+    "file": "originales/C1.57.dil.md",
+    "description": "Perfecto. El dorsal queda fijo para cada jugador dentro de su equipo. No contemplamos cambios."
+  },
+  {
+    "id": "C1.62",
+    "source": "https://chatgpt.com/share/6ad1044d-1eec-83eb-ba8a-3ef2d458b76f",
+    "file": "originales/C1.62.dil.md",
+    "description": "Estadísticas"
+  },
+  {
+    "id": "C2.13",
+    "source": "https://chatgpt.com/share/6ad10460-13bc-83ed-a9be-92278a709735",
+    "file": "originales/C2.13.dil.md",
+    "description": "Propongo definir los eventos de **Handball Stats** con un criterio: registrar las acciones relevantes para las estadísticas, con el menor número posib"
+  },
+  {
+    "id": "C3.30",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.30.dil.md",
+    "description": "Yo empezaría por una decisión fundamental: **¿queremos una aplicación nativa multiplataforma, una aplicación web o una solución híbrida?**"
+  },
+  {
+    "id": "C3.31",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.31.dil.md",
+    "description": "2. Las cuatro opciones de framework"
+  },
+  {
+    "id": "C3.57",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.57.dil.md",
+    "description": "**Sí. Y precisamente esa es una de las principales ventajas de elegir una arquitectura web con Capacitor.**"
+  },
+  {
+    "id": "C3.61",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.61.dil.md",
+    "description": "Te propongo definir la interfaz **pantalla por pantalla, empezando por la más importante: el partido en curso**. No empezaría programando, sino diseña"
+  },
+  {
+    "id": "C3.79",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.79.dil.md",
+    "description": "Es una preocupación fundada. Y creo que conviene resolverla antes de seguir con la interfaz, porque **OPFS tiene una compatibilidad razonablemente amp"
+  },
+  {
+    "id": "C3.103",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.103.dil.md",
+    "description": "Si elegiste SQLite principalmente por robustez, creo que **IndexedDB es perfectamente viable**, siempre que diseñemos bien las copias de seguridad. La"
+  },
+  {
+    "id": "C3.117",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.117.dil.md",
+    "description": "Vamos a hacer una primera versión de la **pantalla principal de partido en curso**, pensada para móvil vertical y uso con una mano."
+  },
+  {
+    "id": "C3.121",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.121.dil.md",
+    "description": "Me parecen buenos cambios. He reducido las tarjetas, separado visualmente los eventos propios (izquierda) de los rivales (derecha) y añadido el contro"
+  },
+  {
+    "id": "C3.125",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.125.dil.md",
+    "description": "Así quedaría la edición mediante un **panel inferior (*bottom sheet*)**. Al pulsar «Editar», aparece desde abajo sin abandonar el partido. La lista pe"
+  },
+  {
+    "id": "C3.132",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.132.dil.md",
+    "description": "El control que buscas se llama **wheel picker** o *selector de rueda*, típico de iOS."
+  },
+  {
+    "id": "C3.133",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.133.dil.md",
+    "description": "{@body const roster = [{team:\"Nuestro\",number:9,name:\"Ana Ruiz\"},{team:\"Nuestro\",number:8,name:\"Lucía\"},{team:\"Nuestro\",number:1,name:\"Paula\"},{team:\""
+  },
+  {
+    "id": "C3.138",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.138.dil.md",
+    "description": "Pondría **el minuto junto al tipo de evento**, en la parte superior del editor. Así dejamos la zona central para el jugador, que es la información que"
+  },
+  {
+    "id": "C3.148",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.148.dil.md",
+    "description": "De acuerdo. Incorporamos tres decisiones al diseño:"
+  },
+  {
+    "id": "C3.154",
+    "source": "https://chatgpt.com/share/6ad1047f-dc74-83eb-80f8-6cb78ea67b66",
+    "file": "originales/C3.154.dil.md",
+    "description": "Creo que tu propuesta es mejor: **un editor con estructura fija para todos los eventos**, donde los campos no aplicables aparezcan desactivados. Se ap"
+  }
+]
