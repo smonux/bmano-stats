@@ -1,11 +1,11 @@
-# Indicaciones posteriores a la refactorización
+# Indicaciones posteriores a la refactorización: completadas
 
-El usuario ha pedido terminar primero la refactorización integral del código. Después se aplicarán estas indicaciones, en este orden de llegada:
+La refactorización integral se cerró primero en `66762cc`. Después se aplicaron las indicaciones de interfaz en commits separados.
 
-1. **Hecho:** Guardar evento y Cancelar visibles sin desplazarse, también con teclado móvil, paneo y conflicto de guardado. Cuatro recorridos de navegador aprobados en móvil/escritorio, hasta 220 px de área visible. El diálogo sigue `visualViewport` y el error no desplaza las acciones.
-2. Reducir la altura de la franja de exclusiones.
-3. Mantener orientación vertical y evitar que girar o mover el terminal pierda la edición o una grabación. El bloqueo web puede requerir aplicación instalada o pantalla completa; debe comprobarse el comportamiento compatible y la conservación del estado cuando el navegador no permita bloquear.
-4. Introducir dorsales nuevos con dos ruedas, una por cifra, sincronizadas con la rueda de jugadores conocidos cuando el dorsal exista.
-5. Mover Inicio, Equipos, Partidos, Estadísticas y Ajustes a un menú lateral izquierdo con botón de tres rayas, y retirar la navegación inferior y la navegación horizontal que ocupan espacio.
+1. **Guardar y Cancelar siempre visibles.** El editor sigue el área visible del teclado, mantiene las acciones en una fila propia y presenta los errores sin desplazarlas. Comprobado con paneo, scroll, conflicto de guardado y solo 220 px visibles. Commit `0d98301`.
+2. **Franja de exclusiones compacta.** Cada contador baja de 66 a 46 px, conserva equipo, dorsal opcional, tiempo, estado y acciones. El reloj y sus controles caben en una fila en el móvil comprobado. Se mantiene el aviso sonoro de cinco segundos.
+3. **Orientación y conservación del trabajo.** El manifiesto prefiere vertical y se intenta el bloqueo permitido por el navegador. El menú ofrece «Fijar vertical» con pantalla completa; si se rechaza, se explica el uso del bloqueo del dispositivo. La edición se conserva al girar. Si el giro cancela el contacto táctil, se procesa el audio ya capturado para revisión. No se solicita pantalla completa al grabar. Véanse las [condiciones de la API](https://www.w3.org/TR/screen-orientation/#dom-screenorientation-lock).
+4. **Dorsales con dos ruedas.** Una por cifra, de 0 a 99; cero y desconocido son distintos. Se sincronizan con el jugador conocido y se utilizan también en exclusiones y catálogo. Los dorsales de jugadores existentes siguen siendo fijos.
+5. **Navegación lateral izquierda.** Botón de tres rayas con Inicio, Equipos, Partidos, Estadísticas y Ajustes. Se retiran las barras horizontal e inferior. Cierra al navegar o pulsar Escape y devuelve el foco al botón de apertura.
 
-Las ruedas existentes, la transcripción identificada, el aviso sonoro de cinco segundos y las tarjetas reflejadas por equipo ya están en el commit `12d66db` y se conservan durante la refactorización.
+Validación: 730 pruebas de código aprobadas; 37 recorridos únicos de navegador comprobados entre móvil y escritorio, con repetición dirigida de los casos corregidos y del último ajuste de espacio. Se omite intencionadamente la repetición móvil del PDF largo. Se verifican también la voz con Whistle real local y la cancelación táctil, funcionamiento sin conexión, siete idiomas, copias ZIP/JSON, estadísticas, ruedas, orientación aceptada/rechazada y sonido. Capturas de menú, editor y contadores revisadas. Tipos, formato, integridad del corpus y compilación aprobados. La compatibilidad física del bloqueo sigue dependiendo del navegador y del dispositivo.

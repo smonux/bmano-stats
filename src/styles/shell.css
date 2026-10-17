@@ -26,15 +26,6 @@
 .brand-light {
   font-weight: 400;
 }
-.desktop-nav {
-  display: flex;
-  gap: 8px;
-}
-.desktop-nav button {
-  border: 0;
-  background: none;
-  font-size: 13px;
-}
 .header-right {
   display: flex;
   gap: 20px;
@@ -56,10 +47,7 @@
   max-width: 980px;
   margin: 0 auto;
   padding: 44px 32px 55px;
-  min-height: calc(100vh - 88px);
-}
-.mobile-nav {
-  display: none;
+  min-height: calc(100dvh - 64px);
 }
 @media (min-width: 1100px) {
   .app-main {
@@ -69,41 +57,18 @@
 }
 @media (max-width: 760px) {
   .app-header {
-    height: 72px;
-    padding: 0 22px;
+    height: 64px;
+    padding: 0 16px;
   }
   .brand {
     font-size: 21px;
-  }
-  .desktop-nav {
-    display: none;
   }
   .local-status {
     display: none;
   }
   .app-main {
-    padding: 28px 20px 105px;
-    min-height: calc(100vh - 72px);
-  }
-  .mobile-nav {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 5;
-    padding: 8px 12px max(8px, env(safe-area-inset-bottom));
-    backdrop-filter: blur(12px);
-  }
-  .mobile-nav button {
-    border: 0;
-    background: transparent;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    font-size: 9px;
-    gap: 5px;
-    padding: 5px;
+    padding: 24px 20px max(24px, env(safe-area-inset-bottom));
+    min-height: calc(100dvh - 64px);
   }
 }
 
@@ -125,6 +90,8 @@
 .app-header {
   background: var(--ink);
   border-bottom: 3px solid var(--accent);
+  height: 64px;
+  gap: 12px;
 }
 .brand,
 .header-right .icon-button {
@@ -137,45 +104,107 @@
   background: var(--accent);
   color: var(--ink);
 }
-.desktop-nav button {
-  color: #d6d6d6;
-}
-.desktop-nav .current {
-  background: var(--accent);
-  color: var(--ink);
-}
-.desktop-nav button:hover,
-.app-header .icon-button:hover {
-  background: #333;
-  color: #fff;
-}
-.desktop-nav .current:hover {
-  background: #edc600;
-  color: var(--ink);
-}
 .local-status {
   color: #d6d6d6;
 }
 .local-status.is-offline {
   color: #ffe58a;
 }
-@media (max-width: 760px) {
-  .mobile-nav {
-    background: #171717f5;
-    border-top: 2px solid var(--accent);
-  }
-  .mobile-nav button {
-    color: #bdbdbd;
-  }
-  .mobile-nav button.current {
-    color: var(--accent);
-  }
-}
 .app-main:has(.match-header) {
   padding-top: 14px;
 }
 @media (max-width: 760px) {
   .app-main:has(.match-header) {
-    padding: 12px 12px 100px;
+    padding: 12px 12px max(24px, env(safe-area-inset-bottom));
   }
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.menu-button {
+  color: white;
+  flex-shrink: 0;
+}
+.menu-button:hover {
+  background: #333;
+  color: var(--accent);
+}
+.navigation-drawer {
+  position: fixed;
+  inset: 0 auto 0 0;
+  margin: 0;
+  width: min(310px, 88vw);
+  max-width: none;
+  height: 100dvh;
+  max-height: 100dvh;
+  border: 0;
+  border-right: 3px solid var(--accent);
+  padding: max(18px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom));
+  background: var(--ink);
+  color: white;
+  box-shadow: 8px 0 40px #0005;
+}
+.navigation-drawer::backdrop {
+  background: #0008;
+  backdrop-filter: blur(3px);
+}
+.drawer-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.drawer-heading h2 {
+  font-size: 18px;
+}
+.drawer-heading button {
+  color: white;
+}
+.navigation-drawer nav {
+  display: grid;
+  gap: 6px;
+}
+.navigation-drawer a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 12px;
+  min-height: 48px;
+  color: #eee;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.navigation-drawer a[aria-current='page'] {
+  background: var(--accent);
+  color: var(--ink);
+}
+.navigation-drawer a:hover {
+  background: #333;
+  color: white;
+}
+.navigation-drawer a[aria-current='page']:hover {
+  background: #edc600;
+  color: var(--ink);
+}
+.portrait-control {
+  margin-top: 28px;
+  width: 100%;
+  background: #333;
+  color: white;
+  border: 1px solid #555;
+}
+.orientation-notice {
+  display: flex;
+  gap: 8px;
+  align-items: start;
+  padding: 10px;
+  background: #fff4b8;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 12px;
 }

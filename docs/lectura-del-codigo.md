@@ -70,7 +70,7 @@ Después de cambiar una regla, añade un caso con frase y resultado esperado en 
 
 El catálogo comparte `createTeamInTransaction` y `resolvePlayerInTransaction` con partidos y eventos. Sus nombres señalan que dependen de la transacción del llamador: crear un jugador no debe confirmarse si el evento termina fallando. Cada operación pública declara las tablas que necesita. Las importaciones validan antes de abrir una transacción que reemplaza las cuatro colecciones; las ediciones de eventos mantienen el control de `expectedUpdatedAt` y el desempate por `orderKey`.
 
-Las selecciones de opciones usan `WheelPicker`, con etiquetas traducidas, selección táctil, clic y teclado. El componente controla explícitamente sus estados deshabilitados: un `fieldset disabled` por sí solo no bloquea un `div` con rol `listbox`. `ParticipantPicker` conserva los dorsales nuevos y los reconocidos por voz aunque todavía no existan en el catálogo, y mantiene una entrada numérica directa. `EventMetadata` contiene las opciones compatibles con cada evento. El editor mantiene sus acciones fuera del área desplazable y agrupa la nota y la transcripción original identificada en «Información adicional»; conserva la transcripción en `rawText`, independiente de la nota editable.
+Las selecciones de opciones usan `WheelPicker`, con etiquetas traducidas, selección táctil, clic y teclado. El componente controla explícitamente sus estados deshabilitados: un `fieldset disabled` por sí solo no bloquea un `div` con rol `listbox`. `ParticipantPicker` conserva los dorsales nuevos y los reconocidos por voz aunque todavía no existan en el catálogo, y usa `ShirtNumberPicker`, con una rueda por cifra, sincronizada con los jugadores conocidos. `EventMetadata` contiene las opciones compatibles con cada evento. El editor mantiene sus acciones fuera del área desplazable y agrupa la nota y la transcripción original identificada en «Información adicional»; conserva la transcripción en `rawText`, independiente de la nota editable.
 
 ```sh
 npm run format
@@ -129,3 +129,9 @@ uv run --no-project scripts/needle-depths.py --help
 ```
 
 Las tablas de traducciones conservan la clave española y el orden declarado en `translationLanguages`. Vocabularios, esquemas, fixtures y manifiestos son datos; se mantienen como tablas cuando resultan más claros que una abstracción adicional. Dependencias, fuentes y archivos generados no se refactorizan como código propio.
+
+## Uso compacto durante el partido
+
+`NavigationDrawer` contiene los cinco destinos y devuelve el foco a su botón al cerrarse; reemplaza la navegación horizontal e inferior. `ShirtNumberPicker` comparte un único valor con el catálogo: cero es válido y la opción «—» vacía el dorsal. Se utiliza en participantes, exclusiones y alta de jugadores; los dorsales ya creados siguen siendo fijos.
+
+`useDialogViewport` adapta los límites del editor al área visible del teclado. Las acciones tienen su propia fila; los mensajes de error no las desplazan. `device/orientation.ts` solicita el bloqueo vertical y solo entra en pantalla completa por la acción explícita del menú. `usePortraitOrientation` evita aplicar respuestas antiguas y mantiene separados estos cambios del estado del partido. Si el navegador rechaza el bloqueo, se explica el uso del bloqueo del dispositivo. El manifiesto prefiere orientación vertical. Una cancelación táctil termina la pulsación y procesa el audio ya capturado; no lo descarta.

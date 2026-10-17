@@ -1,3 +1,4 @@
+import { ShirtNumberPicker } from './ShirtNumberPicker';
 import { useEffect, useRef, useState } from 'react';
 import { Volume2 } from 'lucide-react';
 import type { Match, Snapshot } from '../domain/model';
@@ -110,18 +111,7 @@ export function ExclusionTimers({
               }))}
               change={setTeam}
             />
-            <label>
-              {tr('Dorsal (opcional)')}
-              <input
-                aria-label={tr('Dorsal (opcional)')}
-                autoFocus
-                inputMode="numeric"
-                pattern="[0-9]{1,2}"
-                maxLength={2}
-                value={dorsal}
-                onChange={(inputEvent) => setDorsal(inputEvent.target.value.replace(/\D/g, ''))}
-              />
-            </label>
+            <ShirtNumberPicker label={tr('Dorsal (opcional)')} value={dorsal} change={setDorsal} />
             <ErrorMessage text={action.error} />
             <button className="primary full" disabled={action.busy}>
               {tr('Activar')} · 02:00

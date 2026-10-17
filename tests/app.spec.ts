@@ -1,3 +1,4 @@
+import { selectShirtNumber } from './wheel-helpers';
 import { selectWheelOption } from './wheel-helpers';
 import { serveModels, prepareMatchVoice, selectEvent } from './voice-helpers';
 import { test, expect } from '@playwright/test';
@@ -48,7 +49,7 @@ test('manual match lifecycle persists and works offline', async ({ page, context
   await expect(page.getByText('Registrado · sin identificar', { exact: false })).toBeVisible();
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
   dialog = page.getByRole('dialog');
-  await dialog.getByLabel('Dorsal principal', { exact: true }).fill('7');
+  await selectShirtNumber(dialog, 'Dorsal principal', '7');
   await dialog.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(page.getByText('Águilas · #7', { exact: false })).toBeVisible();
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();

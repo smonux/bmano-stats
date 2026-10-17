@@ -141,15 +141,6 @@ export function useVoiceCapture(match: Match, data: Snapshot) {
       void stop();
     }
   }
-  function cancelRecording() {
-    if (!['recording', 'permission'].includes(phase)) {
-      return;
-    }
-    buttonHeld.current = false;
-    recorder.current?.cancel();
-    recorder.current = null;
-    setPhase('ready');
-  }
   function closeReview() {
     setResult(null);
     setPhase('ready');
@@ -164,7 +155,6 @@ export function useVoiceCapture(match: Match, data: Snapshot) {
     seconds,
     start,
     release,
-    cancelRecording,
     closeReview,
     ready: setup.phase === 'ready',
     problem: microphoneProblem(),

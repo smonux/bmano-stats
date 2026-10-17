@@ -392,16 +392,16 @@
 }
 .exclusion-heading {
   margin: 0;
-  min-height: 26px;
+  min-height: 22px;
 }
 .exclusion-heading h2 {
   font-size: 11px;
   letter-spacing: 0;
 }
 .exclusion-heading button {
-  min-height: 26px;
-  padding: 3px;
   font-size: 10px;
+  min-height: 22px;
+  padding: 1px 3px;
 }
 .exclusion-grid {
   gap: 6px;
@@ -413,63 +413,68 @@
   border-radius: 8px;
   border-width: 1px;
   overflow: hidden;
-  height: 66px;
+  height: 46px;
 }
 .exclusion-timer.expired {
   border-width: 1px;
 }
 .timer-toggle {
   width: 100%;
-  height: 64px;
   min-height: 0;
   border: 0;
   background: transparent;
   border-radius: 0;
-  padding: 3px 20px 2px 4px;
   gap: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  height: 44px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 4px;
+  align-content: center;
+  padding: 3px 23px 2px 5px;
+  padding-right: 27px;
 }
 .timer-toggle:only-child {
-  padding-right: 4px;
+  padding-right: 5px;
 }
 .timer-player {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 3px;
-  font-size: 10px;
+  justify-content: start;
+  font-size: 9px;
   line-height: 12px;
+  white-space: nowrap;
 }
 .timer-time {
   display: flex;
   align-items: center;
-  gap: 3px;
+  justify-content: end;
+  gap: 2px;
 }
 .timer-digits {
-  font-size: 18px;
-  line-height: 22px;
   letter-spacing: 0;
   margin: 0;
+  font-size: 16px;
+  line-height: 19px;
 }
 .timer-state {
+  white-space: nowrap;
+  grid-column: 1 / -1;
   font-size: 9px;
   line-height: 11px;
   min-height: 11px;
-  white-space: nowrap;
 }
 .timer-clear {
   position: absolute;
   right: 0;
   top: 0;
-  height: 64px;
-  min-height: 32px;
-  width: 22px;
   padding: 0;
   border-width: 0 0 0 1px;
   border-radius: 0;
   background: transparent;
+  height: 44px;
+  min-height: 44px;
+  width: 24px;
 }
 .expired .timer-toggle:hover {
   background: #edc600;
@@ -515,7 +520,7 @@
     padding: 4px 7px;
   }
   .timer-digits {
-    font-size: 17px;
+    font-size: 15px;
   }
   .exclusion-heading h2 {
     font-size: 10px;
@@ -527,12 +532,16 @@
     font-size: 12px;
   }
   .capture-bar {
-    bottom: 72px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+  }
+  .clock-actions .clock-action-label {
+    display: none;
   }
 }
 
 .capture-bar {
   flex-wrap: wrap;
+  bottom: max(12px, env(safe-area-inset-bottom));
 }
 .capture-bar > .hold-to-talk {
   touch-action: none;

@@ -3,6 +3,58 @@ export const translationLanguages = ['en', 'de', 'fr', 'it', 'nl', 'pl'] as cons
 
 // Order: English, German, French, Italian, Dutch, Polish. Spanish keys are the source text.
 export const catalog: Record<string, readonly string[]> = {
+  Ajustes: ['Settings', 'Einstellungen', 'Réglages', 'Impostazioni', 'Instellingen', 'Ustawienia'],
+  'Abrir menú': [
+    'Open menu',
+    'Menü öffnen',
+    'Ouvrir le menu',
+    'Apri menu',
+    'Menu openen',
+    'Otwórz menu',
+  ],
+  'Cerrar menú': [
+    'Close menu',
+    'Menü schließen',
+    'Fermer le menu',
+    'Chiudi menu',
+    'Menu sluiten',
+    'Zamknij menu',
+  ],
+  'Menú principal': [
+    'Main menu',
+    'Hauptmenü',
+    'Menu principal',
+    'Menu principale',
+    'Hoofdmenu',
+    'Menu główne',
+  ],
+  'Fijar vertical': [
+    'Lock portrait',
+    'Hochformat sperren',
+    'Verrouiller en portrait',
+    'Blocca in verticale',
+    'Portretstand vergrendelen',
+    'Zablokuj pionowo',
+  ],
+  'Orientación vertical fijada': [
+    'Portrait locked',
+    'Hochformat gesperrt',
+    'Orientation portrait verrouillée',
+    'Orientamento verticale bloccato',
+    'Portretstand vergrendeld',
+    'Orientacja pionowa zablokowana',
+  ],
+  'Este navegador no permite fijar la orientación. Usa el bloqueo vertical del dispositivo; la edición y el audio se conservan al girar.':
+    [
+      'This browser cannot lock orientation. Use your device’s portrait lock; editing and captured audio are kept when rotating.',
+      'Dieser Browser kann die Ausrichtung nicht sperren. Nutze die Hochformatsperre des Geräts; Eingaben und aufgenommenes Audio bleiben beim Drehen erhalten.',
+      'Ce navigateur ne peut pas verrouiller l’orientation. Utilisez le verrouillage portrait de l’appareil ; la saisie et l’audio enregistré sont conservés en tournant.',
+      'Questo browser non può bloccare l’orientamento. Usa il blocco verticale del dispositivo; modifiche e audio registrato vengono conservati durante la rotazione.',
+      'Deze browser kan de oriëntatie niet vergrendelen. Gebruik de portretvergrendeling van je apparaat; invoer en opgenomen audio blijven behouden bij draaien.',
+      'Ta przeglądarka nie blokuje orientacji. Użyj blokady pionowej urządzenia; edycja i nagrany dźwięk są zachowane przy obracaniu.',
+    ],
+  Decenas: ['Tens', 'Zehner', 'Dizaines', 'Decine', 'Tientallen', 'Dziesiątki'],
+  Unidades: ['Units', 'Einer', 'Unités', 'Unità', 'Eenheden', 'Jedności'],
   Inicio: ['Home', 'Start', 'Accueil', 'Home', 'Start', 'Start'],
   Equipos: ['Teams', 'Teams', 'Équipes', 'Squadre', 'Teams', 'Drużyny'],
   Partidos: ['Matches', 'Spiele', 'Matchs', 'Partite', 'Wedstrijden', 'Mecze'],

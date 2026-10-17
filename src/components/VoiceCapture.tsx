@@ -23,7 +23,6 @@ export function VoiceCapture({
     seconds,
     start,
     release,
-    cancelRecording,
     closeReview,
     ready,
     problem,
@@ -50,7 +49,7 @@ export function VoiceCapture({
           void start();
         }}
         onPointerUp={release}
-        onPointerCancel={cancelRecording}
+        onPointerCancel={release}
         onLostPointerCapture={release}
         onKeyDown={(e) => {
           if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {

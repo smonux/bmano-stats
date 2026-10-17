@@ -143,16 +143,8 @@
   overflow-wrap: anywhere;
 }
 .participant-number {
-  width: 95px;
   flex-shrink: 0;
-}
-.participant-row input {
-  width: 53px;
-  margin: 0;
-  padding: 10px;
-}
-.participant-number input {
-  margin-top: 8px;
+  width: 110px;
 }
 .participant .wheel-shell {
   margin-top: 0;
@@ -387,4 +379,23 @@
 .event-editor[data-compact-viewport] .event-editor-footer {
   padding-top: 8px;
   margin-top: 8px;
+}
+.shirt-number-picker {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  flex: 1;
+}
+.shirt-number-digits {
+  display: flex;
+  gap: 4px;
+}
+.shirt-number-picker .wheel-shell {
+  margin-top: 4px;
+}
+.shirt-number-picker .scroll-wheel [role='option'] {
+  padding-inline: 3px;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
 }

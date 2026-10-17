@@ -81,6 +81,8 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
           {match.status === 'active' && (
             <div className="clock-actions">
               <button
+                aria-label={match.clock.startedAt === null ? tr('Reanudar') : tr('Parar')}
+                title={match.clock.startedAt === null ? tr('Reanudar') : tr('Parar')}
                 disabled={action.busy}
                 onClick={() =>
                   action.run(() =>
@@ -89,7 +91,9 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
                 }
               >
                 {match.clock.startedAt === null ? <Play size={15} /> : <Pause size={15} />}{' '}
-                {match.clock.startedAt === null ? tr('Reanudar') : tr('Parar')}
+                <span className="clock-action-label">
+                  {match.clock.startedAt === null ? tr('Reanudar') : tr('Parar')}
+                </span>
               </button>
               <button onClick={() => setConfirm('period')}>{tr('Nuevo tiempo')}</button>
             </div>

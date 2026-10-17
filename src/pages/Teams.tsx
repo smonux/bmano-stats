@@ -1,3 +1,4 @@
+import { ShirtNumberPicker } from '../components/ShirtNumberPicker';
 import { tr } from '../i18n';
 import { useState } from 'react';
 import { ChevronRight, Plus, Pencil, Search } from 'lucide-react';
@@ -209,24 +210,12 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
             }}
           >
             <div className="filter-row">
-              <label>
-                {tr('Dorsal')}
-                <input
-                  aria-label={tr('Dorsal')}
-                  required
-                  inputMode="numeric"
-                  pattern="[0-9]{1,2}"
-                  maxLength={2}
-                  value={editing.dorsal}
-                  onChange={(inputEvent) =>
-                    setEditing({
-                      ...editing,
-                      dorsal: inputEvent.target.value,
-                    })
-                  }
-                  readOnly={Boolean(editing.id)}
-                />
-              </label>
+              <ShirtNumberPicker
+                label={tr('Dorsal')}
+                value={editing.dorsal}
+                disabled={Boolean(editing.id)}
+                change={(dorsal) => setEditing({ ...editing, dorsal })}
+              />
               <label>
                 {tr('Nombre (opcional)')}
                 <input

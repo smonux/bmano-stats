@@ -1,3 +1,4 @@
+import { selectShirtNumber } from './wheel-helpers';
 import { selectWheelOption } from './wheel-helpers';
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
@@ -36,15 +37,15 @@ test('substitution editor preserves two teammates, statistics, PDF and ZIP resto
   await expect(
     dialog.getByRole('group', { name: 'Relacionado · Entra', exact: true }),
   ).toContainText('La Jota');
-  await dialog.getByLabel('Dorsal principal', { exact: true }).fill('6');
-  await dialog.getByLabel('Dorsal relacionado', { exact: true }).fill('6');
+  await selectShirtNumber(dialog, 'Dorsal principal', '6');
+  await selectShirtNumber(dialog, 'Dorsal relacionado', '6');
   await expect(
     dialog.getByText('El jugador que sale y el que entra deben ser distintos.'),
   ).toBeVisible();
   await expect(
     dialog.getByRole('button', { name: 'Guardar pendiente', exact: true }),
   ).toBeVisible();
-  await dialog.getByLabel('Dorsal relacionado', { exact: true }).fill('9');
+  await selectShirtNumber(dialog, 'Dorsal relacionado', '9');
   await page.screenshot({ path: info.outputPath('substitution-editor.png'), fullPage: true });
   await dialog.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(page.locator('.event-card').filter({ hasText: 'Sustitución' })).toContainText(

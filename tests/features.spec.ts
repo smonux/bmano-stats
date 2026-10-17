@@ -1,3 +1,4 @@
+import { selectShirtNumber } from './wheel-helpers';
 import { selectWheelOption } from './wheel-helpers';
 import { serveModels, prepareMatchVoice } from './voice-helpers';
 import { test, expect } from '@playwright/test';
@@ -51,7 +52,11 @@ test('first-use gallery changes language, persists completion and reopens from s
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Every play counts.' })).toBeVisible();
   await expect(dialog).toHaveCount(0);
-  await page.getByRole('button', { name: 'Settings and backups' }).click();
+  await page.getByRole('button', { name: 'Open menu', exact: true }).click();
+  await page
+    .getByRole('dialog', { name: 'Main menu', exact: true })
+    .getByRole('link', { name: 'Settings', exact: true })
+    .click();
   await page.getByRole('button', { name: 'View welcome guide' }).click();
   await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: 'Skip guide' }).click();
@@ -114,7 +119,7 @@ test('three independent suspension timers persist, pause with match clock and si
       .click();
     const dialog = page.getByRole('dialog');
     if (i < 3) {
-      await dialog.getByLabel('Dorsal (opcional)', { exact: true }).fill(String(i + 6));
+      await selectShirtNumber(dialog, 'Dorsal (opcional)', String(i + 6));
     }
     await dialog.getByRole('button', { name: /Activar/ }).click();
     await expect(dialog).toHaveCount(0);

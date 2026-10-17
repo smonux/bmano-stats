@@ -1,3 +1,4 @@
+import { selectShirtNumber, readShirtNumber } from './wheel-helpers';
 import { selectWheelOption } from './wheel-helpers';
 import { serveModels, prepareMatchVoice, selectEvent } from './voice-helpers';
 import { test, expect } from '@playwright/test';
@@ -51,12 +52,15 @@ test('real Whistle and deterministic rules: microphone to reviewed event, then r
   const talk = page.getByRole('button', { name: 'Mantén pulsado para hablar' });
   await expect(talk).toBeEnabled({ timeout: 30000 });
   await expect(page.getByRole('button', { name: 'Grabar con un toque' })).toHaveCount(0);
-  await talk.focus();
-  await page.keyboard.down('Space');
+  await talk.scrollIntoViewIfNeeded();
+  await talk.hover();
+  await page.mouse.down();
   await expect(page.getByRole('button', { name: /Grabando ·/ })).toBeVisible();
   // Record one complete, synthetic Spanish utterance from Chromium's fake microphone.
   await page.waitForTimeout(6500);
-  await page.keyboard.up('Space');
+  await page.evaluate(() => screen.orientation.dispatchEvent(new Event('change')));
+  await page.locator('.hold-to-talk').dispatchEvent('pointercancel');
+  await page.mouse.up();
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(1);
   await expect(
@@ -88,14 +92,14 @@ test('real Whistle and deterministic rules: microphone to reviewed event, then r
         .getByRole('listbox', { name: 'Equipo', exact: true })
         .getByRole('option', { selected: true })
         .textContent(),
-      dorsal: await editor.getByLabel('Dorsal principal', { exact: true }).inputValue(),
+      dorsal: await readShirtNumber(editor, 'Dorsal principal'),
     }),
     contentType: 'application/json',
   });
   // Recognition is a proposal: explicitly review/correct it before committing.
   await selectEvent(page, 'Gol');
   await selectWheelOption(editor.getByRole('listbox', { name: 'Equipo', exact: true }), 'Águilas');
-  await editor.getByLabel('Dorsal principal', { exact: true }).fill('7');
+  await selectShirtNumber(editor, 'Dorsal principal', '7');
   await expect(page.getByLabel('Marcador 0 a 0')).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('voz-revision.png'), fullPage: true });
   await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();

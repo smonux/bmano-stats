@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { ShirtNumberPicker } from '../ShirtNumberPicker';
 import type { Player } from '../../domain/model';
 import { tr } from '../../i18n';
 import { WheelPicker, type WheelOption } from '../WheelPicker';
@@ -22,7 +22,6 @@ export function ParticipantPicker({
   disabled: boolean;
   change: (shirtNumber: string) => void;
 }) {
-  const inputId = useId();
   const knownPlayers = players
     .filter((player) => player.teamId === teamId && !player.isUnknown && !player.deletedAt)
     .sort((first, second) => first.dorsal! - second.dorsal!);
@@ -65,17 +64,12 @@ export function ParticipantPicker({
       <div className="participant-row">
         <div className="participant-number">
           <span className="participant-team">{teamName || tr('Sin equipo')}</span>
-          <label className="sr-only" htmlFor={inputId}>
-            {role === 'primary' ? tr('Dorsal principal') : tr('Dorsal relacionado')}
-          </label>
-          <input
-            id={inputId}
-            inputMode="numeric"
-            pattern="[0-9]{1,2}"
-            maxLength={2}
-            placeholder="Nº"
+          <ShirtNumberPicker
+            label={role === 'primary' ? tr('Dorsal principal') : tr('Dorsal relacionado')}
+            hideLabel
             value={shirtNumber}
-            onChange={(event) => change(event.target.value.replace(/\D/g, '').slice(0, 2))}
+            disabled={disabled}
+            change={change}
           />
         </div>
         <WheelPicker

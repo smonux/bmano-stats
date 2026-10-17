@@ -1,3 +1,4 @@
+import { selectShirtNumber, readShirtNumber } from './wheel-helpers';
 import { expect, test, type Page } from '@playwright/test';
 import { reportFixture } from './fixtures/report';
 import { selectWheelOption } from './wheel-helpers';
@@ -38,19 +39,19 @@ test('event wheels keep team, period, players and infraction consistent and save
   await selectWheelOption(wheel('Equipo'), 'La Jota');
   await selectWheelOption(wheel('Jugador principal'), '#7 Ana Łukasz');
   await selectWheelOption(wheel('Jugador relacionado'), '#1 Íker');
-  await expect(editor.getByLabel('Dorsal principal', { exact: true })).toHaveValue('7');
-  await expect(editor.getByLabel('Dorsal relacionado', { exact: true })).toHaveValue('1');
+  await expect.poll(() => readShirtNumber(editor, 'Dorsal principal')).toBe('7');
+  await expect.poll(() => readShirtNumber(editor, 'Dorsal relacionado')).toBe('1');
 
   // Selecting the current team again must not erase the chosen participants.
   await selectWheelOption(wheel('Equipo'), 'La Jota');
-  await expect(editor.getByLabel('Dorsal principal', { exact: true })).toHaveValue('7');
+  await expect.poll(() => readShirtNumber(editor, 'Dorsal principal')).toBe('7');
   await selectWheelOption(wheel('Equipo'), 'Rival');
-  await expect(editor.getByLabel('Dorsal principal', { exact: true })).toHaveValue('');
-  await expect(editor.getByLabel('Dorsal relacionado', { exact: true })).toHaveValue('');
+  await expect.poll(() => readShirtNumber(editor, 'Dorsal principal')).toBe('');
+  await expect.poll(() => readShirtNumber(editor, 'Dorsal relacionado')).toBe('');
   await expect(
     wheel('Jugador principal').getByRole('option', { name: '#7 Ana Łukasz' }),
   ).toHaveCount(0);
-  await editor.getByLabel('Dorsal principal', { exact: true }).fill('99');
+  await selectShirtNumber(editor, 'Dorsal principal', '99');
   await expect(wheel('Jugador principal').getByRole('option', { selected: true })).toHaveText(
     '#99 · Dorsal nuevo',
   );
@@ -69,7 +70,7 @@ test('event wheels keep team, period, players and infraction consistent and save
   await expect(wheel('Evento').getByRole('option', { selected: true })).toHaveText('Infracción');
   await expect(wheel('Jugador relacionado')).toHaveAttribute('aria-disabled', 'true');
   await wheel('Jugador relacionado').press('ArrowDown');
-  await expect(editor.getByLabel('Dorsal relacionado', { exact: true })).toHaveValue('');
+  await expect.poll(() => readShirtNumber(editor, 'Dorsal relacionado')).toBe('');
   await wheel('Tipo de infracción').focus();
   await wheel('Tipo de infracción').press('End');
   await expect(wheel('Tipo de infracción').getByRole('option', { selected: true })).toHaveText(

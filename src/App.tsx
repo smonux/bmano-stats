@@ -1,10 +1,12 @@
+import { NavigationDrawer } from './components/NavigationDrawer';
+import { usePortraitOrientation } from './hooks/usePortraitOrientation';
 import { AppPage } from './pages/AppPage';
 import { refreshVoiceFiles } from './voice/setup';
 import { Welcome, hasSeenWelcome } from './components/Welcome';
 import { tr, useLanguage } from './i18n';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Activity, BarChart3, CalendarDays, Home, Settings, Users } from 'lucide-react';
+import { Activity, Menu, X } from 'lucide-react';
 import { db } from './data/database';
 import { navigate, useRoute } from './components/ui';
 export default function App() {
@@ -18,6 +20,9 @@ export default function App() {
   }, [language]);
   const data = useLiveQuery(() => db.snapshot(), []);
   const route = useRoute();
+  const [navigationOpen, setNavigationOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const portrait = usePortraitOrientation();
   const [offline, setOffline] = useState(!navigator.onLine);
   useEffect(() => {
     const change = () => setOffline(!navigator.onLine);
@@ -28,85 +33,61 @@ export default function App() {
       window.removeEventListener('offline', change);
     };
   }, []);
-  const nav = [
-    {
-      path: '/',
-      label: tr('Inicio'),
-      icon: Home,
-    },
-    {
-      path: '/equipos',
-      label: tr('Equipos'),
-      icon: Users,
-    },
-    {
-      path: '/partidos',
-      label: tr('Partidos'),
-      icon: CalendarDays,
-    },
-    {
-      path: '/estadisticas',
-      label: tr('Estadísticas'),
-      icon: BarChart3,
-    },
-  ];
 
   return (
     <>
       <header className="app-header">
-        <button className="brand" onClick={() => navigate('/')}>
-          <span className="brand-mark">
-            <Activity size={21} />
-          </span>
-          <span>
-            handball<span className="brand-light">stats</span>
-          </span>
-        </button>
-        <nav className="desktop-nav">
-          {nav.map((item) => (
-            <button
-              key={item.path}
-              className={
-                (item.path === '/' ? route === '/' : route.startsWith(item.path)) ? 'current' : ''
-              }
-              onClick={() => navigate(item.path)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </nav>
+        <div className="header-left">
+          <button
+            ref={menuButton}
+            className="icon-button menu-button"
+            aria-label={tr('Abrir menú')}
+            aria-expanded={navigationOpen}
+            aria-controls="main-navigation"
+            onClick={() => setNavigationOpen(true)}
+          >
+            <Menu size={24} />
+          </button>
+          <button className="brand" onClick={() => navigate('/')}>
+            <span className="brand-mark">
+              <Activity size={21} />
+            </span>
+            <span>
+              handball<span className="brand-light">stats</span>
+            </span>
+          </button>
+        </div>
         <div className="header-right">
           <span className={`local-status ${offline ? 'is-offline' : ''}`}>
             <span />
             {offline ? tr('Sin conexión') : tr('En este dispositivo')}
           </span>
-          <button
-            aria-label={tr('Ajustes y copias de seguridad')}
-            className="icon-button"
-            onClick={() => navigate('/ajustes')}
-          >
-            <Settings size={21} />
-          </button>
         </div>
       </header>
+      {navigationOpen && (
+        <NavigationDrawer
+          trigger={menuButton}
+          route={route}
+          close={() => setNavigationOpen(false)}
+          portrait={portrait}
+        />
+      )}
       <main className="app-main">
+        {portrait.notice && (
+          <div className="orientation-notice" role="status">
+            <p>{portrait.notice}</p>
+            <button
+              className="icon-button"
+              aria-label={tr('Cerrar')}
+              onClick={portrait.dismissNotice}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        )}
         <AppPage data={data} route={route} showWelcome={() => setWelcome(true)} />
       </main>
       {welcome && <Welcome close={() => setWelcome(false)} />}
-      <nav className="mobile-nav">
-        {nav.map((item) => (
-          <button
-            key={item.path}
-            className={
-              (item.path === '/' ? route === '/' : route.startsWith(item.path)) ? 'current' : ''
-            }
-            onClick={() => navigate(item.path)}
-          >
-            <item.icon size={20} />
-            <span>{item.label}</span>
-          </button>
-        ))}
-      </nav>
     </>
   );
 }
