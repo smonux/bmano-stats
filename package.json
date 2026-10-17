@@ -12,7 +12,9 @@
     "dataset:build": "node scripts/build-voice-dataset.mjs",
     "dataset:check": "node scripts/build-voice-dataset.mjs --check",
     "check": "tsc -b",
-    "voice:evaluate": "node scripts/evaluate-voice-rules.mjs"
+    "voice:evaluate": "node scripts/evaluate-voice-rules.mjs",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"tests/**/*.ts\" \"scripts/**/*.{ts,mjs}\" \"*.ts\" tsconfig.json package.json .prettierrc.json",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"tests/**/*.ts\" \"scripts/**/*.{ts,mjs}\" \"*.ts\" tsconfig.json package.json .prettierrc.json"
   },
   "engines": {
     "node": ">=22.18.0"
@@ -36,6 +38,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "fake-indexeddb": "^6.2.5",
+    "prettier": "3.9.10",
     "typescript": "^7.0.2",
     "vite": "^8.3.4",
     "vite-plugin-pwa": "^2.0.0",
