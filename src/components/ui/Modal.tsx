@@ -1,3 +1,4 @@
+import { useDialogViewport } from '../../hooks/useDialogViewport';
 import { tr } from '../../i18n';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { X } from 'lucide-react';
@@ -13,6 +14,7 @@ export function Modal({
   className?: string;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  useDialogViewport(dialogRef);
   useEffect(() => {
     const dialog = dialogRef.current!;
     dialog.showModal();

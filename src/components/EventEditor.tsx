@@ -245,20 +245,22 @@ export function EventEditor({
               {tr('Cambiar minuto o tiempo recoloca el evento en orden cronológico.')}
             </p>
           )}
+        </div>
+        <footer className="event-editor-footer">
           <ErrorMessage text={action.error} />
-        </div>
-        <div className="actions">
-          <button type="button" disabled={action.busy} onClick={close}>
-            {tr('Cancelar')}
-          </button>
-          <button className="primary" disabled={action.busy}>
-            {action.busy
-              ? tr('Guardando…')
-              : missing
-                ? tr('Guardar pendiente')
-                : tr('Guardar evento')}
-          </button>
-        </div>
+          <div className="actions">
+            <button type="button" disabled={action.busy} onClick={close}>
+              {tr('Cancelar')}
+            </button>
+            <button className="primary" disabled={action.busy}>
+              {action.busy
+                ? tr('Guardando…')
+                : missing
+                  ? tr('Guardar pendiente')
+                  : tr('Guardar evento')}
+            </button>
+          </div>
+        </footer>
       </form>
     </Modal>
   );
