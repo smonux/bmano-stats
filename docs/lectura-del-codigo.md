@@ -13,9 +13,16 @@ La aplicación usa React y TypeScript. Los datos y las consecuencias estadístic
 | Rueda de selección compartida, teclado y desplazamiento | `src/components/WheelPicker.tsx` |
 | Selección de participantes y metadatos del editor | `src/components/event-editor/` |
 | Aviso sonoro de exclusiones y desbloqueo por gesto | `src/audio/exclusion-alert.ts`, `src/components/exclusions/useExclusionSound.ts` |
-| Definiciones de eventos y validación de copias | `src/domain/model.ts` |
+| Contrato público del dominio | `src/domain/model.ts` |
+| Esquemas y tipos de datos | `src/domain/schema.ts` |
+| Catálogo y reglas de eventos | `src/domain/event-definitions.ts`, `src/domain/events.ts` |
+| Validación de referencias e identidades de una copia | `src/domain/backup.ts` |
+| Reloj y transiciones de exclusiones | `src/domain/clock.ts`, `src/domain/exclusions.ts` |
 | Consecuencias estadísticas de cada evento | `src/domain/statistics.ts` |
-| Persistencia y transacciones | `src/data/database.ts` |
+| Métricas y tanteo por periodos | `src/domain/statistics/metrics.ts`, `src/domain/score-timeline.ts` |
+| Contrato público de persistencia | `src/data/database.ts` |
+| Tablas e índices IndexedDB | `src/data/connection.ts` |
+| Operaciones y transacciones por entidad | `src/data/repository/` |
 | Transcripción con Whistle | `src/voice/engine.ts` |
 | Recorrido completo del intérprete | `src/voice/deterministic.ts` |
 
@@ -58,6 +65,10 @@ Después de cambiar una regla, añade un caso con frase y resultado esperado en 
 - Funciones organizadas por responsabilidad y comentarios sobre decisiones lingüísticas.
 - TypeScript comprueba tipos, parámetros e importaciones sin uso.
 - Las correcciones de comportamiento deben poder distinguirse de los cambios de organización.
+
+`model.ts` y `database.ts` son entradas públicas pequeñas. Dentro del dominio y el repositorio se importan los módulos concretos para que las dependencias se puedan seguir sin ciclos de ejecución. Los esquemas conservan el formato de datos y copias versión 1. `backup.ts` valida primero la forma y luego identificadores, equipos, jugadores, partidos y eventos, en ese orden.
+
+El catálogo comparte `createTeamInTransaction` y `resolvePlayerInTransaction` con partidos y eventos. Sus nombres señalan que dependen de la transacción del llamador: crear un jugador no debe confirmarse si el evento termina fallando. Cada operación pública declara las tablas que necesita. Las importaciones validan antes de abrir una transacción que reemplaza las cuatro colecciones; las ediciones de eventos mantienen el control de `expectedUpdatedAt` y el desempate por `orderKey`.
 
 Las selecciones de opciones usan `WheelPicker`, con etiquetas traducidas, selección táctil, clic y teclado. El componente controla explícitamente sus estados deshabilitados: un `fieldset disabled` por sí solo no bloquea un `div` con rol `listbox`. `ParticipantPicker` conserva los dorsales nuevos y los reconocidos por voz aunque todavía no existan en el catálogo, y mantiene una entrada numérica directa. `EventMetadata` contiene las opciones compatibles con cada evento. El editor mantiene sus acciones fuera del área desplazable y agrupa la nota y la transcripción original identificada en «Información adicional»; conserva la transcripción en `rawText`, independiente de la nota editable.
 
