@@ -5,7 +5,7 @@ import { promisify } from 'node:util';
 import { createHash } from 'node:crypto';
 import { mkdtemp, readFile, writeFile, rm, symlink, mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { resolve, join } from 'node:path';
+import { resolve, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadVoiceModule } from './lib/voice-bundle.mjs';
 
@@ -100,7 +100,10 @@ try {
       numberSpellings: preservedNumberSpellings,
       numberDictionaries: languages.length,
     },
-    implementationSha256: { before: hash(before.code), after: hash(after.code) },
+    implementationSha256: {
+      before: hashImplementation(before.code, directory),
+      after: hashImplementation(after.code, root),
+    },
     timingMs: { before: summarize(times.before), after: summarize(times.after) },
   };
   const destination = resolve(root, 'docs/benchmarks/reglas');
@@ -125,4 +128,14 @@ function summarize(times) {
     p95: sorted[Math.floor(sorted.length * 0.95)],
     mean: sorted.reduce((total, time) => total + time, 0) / sorted.length,
   };
+}
+
+// Temporary checkout names must not change the fingerprint of identical source.
+function hashImplementation(code, sourceRoot) {
+  let normalizedCode = code.replaceAll(sourceRoot, '<source-root>');
+  const relativeSourceRoot = relative(root, sourceRoot);
+  if (relativeSourceRoot) {
+    normalizedCode = normalizedCode.replaceAll(relativeSourceRoot, '<source-root>');
+  }
+  return hash(normalizedCode.replaceAll(root, '<dependencies-root>'));
 }

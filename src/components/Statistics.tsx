@@ -75,12 +75,13 @@ export function Statistics({ data, matchId }: { data: Snapshot; matchId?: string
     .filter((p) => p.teamId === team && (!p.deletedAt || stats.players[p.id]))
     .sort((a, b) => Number(a.isUnknown) - Number(b.isUnknown) || (a.dorsal ?? 0) - (b.dorsal ?? 0));
   const teamName = (id: string) => data.teams.find((t) => t.id === id)?.name ?? tr('Equipo');
-  if (!teams.length)
+  if (!teams.length) {
     return (
       <Empty title={tr('Todo empieza con un equipo')}>
         <p>{tr('Crea un partido o un equipo para consultar sus estadísticas.')}</p>
       </Empty>
     );
+  }
   return (
     <div className="statistics">
       <div className="filter-row">

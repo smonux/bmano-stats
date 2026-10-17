@@ -3,7 +3,9 @@ import { afterEach, beforeEach, expect, test } from 'vitest';
 import { HandballDatabase, repository, type EventDraft } from './database';
 import { changeClock, elapsed, eventState, unknownId, type Match } from '../domain/model';
 import { calculate, efficacy, emptyStats } from '../domain/statistics';
-let db: HandballDatabase, repo: ReturnType<typeof repository>, match: Match;
+let db: HandballDatabase;
+let repo: ReturnType<typeof repository>;
+let match: Match;
 beforeEach(async () => {
   db = new HandballDatabase(crypto.randomUUID());
   repo = repository(db);
@@ -87,8 +89,9 @@ test('pending events do not count; passive has no individual; infraction require
   });
 });
 test('disciplinary and penalty events count without inventing assists or provocateurs', async () => {
-  for (const type of ['penalty', 'exclusion', 'yellow', 'disqualification'] as const)
+  for (const type of ['penalty', 'exclusion', 'yellow', 'disqualification'] as const) {
     await repo.saveEvent(draft(type, { metadata: { blue: true } }));
+  }
   const s = await stats();
   expect(s.teams[match.localTeamId]).toMatchObject({
     penalties: 1,
@@ -161,11 +164,12 @@ test('three suspension timers survive backup and follow pauses, individual stops
   const mock = vi.spyOn(Date, 'now').mockImplementation(() => now);
   const read = async () => (await db.matches.get(match.id))!;
   try {
-    for (let slot = 0; slot < 3; slot++)
+    for (let slot = 0; slot < 3; slot++) {
       await repo.exclusion(match.id, slot, 'start', {
         teamId: slot === 1 ? match.visitorTeamId : match.localTeamId,
         dorsal: slot + 7,
       });
+    }
     await expect(
       repo.exclusion(match.id, 3, 'start', { teamId: match.localTeamId, dorsal: 4 }),
     ).rejects.toThrow();

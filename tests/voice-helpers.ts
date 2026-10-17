@@ -7,7 +7,7 @@ export async function serveModels(context: BrowserContext, request?: () => void)
     !models,
     'Set VOICE_MODELS_DIR to verify the required pre-match preparation using real pinned models.',
   );
-  for (const model of [DEFAULT_SPEECH_MODEL])
+  for (const model of [DEFAULT_SPEECH_MODEL]) {
     await context.route(model.url, (route) => {
       request?.();
       return route.fulfill({
@@ -16,6 +16,7 @@ export async function serveModels(context: BrowserContext, request?: () => void)
         headers: { 'access-control-allow-origin': '*' },
       });
     });
+  }
   await context.route('**/*needle3*.cact', (route) => {
     request?.();
     return route.abort('blockedbyclient');

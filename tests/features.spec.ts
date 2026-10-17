@@ -3,9 +3,12 @@ import { test, expect } from '@playwright/test';
 async function spanish(page: import('@playwright/test').Page, skip = true) {
   await page.addInitScript(
     ({ skip }) => {
-      if (!localStorage.getItem('handball-language'))
+      if (!localStorage.getItem('handball-language')) {
         localStorage.setItem('handball-language', 'es');
-      if (skip) localStorage.setItem('handball-welcome-v1', 'done');
+      }
+      if (skip) {
+        localStorage.setItem('handball-welcome-v1', 'done');
+      }
     },
     { skip },
   );
@@ -38,8 +41,9 @@ test('first-use gallery changes language, persists completion and reopens from s
   ).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await page.screenshot({ path: info.outputPath('welcome-en.png') });
-  for (let i = 0; i < 4; i++)
+  for (let i = 0; i < 4; i++) {
     await dialog.getByRole('button', { name: 'Next', exact: true }).click();
+  }
   await expect(dialog.getByText('Track the two minutes', { exact: true })).toBeVisible();
   await dialog.getByRole('button', { name: 'Get started', exact: true }).click();
   await expect(dialog).toHaveCount(0);
@@ -80,7 +84,9 @@ test('three independent suspension timers persist, pause with match clock and si
       .getByRole('button', { name: 'Activar', exact: true })
       .click();
     const dialog = page.getByRole('dialog');
-    if (i < 3) await dialog.getByLabel('Dorsal (opcional)', { exact: true }).fill(String(i + 6));
+    if (i < 3) {
+      await dialog.getByLabel('Dorsal (opcional)', { exact: true }).fill(String(i + 6));
+    }
     await dialog.getByRole('button', { name: /Activar/ }).click();
     await expect(dialog).toHaveCount(0);
     await expect(page.getByRole('group', { name: `Exclusión ${i}`, exact: true })).toContainText(
@@ -129,8 +135,11 @@ test('three independent suspension timers persist, pause with match clock and si
   });
   await expect(page.getByRole('button', { name: 'Grabar con un toque' })).toHaveCount(0);
   await page.evaluate(async () => {
-    for (const key of await caches.keys())
-      if (key.startsWith('cactus-needle-')) await caches.delete(key);
+    for (const key of await caches.keys()) {
+      if (key.startsWith('cactus-needle-')) {
+        await caches.delete(key);
+      }
+    }
   });
   await page.reload();
   await expect(page.getByRole('alert').filter({ hasText: 'Cactus no está cargado' })).toBeVisible();

@@ -11,9 +11,9 @@ import { checkMicrophone, microphoneProblem } from '../voice/readiness';
 import { voiceError } from '../voice/engine';
 import { ErrorMessage } from './ui';
 export function VoicePreparation({ live = false }: { live?: boolean }) {
-  const setup = useVoiceSetup(),
-    [mic, setMic] = useState<'idle' | 'asking' | 'ok'>('idle'),
-    [error, setError] = useState('');
+  const setup = useVoiceSetup();
+  const [mic, setMic] = useState<'idle' | 'asking' | 'ok'>('idle');
+  const [error, setError] = useState('');
   const alive = useRef(true);
   useEffect(() => {
     alive.current = true;
@@ -22,15 +22,19 @@ export function VoicePreparation({ live = false }: { live?: boolean }) {
       alive.current = false;
     };
   }, []);
-  const problem = microphoneProblem(),
-    missing = ['missing', 'error'].includes(setup.phase);
+  const problem = microphoneProblem();
+  const missing = ['missing', 'error'].includes(setup.phase);
   const testMic = async () => {
-    if (mic === 'asking') return;
+    if (mic === 'asking') {
+      return;
+    }
     setMic('asking');
     setError('');
     try {
       await checkMicrophone();
-      if (alive.current) setMic('ok');
+      if (alive.current) {
+        setMic('ok');
+      }
     } catch (e) {
       if (alive.current) {
         setMic('idle');

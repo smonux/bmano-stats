@@ -61,11 +61,13 @@ const stamps = () => {
 export function repository(database = db) {
   async function makeTeam(name: string): Promise<Team> {
     name = name.trim();
-    if (!name || name.length > 100)
+    if (!name || name.length > 100) {
       throw new Error('Introduce un nombre de equipo de hasta 100 caracteres.');
+    }
     const key = nameKey(name);
-    if (await database.teams.where('nameKey').equals(key).first())
+    if (await database.teams.where('nameKey').equals(key).first()) {
       throw new Error('Ya existe un equipo con ese nombre. Selecciónalo del catálogo.');
+    }
     const team: Team = { id: createId(), name, nameKey: key, ...stamps() };
     await database.teams.add(team);
     await database.players.add({
@@ -79,20 +81,26 @@ export function repository(database = db) {
     return team;
   }
   async function resolvePlayer(teamId: string, value: string) {
-    if (!value.trim()) return null;
-    if (!/^\d{1,2}$/.test(value.trim()))
+    if (!value.trim()) {
+      return null;
+    }
+    if (!/^\d{1,2}$/.test(value.trim())) {
       throw new Error('El dorsal debe ser un número entre 0 y 99.');
+    }
     const dorsal = Number(value);
     const existing = await database.players
       .where('[teamId+dorsal]')
       .equals([teamId, dorsal])
       .first();
     if (existing) {
-      if (existing.deletedAt !== null)
+      if (existing.deletedAt !== null) {
         await database.players.update(existing.id, { deletedAt: null, updatedAt: Date.now() });
+      }
       return existing.id;
     }
-    if (!(await database.teams.get(teamId))) throw new Error('No se encontró el equipo.');
+    if (!(await database.teams.get(teamId))) {
+      throw new Error('No se encontró el equipo.');
+    }
     const player: Player = {
       id: createId(),
       teamId,
@@ -110,20 +118,29 @@ export function repository(database = db) {
     async renameTeam(id: string, name: string) {
       return database.transaction('rw', database.teams, async () => {
         name = name.trim();
-        if (!name || name.length > 100) throw new Error('Introduce un nombre válido.');
+        if (!name || name.length > 100) {
+          throw new Error('Introduce un nombre válido.');
+        }
         const team = await database.teams.get(id);
-        if (!team) throw new Error('Equipo no encontrado.');
+        if (!team) {
+          throw new Error('Equipo no encontrado.');
+        }
         const duplicate = await database.teams.where('nameKey').equals(nameKey(name)).first();
-        if (duplicate && duplicate.id !== id)
+        if (duplicate && duplicate.id !== id) {
           throw new Error('Ya existe otro equipo con ese nombre.');
+        }
         await database.teams.update(id, { name, nameKey: nameKey(name), updatedAt: Date.now() });
       });
     },
     async savePlayer(teamId: string, dorsal: string, name: string) {
       return database.transaction('rw', database.players, database.teams, async () => {
         const id = await resolvePlayer(teamId, dorsal);
-        if (!id) throw new Error('Introduce el dorsal.');
-        if (name.length > 100) throw new Error('El nombre no puede superar 100 caracteres.');
+        if (!id) {
+          throw new Error('Introduce el dorsal.');
+        }
+        if (name.length > 100) {
+          throw new Error('El nombre no puede superar 100 caracteres.');
+        }
         await database.players.update(id, { name: name.trim(), updatedAt: Date.now() });
       });
     },
@@ -136,15 +153,17 @@ export function repository(database = db) {
         async () => {
           const resolve = async (choice: TeamChoice) =>
             choice.id ? database.teams.get(choice.id) : makeTeam(choice.name!);
-          const a = await resolve(local),
-            b = await resolve(visitor);
-          if (!a || !b || a.deletedAt !== null || b.deletedAt !== null || a.id === b.id)
+          const a = await resolve(local);
+          const b = await resolve(visitor);
+          if (!a || !b || a.deletedAt !== null || b.deletedAt !== null || a.id === b.id) {
             throw new Error('Elige dos equipos distintos.');
+          }
           if (
             !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
             new Date(date + 'T12:00:00Z').toISOString().slice(0, 10) !== date
-          )
+          ) {
             throw new Error('Introduce una fecha válida.');
+          }
           const match: Match = {
             id: createId(),
             localTeamId: a.id,
@@ -168,25 +187,34 @@ export function repository(database = db) {
         database.teams,
         async () => {
           const match = await database.matches.get(draft.matchId);
-          if (!match || match.deletedAt !== null) throw new Error('Partido no disponible.');
-          if (draft.period > match.clock.period)
+          if (!match || match.deletedAt !== null) {
+            throw new Error('Partido no disponible.');
+          }
+          if (draft.period > match.clock.period) {
             throw new Error('El tiempo indicado aún no existe.');
-          if (draft.teamId && ![match.localTeamId, match.visitorTeamId].includes(draft.teamId))
+          }
+          if (draft.teamId && ![match.localTeamId, match.visitorTeamId].includes(draft.teamId)) {
             throw new Error('El equipo no pertenece al partido.');
+          }
           const old = draft.id ? await database.events.get(draft.id) : undefined;
-          if (draft.id && (!old || old.matchId !== match.id || old.deletedAt !== null))
+          if (draft.id && (!old || old.matchId !== match.id || old.deletedAt !== null)) {
             throw new Error('El evento ya no está disponible.');
-          if (old && draft.expectedUpdatedAt !== old.updatedAt)
+          }
+          if (old && draft.expectedUpdatedAt !== old.updatedAt) {
             throw new Error('El evento cambió en otra ventana. Cierra y vuelve a editarlo.');
+          }
           const events = await database.events.where('matchId').equals(match.id).toArray();
-          const cfg = draft.type;
+          const eventType = draft.type;
           const primary =
-            cfg && cfg !== 'passive' && draft.teamId
+            eventType && eventType !== 'passive' && draft.teamId
               ? await resolvePlayer(draft.teamId, draft.primaryDorsal)
               : null;
           const secondary =
-            cfg && draft.teamId && definitions[cfg].related
-              ? await resolvePlayer(relatedTeam(match, cfg, draft.teamId), draft.relatedDorsal)
+            eventType && draft.teamId && definitions[eventType].related
+              ? await resolvePlayer(
+                  relatedTeam(match, eventType, draft.teamId),
+                  draft.relatedDorsal,
+                )
               : null;
           const event = cleanEvent(
             eventSchema.parse({
@@ -213,7 +241,9 @@ export function repository(database = db) {
     async clock(id: string, action: 'pause' | 'resume' | 'period' | 'finish') {
       return database.transaction('rw', database.matches, async () => {
         const match = await database.matches.get(id);
-        if (!match || match.deletedAt !== null) throw new Error('Partido no disponible.');
+        if (!match || match.deletedAt !== null) {
+          throw new Error('Partido no disponible.');
+        }
         await database.matches.put(changeClock(match, action));
       });
     },
@@ -223,24 +253,29 @@ export function repository(database = db) {
       action: 'start' | 'pause' | 'resume' | 'clear',
       player?: { teamId: string; dorsal: number | null },
     ) {
-      if (!Number.isInteger(slot) || slot < 0 || slot > 2)
+      if (!Number.isInteger(slot) || slot < 0 || slot > 2) {
         throw new Error('Temporizador de exclusión inválido.');
+      }
       return database.transaction('rw', database.matches, async () => {
         const match = await database.matches.get(id);
-        if (!match || match.deletedAt !== null || match.status !== 'active')
+        if (!match || match.deletedAt !== null || match.status !== 'active') {
           throw new Error('Partido no disponible.');
+        }
         const timers = [...(match.exclusions ?? [null, null, null])];
-        const timer = timers[slot],
-          now = Date.now();
+        const timer = timers[slot];
+        const now = Date.now();
         if (action === 'start') {
-          if (timer) throw new Error('Libera el contador antes de usarlo de nuevo.');
+          if (timer) {
+            throw new Error('Libera el contador antes de usarlo de nuevo.');
+          }
           if (
             !player ||
             ![match.localTeamId, match.visitorTeamId].includes(player.teamId) ||
             (player.dorsal !== null &&
               (!Number.isInteger(player.dorsal) || player.dorsal < 0 || player.dorsal > 99))
-          )
+          ) {
             throw new Error('Elige equipo y dorsal.');
+          }
           timers[slot] = {
             id: createId(),
             ...player,
@@ -248,8 +283,9 @@ export function repository(database = db) {
             running: true,
             startedAt: match.clock.startedAt === null ? null : now,
           };
-        } else if (action === 'clear') timers[slot] = null;
-        else if (timer)
+        } else if (action === 'clear') {
+          timers[slot] = null;
+        } else if (timer) {
           timers[slot] = {
             ...timer,
             remainingMs: exclusionRemaining(timer, now),
@@ -261,13 +297,16 @@ export function repository(database = db) {
                 ? now
                 : null,
           };
+        }
         await database.matches.update(id, { exclusions: timers, updatedAt: now });
       });
     },
     async deleteMatch(id: string) {
       return database.transaction('rw', database.matches, database.events, async () => {
         const match = await database.matches.get(id);
-        if (!match) return;
+        if (!match) {
+          return;
+        }
         const stopped = match.status === 'active' ? changeClock(match, 'finish') : match;
         await database.matches.put({ ...stopped, deletedAt: Date.now(), updatedAt: Date.now() });
         await database.events
@@ -288,7 +327,9 @@ export function repository(database = db) {
       const data = validateBackup(input);
       // Explicit replacement, atomic across all stores. Never silently merge identities.
       await database.transaction('rw', database.tables, async () => {
-        for (const table of database.tables) await table.clear();
+        for (const table of database.tables) {
+          await table.clear();
+        }
         await database.teams.bulkAdd(data.teams);
         await database.players.bulkAdd(data.players);
         await database.matches.bulkAdd(data.matches);

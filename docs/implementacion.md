@@ -104,3 +104,7 @@ La evaluación reproducible del corpus español y sus límites se conservan en `
 ## Sustituciones (17 de octubre de 2026)
 
 Se añade el duodécimo evento, Sustitución, tanto manual como por voz. «Cambio» es una palabra clave española, junto con «sustitución»; los siete idiomas tienen vocabulario de cambio y roles de entrada/salida, también incluido en las pistas de Whistle. El participante principal sale y el relacionado entra, siempre del mismo equipo. Se guardan ambos, se muestran en registro y PDF y se conservan al restaurar ZIP/JSON. Las estadísticas cuentan cambios por equipo y entradas/salidas por jugador; no calculan tiempo en pista. El mismo jugador conocido no puede salir y entrar en el mismo cambio: queda pendiente. Se añaden 45 transcripciones sintéticas (15 familias) al dataset, que pasa a 645 muestras y 12 tipos.
+
+## Refactorización de legibilidad (17 de octubre de 2026)
+
+Se aplica formato automático al código, se añaden comprobaciones de formato y detección de importaciones/parámetros sin uso, y se separan las pantallas de App.tsx. El intérprete queda organizado por fases en voice/analysis; vocabularios, pistas de Whistle y formas numéricas están agrupados por idioma. Los auxiliares históricos de Needle quedan en voice/legacy. Las 645 respuestas anteriores, con advertencias y coincidencias, se conservan como referencia de regresión. voice:compare permite comprobar equivalencia y rendimiento frente al commit 6805b02. La guía docs/lectura-del-codigo.md explica el recorrido y la edición de reglas.

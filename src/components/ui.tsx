@@ -18,11 +18,13 @@ export function useRoute() {
   return route;
 }
 export function useAction() {
-  const [busy, setBusy] = useState(false),
-    [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
   const lock = useRef(false);
   const run = async (action: () => Promise<unknown>) => {
-    if (lock.current) return;
+    if (lock.current) {
+      return;
+    }
     lock.current = true;
     setBusy(true);
     setError('');
@@ -127,26 +129,26 @@ export function Confirm({
   close: () => void;
   danger?: boolean;
 }) {
-  const a = useAction();
+  const action = useAction();
   return (
-    <Modal title={title} close={() => !a.busy && close()}>
+    <Modal title={title} close={() => !action.busy && close()}>
       <p>{tr(text)}</p>
-      <ErrorMessage text={a.error} />
+      <ErrorMessage text={action.error} />
       <div className="actions">
-        <button disabled={a.busy} onClick={close}>
+        <button disabled={action.busy} onClick={close}>
           {tr('Cancelar')}
         </button>
         <button
           className={danger ? 'danger' : 'primary'}
-          disabled={a.busy}
+          disabled={action.busy}
           onClick={() =>
-            a.run(async () => {
+            action.run(async () => {
               await confirm();
               close();
             })
           }
         >
-          {a.busy ? tr('Guardando…') : tr('Confirmar')}
+          {action.busy ? tr('Guardando…') : tr('Confirmar')}
         </button>
       </div>
     </Modal>

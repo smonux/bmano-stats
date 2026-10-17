@@ -17,15 +17,15 @@ export function ExclusionTimers({
   onDialogChange: (open: boolean) => void;
 }) {
   const timers = match.exclusions ?? [null, null, null];
-  const [editing, setEditing] = useState<number | null>(null),
-    [clearing, setClearing] = useState<number | null>(null);
-  const [teamId, setTeam] = useState(match.localTeamId),
-    [dorsal, setDorsal] = useState('');
-  const [sound, setSound] = useState(false),
-    [soundError, setSoundError] = useState('');
-  const audio = useRef<AudioContext | null>(null),
-    announced = useRef(new Set<string>()),
-    a = useAction();
+  const [editing, setEditing] = useState<number | null>(null);
+  const [clearing, setClearing] = useState<number | null>(null);
+  const [teamId, setTeam] = useState(match.localTeamId);
+  const [dorsal, setDorsal] = useState('');
+  const [sound, setSound] = useState(false);
+  const [soundError, setSoundError] = useState('');
+  const audio = useRef<AudioContext | null>(null);
+  const announced = useRef(new Set<string>());
+  const action = useAction();
   useEffect(
     () => () => {
       void audio.current?.close();
@@ -37,13 +37,13 @@ export function ExclusionTimers({
     return () => onDialogChange(false);
   }, [editing, clearing, onDialogChange]);
   useEffect(() => {
-    for (const timer of timers)
+    for (const timer of timers) {
       if (timer && exclusionRemaining(timer, now) === 0 && !announced.current.has(timer.id)) {
         announced.current.add(timer.id);
         if (sound && audio.current?.state === 'running') {
-          const ctx = audio.current,
-            osc = ctx.createOscillator(),
-            gain = ctx.createGain();
+          const ctx = audio.current;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
           osc.frequency.value = 880;
           gain.gain.setValueAtTime(0.15, ctx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
@@ -53,6 +53,7 @@ export function ExclusionTimers({
           osc.stop(ctx.currentTime + 0.8);
         }
       }
+    }
   }, [timers, now, sound]);
   const toggleSound = async () => {
     if (sound) {
@@ -62,7 +63,9 @@ export function ExclusionTimers({
     try {
       audio.current ??= new AudioContext();
       await audio.current.resume();
-      if (audio.current.state !== 'running') throw new Error();
+      if (audio.current.state !== 'running') {
+        throw new Error();
+      }
       setSound(true);
       setSoundError('');
     } catch {
@@ -80,9 +83,9 @@ export function ExclusionTimers({
       </div>
       <div className="exclusion-grid">
         {timers.map((timer, i) => {
-          const remaining = timer ? exclusionRemaining(timer, now) : 120000,
-            seconds = Math.ceil(remaining / 1000),
-            finished = Boolean(timer && remaining === 0);
+          const remaining = timer ? exclusionRemaining(timer, now) : 120000;
+          const seconds = Math.ceil(remaining / 1000);
+          const finished = Boolean(timer && remaining === 0);
           return (
             <div
               className={`exclusion-timer ${finished ? 'expired' : ''}`}
@@ -92,7 +95,7 @@ export function ExclusionTimers({
             >
               <button
                 className="timer-toggle"
-                disabled={a.busy || match.status === 'done'}
+                disabled={action.busy || match.status === 'done'}
                 aria-label={tr(
                   !timer ? 'Activar' : finished ? 'Liberar' : timer.running ? 'Parar' : 'Reanudar',
                 )}
@@ -102,8 +105,13 @@ export function ExclusionTimers({
                     setEditing(i);
                     setDorsal('');
                     setTeam(match.localTeamId);
-                  } else if (finished) a.run(() => repo.exclusion(match.id, i, 'clear'));
-                  else a.run(() => repo.exclusion(match.id, i, timer.running ? 'pause' : 'resume'));
+                  } else if (finished) {
+                    action.run(() => repo.exclusion(match.id, i, 'clear'));
+                  } else {
+                    action.run(() =>
+                      repo.exclusion(match.id, i, timer.running ? 'pause' : 'resume'),
+                    );
+                  }
                 }}
               >
                 <span className="timer-player">
@@ -140,7 +148,7 @@ export function ExclusionTimers({
               {timer && !finished && (
                 <button
                   className="timer-clear"
-                  disabled={a.busy || match.status === 'done'}
+                  disabled={action.busy || match.status === 'done'}
                   aria-label={tr('Liberar')}
                   onClick={() => setClearing(i)}
                 >
@@ -156,16 +164,16 @@ export function ExclusionTimers({
           'Sigue el reloj del partido. Mantén la aplicación abierta para recibir avisos. Registra la exclusión como evento aparte.',
         )}
       </p>
-      <ErrorMessage text={a.error || soundError} />
+      <ErrorMessage text={action.error || soundError} />
       {editing !== null && (
         <Modal
           title={tr('Exclusión {number}', { number: editing + 1 })}
-          close={() => !a.busy && setEditing(null)}
+          close={() => !action.busy && setEditing(null)}
         >
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              a.run(async () => {
+              action.run(async () => {
                 await repo.exclusion(match.id, editing, 'start', {
                   teamId,
                   dorsal: dorsal === '' ? null : Number(dorsal),
@@ -200,8 +208,8 @@ export function ExclusionTimers({
                 onChange={(e) => setDorsal(e.target.value.replace(/\D/g, ''))}
               />
             </label>
-            <ErrorMessage text={a.error} />
-            <button className="primary full" disabled={a.busy}>
+            <ErrorMessage text={action.error} />
+            <button className="primary full" disabled={action.busy}>
               {tr('Activar')} · 02:00
             </button>
           </form>

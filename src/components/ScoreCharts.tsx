@@ -21,9 +21,9 @@ export function ScoreCharts({ data, match }: { data: Snapshot; match: Match }) {
       </div>
       <div className="period-charts">
         {scoreTimelines(data, match).map((period) => {
-          const max = Math.max(5, Math.ceil(Math.max(...period.end) / 5) * 5),
-            x = (minute: number) => 34 + (minute / period.maxMinute) * 286,
-            y = (goals: number) => 142 - (goals / max) * 114;
+          const max = Math.max(5, Math.ceil(Math.max(...period.end) / 5) * 5);
+          const x = (minute: number) => 34 + (minute / period.maxMinute) * 286;
+          const y = (goals: number) => 142 - (goals / max) * 114;
           return (
             <figure key={period.period}>
               <figcaption>

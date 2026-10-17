@@ -11,7 +11,9 @@ export type PeriodTimeline = {
 };
 export function matchReport(data: Snapshot, matchId: string, now = Date.now()) {
   const match = data.matches.find((m) => m.id === matchId && !m.deletedAt);
-  if (!match) throw new Error('Partido no encontrado');
+  if (!match) {
+    throw new Error('Partido no encontrado');
+  }
   const events = data.events
     .filter((e) => e.matchId === matchId && !e.deletedAt)
     .sort(chronological);
@@ -34,8 +36,8 @@ export function scoreTimelines(data: Snapshot, match: Match, now = Date.now()): 
     .sort(chronological);
   let score: [number, number] = [0, 0];
   return Array.from({ length: match.clock.period }, (_, i) => {
-    const period = i + 1,
-      start: [number, number] = [...score];
+    const period = i + 1;
+    const start: [number, number] = [...score];
     const inPeriod = events.filter((e) => e.period === period);
     const endMinute = Math.max(
       1,
@@ -51,8 +53,9 @@ export function scoreTimelines(data: Snapshot, match: Match, now = Date.now()): 
       if (
         event.type !== 'goal' ||
         ['pending', 'deleted'].includes(eventState(event, match, data.players))
-      )
+      ) {
         continue;
+      }
       const team = event.teamId === match.localTeamId ? 0 : 1;
       series[team].push(
         { minute: event.minute, goals: score[team] },

@@ -56,8 +56,8 @@ export function hasSeenWelcome() {
   }
 }
 export function Welcome({ close }: { close: () => void }) {
-  const [step, setStep] = useState(0),
-    slide = slides[step];
+  const [step, setStep] = useState(0);
+  const slide = slides[step];
   const finish = () => {
     try {
       localStorage.setItem('handball-welcome-v1', 'done');

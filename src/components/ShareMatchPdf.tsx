@@ -12,9 +12,9 @@ export function ShareMatchPdf({ data, matchId }: { data: Snapshot; matchId: stri
     matchId: string;
     language: string;
   } | null>(null);
-  const [error, setError] = useState(''),
-    [busy, setBusy] = useState(false),
-    [notice, setNotice] = useState('');
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState('');
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     setError('');
@@ -23,8 +23,11 @@ export function ShareMatchPdf({ data, matchId }: { data: Snapshot; matchId: stri
       type: 'module',
     });
     worker.onmessage = (event: MessageEvent<{ file?: File; error?: boolean }>) => {
-      if (event.data.file) setPrepared({ file: event.data.file, data, matchId, language });
-      else setError(tr('No se pudo generar el PDF.'));
+      if (event.data.file) {
+        setPrepared({ file: event.data.file, data, matchId, language });
+      } else {
+        setError(tr('No se pudo generar el PDF.'));
+      }
     };
     worker.onerror = (event) => {
       event.preventDefault();
@@ -38,8 +41,8 @@ export function ShareMatchPdf({ data, matchId }: { data: Snapshot; matchId: stri
       ? prepared.file
       : null;
   const download = (file: File) => {
-    const url = URL.createObjectURL(file),
-      a = document.createElement('a');
+    const url = URL.createObjectURL(file);
+    const a = document.createElement('a');
     a.href = url;
     a.download = file.name;
     a.click();
@@ -47,16 +50,22 @@ export function ShareMatchPdf({ data, matchId }: { data: Snapshot; matchId: stri
     setNotice(tr('PDF descargado. Puedes compartirlo desde tus archivos.'));
   };
   const share = async () => {
-    if (!file || busy) return;
+    if (!file || busy) {
+      return;
+    }
     setBusy(true);
     setNotice('');
     setError('');
     try {
-      if (navigator.canShare?.({ files: [file] }) && navigator.share)
+      if (navigator.canShare?.({ files: [file] }) && navigator.share) {
         await navigator.share({ files: [file], title: tr('Estadísticas del partido') });
-      else download(file);
+      } else {
+        download(file);
+      }
     } catch (reason) {
-      if (!(reason instanceof DOMException && reason.name === 'AbortError')) download(file);
+      if (!(reason instanceof DOMException && reason.name === 'AbortError')) {
+        download(file);
+      }
     } finally {
       setBusy(false);
     }

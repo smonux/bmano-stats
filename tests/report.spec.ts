@@ -20,13 +20,11 @@ test('active match shares a PDF snapshot; completed match downloads one, also of
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/#/ajustes');
-  await page
-    .getByLabel('Importar copia', { exact: true })
-    .setInputFiles({
-      name: 'fixture.json',
-      mimeType: 'application/json',
-      buffer: Buffer.from(JSON.stringify(reportFixture())),
-    });
+  await page.getByLabel('Importar copia', { exact: true }).setInputFiles({
+    name: 'fixture.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(reportFixture())),
+  });
   await page.getByRole('dialog').getByRole('button', { name: 'Confirmar', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.goto('/#/partidos/report-match');
@@ -110,13 +108,11 @@ test('a long match paginates compact events and handles long names', async ({ pa
     minute: Math.floor((index % 60) / 2) + 1,
   }));
   await page.goto('/#/ajustes');
-  await page
-    .getByLabel('Importar copia', { exact: true })
-    .setInputFiles({
-      name: 'long.json',
-      mimeType: 'application/json',
-      buffer: Buffer.from(JSON.stringify(data)),
-    });
+  await page.getByLabel('Importar copia', { exact: true }).setInputFiles({
+    name: 'long.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(data)),
+  });
   await page.getByRole('dialog').getByRole('button', { name: 'Confirmar', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.goto('/#/partidos/report-match');

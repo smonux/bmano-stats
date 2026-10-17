@@ -1,6 +1,6 @@
 {
   "referenceCommit": "6805b024d6284a0f935988726d182bda9ef9faf2",
-  "date": "2026-10-17T05:44:17.491Z",
+  "date": "2026-10-17T05:48:53.158Z",
   "runtime": "v22.22.1",
   "method": "Same process, warmed interpreters, 12 alternating full-corpus rounds. Text only; no audio/Whistle timing.",
   "preserved": {
@@ -11,21 +11,21 @@
     "numberDictionaries": 7
   },
   "implementationSha256": {
-    "before": "24f0bbc0bda5c06a4d40d8290fbb753f4716f56bc8300d3baec9c3f282a12cfc",
+    "before": "b2698ca92d7807388f7260fcbba02890df75cfcbff585f9dd759ba4c22ffe5e5",
     "after": "ad4bf47fe9f162644fb2ba73b5304665c988d27e30cd6cf9a032cc4e4f20a7b1"
   },
   "timingMs": {
     "before": {
       "samples": 7740,
-      "p50": 0.15012799999999515,
-      "p95": 0.4463269999998829,
-      "mean": 0.1815421810077533
+      "p50": 0.14987100000007558,
+      "p95": 0.4427980000000389,
+      "mean": 0.18273079573643397
     },
     "after": {
       "samples": 7740,
-      "p50": 0.1232279999999264,
-      "p95": 0.36316099999999096,
-      "mean": 0.1635930795865647
+      "p50": 0.12655499999982567,
+      "p95": 0.3559700000000703,
+      "mean": 0.1626470582687355
     }
   }
 }

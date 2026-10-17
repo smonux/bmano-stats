@@ -70,8 +70,8 @@ test('real Whistle and deterministic rules: microphone to reviewed event, then r
     .poll(() =>
       editor.getByRole('listbox', { name: 'Evento', exact: true }).evaluate((el) => {
         const selected = el.querySelector('[aria-selected=true]')!;
-        const a = selected.getBoundingClientRect(),
-          b = el.getBoundingClientRect();
+        const a = selected.getBoundingClientRect();
+        const b = el.getBoundingClientRect();
         return Math.abs(a.top + a.height / 2 - b.top - b.height / 2);
       }),
     )

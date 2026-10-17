@@ -10,11 +10,14 @@ function loadFonts() {
   return (fonts ??= Promise.all(
     ['handball-sans.ttf', 'handball-sans-bold.ttf'].map(async (name) => {
       const response = await fetch(`${import.meta.env.BASE_URL}fonts/${name}`);
-      if (!response.ok) throw new Error('No se pudo generar el PDF.');
+      if (!response.ok) {
+        throw new Error('No se pudo generar el PDF.');
+      }
       const bytes = new Uint8Array(await response.arrayBuffer());
       let text = '';
-      for (let i = 0; i < bytes.length; i += 8192)
+      for (let i = 0; i < bytes.length; i += 8192) {
         text += String.fromCharCode(...bytes.subarray(i, i + 8192));
+      }
       return btoa(text);
     }),
   ).catch((error) => {
@@ -28,9 +31,10 @@ export async function createMatchPdf(
   matchId: string,
   language: Language = getLanguage(),
 ): Promise<File> {
-  const fontData = await loadFonts(),
-    report = matchReport(data, matchId),
-    t = (text: string, values: Record<string, string | number> = {}) => tr(text, values, language);
+  const fontData = await loadFonts();
+  const report = matchReport(data, matchId);
+  const t = (text: string, values: Record<string, string | number> = {}) =>
+    tr(text, values, language);
   const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true });
   for (const [index, name] of ['normal', 'bold'].entries()) {
     doc.addFileToVFS(`handball-${name}.ttf`, fontData[index]);
@@ -42,18 +46,20 @@ export async function createMatchPdf(
     subject: t('Estadísticas del partido'),
     creator: 'handballstats',
   });
-  const ink: [number, number, number] = [23, 23, 23],
-    yellow: [number, number, number] = [255, 214, 0];
-  const margin = 12,
-    width = 186,
-    bottom = 282;
+  const ink: [number, number, number] = [23, 23, 23];
+  const yellow: [number, number, number] = [255, 214, 0];
+  const margin = 12;
+  const width = 186;
+  const bottom = 282;
   let y = 0;
   const newPage = () => {
     doc.addPage();
     y = 19;
   };
   const room = (height: number) => {
-    if (y + height > bottom) newPage();
+    if (y + height > bottom) {
+      newPage();
+    }
   };
   const title = (text: string) => {
     room(25);
@@ -157,11 +163,11 @@ export async function createMatchPdf(
     String(totals[1][metric]),
   ]);
   pairs.push([t('Eficacia de tiro'), efficacy(totals[0]), efficacy(totals[1])]);
-  const middle = Math.ceil(pairs.length / 2),
-    rows = Array.from({ length: middle }, (_, i) => [
-      ...pairs[i],
-      ...(pairs[i + middle] ?? ['', '', '']),
-    ]);
+  const middle = Math.ceil(pairs.length / 2);
+  const rows = Array.from({ length: middle }, (_, i) => [
+    ...pairs[i],
+    ...(pairs[i + middle] ?? ['', '', '']),
+  ]);
   table([t('Estadísticas'), '1', '2', t('Estadísticas'), '1', '2'], rows, {
     columnStyles: {
       0: { cellWidth: 64 },
@@ -234,18 +240,19 @@ export async function createMatchPdf(
         !playerCore.includes(metric) &&
         players.some((player) => report.stats.players[player.id][metric]),
     );
-    if (extra.length)
+    if (extra.length) {
       table(
         [t('Jugador'), t('Otras estadísticas')],
         players.flatMap((player) => {
-          const stats = report.stats.players[player.id],
-            values = extra
-              .filter((metric) => stats[metric])
-              .map((metric) => `${nameOf(metric)}: ${stats[metric]}`);
+          const stats = report.stats.players[player.id];
+          const values = extra
+            .filter((metric) => stats[metric])
+            .map((metric) => `${nameOf(metric)}: ${stats[metric]}`);
           return values.length ? [[playerName(player.id), values.join(' · ')]] : [];
         }),
         { columnStyles: { 0: { cellWidth: 66 } } },
       );
+    }
   }
   doc.setFont('Handball', 'normal');
   doc.setFontSize(6.5);
@@ -262,15 +269,15 @@ export async function createMatchPdf(
   doc.text(t('Marcador acumulado. Cada escalón corresponde a un gol en su minuto.'), margin, y);
   y += 5;
   const chart = (period: PeriodTimeline, left: number, top: number) => {
-    const cw = 90,
-      ch = 48,
-      plotX = left + 8,
-      plotY = top + 8,
-      pw = cw - 11,
-      ph = ch - 14;
-    const maxGoals = Math.max(5, Math.ceil(Math.max(...period.end) / 5) * 5),
-      x = (minute: number) => plotX + (minute / period.maxMinute) * pw,
-      py = (goals: number) => plotY + ph - (goals / maxGoals) * ph;
+    const cw = 90;
+    const ch = 48;
+    const plotX = left + 8;
+    const plotY = top + 8;
+    const pw = cw - 11;
+    const ph = ch - 14;
+    const maxGoals = Math.max(5, Math.ceil(Math.max(...period.end) / 5) * 5);
+    const x = (minute: number) => plotX + (minute / period.maxMinute) * pw;
+    const py = (goals: number) => plotY + ph - (goals / maxGoals) * ph;
     doc.setFont('Handball', 'bold');
     doc.setFontSize(8);
     doc.setTextColor(...ink);
@@ -300,28 +307,34 @@ export async function createMatchPdf(
         doc.setDrawColor(...color);
         doc.setLineWidth(lineWidth);
         doc.setLineDashPattern(index ? [1.4, 0.8] : [], 0);
-        for (let i = 1; i < points.length; i++)
+        for (let i = 1; i < points.length; i++) {
           doc.line(
             x(points[i - 1].minute),
             py(points[i - 1].goals),
             x(points[i].minute),
             py(points[i].goals),
           );
+        }
       };
-      if (!index) draw([125, 105, 0], 0.75);
+      if (!index) {
+        draw([125, 105, 0], 0.75);
+      }
       draw(index ? ink : yellow, 0.4);
       doc.setLineDashPattern([], 0);
       doc.setDrawColor(...ink);
       doc.setFillColor(...(index ? ink : yellow));
       doc.setLineWidth(0.15);
-      for (const point of points.filter((point) => point.goal))
+      for (const point of points.filter((point) => point.goal)) {
         doc.circle(x(point.minute), py(point.goals), 0.6, 'FD');
+      }
     });
   };
   for (let i = 0; i < report.periods.length; i += 2) {
     room(58);
     chart(report.periods[i], margin, y);
-    if (report.periods[i + 1]) chart(report.periods[i + 1], margin + 96, y);
+    if (report.periods[i + 1]) {
+      chart(report.periods[i + 1], margin + 96, y);
+    }
     y += 54;
   }
   doc.setFontSize(7);

@@ -51,6 +51,6 @@ npm run dataset:build
 npm run dataset:check
 ```
 
-La compilación deriva el esquema de `src/voice/interpretation.ts`, valida campos, límites, combinaciones de metadatos, nombres literales y evidencia numérica, comprueba la cobertura y genera los JSONL, estadísticas y ZIP. La comprobación repite esas validaciones y exige que los archivos publicados coincidan con la fuente, sin reescribirlos. No descarga ni abre Whistle o Needle.
+La compilación deriva el esquema de `src/voice/schema.ts`, valida campos, límites, combinaciones de metadatos, nombres literales y evidencia numérica, comprueba la cobertura y genera los JSONL, estadísticas y ZIP. La comprobación repite esas validaciones y exige que los archivos publicados coincidan con la fuente, sin reescribirlos. No descarga ni abre Whistle o Needle.
 
 Las comprobaciones automáticas detectan errores de estructura y algunas incoherencias; la asignación de roles y el sentido de las frases requieren revisión semántica. Para medir precisión o decidir un entrenamiento se necesitará ampliar el conjunto con audio consentido y transcripciones reales de Whistle, ruido de pista, voces y sesiones diferentes, manteniendo separados los partidos y hablantes de evaluación.

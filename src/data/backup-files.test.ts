@@ -75,8 +75,9 @@ test('invalid archives, ambiguous JSONs and broken references fail before any da
     zipSync({ 'text.txt': strToU8('x') }),
     zipSync({ 'one.json': strToU8('{}'), 'two.json': strToU8('{}') }),
     zipSync({ 'data.json': strToU8('{}') }),
-  ])
+  ]) {
     await expect(readBackupFile(file(bytes))).rejects.toThrow();
+  }
   const broken = { ...backup, events: [{ ...backup.events[0], matchId: 'missing' }] };
   await expect(readBackupFile(file(strToU8(JSON.stringify(broken))))).rejects.toThrow(
     'Copia no válida',

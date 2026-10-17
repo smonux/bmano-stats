@@ -157,35 +157,43 @@ export const chronological = (a: GameEvent, b: GameEvent) =>
   a.period - b.period || a.minute - b.minute || a.orderKey - b.orderKey || a.id.localeCompare(b.id);
 
 export function cleanEvent(event: GameEvent): GameEvent {
-  const cfg = event.type ? definitions[event.type] : null;
+  const eventDefinition = event.type ? definitions[event.type] : null;
   const metadata: GameEvent['metadata'] = {};
-  if (cfg?.penalty && event.metadata.penalty !== undefined)
+  if (eventDefinition?.penalty && event.metadata.penalty !== undefined) {
     metadata.penalty = event.metadata.penalty;
-  if (event.type === 'disqualification' && event.metadata.blue !== undefined)
+  }
+  if (event.type === 'disqualification' && event.metadata.blue !== undefined) {
     metadata.blue = event.metadata.blue;
-  if (event.type === 'infraction' && event.metadata.infraction)
+  }
+  if (event.type === 'infraction' && event.metadata.infraction) {
     metadata.infraction = event.metadata.infraction;
+  }
   return {
     ...event,
     metadata,
     primaryPlayerId:
-      event.type === 'passive' || !cfg || !event.teamId ? null : event.primaryPlayerId,
-    relatedPlayerId: cfg?.related && event.teamId ? event.relatedPlayerId : null,
+      event.type === 'passive' || !eventDefinition || !event.teamId ? null : event.primaryPlayerId,
+    relatedPlayerId: eventDefinition?.related && event.teamId ? event.relatedPlayerId : null,
   };
 }
 
 export function eventIssues(event: GameEvent, match: Match, players: Player[]): string[] {
   const issues: string[] = [];
-  if (!event.type) issues.push('Selecciona un evento');
-  if (!event.teamId || ![match.localTeamId, match.visitorTeamId].includes(event.teamId))
+  if (!event.type) {
+    issues.push('Selecciona un evento');
+  }
+  if (!event.teamId || ![match.localTeamId, match.visitorTeamId].includes(event.teamId)) {
     issues.push('Selecciona un equipo');
-  if (event.type === 'infraction' && !event.metadata.infraction)
+  }
+  if (event.type === 'infraction' && !event.metadata.infraction) {
     issues.push('Selecciona el tipo de infracción');
+  }
   if (
     event.primaryPlayerId &&
     !players.some((p) => p.id === event.primaryPlayerId && p.teamId === event.teamId)
-  )
+  ) {
     issues.push('Jugador principal de otro equipo');
+  }
   if (
     event.relatedPlayerId &&
     event.type &&
@@ -195,30 +203,38 @@ export function eventIssues(event: GameEvent, match: Match, players: Player[]): 
         p.id === event.relatedPlayerId &&
         p.teamId === relatedTeam(match, event.type!, event.teamId!),
     )
-  )
+  ) {
     issues.push('Jugador relacionado de otro equipo');
+  }
   if (
     event.type === 'substitution' &&
     event.primaryPlayerId &&
     event.primaryPlayerId === event.relatedPlayerId &&
     players.some((p) => p.id === event.primaryPlayerId && !p.isUnknown)
-  )
+  ) {
     issues.push('El jugador que sale y el que entra deben ser distintos.');
+  }
   return issues;
 }
 export function eventState(event: GameEvent, match: Match, players: Player[]) {
-  if (event.deletedAt !== null) return 'deleted';
-  if (eventIssues(event, match, players).length) return 'pending';
+  if (event.deletedAt !== null) {
+    return 'deleted';
+  }
+  if (eventIssues(event, match, players).length) {
+    return 'pending';
+  }
   if (
     event.type !== 'passive' &&
     (!event.primaryPlayerId || players.find((p) => p.id === event.primaryPlayerId)?.isUnknown)
-  )
+  ) {
     return 'unidentified';
+  }
   if (
     event.type === 'substitution' &&
     (!event.relatedPlayerId || players.find((p) => p.id === event.relatedPlayerId)?.isUnknown)
-  )
+  ) {
     return 'unidentified';
+  }
   return 'valid';
 }
 export const elapsed = (clock: Clock, now = Date.now()) =>
@@ -228,15 +244,21 @@ export function changeClock(
   action: 'pause' | 'resume' | 'period' | 'finish',
   now = Date.now(),
 ): Match {
-  if (match.status === 'done')
+  if (match.status === 'done') {
     throw new Error(
       'El partido ha finalizado. Puedes corregir sus eventos, pero el reloj está detenido.',
     );
+  }
   let clock = { ...match.clock };
-  if (action === 'resume' && clock.startedAt === null) clock.startedAt = now;
-  if (action === 'pause' || action === 'finish')
+  if (action === 'resume' && clock.startedAt === null) {
+    clock.startedAt = now;
+  }
+  if (action === 'pause' || action === 'finish') {
     clock = { ...clock, elapsedMs: elapsed(clock, now), startedAt: null };
-  if (action === 'period') clock = { period: clock.period + 1, elapsedMs: 0, startedAt: now };
+  }
+  if (action === 'period') {
+    clock = { period: clock.period + 1, elapsedMs: 0, startedAt: now };
+  }
   return {
     ...match,
     exclusions: syncExclusions(match, clock.startedAt !== null, now, action === 'finish'),
@@ -248,72 +270,89 @@ export function changeClock(
 
 export function validateBackup(input: unknown): Backup {
   const data = backupSchema.parse(input);
-  for (const collection of [data.teams, data.players, data.matches, data.events])
-    if (new Set(collection.map((x) => x.id)).size !== collection.length)
+  for (const collection of [data.teams, data.players, data.matches, data.events]) {
+    if (new Set(collection.map((x) => x.id)).size !== collection.length) {
       throw new Error('La copia contiene identificadores duplicados.');
+    }
+  }
   const teams = new Map(data.teams.map((t) => [t.id, t]));
   const players = new Map(data.players.map((p) => [p.id, p]));
   const matches = new Map(data.matches.map((m) => [m.id, m]));
   const keys = new Set<string>();
   for (const t of data.teams) {
-    if (t.nameKey !== nameKey(t.name) || keys.has(t.nameKey))
+    if (t.nameKey !== nameKey(t.name) || keys.has(t.nameKey)) {
       throw new Error('Los nombres de equipo no son únicos o válidos.');
+    }
     keys.add(t.nameKey);
     const u = players.get(unknownId(t.id));
-    if (!u?.isUnknown || u.teamId !== t.id || u.dorsal !== null || u.deletedAt !== null)
+    if (!u?.isUnknown || u.teamId !== t.id || u.dorsal !== null || u.deletedAt !== null) {
       throw new Error('Falta el jugador virtual de un equipo.');
+    }
   }
   keys.clear();
   for (const p of data.players) {
     if (
       !teams.has(p.teamId) ||
       (p.isUnknown ? p.id !== unknownId(p.teamId) || p.dorsal !== null : p.dorsal === null)
-    )
+    ) {
       throw new Error('Jugador o equipo inválido en la copia.');
+    }
     const key = `${p.teamId}:${p.dorsal}`;
-    if (keys.has(key)) throw new Error('La copia contiene dorsales duplicados.');
+    if (keys.has(key)) {
+      throw new Error('La copia contiene dorsales duplicados.');
+    }
     keys.add(key);
   }
   for (const m of data.matches) {
-    for (const timer of m.exclusions ?? [])
+    for (const timer of m.exclusions ?? []) {
       if (
         timer &&
         (![m.localTeamId, m.visitorTeamId].includes(timer.teamId) ||
           (timer.startedAt !== null &&
             (!timer.running || m.clock.startedAt === null || m.status === 'done')))
-      )
+      ) {
         throw new Error('Temporizador de exclusión inválido.');
+      }
+    }
     if (
       !teams.has(m.localTeamId) ||
       !teams.has(m.visitorTeamId) ||
       m.localTeamId === m.visitorTeamId ||
       (m.status === 'done' && m.clock.startedAt !== null)
-    )
+    ) {
       throw new Error('Partido inválido en la copia.');
-    if (new Date(m.date + 'T12:00:00Z').toISOString().slice(0, 10) !== m.date)
+    }
+    if (new Date(m.date + 'T12:00:00Z').toISOString().slice(0, 10) !== m.date) {
       throw new Error('Fecha de partido inválida.');
+    }
   }
   for (const e of data.events) {
     const m = matches.get(e.matchId);
-    if (!m || (e.teamId !== null && ![m.localTeamId, m.visitorTeamId].includes(e.teamId)))
+    if (!m || (e.teamId !== null && ![m.localTeamId, m.visitorTeamId].includes(e.teamId))) {
       throw new Error('Evento con referencias inválidas.');
-    if (e.period > m.clock.period) throw new Error('Evento fuera de los tiempos del partido.');
-    if (e.primaryPlayerId && players.get(e.primaryPlayerId)?.teamId !== e.teamId)
+    }
+    if (e.period > m.clock.period) {
+      throw new Error('Evento fuera de los tiempos del partido.');
+    }
+    if (e.primaryPlayerId && players.get(e.primaryPlayerId)?.teamId !== e.teamId) {
       throw new Error('Jugador principal inválido.');
+    }
     if (
       e.relatedPlayerId &&
       (!e.type ||
         !e.teamId ||
         players.get(e.relatedPlayerId)?.teamId !== relatedTeam(m, e.type, e.teamId))
-    )
+    ) {
       throw new Error('Jugador relacionado inválido.');
+    }
     const clean = cleanEvent(e);
     if (
       JSON.stringify(clean.metadata) !== JSON.stringify(e.metadata) ||
       clean.primaryPlayerId !== e.primaryPlayerId ||
       clean.relatedPlayerId !== e.relatedPlayerId
-    )
+    ) {
       throw new Error('Evento con campos incompatibles.');
+    }
   }
   return data;
 }

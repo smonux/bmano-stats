@@ -69,11 +69,12 @@ export function calculate(matches: Match[], events: GameEvent[], players: Player
   };
   for (const e of events) {
     const m = byMatch.get(e.matchId);
-    if (!m || ['pending', 'deleted'].includes(eventState(e, m, players)) || !e.type || !e.teamId)
+    if (!m || ['pending', 'deleted'].includes(eventState(e, m, players)) || !e.type || !e.teamId) {
       continue;
-    const t = e.teamId,
-      other = opponent(m, t),
-      p = e.primaryPlayerId ?? unknownId(t);
+    }
+    const t = e.teamId;
+    const other = opponent(m, t);
+    const p = e.primaryPlayerId ?? unknownId(t);
     const r = e.relatedPlayerId ?? unknownId(relatedTeam(m, e.type, t));
     const own = (...keys: Metric[]) =>
       keys.forEach((k) => {
@@ -90,8 +91,12 @@ export function calculate(matches: Match[], events: GameEvent[], players: Player
       case 'goal':
         own('goals', 'shots');
         rivalTeam('goalsReceived', 'shotsReceived');
-        if (e.relatedPlayerId) add(individual, r, 'assists');
-        if (e.metadata.penalty) own('penaltyGoals');
+        if (e.relatedPlayerId) {
+          add(individual, r, 'assists');
+        }
+        if (e.metadata.penalty) {
+          own('penaltyGoals');
+        }
         break;
       case 'save':
         own('saves');
@@ -108,7 +113,9 @@ export function calculate(matches: Match[], events: GameEvent[], players: Player
       case 'miss':
         own('shots', 'misses');
         rivalTeam('shotsReceived');
-        if (e.metadata.penalty) own('penaltyMisses');
+        if (e.metadata.penalty) {
+          own('penaltyMisses');
+        }
         break;
       case 'loss':
         own('losses');
@@ -124,15 +131,18 @@ export function calculate(matches: Match[], events: GameEvent[], players: Player
         break;
       case 'exclusion':
         own('exclusions');
-        if (e.relatedPlayerId && !players.find((p) => p.id === r)?.isUnknown)
+        if (e.relatedPlayerId && !players.find((p) => p.id === r)?.isUnknown) {
           add(individual, r, 'forcedExclusions');
+        }
         break;
       case 'yellow':
         own('yellow');
         break;
       case 'disqualification':
         own('disqualifications');
-        if (e.metadata.blue) own('blue');
+        if (e.metadata.blue) {
+          own('blue');
+        }
         break;
       case 'passive':
         add(teams, t, 'passives');

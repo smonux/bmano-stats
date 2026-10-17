@@ -38,6 +38,8 @@ La integración nativa y reordenación por arrastre siguen pendientes. La voz es
 ## Validación
 
 ```sh
+npm run format:check
+npm run check
 npm test
 npm run build
 npx playwright install chromium
@@ -51,7 +53,10 @@ Si Chromium ya está instalado, se puede indicar su ejecutable con `CHROMIUM_PAT
 - `src/domain`: modelo, validación de copias, reloj y reglas estadísticas.
 - `src/data`: transacciones y persistencia local.
 - `src/components`: editor, estadísticas y componentes de interfaz.
-- `src/App.tsx`: pantallas y navegación.
+- `src/App.tsx`: navegación, carga de datos y estructura de la aplicación.
+- `src/pages`: pantallas de la aplicación.
+- `src/voice/analysis` y `src/voice/languages`: fases del intérprete y vocabulario por idioma.
+- [Guía para leer y modificar el código](docs/lectura-del-codigo.md).
 - `tests`: pruebas del recorrido de usuario.
 - [Especificación de diseño](docs/diseno/diseno.md).
 - [Wireframes y fuentes](docs/diseno/wireframes/index.html).
@@ -86,3 +91,7 @@ La generación ocurre en un worker para mantener libre la interfaz. Cuando el na
 ## Dataset de voz en español
 
 El [dataset de frases](datasets/voz-es/README.md) contiene 645 ejemplos sintéticos anotados para los 12 eventos, con dorsales en cifras y palabras y nombres ficticios de hombre y de mujer. Incluye casos de rechazo y particiones separadas por familia. Está disponible como [ZIP](datasets/voz-es.zip). `npm run dataset:build` regenera los archivos y `npm run dataset:check` valida su cobertura y correspondencia con el esquema actual. Su preparación no entrena modelos ni modifica Whistle.
+
+## Trabajar con el código
+
+`npm run format` aplica el formato automático; `npm run format:check` lo comprueba. TypeScript también detecta importaciones y parámetros sin uso. La [guía de lectura](docs/lectura-del-codigo.md) explica las pantallas, las fases de voz y cómo añadir una palabra clave. `npm run voice:compare` compara el intérprete actual con la referencia anterior a la refactorización, incluidos resultados, advertencias, vocabularios y rendimiento de texto.

@@ -1,6 +1,8 @@
 /** UUID v4, including HTTP contexts where randomUUID is not exposed. */
 export function createId(): string {
-  if (typeof globalThis.crypto.randomUUID === 'function') return globalThis.crypto.randomUUID();
+  if (typeof globalThis.crypto.randomUUID === 'function') {
+    return globalThis.crypto.randomUUID();
+  }
   const bytes = globalThis.crypto.getRandomValues(new Uint8Array(16));
   bytes[6] = (bytes[6] & 0x0f) | 0x40;
   bytes[8] = (bytes[8] & 0x3f) | 0x80;

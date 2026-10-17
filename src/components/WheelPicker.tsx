@@ -12,9 +12,9 @@ export function WheelPicker({
   options: { value: string; label: string }[];
   change: (value: string) => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null),
-    timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined),
-    id = useId();
+  const ref = useRef<HTMLDivElement>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const id = useId();
   const index = Math.max(
     0,
     options.findIndex((o) => o.value === value),
@@ -23,7 +23,9 @@ export function WheelPicker({
   latest.current = { options, change, value };
   useLayoutEffect(() => {
     const element = ref.current!;
-    if (Math.abs(element.scrollTop - index * rowHeight) > 1) element.scrollTop = index * rowHeight;
+    if (Math.abs(element.scrollTop - index * rowHeight) > 1) {
+      element.scrollTop = index * rowHeight;
+    }
   }, [index]);
   // A newly mounted dialog is still closed during layout effects; center again after showModal.
   useEffect(() => {
@@ -60,17 +62,26 @@ export function WheelPicker({
                   Math.round(ref.current!.scrollTop / rowHeight),
                 ),
               );
-              if (current.options[i].value !== current.value)
+              if (current.options[i].value !== current.value) {
                 current.change(current.options[i].value);
+              }
             }, 100);
           }}
           onKeyDown={(e) => {
             if (['ArrowDown', 'ArrowUp', 'Home', 'End', 'Enter', ' '].includes(e.key)) {
               e.preventDefault();
-              if (e.key === 'ArrowDown') select(index + 1);
-              if (e.key === 'ArrowUp') select(index - 1);
-              if (e.key === 'Home') select(0);
-              if (e.key === 'End') select(options.length - 1);
+              if (e.key === 'ArrowDown') {
+                select(index + 1);
+              }
+              if (e.key === 'ArrowUp') {
+                select(index - 1);
+              }
+              if (e.key === 'Home') {
+                select(0);
+              }
+              if (e.key === 'End') {
+                select(options.length - 1);
+              }
             }
           }}
         >

@@ -17,13 +17,11 @@ test('substitution editor preserves two teammates, statistics, PDF and ZIP resto
   const data = reportFixture();
   data.events = [];
   await page.goto('/#/ajustes');
-  await page
-    .getByLabel('Importar copia', { exact: true })
-    .setInputFiles({
-      name: 'match.json',
-      mimeType: 'application/json',
-      buffer: Buffer.from(JSON.stringify(data)),
-    });
+  await page.getByLabel('Importar copia', { exact: true }).setInputFiles({
+    name: 'match.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(data)),
+  });
   await page.getByRole('dialog').getByRole('button', { name: 'Confirmar', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.goto('/#/partidos/report-match');
@@ -86,11 +84,12 @@ test('substitution editor preserves two teammates, statistics, PDF and ZIP resto
   const restored = JSON.parse(strFromU8(unzipSync(bytes)['handball-stats.json']));
   expect(restored.events).toHaveLength(1);
   expect(restored.events[0].type).toBe('substitution');
-  for (const key of ['primaryPlayerId', 'relatedPlayerId'])
+  for (const key of ['primaryPlayerId', 'relatedPlayerId']) {
     expect(
       restored.players.find((player: { id: string }) => player.id === restored.events[0][key])
         .teamId,
     ).toBe('a');
+  }
   await page
     .getByLabel('Importar copia', { exact: true })
     .setInputFiles({ name: 'match.zip', mimeType: 'application/zip', buffer: bytes });

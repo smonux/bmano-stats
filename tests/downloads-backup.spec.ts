@@ -19,7 +19,9 @@ test('downloads only Whistle, reuses it for language changes and reloads offline
   await serveModels(context);
   const requests: string[] = [];
   page.on('request', (request) => {
-    if (request.url().endsWith('.cact')) requests.push(request.url());
+    if (request.url().endsWith('.cact')) {
+      requests.push(request.url());
+    }
   });
   await page.addInitScript(() => localStorage.setItem('handball-needle-depth', '20'));
   await page.goto('/#/ajustes');

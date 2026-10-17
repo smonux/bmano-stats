@@ -14,7 +14,7 @@ El editor conserva la transcripción literal, muestra tiempos separados de **Whi
 
 No se crea ninguna sesión de Needle ni se descargan sus pesos. El paquete `cactus-needle` 0.3.0 y su motor WASM compartido siguen siendo la dependencia usada para Whistle; el nombre del paquete o del WASM no implica que se esté ejecutando el modelo Needle. Los experimentos anteriores quedan en `docs/benchmarks/needle/` y scripts históricos, sin intervenir en desarrollo, compilación ni captura actual.
 
-El análisis de `src/voice/deterministic.ts` sigue estas fases:
+El punto de entrada `src/voice/deterministic.ts` coordina las fases de `src/voice/analysis/`. Los vocabularios están separados en `src/voice/languages/`, uno por idioma. La [guía de lectura del código](lectura-del-codigo.md) describe los módulos y las reglas de mantenimiento. El análisis conserva estas decisiones:
 
 1. **Evento:** busca palabras clave e inflexiones del idioma de captura, incluso fuera del inicio de la frase. Distingue el penalti de lanzamiento del penalti cometido. Una asistencia propone un gol con asistente; no inventa goleador. No se consulta una tabla de frases del dataset.
 2. **Aproximación:** solo si no hay evento literal, busca la mejor palabra clave próxima en ese idioma. Usa distancia de edición con transposiciones (uno o dos cambios según longitud), prefijos suficientemente largos y margen entre eventos competidores. «penal» es un alias de «penalti»; «exclucion» puede aproximarse a «exclusión». Si dos tipos compiten, deja el evento pendiente. Los nombres conocidos y nombres de club se excluyen de esa aproximación. Una advertencia visible identifica el resultado aproximado.
