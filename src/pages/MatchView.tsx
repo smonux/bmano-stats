@@ -1,3 +1,7 @@
+import {
+  MatchConfirmation,
+  type MatchConfirmationIntent,
+} from '../components/match/MatchConfirmation';
 import { EventFeed } from '../components/EventFeed';
 import { ExclusionTimers } from '../components/ExclusionTimers';
 import { tr } from '../i18n';
@@ -5,17 +9,16 @@ import { useEffect, useState } from 'react';
 import { Pause, Play, Plus, Trash2, Flag } from 'lucide-react';
 import { repo } from '../data/database';
 import { chronological, elapsed, type GameEvent, type Match, type Snapshot } from '../domain/model';
-import { Confirm, ErrorMessage, PageTitle, navigate, useAction } from '../components/ui';
+import { ErrorMessage, PageTitle, useAction } from '../components/ui';
 import { VoiceCapture } from '../components/VoiceCapture';
 import { EventEditor } from '../components/EventEditor';
 import { Statistics } from '../components/Statistics';
 import { teamName, formatMatchDate, matchScore } from '../presentation/matches';
-
 function MatchView({ data, match }: { data: Snapshot; match: Match }) {
   const [tab, setTab] = useState('events');
   const [editing, setEditing] = useState<GameEvent | 'new' | null>(null);
   const [pendingOnly, setPendingOnly] = useState(false);
-  const [confirm, setConfirm] = useState<'period' | 'finish' | 'delete' | GameEvent | null>(null);
+  const [confirm, setConfirm] = useState<MatchConfirmationIntent | null>(null);
   const [counterDialog, setCounterDialog] = useState(false);
   const action = useAction();
   const [now, setNow] = useState(Date.now());
@@ -24,10 +27,9 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
     return () => clearInterval(timer);
   }, []);
   const events = data.events
-    .filter((e) => e.matchId === match.id && !e.deletedAt)
+    .filter((event) => event.matchId === match.id && !event.deletedAt)
     .sort(chronological)
     .reverse();
-
   const scores = matchScore(data, match);
   return (
     <>
@@ -49,7 +51,10 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
             <h2>{teamName(data, match.localTeamId)}</h2>
           </div>
           <strong
-            aria-label={tr('Marcador {a} a {b}', { a: scores[0], b: scores[1] })}
+            aria-label={tr('Marcador {a} a {b}', {
+              a: scores[0],
+              b: scores[1],
+            })}
             className="score"
           >
             {scores[0]}
@@ -157,45 +162,9 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
         />
       )}{' '}
       {confirm && (
-        <Confirm
-          danger={confirm === 'delete' || typeof confirm === 'object'}
-          title={
-            confirm === 'period'
-              ? tr('Iniciar tiempo {number}', { number: match.clock.period + 1 })
-              : confirm === 'finish'
-                ? tr('Finalizar partido')
-                : confirm === 'delete'
-                  ? tr('Eliminar partido')
-                  : tr('Eliminar evento')
-          }
-          text={
-            confirm === 'period'
-              ? tr(
-                  'El minuto vuelve a cero y comienza el siguiente tiempo. Los eventos anteriores se conservan.',
-                )
-              : confirm === 'finish'
-                ? tr('Se detendrá el reloj. Podrás seguir corrigiendo los eventos del partido.')
-                : confirm === 'delete'
-                  ? tr(
-                      'El partido y sus eventos dejarán de aparecer y de contar en las estadísticas.',
-                    )
-                  : tr('Se retirarán todas las estadísticas derivadas de esta acción.')
-          }
-          close={() => setConfirm(null)}
-          confirm={async () => {
-            if (typeof confirm === 'object') {
-              await repo.deleteEvent(confirm.id);
-            } else if (confirm === 'delete') {
-              await repo.deleteMatch(match.id);
-              navigate('/partidos');
-            } else {
-              await repo.clock(match.id, confirm);
-            }
-          }}
-        />
+        <MatchConfirmation intent={confirm} match={match} close={() => setConfirm(null)} />
       )}
     </>
   );
 }
-
 export { MatchView };

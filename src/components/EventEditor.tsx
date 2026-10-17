@@ -1,3 +1,4 @@
+import { createEditorDraft } from './event-editor/draft';
 import { WheelPicker } from './WheelPicker';
 import { ParticipantPicker } from './event-editor/ParticipantPicker';
 import { EventMetadata } from './event-editor/EventMetadata';
@@ -5,7 +6,6 @@ import { tr } from '../i18n';
 import { useState } from 'react';
 import {
   definitions,
-  elapsed,
   eventTypes,
   relatedTeam,
   type EventType,
@@ -15,7 +15,6 @@ import {
 } from '../domain/model';
 import { repo, type EventDraft } from '../data/database';
 import { ErrorMessage, Modal, NumberWheel, useAction } from './ui';
-
 export function EventEditor({
   data,
   match,
@@ -30,31 +29,18 @@ export function EventEditor({
   event?: GameEvent;
   initialDraft?: EventDraft;
   voiceWarnings?: string[];
-  voiceTimings?: { whistleMs: number; rulesMs: number };
+  voiceTimings?: {
+    whistleMs: number;
+    rulesMs: number;
+  };
   close: () => void;
 }) {
-  const shirtNumberForPlayer = (id: string | null) =>
-    data.players.find((candidatePlayer) => candidatePlayer.id === id)?.dorsal?.toString() ?? '';
   const [draft, setDraft] = useState<EventDraft>(
-    () =>
-      initialDraft ?? {
-        id: event?.id,
-        expectedUpdatedAt: event?.updatedAt,
-        matchId: match.id,
-        type: event?.type ?? null,
-        teamId: event?.teamId ?? null,
-        primaryDorsal: shirtNumberForPlayer(event?.primaryPlayerId ?? null),
-        relatedDorsal: shirtNumberForPlayer(event?.relatedPlayerId ?? null),
-        minute: event?.minute ?? Math.min(999, Math.floor(elapsed(match.clock) / 60000)),
-        period: event?.period ?? match.clock.period,
-        metadata: event?.metadata ?? {},
-        note: event?.note ?? '',
-        rawText: event?.rawText ?? '',
-      },
+    () => initialDraft ?? createEditorDraft(data, match, event),
   );
   const action = useAction();
   const eventDefinition = draft.type ? definitions[draft.type] : null;
-  const teamName = (id: string) => data.teams.find((t) => t.id === id)?.name ?? '';
+  const teamName = (id: string) => data.teams.find((team) => team.id === id)?.name ?? '';
   const setType = (type: EventType | null) =>
     setDraft((previousDraft) => ({
       ...previousDraft,
@@ -101,8 +87,8 @@ export function EventEditor({
           )}
           {voiceWarnings && (
             <ul className="voice-warnings">
-              {voiceWarnings.map((w) => (
-                <li key={w}>{tr(w)}</li>
+              {voiceWarnings.map((warning) => (
+                <li key={warning}>{tr(warning)}</li>
               ))}
             </ul>
           )}
@@ -111,8 +97,14 @@ export function EventEditor({
               label={tr('Evento')}
               value={draft.type ?? ''}
               options={[
-                { value: '', label: tr('Seleccionar evento') },
-                ...eventTypes.map((value) => ({ value, label: tr(definitions[value].label) })),
+                {
+                  value: '',
+                  label: tr('Seleccionar evento'),
+                },
+                ...eventTypes.map((value) => ({
+                  value,
+                  label: tr(definitions[value].label),
+                })),
               ]}
               change={(value) => setType(value || null)}
             />
@@ -121,7 +113,12 @@ export function EventEditor({
               value={draft.minute}
               min={0}
               max={999}
-              onChange={(minute) => setDraft((previousDraft) => ({ ...previousDraft, minute }))}
+              onChange={(minute) =>
+                setDraft((previousDraft) => ({
+                  ...previousDraft,
+                  minute,
+                }))
+              }
             />
           </div>
           <div className="filter-row">
@@ -129,7 +126,10 @@ export function EventEditor({
               label={tr('Equipo')}
               value={draft.teamId ?? ''}
               options={[
-                { value: '', label: tr('Seleccionar equipo') },
+                {
+                  value: '',
+                  label: tr('Seleccionar equipo'),
+                },
                 ...[match.localTeamId, match.visitorTeamId].map((value) => ({
                   value,
                   label: teamName(value),
@@ -147,10 +147,15 @@ export function EventEditor({
             <WheelPicker
               label={tr('Tiempo')}
               value={String(draft.period)}
-              options={Array.from({ length: match.clock.period }, (_, index) => ({
-                value: String(index + 1),
-                label: tr('Tiempo') + ' ' + (index + 1),
-              }))}
+              options={Array.from(
+                {
+                  length: match.clock.period,
+                },
+                (_, index) => ({
+                  value: String(index + 1),
+                  label: tr('Tiempo') + ' ' + (index + 1),
+                }),
+              )}
               change={(period) =>
                 setDraft((previousDraft) => ({
                   ...previousDraft,
@@ -168,7 +173,10 @@ export function EventEditor({
             shirtNumber={draft.primaryDorsal}
             disabled={!draft.teamId || !eventDefinition || draft.type === 'passive'}
             change={(primaryDorsal) =>
-              setDraft((previousDraft) => ({ ...previousDraft, primaryDorsal }))
+              setDraft((previousDraft) => ({
+                ...previousDraft,
+                primaryDorsal,
+              }))
             }
           />
           <ParticipantPicker
@@ -180,13 +188,21 @@ export function EventEditor({
             shirtNumber={draft.relatedDorsal}
             disabled={!draft.teamId || !eventDefinition?.related}
             change={(relatedDorsal) =>
-              setDraft((previousDraft) => ({ ...previousDraft, relatedDorsal }))
+              setDraft((previousDraft) => ({
+                ...previousDraft,
+                relatedDorsal,
+              }))
             }
           />
           <EventMetadata
             type={draft.type}
             metadata={draft.metadata}
-            change={(metadata) => setDraft((previousDraft) => ({ ...previousDraft, metadata }))}
+            change={(metadata) =>
+              setDraft((previousDraft) => ({
+                ...previousDraft,
+                metadata,
+              }))
+            }
           />
           <section className="event-additional" aria-label={tr('Información adicional (opcional)')}>
             <h3>{tr('Información adicional (opcional)')}</h3>
@@ -198,7 +214,10 @@ export function EventEditor({
                 value={draft.note}
                 placeholder={tr('Información adicional (opcional)')}
                 onChange={(inputEvent) =>
-                  setDraft((previousDraft) => ({ ...previousDraft, note: inputEvent.target.value }))
+                  setDraft((previousDraft) => ({
+                    ...previousDraft,
+                    note: inputEvent.target.value,
+                  }))
                 }
               />
             </label>

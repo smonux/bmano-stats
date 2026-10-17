@@ -99,3 +99,33 @@ Las pruebas de navegador comprueban los recorridos completos, incluida la voz, l
 ## Experimentos históricos
 
 `src/voice/legacy/` contiene los auxiliares y pruebas de los antiguos experimentos con Needle. Los scripts históricos los importan desde esa carpeta. El recorrido actual de captura usa `engine.ts`, `deterministic.ts`, `analysis/` y `languages/`.
+
+## Captura y revisión de voz
+
+`components/VoiceCapture.tsx` dibuja el botón y el estado. `components/voice/useVoiceCapture.ts` controla permiso, pulsación, grabador, cancelación, trabajo pendiente y revisión; captura el tiempo del partido al comenzar. `voice/recognition.ts` transcribe una vez con las pistas del partido, interpreta ese texto y lo adapta al editor. Si falla la interpretación, conserva la transcripción para completarla manualmente. Si la pantalla se desmonta, no presenta el resultado.
+
+`voice/capture-context.ts` fija la perspectiva y el instante; `voice/resolve-references.ts` resuelve equipos y dorsales dentro del equipo correspondiente; `voice/team-references.ts` contiene los alias. `interpretation.ts` conserva la entrada pública de este adaptador. Los números se organizan en `voice/numbers/`: normalización, escritura canónica, diccionario de variantes y lectura de intervalos. `numbers.ts` conserva la API anterior.
+
+`VoicePreparation` presenta la descarga y selección de idioma; `useMicrophoneCheck` comprueba el permiso y cierra el micrófono. `voice/setup.ts` mantiene una preparación compartida y la sesión reutilizable. `voice/recorder.ts` gestiona las pistas y el contexto de audio; `public/voice-recorder.js` produce fragmentos PCM y confirma su vaciado. El formato automático incluye también este worklet.
+
+## Presentación, controles e informes
+
+`pages/AppPage.tsx` selecciona la pantalla; `App.tsx` mantiene la estructura y los estados del navegador. `components/ui.tsx` es la entrada pública de los controles de `components/ui/` y los hooks de `hooks/`. Los módulos internos importan directamente sus dependencias. `useAction` bloquea envíos simultáneos y presenta errores; `Modal` administra el diálogo nativo; `Confirm` coordina la acción confirmada.
+
+`event-editor/draft.ts` construye el borrador inicial sin mezclarlo con los controles. `match/MatchConfirmation.tsx` relaciona cada intención con su mensaje y operación. `exclusions/ExclusionCounter.tsx` presenta un contador y recibe sus acciones; las transacciones siguen en `ExclusionTimers`. `statistics/Metrics.tsx` presenta métricas y `statistics/useMatchPdf.ts` prepara y comparte el archivo. La galería separa contenido, ilustraciones, idioma y navegación en `components/welcome/`.
+
+`reports/match-pdf.ts` coordina las secciones de `reports/pdf/`: fuentes, cabecera, estadísticas de equipo y jugador, gráficos, eventos y pies. Comparten un cursor y la política de paginación de `layout.ts`; `context.ts` declara los datos y el tema común. `pdf-messages.ts` define el contrato del worker y su consumidor. Separar secciones no permite cambiar el estado de fuente o el cursor entre llamadas sin comprobar el resultado renderizado.
+
+`style.css` importa `styles/`: bases compartidas, estructura, inicio, catálogo, partido, editor, estadísticas, voz y bienvenida. Cada módulo conserva junto al componente sus estados y reglas adaptables. Algunas reglas deben permanecer después de un bloque de media para conservar la cascada; se han quitado declaraciones sobrescritas y selectores de controles retirados sin mover ese orden.
+
+## Herramientas y datos
+
+`build-voice-dataset.mjs` coordina los módulos de `scripts/dataset/`: contrato real de la aplicación, evidencia de las anotaciones, particiones por familia, filas, resumen y publicación de JSONL/Markdown/ZIP. `dataset:check` compara también el ZIP byte a byte. El lint de anotaciones comprueba datos sintéticos; no se utiliza para interpretar la entrada de la aplicación.
+
+`evaluate-voice-rules.mjs` coordina la medición; `scripts/evaluation/` contiene las medidas y el informe legible. `scripts/benchmarks/needle-schemas.ts` conserva la configuración de los experimentos históricos. `needle-depths.py` separa lectura, selección de bloques y filas, remapeo de cabecera y empaquetado. Declara sus dependencias y se ejecuta con uv:
+
+```sh
+uv run --no-project scripts/needle-depths.py --help
+```
+
+Las tablas de traducciones conservan la clave española y el orden declarado en `translationLanguages`. Vocabularios, esquemas, fixtures y manifiestos son datos; se mantienen como tablas cuando resultan más claros que una abstracción adicional. Dependencias, fuentes y archivos generados no se refactorizan como código propio.

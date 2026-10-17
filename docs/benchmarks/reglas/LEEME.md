@@ -12,7 +12,7 @@ Ejecutar desde la raíz: `npm run voice:evaluate`. No abre Whistle ni Needle, no
 | Acciones inciertas sin tipo inventado | 9/9 (100 %) |
 | Falsos positivos entre rechazos | 0 |
 
-Tiempo exclusivo del intérprete en Node v22.22.1 de este servidor: mediana 0.208 ms, percentil 95 0.736 ms. No incluye audio ni Whistle y no predice el tiempo en Android. La compilación de expresiones regulares se calienta antes de medir.
+Tiempo exclusivo del intérprete en Node v22.22.1 de este servidor: mediana 0.215 ms, percentil 95 0.795 ms. No incluye audio ni Whistle y no predice el tiempo en Android. La compilación de expresiones regulares se calienta antes de medir.
 
 ## Casos que requieren revisión
 

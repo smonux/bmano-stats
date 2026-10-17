@@ -95,3 +95,5 @@ El [dataset de frases](datasets/voz-es/README.md) contiene 645 ejemplos sintéti
 ## Trabajar con el código
 
 `npm run format` aplica el formato automático; `npm run format:check` lo comprueba. TypeScript también detecta importaciones y parámetros sin uso. La [guía de lectura](docs/lectura-del-codigo.md) explica las pantallas, las fases de voz y cómo añadir una palabra clave. `npm run voice:compare` compara el intérprete actual con la referencia anterior a la refactorización, incluidos resultados, advertencias, vocabularios y rendimiento de texto.
+
+La [auditoría integral](docs/refactorizacion-integral.md) registra el alcance y las comprobaciones de equivalencia. Las [indicaciones de interfaz posteriores](docs/tareas-pendientes.md) se aplican después de cerrar esa refactorización.

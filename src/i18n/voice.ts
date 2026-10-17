@@ -1,3 +1,4 @@
+import { languageRules } from '../voice/languages';
 import { getLanguage, supportedLanguage, type Language } from './index';
 export function savedVoiceLanguage(): Language {
   try {
@@ -6,7 +7,6 @@ export function savedVoiceLanguage(): Language {
     return getLanguage();
   }
 }
-import { languageRules } from '../voice/languages';
 
 export const voiceKeywords: Record<Language, string[]> = Object.fromEntries(
   Object.entries(languageRules).map(([language, rules]) => [language, [...rules.whistleKeywords]]),

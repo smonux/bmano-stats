@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
+import { useMicrophoneCheck } from './voice/useMicrophoneCheck';
 import { Check, Download, Mic } from 'lucide-react';
 import { languages, tr, type Language } from '../i18n';
 import {
@@ -7,42 +8,18 @@ import {
   refreshVoiceFiles,
   useVoiceSetup,
 } from '../voice/setup';
-import { checkMicrophone, microphoneProblem } from '../voice/readiness';
-import { voiceError } from '../voice/engine';
+import { microphoneProblem } from '../voice/readiness';
 import { ErrorMessage } from './ui';
 import { WheelPicker } from './WheelPicker';
 export function VoicePreparation({ live = false }: { live?: boolean }) {
   const setup = useVoiceSetup();
-  const [mic, setMic] = useState<'idle' | 'asking' | 'ok'>('idle');
-  const [error, setError] = useState('');
-  const alive = useRef(true);
+  const { mic, error, testMic } = useMicrophoneCheck();
   useEffect(() => {
-    alive.current = true;
     void refreshVoiceFiles();
-    return () => {
-      alive.current = false;
-    };
   }, []);
   const problem = microphoneProblem();
   const missing = ['missing', 'error'].includes(setup.phase);
-  const testMic = async () => {
-    if (mic === 'asking') {
-      return;
-    }
-    setMic('asking');
-    setError('');
-    try {
-      await checkMicrophone();
-      if (alive.current) {
-        setMic('ok');
-      }
-    } catch (e) {
-      if (alive.current) {
-        setMic('idle');
-        setError(voiceError(e));
-      }
-    }
-  };
+
   return (
     <section className="voice-preparation" aria-label={tr('Preparación de voz')}>
       <div className="section-heading">

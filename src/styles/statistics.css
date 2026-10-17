@@ -1,0 +1,161 @@
+/* Responsive rules retain their cascade order; superseded declarations have been removed. */
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 20px 0;
+}
+.metrics > div {
+  border: 1px solid #deded7;
+  background: #fff9dc;
+  border-radius: 12px;
+  padding: 17px;
+}
+.metrics span {
+  font-size: 11px;
+  color: #626262;
+  display: block;
+}
+.metrics strong {
+  font-size: 29px;
+  letter-spacing: -1px;
+  display: block;
+  margin-top: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.stat-list {
+  margin: 0 0 20px;
+}
+.stat-list > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid #ebebe6;
+  font-size: 13px;
+}
+.stat-list dd {
+  margin: 0;
+  font-weight: 700;
+}
+.player-stat-head,
+.player-stat {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) 55px 55px 20px;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+}
+.player-stat-head {
+  font-size: 10px;
+  color: #626262;
+  padding: 12px;
+}
+.player-stat {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  padding: 13px 0;
+  font-size: 12px;
+}
+.player-stat > span {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.statistics .caption {
+  margin-top: 20px;
+}
+@media (max-width: 760px) {
+  .metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .player-stat-head,
+  .player-stat {
+    gap: 6px;
+    grid-template-columns: minmax(105px, 1fr) 44px 44px 16px;
+  }
+  .player-stat {
+    font-size: 11px;
+  }
+}
+
+.score-charts {
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+.score-charts h3 {
+  font-size: 16px;
+}
+.score-charts .caption {
+  margin: 5px 0 10px;
+}
+.score-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  margin: 10px 0;
+}
+.score-legend span {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  overflow-wrap: anywhere;
+}
+.score-legend i {
+  width: 23px;
+  flex-shrink: 0;
+}
+.own-line {
+  border-top: 3px solid #d8b500;
+  outline: 1px solid #766500;
+}
+.opponent-line {
+  border-top: 3px dashed #171717;
+}
+.period-charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.period-charts figure {
+  margin: 0;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 10px;
+  background: #fff;
+}
+.period-charts figcaption {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.period-charts svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.period-charts text {
+  font-size: 9px;
+  fill: #626262;
+  font-family: inherit;
+}
+.share-match-pdf {
+  margin-top: 20px;
+}
+.share-match-pdf .caption {
+  margin: 6px 0;
+}
+@media (max-width: 760px) {
+  .period-charts {
+    grid-template-columns: 1fr;
+  }
+  .share-match-pdf > button {
+    width: 100%;
+  }
+}

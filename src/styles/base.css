@@ -1,0 +1,367 @@
+/* Responsive rules retain their cascade order; superseded declarations have been removed. */
+:root {
+  font-family:
+    Inter,
+    ui-sans-serif,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  color: #171717;
+  background: #f5f5f2;
+  font-synthesis: none;
+  font-weight: 400;
+  --ink: #171717;
+  --muted: #626262;
+  --line: #deded7;
+  --accent: #ffd600;
+  --bg: #f5f5f2;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  padding: 11px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 44px;
+  transition:
+    background 0.15s,
+    transform 0.15s;
+}
+button:hover {
+  background: #fff4b8;
+}
+button:active {
+  transform: translateY(1px);
+}
+button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 3px solid #9b7700;
+  outline-offset: 3px;
+}
+.danger {
+  background: #a13632;
+  color: white;
+  border-color: #a13632;
+}
+.danger-text {
+  color: #aa4a43 !important;
+}
+.full {
+  width: 100%;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+h1 {
+  font-size: 34px;
+  letter-spacing: -1.2px;
+  line-height: 1.15;
+  font-weight: 650;
+}
+h2 {
+  font-size: 20px;
+  letter-spacing: -0.45px;
+  font-weight: 650;
+}
+h3 {
+  font-size: 17px;
+}
+p {
+  line-height: 1.65;
+}
+small,
+.caption {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.muted {
+  color: var(--muted);
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.7px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.icon-button {
+  border: 0;
+  background: transparent;
+  width: 40px;
+  padding: 8px;
+  min-height: 40px;
+}
+.section {
+  margin-top: 35px;
+}
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.page-heading p {
+  margin-top: 10px;
+  font-size: 14px;
+}
+.back {
+  padding: 0;
+  background: none;
+  border: 0;
+  font-size: 12px;
+  color: var(--muted);
+  min-height: 24px;
+  margin-bottom: 14px;
+}
+.panel {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  padding: 28px;
+}
+.form-panel {
+  max-width: 620px;
+  margin: auto;
+}
+.form-panel > label {
+  margin: 25px 0;
+}
+.form-panel .caption {
+  text-align: center;
+  margin-top: 17px;
+}
+label,
+.field-label {
+  font-size: 12px;
+  font-weight: 600;
+  display: block;
+  color: #444444;
+}
+input,
+select,
+textarea {
+  width: 100%;
+  display: block;
+  padding: 12px 13px;
+  min-height: 44px;
+  border: 1px solid #deded7;
+  border-radius: 8px;
+  background: white;
+  color: #171717;
+  font-size: 14px;
+  margin-top: 8px;
+}
+input:disabled,
+select:disabled {
+  background: #ebebe6;
+  color: #8a8a80;
+}
+input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+  margin: 0;
+  accent-color: var(--ink);
+}
+textarea {
+  resize: vertical;
+}
+.empty {
+  text-align: center;
+  padding: 42px 15px;
+}
+.empty h3 {
+  margin: 12px 0;
+}
+.empty p {
+  font-size: 14px;
+  max-width: 400px;
+  margin: auto;
+}
+.empty button {
+  margin-top: 18px;
+}
+.empty-symbol {
+  border: 1px dashed #8a8a80;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  margin: auto;
+  font-size: 23px;
+  border-radius: 14px;
+  color: #8a8a80;
+}
+.badge {
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 20px;
+  background: #ebebe6;
+  color: #626262;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  margin: 0 0 22px;
+  gap: 20px;
+}
+.tabs button {
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  flex: 1;
+  color: #626262;
+  padding: 13px 8px;
+  position: relative;
+}
+.tabs .selected {
+  color: var(--ink);
+}
+.tabs .selected:after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  width: 100%;
+  height: 3px;
+  left: 0;
+  border-radius: 3px;
+}
+.tabs button > span {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #ebebe6;
+}
+.text-button {
+  border: 0;
+  background: transparent;
+  padding: 5px 4px;
+  font-size: 12px;
+  min-height: 34px;
+}
+.filter-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.error {
+  background: #fff0ed;
+  padding: 12px;
+  color: #9e3830;
+  font-size: 13px !important;
+  border-radius: 8px;
+  margin: 15px 0 !important;
+  overflow-wrap: anywhere;
+}
+.success {
+  color: #444444;
+  display: flex;
+  gap: 8px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip: rect(0, 0, 0, 0);
+  overflow: hidden;
+}
+@media (max-width: 760px) {
+  .panel {
+    padding: 20px;
+  }
+  .page-heading {
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: 28px;
+  }
+  .page-heading p {
+    font-size: 12px;
+  }
+  .filter-row {
+    gap: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+.primary {
+  background: var(--accent);
+  color: var(--ink);
+  border-color: var(--accent);
+}
+.primary:hover {
+  background: #edc600;
+  border-color: #edc600;
+}
+.danger:hover {
+  background: #882d29;
+  border-color: #882d29;
+  color: #fff;
+}
+.badge.live {
+  background: #fff4b8;
+  color: #4d3d00;
+}
+.tabs .selected:after {
+  background: var(--accent);
+}
+.form-panel + .form-panel {
+  margin-top: 16px;
+}
+.spin {
+  animation: report-spin 1s linear infinite;
+}
+@keyframes report-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation-duration: 2s;
+  }
+}

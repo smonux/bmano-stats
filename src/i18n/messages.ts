@@ -1,3 +1,6 @@
+// Each row follows this language order; the Spanish phrase is its stable key.
+export const translationLanguages = ['en', 'de', 'fr', 'it', 'nl', 'pl'] as const;
+
 // Order: English, German, French, Italian, Dutch, Polish. Spanish keys are the source text.
 export const catalog: Record<string, readonly string[]> = {
   Inicio: ['Home', 'Start', 'Accueil', 'Home', 'Start', 'Start'],

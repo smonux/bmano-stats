@@ -3,7 +3,7 @@ import type { Match, Snapshot } from '../domain/model';
 import { scoreTimelines } from '../domain/report';
 export function ScoreCharts({ data, match }: { data: Snapshot; match: Match }) {
   const names = [match.localTeamId, match.visitorTeamId].map(
-    (id) => data.teams.find((t) => t.id === id)?.name ?? tr('Equipo'),
+    (id) => data.teams.find((team) => team.id === id)?.name ?? tr('Equipo'),
   );
   return (
     <section className="score-charts" aria-label={tr('Evolución del marcador')}>
@@ -21,9 +21,9 @@ export function ScoreCharts({ data, match }: { data: Snapshot; match: Match }) {
       </div>
       <div className="period-charts">
         {scoreTimelines(data, match).map((period) => {
-          const max = Math.max(5, Math.ceil(Math.max(...period.end) / 5) * 5);
+          const maxGoals = Math.max(5, Math.ceil(Math.max(...period.end) / 5) * 5);
           const x = (minute: number) => 34 + (minute / period.maxMinute) * 286;
-          const y = (goals: number) => 142 - (goals / max) * 114;
+          const y = (goals: number) => 142 - (goals / maxGoals) * 114;
           return (
             <figure key={period.period}>
               <figcaption>
@@ -36,23 +36,28 @@ export function ScoreCharts({ data, match }: { data: Snapshot; match: Match }) {
                   period: period.period,
                 })}
               >
-                {Array.from({ length: 6 }, (_, i) => (
-                  <g key={i}>
-                    <line
-                      x1="34"
-                      x2="320"
-                      y1={y((max * i) / 5)}
-                      y2={y((max * i) / 5)}
-                      stroke="#deded7"
-                    />
-                    <text x="29" y={y((max * i) / 5) + 3} textAnchor="end">
-                      {(max * i) / 5}
-                    </text>
-                    <text x={x((period.maxMinute * i) / 5)} y="157" textAnchor="middle">
-                      {(period.maxMinute * i) / 5}
-                    </text>
-                  </g>
-                ))}
+                {Array.from(
+                  {
+                    length: 6,
+                  },
+                  (_, i) => (
+                    <g key={i}>
+                      <line
+                        x1="34"
+                        x2="320"
+                        y1={y((maxGoals * i) / 5)}
+                        y2={y((maxGoals * i) / 5)}
+                        stroke="#deded7"
+                      />
+                      <text x="29" y={y((maxGoals * i) / 5) + 3} textAnchor="end">
+                        {(maxGoals * i) / 5}
+                      </text>
+                      <text x={x((period.maxMinute * i) / 5)} y="157" textAnchor="middle">
+                        {(period.maxMinute * i) / 5}
+                      </text>
+                    </g>
+                  ),
+                )}
                 <text x="5" y="13">
                   {tr('Goles')}
                 </text>
@@ -60,7 +65,9 @@ export function ScoreCharts({ data, match }: { data: Snapshot; match: Match }) {
                   {tr('Minutos')}
                 </text>
                 {period.series.map((points, i) => {
-                  const path = points.map((p) => `${x(p.minute)},${y(p.goals)}`).join(' ');
+                  const path = points
+                    .map((point) => `${x(point.minute)},${y(point.goals)}`)
+                    .join(' ');
                   return (
                     <g key={i}>
                       {!i && (
@@ -74,12 +81,12 @@ export function ScoreCharts({ data, match }: { data: Snapshot; match: Match }) {
                         strokeDasharray={i ? '6 3' : undefined}
                       />
                       {points
-                        .filter((p) => p.goal)
-                        .map((p, j) => (
+                        .filter((point) => point.goal)
+                        .map((point, j) => (
                           <circle
                             key={j}
-                            cx={x(p.minute)}
-                            cy={y(p.goals)}
+                            cx={x(point.minute)}
+                            cy={y(point.goals)}
                             r="2.5"
                             fill={i ? '#171717' : '#ffd600'}
                             stroke="#171717"

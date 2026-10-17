@@ -13,8 +13,8 @@
     "dataset:check": "node scripts/build-voice-dataset.mjs --check",
     "check": "tsc -b",
     "voice:evaluate": "node scripts/evaluate-voice-rules.mjs",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"tests/**/*.ts\" \"scripts/**/*.{ts,mjs}\" \"*.ts\" tsconfig.json package.json .prettierrc.json",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"tests/**/*.ts\" \"scripts/**/*.{ts,mjs}\" \"*.ts\" tsconfig.json package.json .prettierrc.json",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"tests/**/*.ts\" \"scripts/**/*.{ts,mjs}\" \"public/**/*.js\" \"*.ts\" tsconfig.json package.json .prettierrc.json",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"tests/**/*.ts\" \"scripts/**/*.{ts,mjs}\" \"public/**/*.js\" \"*.ts\" tsconfig.json package.json .prettierrc.json",
     "voice:compare": "node scripts/compare-voice-refactor.mjs"
   },
   "engines": {

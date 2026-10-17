@@ -3,9 +3,8 @@ import { ChevronRight } from 'lucide-react';
 import { type Match, type Snapshot } from '../domain/model';
 import { navigate } from './ui';
 import { teamName, formatMatchDate, matchScore } from '../presentation/matches';
-
 function MatchCard({ data, match }: { data: Snapshot; match: Match }) {
-  const [a, b] = matchScore(data, match);
+  const [ourGoals, opponentGoals] = matchScore(data, match);
   return (
     <button className="match-card" onClick={() => navigate(`/partidos/${match.id}`)}>
       <div className="match-card-top">
@@ -20,13 +19,12 @@ function MatchCard({ data, match }: { data: Snapshot; match: Match }) {
           <span>{teamName(data, match.visitorTeamId)}</span>
         </div>
         <div className="score-small">
-          <strong>{a}</strong>
-          <strong>{b}</strong>
+          <strong>{ourGoals}</strong>
+          <strong>{opponentGoals}</strong>
         </div>
         <ChevronRight size={20} />
       </div>
     </button>
   );
 }
-
 export { MatchCard };

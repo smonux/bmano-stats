@@ -4,16 +4,17 @@ import { ChevronRight, Plus, Pencil, Search } from 'lucide-react';
 import { repo } from '../data/database';
 import { type Snapshot } from '../domain/model';
 import { Empty, ErrorMessage, Modal, PageTitle, navigate, useAction } from '../components/ui';
-
 function Teams({ data, id }: { data: Snapshot; id?: string }) {
   const [query, setQuery] = useState('');
   const [add, setAdd] = useState(false);
   const [name, setName] = useState('');
-  const [editing, setEditing] = useState<{ id?: string; dorsal: string; name: string } | null>(
-    null,
-  );
+  const [editing, setEditing] = useState<{
+    id?: string;
+    dorsal: string;
+    name: string;
+  } | null>(null);
   const action = useAction();
-  const team = data.teams.find((t) => t.id === id);
+  const team = data.teams.find((team) => team.id === id);
   const [rename, setRename] = useState<string | null>(null);
   if (id && !team) {
     return (
@@ -23,8 +24,11 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
     );
   }
   const players = data.players
-    .filter((p) => p.teamId === id && !p.isUnknown && !p.deletedAt)
+    .filter((player) => player.teamId === id && !player.isUnknown && !player.deletedAt)
     .sort((a, b) => a.dorsal! - b.dorsal!);
+  const visibleTeams = data.teams.filter(
+    (team) => !team.deletedAt && team.name.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
+  );
   return (
     <>
       <PageTitle
@@ -38,7 +42,14 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
       >
         <button
           className="primary"
-          onClick={() => (team ? setEditing({ dorsal: '', name: '' }) : setAdd(true))}
+          onClick={() =>
+            team
+              ? setEditing({
+                  dorsal: '',
+                  name: '',
+                })
+              : setAdd(true)
+          }
         >
           <Plus size={18} />
           {team ? tr('Jugador') : tr('Equipo')}
@@ -55,15 +66,21 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
             </button>
           </div>
           {players.length ? (
-            players.map((p) => (
+            players.map((player) => (
               <button
                 className="list-row"
-                key={p.id}
-                onClick={() => setEditing({ id: p.id, dorsal: String(p.dorsal), name: p.name })}
+                key={player.id}
+                onClick={() =>
+                  setEditing({
+                    id: player.id,
+                    dorsal: String(player.dorsal),
+                    name: player.name,
+                  })
+                }
               >
-                <b className="jersey">{p.dorsal}</b>
+                <b className="jersey">{player.dorsal}</b>
                 <span>
-                  <strong>{p.name || tr('Nombre pendiente')}</strong>
+                  <strong>{player.name || tr('Nombre pendiente')}</strong>
                   <small>{tr('Dorsal fijo · toca para editar el nombre')}</small>
                 </span>
                 <ChevronRight size={18} />
@@ -85,39 +102,33 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
               aria-label={tr('Buscar equipo')}
               placeholder={tr('Buscar equipo…')}
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(inputEvent) => setQuery(inputEvent.target.value)}
             />
           </div>
           <section className="panel">
-            {data.teams
-              .filter(
-                (t) =>
-                  !t.deletedAt && t.name.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
-              )
-              .map((t) => (
-                <button
-                  className="list-row"
-                  key={t.id}
-                  onClick={() => navigate(`/equipos/${t.id}`)}
-                >
-                  <span className="team-avatar">{t.name.slice(0, 2).toUpperCase()}</span>
-                  <span>
-                    <strong>{t.name}</strong>
-                    <small>
-                      {
-                        data.players.filter(
-                          (p) => p.teamId === t.id && !p.isUnknown && !p.deletedAt,
-                        ).length
-                      }{' '}
-                      {tr('jugadores identificados')}
-                    </small>
-                  </span>
-                  <ChevronRight size={18} />
-                </button>
-              ))}
-            {!data.teams.filter(
-              (t) => !t.deletedAt && t.name.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
-            ).length && (
+            {visibleTeams.map((team) => (
+              <button
+                className="list-row"
+                key={team.id}
+                onClick={() => navigate(`/equipos/${team.id}`)}
+              >
+                <span className="team-avatar">{team.name.slice(0, 2).toUpperCase()}</span>
+                <span>
+                  <strong>{team.name}</strong>
+                  <small>
+                    {
+                      data.players.filter(
+                        (player) =>
+                          player.teamId === team.id && !player.isUnknown && !player.deletedAt,
+                      ).length
+                    }{' '}
+                    {tr('jugadores identificados')}
+                  </small>
+                </span>
+                <ChevronRight size={18} />
+              </button>
+            ))}
+            {!visibleTeams.length && (
               <Empty title={query ? tr('Sin coincidencias') : tr('Tu primer equipo')}>
                 <p>
                   {query
@@ -132,13 +143,13 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
       {add && (
         <Modal title={tr('Nuevo equipo')} close={() => !action.busy && setAdd(false)}>
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
+            onSubmit={(inputEvent) => {
+              inputEvent.preventDefault();
               action.run(async () => {
-                const t = await repo.addTeam(name);
+                const team = await repo.addTeam(name);
                 setAdd(false);
                 setName('');
-                navigate(`/equipos/${t.id}`);
+                navigate(`/equipos/${team.id}`);
               });
             }}
           >
@@ -149,7 +160,7 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
                 required
                 maxLength={100}
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(inputEvent) => setName(inputEvent.target.value)}
               />
             </label>
             <ErrorMessage text={action.error} />
@@ -162,8 +173,8 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
       {rename !== null && team && (
         <Modal title={tr('Nombre del equipo')} close={() => !action.busy && setRename(null)}>
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
+            onSubmit={(inputEvent) => {
+              inputEvent.preventDefault();
               action.run(async () => {
                 await repo.renameTeam(team.id, rename);
                 setRename(null);
@@ -174,7 +185,7 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
               {tr('Nombre')}
               <input
                 value={rename}
-                onChange={(e) => setRename(e.target.value)}
+                onChange={(inputEvent) => setRename(inputEvent.target.value)}
                 required
                 maxLength={100}
               />
@@ -189,8 +200,8 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
       {editing && team && (
         <Modal title={tr('Jugador')} close={() => !action.busy && setEditing(null)}>
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
+            onSubmit={(inputEvent) => {
+              inputEvent.preventDefault();
               action.run(async () => {
                 await repo.savePlayer(team.id, editing.dorsal, editing.name);
                 setEditing(null);
@@ -207,7 +218,12 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
                   pattern="[0-9]{1,2}"
                   maxLength={2}
                   value={editing.dorsal}
-                  onChange={(e) => setEditing({ ...editing, dorsal: e.target.value })}
+                  onChange={(inputEvent) =>
+                    setEditing({
+                      ...editing,
+                      dorsal: inputEvent.target.value,
+                    })
+                  }
                   readOnly={Boolean(editing.id)}
                 />
               </label>
@@ -216,7 +232,12 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
                 <input
                   maxLength={100}
                   value={editing.name}
-                  onChange={(e) => setEditing({ ...editing, name: e.target.value })}
+                  onChange={(inputEvent) =>
+                    setEditing({
+                      ...editing,
+                      name: inputEvent.target.value,
+                    })
+                  }
                 />
               </label>
             </div>
@@ -233,5 +254,4 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
     </>
   );
 }
-
 export { Teams };

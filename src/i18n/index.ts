@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react';
-import { catalog } from './messages';
+import { catalog, translationLanguages } from './messages';
 export const languages = {
   es: 'Español',
   en: 'English',
@@ -28,13 +28,13 @@ export function setLanguage(value: Language) {
     localStorage.setItem('handball-language', value);
   } catch {}
   document.documentElement.lang = value;
-  listeners.forEach((fn) => fn());
+  listeners.forEach((listener) => listener());
 }
 export function useLanguage() {
-  return useSyncExternalStore((fn) => {
-    listeners.add(fn);
+  return useSyncExternalStore((listener) => {
+    listeners.add(listener);
     return () => {
-      listeners.delete(fn);
+      listeners.delete(listener);
     };
   }, getLanguage);
 }
@@ -43,7 +43,7 @@ export function tr(
   values: Record<string, string | number> = {},
   locale: Language = language,
 ) {
-  const index = ['en', 'de', 'fr', 'it', 'nl', 'pl'].indexOf(locale);
+  const index = (translationLanguages as readonly string[]).indexOf(locale);
   const text = index < 0 ? source : (catalog[source]?.[index] ?? source);
   return text.replace(/\{(\w+)\}/g, (match, key) => String(values[key] ?? match));
 }

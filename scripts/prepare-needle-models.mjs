@@ -48,7 +48,9 @@ if (
   }
   const temporary = await mkdtemp(resolve(cache, 'needle-depths-'));
   try {
-    await promisify(execFile)('python3', [
+    await promisify(execFile)('uv', [
+      'run',
+      '--no-project',
       'scripts/needle-depths.py',
       source,
       '--depths',

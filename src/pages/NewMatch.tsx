@@ -8,7 +8,6 @@ import { type Snapshot } from '../domain/model';
 import { ErrorMessage, PageTitle, navigate, useAction } from '../components/ui';
 import { todayDateString } from '../presentation/matches';
 import { WheelPicker } from '../components/WheelPicker';
-
 function TeamPicker({
   label,
   data,
@@ -31,7 +30,11 @@ function TeamPicker({
             placeholder={tr('Nombre del nuevo equipo')}
             value={value.name}
             maxLength={100}
-            onChange={(e) => change({ name: e.target.value })}
+            onChange={(inputEvent) =>
+              change({
+                name: inputEvent.target.value,
+              })
+            }
           />
         ) : (
           <WheelPicker
@@ -39,7 +42,10 @@ function TeamPicker({
             hideLabel
             value={value.id}
             options={[
-              { value: '', label: tr('Seleccionar equipo') },
+              {
+                value: '',
+                label: tr('Seleccionar equipo'),
+              },
               ...data.teams
                 .filter((team) => !team.deletedAt)
                 .map((team) => ({
@@ -47,10 +53,27 @@ function TeamPicker({
                   label: team.name,
                 })),
             ]}
-            change={(id) => change({ id })}
+            change={(id) =>
+              change({
+                id,
+              })
+            }
           />
         )}
-        <button type="button" onClick={() => change(isNew ? { id: '' } : { name: '' })}>
+        <button
+          type="button"
+          onClick={() =>
+            change(
+              isNew
+                ? {
+                    id: '',
+                  }
+                : {
+                    name: '',
+                  },
+            )
+          }
+        >
           {isNew ? (
             tr('Catálogo')
           ) : (
@@ -68,10 +91,13 @@ function TeamPicker({
     </fieldset>
   );
 }
-
 function NewMatch({ data }: { data: Snapshot }) {
-  const [local, setLocal] = useState<TeamChoice>({ id: '' });
-  const [visitor, setVisitor] = useState<TeamChoice>({ id: '' });
+  const [local, setLocal] = useState<TeamChoice>({
+    id: '',
+  });
+  const [visitor, setVisitor] = useState<TeamChoice>({
+    id: '',
+  });
   const [date, setDate] = useState(todayDateString());
   const action = useAction();
   const setup = useVoiceSetup();
@@ -83,8 +109,8 @@ function NewMatch({ data }: { data: Snapshot }) {
       </div>
       <form
         className="panel form-panel"
-        onSubmit={(e) => {
-          e.preventDefault();
+        onSubmit={(inputEvent) => {
+          inputEvent.preventDefault();
           action.run(async () => {
             if (setup.phase !== 'ready' || !setup.languageChosen) {
               throw new Error(tr('Carga Cactus y elige el idioma antes de iniciar el partido.'));
@@ -106,7 +132,12 @@ function NewMatch({ data }: { data: Snapshot }) {
         />
         <label>
           {tr('Fecha')}
-          <input type="date" value={date} required onChange={(e) => setDate(e.target.value)} />
+          <input
+            type="date"
+            value={date}
+            required
+            onChange={(inputEvent) => setDate(inputEvent.target.value)}
+          />
         </label>
         <ErrorMessage text={action.error} />
         <button
@@ -127,5 +158,4 @@ function NewMatch({ data }: { data: Snapshot }) {
     </>
   );
 }
-
 export { NewMatch };

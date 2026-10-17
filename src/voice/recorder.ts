@@ -6,11 +6,11 @@ export class VoiceRecorder {
   private node?: AudioWorkletNode;
   private source?: MediaStreamAudioSourceNode;
   private chunks: Float32Array[] = [];
-  private count = 0;
+  private sampleCount = 0;
   private cancelled = false;
   private stopping?: Promise<Recording>;
-  private done?: () => void;
-  private timer?: ReturnType<typeof setTimeout>;
+  private onWorkletDrained?: () => void;
+  private limitTimer?: ReturnType<typeof setTimeout>;
   async start(limit: () => void) {
     const problem = microphoneProblem();
     if (problem) {
@@ -34,23 +34,23 @@ export class VoiceRecorder {
         this.release();
         return false;
       }
-      const rate = this.context.sampleRate;
+      const sampleRate = this.context.sampleRate;
       this.source = this.context.createMediaStreamSource(this.stream);
       this.node = new AudioWorkletNode(this.context, 'handball-recorder');
       this.node.port.onmessage = ({ data }) => {
         if (data.samples) {
-          const remaining = Math.max(0, Math.floor(rate * 20) - this.count);
+          const remaining = Math.max(0, Math.floor(sampleRate * 20) - this.sampleCount);
           const chunk = (data.samples as Float32Array).slice(0, remaining);
           this.chunks.push(chunk);
-          this.count += chunk.length;
+          this.sampleCount += chunk.length;
         }
         if (data.done) {
-          this.done?.();
+          this.onWorkletDrained?.();
         }
       };
       this.source.connect(this.node);
       this.node.connect(this.context.destination);
-      this.timer = setTimeout(limit, 20000);
+      this.limitTimer = setTimeout(limit, 20000);
       return true;
     } catch (error) {
       this.release();
@@ -65,18 +65,18 @@ export class VoiceRecorder {
       if (!this.node || !this.context) {
         throw new Error('La grabación no ha comenzado.');
       }
-      clearTimeout(this.timer);
+      clearTimeout(this.limitTimer);
       const sampleRate = this.context.sampleRate;
       await new Promise<void>((resolve) => {
-        const timer = setTimeout(resolve, 500);
-        this.done = () => {
-          clearTimeout(timer);
+        const limitTimer = setTimeout(resolve, 500);
+        this.onWorkletDrained = () => {
+          clearTimeout(limitTimer);
           resolve();
         };
         this.node!.port.postMessage('stop');
       });
       this.release();
-      const samples = new Float32Array(this.count);
+      const samples = new Float32Array(this.sampleCount);
       let offset = 0;
       for (const chunk of this.chunks) {
         samples.set(chunk, offset);
@@ -89,14 +89,14 @@ export class VoiceRecorder {
   }
   cancel() {
     this.cancelled = true;
-    this.done?.();
+    this.onWorkletDrained?.();
     this.release();
     this.chunks = [];
-    this.count = 0;
+    this.sampleCount = 0;
   }
   private release() {
-    clearTimeout(this.timer);
-    this.stream?.getTracks().forEach((t) => t.stop());
+    clearTimeout(this.limitTimer);
+    this.stream?.getTracks().forEach((track) => track.stop());
     this.node?.disconnect();
     this.source?.disconnect();
     if (this.context && this.context.state !== 'closed') {

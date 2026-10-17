@@ -12,7 +12,7 @@ type State = {
   progress: string;
   error: string;
 };
-const chosen = () => {
+const hasChosenLanguage = () => {
   try {
     return localStorage.getItem('handball-voice-language') !== null;
   } catch {
@@ -22,13 +22,13 @@ const chosen = () => {
 let state: State = {
   phase: 'checking',
   language: savedVoiceLanguage(),
-  languageChosen: chosen(),
+  languageChosen: hasChosenLanguage(),
   progress: '',
   error: '',
 };
 const listeners = new Set<() => void>();
 let engine: VoiceEngine | undefined;
-let pending: Promise<boolean> | undefined;
+let pendingPreparation: Promise<boolean> | undefined;
 const update = (change: Partial<State>) => {
   state = { ...state, ...change };
   listeners.forEach((fn) => fn());
@@ -69,33 +69,33 @@ export async function chooseVoiceLanguage(language: Language) {
   update({ language, languageChosen: true, error: '' });
 }
 export async function discardVoiceEngine() {
-  const current = engine;
+  const session = engine;
   engine = undefined;
-  if (current) {
-    await current.close();
+  if (session) {
+    await session.close();
   }
   update({ phase: 'checking' });
   await refreshVoiceFiles();
 }
 /** Download only in preparation. A live match may load existing local files, never fetch models. */
 export function prepareVoice(download: boolean): Promise<boolean> {
-  if (pending) {
-    return pending;
+  if (pendingPreparation) {
+    return pendingPreparation;
   }
   if (engine?.ready) {
     return Promise.resolve(true);
   }
   const language = state.languageChosen ? state.language : getLanguage();
-  pending = (async () => {
+  pendingPreparation = (async () => {
     if (!state.languageChosen) {
       update({ phase: 'error', error: 'Elige el idioma de voz antes de cargar Cactus.' });
       return false;
     }
-    const current = new VoiceEngine(language);
-    engine = current;
+    const session = new VoiceEngine(language);
+    engine = session;
     update({ phase: 'loading', progress: '', error: '' });
     try {
-      await current.prepare((progress) => update({ progress }), !download);
+      await session.prepare((progress) => update({ progress }), !download);
       if (!(await localModelsPresent())) {
         throw new Error(
           'Los modelos no se han guardado en este navegador. Libera espacio y vuelve a cargarlos antes del partido.',
@@ -104,15 +104,15 @@ export function prepareVoice(download: boolean): Promise<boolean> {
       update({ phase: 'ready', error: '' });
       return true;
     } catch (error) {
-      await current.close();
+      await session.close();
       engine = undefined;
       update({ phase: 'error', error: voiceError(error, true) });
       return false;
     }
   })().finally(() => {
-    pending = undefined;
+    pendingPreparation = undefined;
   });
-  return pending;
+  return pendingPreparation;
 }
 export function preparedEngine() {
   if (!engine?.ready) {

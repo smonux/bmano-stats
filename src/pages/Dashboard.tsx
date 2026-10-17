@@ -3,10 +3,9 @@ import { ArrowRight, BarChart3, CalendarDays, Plus, ShieldCheck, Users } from 'l
 import { type Snapshot } from '../domain/model';
 import { navigate } from '../components/ui';
 import { MatchCard } from '../components/MatchCard';
-
 function Dashboard({ data }: { data: Snapshot }) {
-  const active = data.matches.filter((m) => !m.deletedAt && m.status === 'active');
-  const total = data.matches.filter((m) => !m.deletedAt).length;
+  const active = data.matches.filter((match) => !match.deletedAt && match.status === 'active');
+  const total = data.matches.filter((match) => !match.deletedAt).length;
   return (
     <>
       <div className="home-heading">
@@ -40,7 +39,8 @@ function Dashboard({ data }: { data: Snapshot }) {
           <strong>{tr('Equipos')}</strong>
           <span>{tr('Jugadores y dorsales')}</span>
           <span className="card-count">
-            {data.teams.filter((t) => !t.deletedAt).length} {tr('equipos')} <ArrowRight size={17} />
+            {data.teams.filter((team) => !team.deletedAt).length} {tr('equipos')}{' '}
+            <ArrowRight size={17} />
           </span>
         </button>
         <button className="nav-card" onClick={() => navigate('/partidos')}>
@@ -71,8 +71,8 @@ function Dashboard({ data }: { data: Snapshot }) {
             </span>
           </div>
           <div className="match-grid">
-            {active.map((m) => (
-              <MatchCard key={m.id} data={data} match={m} />
+            {active.map((match) => (
+              <MatchCard key={match.id} data={data} match={match} />
             ))}
           </div>
         </section>
@@ -87,5 +87,4 @@ function Dashboard({ data }: { data: Snapshot }) {
     </>
   );
 }
-
 export { Dashboard };

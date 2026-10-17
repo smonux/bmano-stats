@@ -1,0 +1,66 @@
+/* Responsive rules retain their cascade order; superseded declarations have been removed. */
+
+.hold-to-talk {
+  touch-action: none;
+  user-select: none;
+  min-height: 58px;
+}
+.voice-transcript {
+  background: #fff9dc;
+  border-radius: 12px;
+  padding: 14px;
+  display: grid;
+  gap: 6px;
+  overflow-wrap: anywhere;
+}
+.voice-warnings {
+  color: #8a541c;
+  font-size: 13px;
+}
+.hold-to-talk.recording {
+  background: #a93c32;
+  border-color: #a93c32;
+  color: #fff;
+}
+.voice-preparation {
+  margin-bottom: 18px;
+}
+.voice-preparation .section-heading {
+  margin-bottom: 8px;
+  gap: 8px;
+}
+.voice-preparation h2 {
+  font-size: 17px;
+}
+.voice-preparation label {
+  margin: 10px 0;
+  max-width: 360px;
+}
+.voice-preparation button {
+  margin: 0 6px 8px 0;
+}
+.voice-preparation .caption {
+  margin: 6px 0;
+}
+.preparation-alert {
+  padding: 10px;
+  background: #fff4b8;
+  border-left: 3px solid var(--accent);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.capture-status {
+  flex: 0 0 100%;
+  font-size: 11px;
+  line-height: 1.4;
+  margin: 0;
+  padding: 5px 3px;
+}
+.capture-status .error {
+  margin: 0 !important;
+  padding: 6px;
+}
+.capture-status a {
+  color: var(--ink);
+  font-weight: 700;
+}

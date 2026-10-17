@@ -5,14 +5,13 @@ import { type Snapshot } from '../domain/model';
 import { Empty, PageTitle, navigate } from '../components/ui';
 import { teamName } from '../presentation/matches';
 import { MatchCard } from '../components/MatchCard';
-
 function Matches({ data }: { data: Snapshot }) {
   const [query, setQuery] = useState('');
   const matches = data.matches
     .filter(
-      (m) =>
-        !m.deletedAt &&
-        `${teamName(data, m.localTeamId)} ${teamName(data, m.visitorTeamId)}`
+      (match) =>
+        !match.deletedAt &&
+        `${teamName(data, match.localTeamId)} ${teamName(data, match.visitorTeamId)}`
           .toLocaleLowerCase()
           .includes(query.toLocaleLowerCase()),
     )
@@ -31,13 +30,13 @@ function Matches({ data }: { data: Snapshot }) {
           aria-label={tr('Buscar partido por equipo')}
           placeholder={tr('Buscar equipo…')}
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(inputEvent) => setQuery(inputEvent.target.value)}
         />
       </div>
       {matches.length ? (
         <div className="match-grid">
-          {matches.map((m) => (
-            <MatchCard key={m.id} data={data} match={m} />
+          {matches.map((match) => (
+            <MatchCard key={match.id} data={data} match={match} />
           ))}
         </div>
       ) : (
@@ -51,5 +50,4 @@ function Matches({ data }: { data: Snapshot }) {
     </>
   );
 }
-
 export { Matches };

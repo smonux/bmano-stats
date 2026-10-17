@@ -1,51 +1,11 @@
 import { useState } from 'react';
-import { ArrowRight, Check, Mic, ShieldCheck, Timer, Users } from 'lucide-react';
-import { languages, setLanguage, tr, useLanguage, type Language } from '../i18n';
+import { ArrowRight } from 'lucide-react';
+import { tr } from '../i18n';
 import { Modal } from './ui';
-import { WheelPicker } from './WheelPicker';
-export function LanguagePicker() {
-  const language = useLanguage();
-  return (
-    <div className="language-picker">
-      <WheelPicker<Language>
-        label={tr('Idioma')}
-        value={language}
-        options={(Object.keys(languages) as Language[]).map((code) => ({
-          value: code,
-          label: languages[code],
-        }))}
-        change={setLanguage}
-      />
-    </div>
-  );
-}
-const slides = [
-  {
-    title: 'Mira el partido. Cuenta la jugada.',
-    body: 'Dos equipos y una fecha bastan. Añade dorsales al registrar y completa los nombres después. Amarillo y negro en homenaje al Balonmano La Jota de Zaragoza.',
-    icon: Users,
-  },
-  {
-    title: 'Prepara la voz antes del pitido',
-    body: 'Elige tu idioma, descarga los modelos con conexión y permite el micrófono. Después, el audio se procesa en este dispositivo. Prueba una jugada antes de empezar.',
-    icon: ShieldCheck,
-  },
-  {
-    title: 'Pulsa, habla, revisa y guarda',
-    body: 'Una jugada por grabación. Mantén pulsado para hablar y suelta para terminar. Whistle transcribe y las reglas proponen los campos; tú revisas y guardas. La entrada manual sigue disponible.',
-    icon: Mic,
-  },
-  {
-    title: 'Tu perspectiva manda',
-    body: 'Nosotros y nuestro siempre son equipo 1. Ellos, rival y suyo son equipo 2. No cambia por jugar en casa o fuera. Di el dorsal y revisa las propuestas dudosas.',
-    icon: Users,
-  },
-  {
-    title: 'Controla los dos minutos',
-    body: 'Tres contadores con equipo y dorsal. Actívalos al comenzar la exclusión; siguen el reloj del partido y puedes pararlos por separado. Al llegar a cero, avisan de la reincorporación. El evento estadístico se registra aparte.',
-    icon: Timer,
-  },
-];
+import { LanguagePicker } from './welcome/LanguagePicker';
+import { slides } from './welcome/slides';
+import { Illustration } from './welcome/Illustration';
+export { LanguagePicker } from './welcome/LanguagePicker';
 export function hasSeenWelcome() {
   try {
     return localStorage.getItem('handball-welcome-v1') === 'done';
@@ -68,47 +28,7 @@ export function Welcome({ close }: { close: () => void }) {
         <LanguagePicker />
         <div className="welcome-visual" aria-hidden="true">
           <slide.icon size={44} />
-          {step === 0 ? (
-            <div className="welcome-score">
-              <span>01</span>
-              <b>12 : 10</b>
-              <span>02</span>
-            </div>
-          ) : step === 1 ? (
-            <>
-              <b>Whistle</b>
-              <span>ES EN DE FR IT NL PL</span>
-              <div className="welcome-wave">▂ ▅ ▃ █ ▅ ▂ ▆ ▃</div>
-            </>
-          ) : step === 2 ? (
-            <>
-              <div className="welcome-wave">▂ ▅ ▃ █ ▅ ▂ ▆ ▃</div>
-              <div className="welcome-flow">
-                <Mic size={18} />
-                <ArrowRight size={16} />
-                <span>{tr('Gol')} · #7</span>
-                <ArrowRight size={16} />
-                <Check size={20} />
-              </div>
-            </>
-          ) : step === 3 ? (
-            <div className="welcome-teams">
-              <b>{tr('Equipo 1 (nuestro)')}</b>
-              <span>{tr('Equipo 2 (rival)')}</span>
-            </div>
-          ) : (
-            <div className="welcome-timers">
-              <span>
-                #7<b>02:00</b>
-              </span>
-              <span>
-                #9<b>00:38</b>
-              </span>
-              <span>
-                #4<b>00:00</b>
-              </span>
-            </div>
-          )}
+          <Illustration step={step} />
         </div>
         <div className="welcome-copy" aria-live="polite">
           <span className="eyebrow">
@@ -118,13 +38,13 @@ export function Welcome({ close }: { close: () => void }) {
           <p>{tr(slide.body)}</p>
         </div>
         <div className="welcome-dots">
-          {slides.map((s, i) => (
+          {slides.map((slide, index) => (
             <button
-              key={i}
+              key={index}
               type="button"
-              aria-label={tr(s.title)}
-              aria-current={step === i ? 'step' : undefined}
-              onClick={() => setStep(i)}
+              aria-label={tr(slide.title)}
+              aria-current={step === index ? 'step' : undefined}
+              onClick={() => setStep(index)}
             >
               <span />
             </button>

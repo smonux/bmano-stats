@@ -8,7 +8,6 @@ import { type Backup } from '../domain/model';
 import { Confirm, ErrorMessage, PageTitle, useAction } from '../components/ui';
 import { backupZip, readBackupFile } from '../data/backup-files';
 import { todayDateString } from '../presentation/matches';
-
 function SettingsView({ showWelcome }: { showWelcome: () => void }) {
   const action = useAction();
   const [backup, setBackup] = useState<Backup | null>(null);
@@ -44,12 +43,14 @@ function SettingsView({ showWelcome }: { showWelcome: () => void }) {
               const data = await repo.exportBackup();
               const bytes = await backupZip(data);
               const url = URL.createObjectURL(
-                new Blob([new Uint8Array(bytes).buffer], { type: 'application/zip' }),
+                new Blob([new Uint8Array(bytes).buffer], {
+                  type: 'application/zip',
+                }),
               );
-              const el = document.createElement('a');
-              el.href = url;
-              el.download = `handball-stats-${todayDateString()}.zip`;
-              el.click();
+              const downloadLink = document.createElement('a');
+              downloadLink.href = url;
+              downloadLink.download = `handball-stats-${todayDateString()}.zip`;
+              downloadLink.click();
               setTimeout(() => URL.revokeObjectURL(url), 1000);
               setNotice(tr('Copia exportada. Guarda el archivo en un lugar seguro.'));
             })
@@ -69,9 +70,9 @@ function SettingsView({ showWelcome }: { showWelcome: () => void }) {
             type="file"
             accept=".zip,.json,application/zip,application/x-zip-compressed,application/json"
             aria-label={tr('Importar copia')}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              e.target.value = '';
+            onChange={(inputEvent) => {
+              const file = inputEvent.target.files?.[0];
+              inputEvent.target.value = '';
               if (file) {
                 action.run(async () => {
                   setBackup(await readBackupFile(file));
@@ -110,5 +111,4 @@ function SettingsView({ showWelcome }: { showWelcome: () => void }) {
     </>
   );
 }
-
 export { SettingsView };

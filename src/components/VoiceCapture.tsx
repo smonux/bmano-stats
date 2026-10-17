@@ -1,17 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
 import { LoaderCircle, Mic } from 'lucide-react';
-import type { Match, Snapshot } from '../domain/model';
+import type { Match, Snapshot } from '../domain/schema';
 import { tr } from '../i18n';
-import { whistleKeywords } from '../voice/keywords';
-import { voiceError } from '../voice/engine';
-import { VoiceRecorder } from '../voice/recorder';
-import { microphoneProblem } from '../voice/readiness';
-import { useVoiceSetup, prepareVoice, preparedEngine, discardVoiceEngine } from '../voice/setup';
-import { captureContext, toVoiceDraft, type CaptureContext } from '../voice/interpretation';
 import { EventEditor } from './EventEditor';
 import { ErrorMessage } from './ui';
-type Phase = 'ready' | 'permission' | 'recording' | 'transcribing' | 'interpreting' | 'review';
-type Result = ReturnType<typeof toVoiceDraft>;
+import { useVoiceCapture } from './voice/useVoiceCapture';
+
 export function VoiceCapture({
   match,
   data,
@@ -21,202 +14,20 @@ export function VoiceCapture({
   data: Snapshot;
   allowReview: boolean;
 }) {
-  const setup = useVoiceSetup();
-  const [phase, setPhase] = useState<Phase>('ready');
-  const [status, setStatus] = useState('');
-  const [error, setError] = useState('');
-  const [result, setResult] = useState<Result | null>(null);
-  const [seconds, setSeconds] = useState(0);
-  const recorder = useRef<VoiceRecorder | null>(null);
-  const alive = useRef(true);
-  const lock = useRef(false);
-  const held = useRef(false);
-  const processing = useRef(false);
-  const timings = useRef({ whistleMs: 0, rulesMs: 0 });
-  const capture = useRef<CaptureContext | null>(null);
-  const stopRef = useRef<() => void>(() => {});
-  useEffect(() => {
-    alive.current = true;
-    return () => {
-      alive.current = false;
-      recorder.current?.cancel();
-      if (processing.current) {
-        void discardVoiceEngine();
-      }
-    };
-  }, []);
-  useEffect(() => {
-    if (setup.phase === 'cached') {
-      void prepareVoice(false);
-    }
-  }, [setup.phase]);
-  useEffect(() => {
-    if (phase !== 'recording') {
-      return;
-    }
-    const start = Date.now();
-    const timer = setInterval(
-      () => setSeconds(Math.min(20, Math.floor((Date.now() - start) / 1000))),
-      200,
-    );
-    return () => clearInterval(timer);
-  }, [phase]);
-  const stop = async () => {
-    if (!recorder.current || lock.current) {
-      return;
-    }
-    lock.current = true;
-    processing.current = true;
-    setPhase('transcribing');
-    setStatus(tr('Whistle está transcribiendo…'));
-    try {
-      const audio = await recorder.current.stop();
-      recorder.current = null;
-      if (!alive.current) {
-        return;
-      }
-      if (audio.samples.length < audio.sampleRate * 0.25) {
-        throw new Error(
-          tr('La grabación es demasiado corta. Mantén pulsado hasta terminar la jugada.'),
-        );
-      }
-      const c = capture.current!;
-      const engine = preparedEngine();
-      const matchPlayers = c.data.players.filter(
-        (p) =>
-          [c.match.localTeamId, c.match.visitorTeamId].includes(p.teamId) &&
-          !p.isUnknown &&
-          !p.deletedAt,
-      );
-      const keywords = whistleKeywords(
-        setup.language,
-        c.data.teams
-          .filter((t) => [c.match.localTeamId, c.match.visitorTeamId].includes(t.id))
-          .map((t) => t.name),
-        matchPlayers,
-      );
-      const speechStart = performance.now();
-      const transcript = await engine.transcribe(audio.samples, audio.sampleRate, keywords);
-      if (!alive.current) {
-        return;
-      }
-      timings.current.whistleMs = performance.now() - speechStart;
-      const text = transcript.text.trim();
-      if (!text) {
-        throw new Error(
-          tr('No se ha reconocido voz. Acércate al micrófono y vuelve a intentarlo.'),
-        );
-      }
-      setPhase('interpreting');
-      setStatus(tr('Aplicando reglas de evento y participantes…'));
-      let proposal: unknown = null;
-      let warnings: string[] = [];
-      const rulesStart = performance.now();
-      try {
-        const response = await engine.interpret(
-          text,
-          [c.match.localTeamId, c.match.visitorTeamId].map(
-            (id) => c.data.teams.find((t) => t.id === id)!.name,
-          ),
-          c.data.players
-            .filter(
-              (p) =>
-                !p.isUnknown &&
-                !p.deletedAt &&
-                p.name &&
-                [c.match.localTeamId, c.match.visitorTeamId].includes(p.teamId),
-            )
-            .map((p) => ({
-              name: p.name,
-              team: p.teamId === c.match.localTeamId ? ('equipo1' as const) : ('equipo2' as const),
-            })),
-        );
-        proposal = response.proposal;
-        warnings = response.warnings;
-        timings.current.rulesMs = performance.now() - rulesStart;
-      } catch (e) {
-        await discardVoiceEngine();
-        if (alive.current) {
-          setError(voiceError(e));
-        }
-      }
-      if (alive.current) {
-        const value = toVoiceDraft(text, proposal, c);
-        value.warnings.unshift(...warnings);
-        setResult(value);
-        setPhase('review');
-      }
-    } catch (e) {
-      await discardVoiceEngine();
-      if (alive.current) {
-        setError(voiceError(e));
-        setPhase('ready');
-      }
-    } finally {
-      lock.current = false;
-      processing.current = false;
-    }
-  };
-  stopRef.current = () => {
-    held.current = false;
-    void stop();
-  };
-  const start = async () => {
-    if (lock.current || phase !== 'ready' || setup.phase !== 'ready') {
-      return;
-    }
-    timings.current = { whistleMs: 0, rulesMs: 0 };
-    held.current = true;
-    lock.current = true;
-    setError('');
-    setResult(null);
-    setSeconds(0);
-    setPhase('permission');
-    capture.current = captureContext(match, data);
-    const mic = new VoiceRecorder();
-    recorder.current = mic;
-    try {
-      const started = await mic.start(() => stopRef.current());
-      if (!alive.current) {
-        mic.cancel();
-        return;
-      }
-      lock.current = false;
-      if (started) {
-        setPhase('recording');
-        if (!held.current) {
-          await stop();
-        }
-      } else {
-        setPhase('ready');
-      }
-    } catch (e) {
-      if (alive.current) {
-        setError(voiceError(e));
-        setPhase('ready');
-      }
-      recorder.current = null;
-    } finally {
-      lock.current = false;
-    }
-  };
-  const release = () => {
-    held.current = false;
-    if (phase === 'recording') {
-      void stop();
-    }
-  };
-  const cancelRecording = () => {
-    if (!['recording', 'permission'].includes(phase)) {
-      return;
-    }
-    held.current = false;
-    recorder.current?.cancel();
-    recorder.current = null;
-    setPhase('ready');
-  };
-  const ready = setup.phase === 'ready';
-  const problem = microphoneProblem();
+  const {
+    setup,
+    phase,
+    status,
+    error,
+    result,
+    seconds,
+    start,
+    release,
+    cancelRecording,
+    closeReview,
+    ready,
+    problem,
+  } = useVoiceCapture(match, data);
   return (
     <>
       <button
@@ -294,11 +105,8 @@ export function VoiceCapture({
             match={match}
             initialDraft={result.draft}
             voiceWarnings={result.warnings}
-            voiceTimings={timings.current}
-            close={() => {
-              setResult(null);
-              setPhase('ready');
-            }}
+            voiceTimings={result.timings}
+            close={closeReview}
           />
         ) : (
           <p className="capture-status" role="status">

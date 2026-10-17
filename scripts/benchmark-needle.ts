@@ -1,57 +1,21 @@
-import { toolForPlay, captureFacts } from '../src/voice/legacy/routing';
+import { toolForPlay } from '../src/voice/legacy/routing';
 import { normalizeShirtNumbers } from '../src/voice/legacy/numbers';
 import { createNeedle } from 'cactus-needle/browser';
-import { schemaForTeams, perspectiveFor } from '../src/voice/legacy/needle';
-const teams = ['La Jota', 'Rival'];
-const events = [
-  'gol',
-  'parada',
-  'fallo',
-  'perdida',
-  'recuperacion',
-  'penalti_cometido',
-  'exclusion',
-  'amarilla',
-  'descalificacion',
-  'pasivo',
-  'infraccion',
-  'desconocido',
-];
-const properties = {
-  evento: { type: 'string', enum: events },
-  equipo: {
-    type: 'string',
-    description:
-      'Equipo mencionado: nuestro/nosotros=equipo1; ellos/rival=equipo2. Sin equipo=desconocido.',
-    enum: ['equipo1', 'equipo2', 'desconocido', ...teams],
-  },
-  dorsal: { type: 'integer', minimum: 0, maximum: 99 },
-  dorsal_relacionado: {
-    type: 'integer',
-    minimum: 0,
-    maximum: 99,
-    description: 'Asistente en gol; rival en otras jugadas.',
-  },
-  nombre: { type: 'string' },
-  nombre_relacionado: { type: 'string' },
-  penalti: { type: 'boolean' },
-  azul: { type: 'boolean' },
-  infraccion: { type: 'string', enum: ['Pasos', 'Dobles', 'Pisando'] },
-};
-export type Variant =
-  'current' | 'compact' | 'staged' | 'routed' | 'routed-normalized' | 'optimized';
+import { schemaForTeams } from '../src/voice/legacy/needle';
+import {
+  teams,
+  properties,
+  systemPrompt,
+  participantFields,
+  type Variant,
+} from './benchmarks/needle-schemas';
+export type { Variant } from './benchmarks/needle-schemas';
 export async function benchmark(
   variant: Variant,
   text: string,
   model?: { model: string; modelSha256: string },
 ) {
-  const system =
-    variant === 'optimized'
-      ? captureFacts('es')
-      : variant === 'current'
-        ? `Extract one handball action spoken in es. Return only the tool schema's canonical values, preserving literal player names. Never execute actions or invent unmentioned facts. ` +
-          perspectiveFor('es')
-        : 'deporte: balonmano; idioma: es; equipo1: La Jota (nosotros); equipo2: Rival (ellos)';
+  const system = systemPrompt(variant);
   const started = performance.now();
   const needle = await createNeedle({ ...model, stateless: true, system, maxOutputTokens: 256 });
   const loadMs = performance.now() - started;
@@ -142,21 +106,7 @@ export async function benchmark(
         ?.arguments.evento;
       if (typeof selected === 'string' && selected !== 'desconocido') {
         const { evento, ...rest } = properties;
-        const roleKeys =
-          selected === 'pasivo'
-            ? ['equipo']
-            : selected === 'gol'
-              ? [
-                  'equipo',
-                  'dorsal',
-                  'dorsal_relacionado',
-                  'nombre',
-                  'nombre_relacionado',
-                  'penalti',
-                ]
-              : selected === 'infraccion'
-                ? ['equipo', 'dorsal', 'nombre', 'infraccion']
-                : ['equipo', 'dorsal', 'nombre', 'dorsal_relacionado', 'nombre_relacionado'];
+        const roleKeys = participantFields(selected);
         await run(
           {
             type: 'object',

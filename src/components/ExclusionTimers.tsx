@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Pause, Play, Plus, Volume2, X } from 'lucide-react';
+import { Volume2 } from 'lucide-react';
 import type { Match, Snapshot } from '../domain/model';
 import { exclusionRemaining } from '../domain/exclusions';
 import { repo } from '../data/database';
 import { tr } from '../i18n';
 import { Confirm, ErrorMessage, Modal, useAction } from './ui';
 import { WheelPicker } from './WheelPicker';
+import { ExclusionCounter } from './exclusions/ExclusionCounter';
 import { useExclusionSound } from './exclusions/useExclusionSound';
 export function ExclusionTimers({
   match,
@@ -49,82 +50,31 @@ export function ExclusionTimers({
         </button>
       </div>
       <div className="exclusion-grid">
-        {timers.map((timer, i) => {
-          const remaining = timer ? exclusionRemaining(timer, now) : 120000;
-          const seconds = Math.ceil(remaining / 1000);
-          const finished = Boolean(timer && remaining === 0);
-          return (
-            <div
-              className={`exclusion-timer ${finished ? 'expired' : ''}`}
-              key={i}
-              role="group"
-              aria-label={tr('Exclusión {number}', { number: i + 1 })}
-            >
-              <button
-                className="timer-toggle"
-                disabled={action.busy || match.status === 'done'}
-                aria-label={tr(
-                  !timer ? 'Activar' : finished ? 'Liberar' : timer.running ? 'Parar' : 'Reanudar',
-                )}
-                title={timer ? data.teams.find((t) => t.id === timer.teamId)?.name : tr('Activar')}
-                onClick={() => {
-                  if (!timer) {
-                    setEditing(i);
-                    setDorsal('');
-                    setTeam(match.localTeamId);
-                  } else if (finished) {
-                    action.run(() => repo.exclusion(match.id, i, 'clear'));
-                  } else {
-                    action.run(() =>
-                      repo.exclusion(match.id, i, timer.running ? 'pause' : 'resume'),
-                    );
-                  }
-                }}
-              >
-                <span className="timer-player">
-                  {timer ? (
-                    `${timer.teamId === match.localTeamId ? '1' : '2'} · ${timer.dorsal === null ? '—' : '#' + timer.dorsal}`
-                  ) : (
-                    <>
-                      <Plus size={13} />
-                      {tr('Libre')} {i + 1}
-                    </>
-                  )}
-                </span>
-                <span className="timer-time">
-                  <strong className="timer-digits">
-                    {String(Math.floor(seconds / 60)).padStart(2, '0')}:
-                    {String(seconds % 60).padStart(2, '0')}
-                  </strong>
-                  {timer &&
-                    !finished &&
-                    (timer.running && match.clock.startedAt !== null ? (
-                      <Pause size={10} />
-                    ) : (
-                      <Play size={10} />
-                    ))}
-                </span>
-                <span className="timer-state" role="status">
-                  {finished
-                    ? tr('Puede volver')
-                    : timer && (!timer.running || match.clock.startedAt === null)
-                      ? tr('Pausado')
-                      : '\u00a0'}
-                </span>
-              </button>
-              {timer && !finished && (
-                <button
-                  className="timer-clear"
-                  disabled={action.busy || match.status === 'done'}
-                  aria-label={tr('Liberar')}
-                  onClick={() => setClearing(i)}
-                >
-                  <X size={13} />
-                </button>
-              )}
-            </div>
-          );
-        })}
+        {timers.map((timer, slot) => (
+          <ExclusionCounter
+            key={slot}
+            timer={timer}
+            slot={slot}
+            match={match}
+            data={data}
+            now={now}
+            busy={action.busy}
+            clear={() => setClearing(slot)}
+            toggle={() => {
+              if (!timer) {
+                setEditing(slot);
+                setDorsal('');
+                setTeam(match.localTeamId);
+              } else if (exclusionRemaining(timer, now) === 0) {
+                action.run(() => repo.exclusion(match.id, slot, 'clear'));
+              } else {
+                action.run(() =>
+                  repo.exclusion(match.id, slot, timer.running ? 'pause' : 'resume'),
+                );
+              }
+            }}
+          />
+        ))}
       </div>
       <p className="sr-only">
         {tr(
@@ -134,12 +84,14 @@ export function ExclusionTimers({
       <ErrorMessage text={action.error || sound.error} />
       {editing !== null && (
         <Modal
-          title={tr('Exclusión {number}', { number: editing + 1 })}
+          title={tr('Exclusión {number}', {
+            number: editing + 1,
+          })}
           close={() => !action.busy && setEditing(null)}
         >
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
+            onSubmit={(inputEvent) => {
+              inputEvent.preventDefault();
               action.run(async () => {
                 await repo.exclusion(match.id, editing, 'start', {
                   teamId,
@@ -167,7 +119,7 @@ export function ExclusionTimers({
                 pattern="[0-9]{1,2}"
                 maxLength={2}
                 value={dorsal}
-                onChange={(e) => setDorsal(e.target.value.replace(/\D/g, ''))}
+                onChange={(inputEvent) => setDorsal(inputEvent.target.value.replace(/\D/g, ''))}
               />
             </label>
             <ErrorMessage text={action.error} />
