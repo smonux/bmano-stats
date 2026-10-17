@@ -25,7 +25,7 @@ Una parada deriva un lanzamiento fallado rival; una recuperación deriva una pé
 
 ## Pendiente respecto al diseño completo
 
-- Validación de voz en dispositivos reales y ruido de pista. La integración web Whistle/Needle ya permite descargar modelos, capturar audio, transcribir e interpretar localmente y revisar el evento antes de guardar; consulta `voz.md`.
+- Validación de voz en dispositivos reales y ruido de pista. La integración web Whistle con reglas deterministas permite descargar el modelo, capturar audio, transcribir e interpretar localmente y revisar el evento antes de guardar; consulta `voz.md`.
 - Arrastre y reordenación manual, con resolución de las reglas de límites temporales del diseño.
 - Edición de fecha/equipos del partido y gestión completa de bajas/restauraciones de catálogo.
 - Presentación de todos los desgloses estadísticos: el motor calcula más métricas de las que muestra esta interfaz inicial.
@@ -91,3 +91,12 @@ La revisión visual posterior corrigió el centrado inicial de la rueda cuando e
 - Los recorridos de navegador sirven `dist/` con un servidor estático temporal, que se cierra al terminar. Los servidores Vite de desarrollo y vista previa siguen parados.
 
 Validación de esta ampliación: 42 pruebas de código superadas; recorridos de móvil y escritorio con los cuatro modelos reales, una sola descarga de Whistle, persistencia y recarga sin conexión, restauración ZIP/JSON con confirmación, y compartir/descargar PDF de partido en curso y finalizado sin conexión. Se renderizaron e inspeccionaron el informe normal y uno con 120 eventos y nombres largos para comprobar paginación, orden y ausencia de solapamientos.
+
+
+## Sustitución de Needle por reglas — 17 de octubre de 2026
+
+La captura actual utiliza únicamente Whistle. Se retiran la selección de capas, la carga de Needle, su requisito de caché y la preparación automática de variantes al compilar. Los modelos generados dejan de publicarse en `dist/models/`. Los apartados anteriores sobre Needle documentan versiones históricas y ya no describen la captura activa.
+
+Se añaden léxicos por idioma para los 11 eventos, coincidencia literal y aproximación acotada cuando falla la literal, perspectiva de quien graba, números 0–99, roles de participantes y reglas por metadato. Whistle recibe vocabulario de balonmano, nombres de equipo/jugadores y únicamente los dorsales conocidos del partido, en cifras y palabras. La interfaz muestra indicador durante reconocimiento y duración separada de Whistle y reglas. Todas las propuestas se revisan antes de guardar.
+
+La evaluación reproducible del corpus español y sus límites se conservan en `benchmarks/reglas/`. Las pruebas específicas cubren los siete idiomas; el corpus acústico y la validación en móviles físicos siguen pendientes. No se ha entrenado ningún modelo.

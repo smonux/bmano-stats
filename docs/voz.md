@@ -1,72 +1,57 @@
 # Captura local por voz
 
-## Uso
+## Preparación y uso durante el partido
 
-Antes de iniciar el partido, elige el **Idioma de voz** y pulsa **Cargar Cactus** en Nuevo partido o Ajustes. La descarga se hace una vez por navegador y origen. Se comprueba la presencia real de Whistle y Needle en caché y el SDK verifica su integridad al cargarlos; no se usa una marca de localStorage como prueba. No se puede iniciar un partido sin haber elegido idioma y preparado los modelos. Se necesita HTTPS o localhost, WebAssembly, workers y AudioWorklet.
+Antes del partido, elige **Idioma de voz** y pulsa **Cargar Cactus** en Nuevo partido o Ajustes. Solo se descarga y carga **Whistle**. Se comprueba su archivo real en CacheStorage; el SDK verifica tamaño y SHA-256 al cargarlo. Una copia antigua de Needle no es necesaria ni suficiente para marcar la voz como preparada. La preferencia anterior de capas se ignora y se ha retirado el selector.
 
-El botón **Comprobar micrófono** solicita permiso antes del partido y cierra inmediatamente las pistas. Funciona independientemente de la descarga. Si se deniega, se muestra el error y se puede reintentar. La publicación actual por Tailscale Serve es HTTPS; no se presupone que un fallo de Firefox se deba a HTTP.
+Whistle conserva su modelo, revisión, configuración de audio y los siete idiomas: español, inglés, alemán, francés, italiano, neerlandés y polaco. Se amplían sus pistas `keywords` con vocabulario de balonmano, nombres de los dos equipos, nombres conocidos y dorsales reales de ambas plantillas, en cifras y palabras del idioma elegido. Se eliminan duplicados y no se corta arbitrariamente la lista en 80 entradas. No se añaden los cien dorsales posibles: únicamente los conocidos en ese partido. Estas pistas ayudan al reconocimiento, pero no garantizan su precisión.
 
-La perspectiva de quien graba es fija: «nuestro/nosotros» y sus variantes siempre son el equipo 1; «ellos/ellas/rival/contrario/suyo/su equipo» y sus variantes siempre son el equipo 2. No depende de quién juega en casa. Needle recibe esta regla y el resolvedor aplica la misma correspondencia. No hay selector de referencia. También se aceptan los nombres exactos de los equipos; «local» y «visitante» por sí solos no determinan la perspectiva.
+**Comprobar micrófono** solicita permiso y cierra inmediatamente las pistas. La publicación por Tailscale Serve usa HTTPS. Durante el partido, **Voz** es push to talk directo: mantener pulsado y soltar para terminar, también con Espacio o Intro. No hay segundo menú ni grabación con un toque. El límite es 20 segundos y el minuto se toma al comenzar la captura. Whistle trabaja en su worker; mientras transcribe se muestra un indicador animado y sigue disponible la entrada manual.
 
-Durante el partido, **Voz** es directamente el botón push to talk: mantén pulsado para hablar y suelta para terminar. No abre paneles ni permite grabar con un toque. En teclado se mantiene Espacio o Intro. El límite es 20 segundos. Di una sola jugada: «gol nuestro, dorsal siete». El tiempo y minuto se toman al comenzar la captura, sin esperar al reconocimiento.
+El editor conserva la transcripción literal, muestra tiempos separados de **Whistle en segundos** y **Reglas en milisegundos**, y permite revisar antes de guardar. Una interpretación ambigua abre un borrador pendiente; no modifica el marcador por sí sola. El audio no se conserva ni se envía a un servicio externo. Tras recargar un partido, solo se cargan archivos locales: si falta Whistle se deshabilita voz y aparece la alerta de preparación.
 
-Whistle transcribe en el idioma elegido antes del partido. Needle propone los campos y el editor permite revisarlos. El marcador solo cambia al guardar. Si la interpretación falla, se conserva el texto y se abre un borrador pendiente. Una única propuesta retenida por baja confianza puede mostrarse como borrador con advertencia explícita; nunca se ejecuta ni se guarda sin confirmación. Las respuestas múltiples, negadas o marcadas como no respaldadas por el texto no rellenan los campos. Los nombres se comparan dentro del equipo correcto, sin aproximación; un nombre ambiguo o inexistente queda sin dorsal. Los dorsales nuevos se crean al guardar, usando las mismas transacciones de la entrada manual.
+## Intérprete determinista
 
-La transcripción literal se guarda en `rawText`, separada de la nota editable. El audio no se guarda ni se envía a un servicio de transcripción. Soltar el botón cierra el micrófono antes de transcribir. Cancelar el gesto o salir del partido libera las pistas. Los modelos preparados se reutilizan en memoria entre pantallas; abandonar una inferencia termina sus workers. Tras recargar, en el partido se cargan solo archivos existentes en caché. Si faltan, se deshabilita la voz, aparece una alerta y se enlaza a preparación; no se descargan modelos en mitad del encuentro.
+No se crea ninguna sesión de Needle ni se descargan sus pesos. El paquete `cactus-needle` 0.3.0 y su motor WASM compartido siguen siendo la dependencia usada para Whistle; el nombre del paquete o del WASM no implica que se esté ejecutando el modelo Needle. Los experimentos anteriores quedan en `docs/benchmarks/needle/` y scripts históricos, sin intervenir en desarrollo, compilación ni captura actual.
 
-## Integración
+El análisis de `src/voice/deterministic.ts` sigue estas fases:
 
-- Modelos de Cactus: Whistle para transcripción y Needle 3 para extracción estructurada.
-- Adaptador comunitario `cactus-needle` **0.3.0**, enlazado desde el [repositorio de Cactus](https://github.com/cactus-compute/needle). [Código y documentación del adaptador](https://github.com/afshinm/cactus-needle).
-- Whistle: revisión `b358ddadd89b7a713b5aa131f23032d3cca1b251`.
-- Needle: revisión `2ae11323dc000f5e70c49f7403efa6af12ba9e67`.
-- El adaptador fija tamaño y SHA-256 de modelos y motor WASM. La aplicación fija la versión del adaptador.
-- La captura usa AudioWorklet, PCM mono, límite de memoria/duración y cierre de pistas tras grabar. El worker de Whistle adapta la frecuencia de muestreo.
-- La inferencia se ejecuta fuera del hilo de interfaz. Durante el procesamiento la captura manual sigue disponible.
-- El service worker conserva JavaScript de la aplicación, el grabador y workers; el adaptador conserva modelos/WASM. En modo offline se pide carga solo desde caché.
-- Licencias y avisos de distribución en `public/third-party/`.
-- No se usa Web Speech API ni un servicio remoto alternativo.
+1. **Evento:** busca palabras clave e inflexiones del idioma de captura, incluso fuera del inicio de la frase. Distingue el penalti de lanzamiento del penalti cometido. Una asistencia propone un gol con asistente; no inventa goleador. No se consulta una tabla de frases del dataset.
+2. **Aproximación:** solo si no hay evento literal, busca la mejor palabra clave próxima en ese idioma. Usa distancia de edición con transposiciones (uno o dos cambios según longitud), prefijos suficientemente largos y margen entre eventos competidores. «penal» es un alias de «penalti»; «exclucion» puede aproximarse a «exclusión». Si dos tipos compiten, deja el evento pendiente. Los nombres conocidos y nombres de club se excluyen de esa aproximación. Una advertencia visible identifica el resultado aproximado.
+3. **Equipo:** separa participante principal y relacionado para aplicar la perspectiva. Nuestro/nosotros/nosotras/mi equipo y equivalentes → equipo 1; ellos/ellas/rival/contrario/suyo y equivalentes → equipo 2. El asistente de gol pertenece al mismo equipo; lanzador de una parada, perdedor en recuperación y beneficiarios/provocadores pertenecen al contrario. Local/visitante no resuelven la perspectiva. Los nombres de club exactos también se aceptan según el contexto del partido. Sin evidencia suficiente, equipo desconocido.
+4. **Participantes:** reconoce dorsales 0–99 en cifras o palabras y nombres literales, usando la plantilla para reconocer nombres conocidos incluso en minúsculas. No aproxima nombres ni inventa un dorsal a partir del nombre. La resolución del dorsal por nombre ocurre después, dentro del equipo correcto. Los minutos, tanteos, metros y duración de exclusión no se convierten en dorsales. Un número fuera de rango se omite sin truncar; las autocorrecciones explícitas pueden sustituir el dorsal anterior.
+5. **Metadatos, uno a uno:** penalti solo en gol/parada/fallo de siete metros; azul solo en descalificación; Pasos/Dobles/Pisando solo en infracción. Pasivo solo admite equipo. La exclusión no exige dorsal. Las sanciones con tipo incierto conservan equipo/jugador cuando están expresos, con evento pendiente.
 
-## Pruebas reproducibles
+Preguntas, negaciones, jugadas anuladas, varias acciones y avisos de pasivo sin infracción no producen una propuesta de acción definitiva. Los colores de una camiseta no se toman por tarjetas y el tiempo restante no se interpreta como exclusión. No se usa un modelo de extracción alternativo ni entrenamiento.
+
+## Ejemplos de los siete idiomas
+
+| Idioma | Gol propio | Parada rival con lanzador propio |
+| --- | --- | --- |
+| ES | Gol nuestro, dorsal veintiuno | Parada rival, dorsal uno; tiro de nuestro nueve |
+| EN | Our goal, number twenty-one | Save their number one; shot from our number nine |
+| DE | Tor für uns, Nummer einundzwanzig | Parade Gegner Nummer eins; Wurf von unser Nummer neun |
+| FR | But pour nous, numéro vingt et un | Arrêt adversaire numéro un; tir de notre numéro neuf |
+| IT | Gol nostro, numero ventuno | Parata loro numero uno; tiro di nostro numero nove |
+| NL | Doelpunt voor ons, rugnummer eenentwintig | Redding tegenstander rugnummer een; schot van ons rugnummer negen |
+| PL | Nasza bramka, numer dwadzieścia jeden | Obrona rywala numer jeden; rzut zawodnika nasz numer dziewięć |
+
+Los comandos breves y explícitos son más predecibles que una narración implícita. Se cubren las formas cardinales 0–99, variantes de género comunes y números compuestos; francés incluye septante/huitante/octante/nonante. La revisión sigue siendo necesaria con nombres nuevos, referencias pronominales ambiguas y expresiones sin palabra de acción reconocible.
+
+Referencias lingüísticas usadas para revisar números compuestos: [Duden](https://www.duden.de/sprachwissen/rechtschreibregeln/getrennt-und-zusammenschreibung), [Académie française](https://www.dictionnaire-academie.fr/article/QDL078), [Treccani](https://www.treccani.it/vocabolario/ventuno/) y [Zintegrowana Platforma Edukacyjna](https://zpe.gov.pl/a/jezykowy-swiat-liczb/DpbQ4CKTd).
+
+## Verificación
 
 ```sh
 npm test
 npm run build
+npm run voice:evaluate
 node scripts/download-voice-test-models.mjs
-VOICE_MODELS_DIR="$PWD/node_modules/.cache/voice-models" npm run test:e2e -- tests/voice.spec.ts
+VOICE_MODELS_DIR="$PWD/node_modules/.cache/voice-models" npm run test:e2e
 ```
 
-El comando de descarga obtiene las revisiones fijadas y verifica sus hashes. Las pruebas de voz se omiten si no se define `VOICE_MODELS_DIR`. Requieren Chromium de Playwright, o `CHROMIUM_PATH` apuntando a un ejecutable compatible. Se inyecta un WAV sintético en el micrófono de prueba y se usan los modelos reales; no se simulan sus respuestas. Los archivos de modelo se sirven desde el directorio local de pruebas para evitar depender de la CDN durante la ejecución.
+`voice:evaluate` ejecuta las 600 transcripciones sintéticas españolas, conserva cada propuesta y publica [resultados y conclusiones](benchmarks/reglas/LEEME.md). No ejecuta Whistle, no le añade nombres de las respuestas esperadas como plantilla y no mide reconocimiento acústico. Las reglas se han ajustado con ese corpus completo; los resultados son una comprobación de regresión, no una estimación independiente de precisión.
 
-## Límites de esta entrega
+Las pruebas de código cubren 11 eventos y perspectiva en los siete idiomas, cada dorsal 0–99 en cifras y palabras, variantes ortográficas independientes, aproximación, roles, metadatos, rechazos y vocabulario de Whistle. Los recorridos de navegador emplean Whistle real, audio sintético, descarga única, cambios de idioma y recarga sin conexión sin Needle. Requieren Chromium y `VOICE_MODELS_DIR` con `whistle.cact`; `CHROMIUM_PATH` permite indicar el ejecutable.
 
-No hay validación en Safari/iOS o Android físicos ni mediciones de ruido de pista, batería o latencia en teléfonos. El micrófono requiere permiso del usuario. El navegador puede borrar la caché y exigir otra descarga. Una frase con varias jugadas no se divide en varios eventos: debe revisarse y registrarse por separado. No se interpreta el minuto dictado: se usa el de inicio de captura y puede editarse. La revisión humana sigue siendo necesaria ante errores de reconocimiento o extracción.
-
-La revisión de esta entrega detectó errores de transcripción con muestras sintéticas y propuestas retenidas por Needle. Una muestra posterior se transcribió correctamente, pero eso no acredita precisión general. La integración se presenta como «En pruebas»; falta evaluar frases variadas, nombres propios, ruido y dispositivos físicos antes de considerarla lista para uso en competición.
-
-Verificación adicional: el arranque con `npm run dev` también carga y prepara los dos modelos reales en Chromium. No requiere ajustes especiales del servidor de desarrollo para los workers o WebAssembly.
-
-Compatibilidad: los campos `localTeamId` y `visitorTeamId` del formato de almacenamiento v1 conservan sus nombres para leer copias existentes, pero representan respectivamente la primera y segunda posición. La interfaz ahora las identifica como equipo 1 (nuestro) y equipo 2 (rival). En partidos antiguos se conserva el orden existente; no se intercambian los equipos ni las estadísticas.
-
-## Idiomas
-
-Whistle admite español (`es`), inglés (`en`), alemán (`de`), francés (`fr`), italiano (`it`), neerlandés (`nl`) y polaco (`pl`), según la [ficha oficial](https://huggingface.co/Cactus-Compute/whistle). El único modelo descargado cubre los siete idiomas. La interfaz dispone del mismo conjunto, pero el idioma hablado se selecciona por separado en la preparación previa al partido y se conserva en este navegador.
-
-La captura pasa el idioma elegido a Whistle y al prompt de Needle, con vocabulario deportivo específico. El esquema de salida conserva sus claves originales para evitar cambios en estadísticas y copias. Las formas equivalentes a «nosotros/nuestro» se resuelven como equipo 1; «ellos/rival/suyo», como equipo 2, independientemente del campo. El ejemplo de voz sigue el idioma hablado aunque la interfaz use otro.
-
-La cobertura de configuración, esquema y resolución de perspectiva se verifica para los siete idiomas. La prueba de audio real automatizada sigue usando una muestra sintética española: no equivale a validar precisión acústica ni de interpretación con hablantes nativos de los otros seis idiomas o ruido de pabellón. Todas las propuestas se revisan antes de guardar.
-
-## Interpretación y latencia
-
-La captura usa una ruta literal para una acción inequívoca y normaliza solo números dictados tras marcadores explícitos de dorsal. Needle recibe los campos necesarios para esa acción; los demás no entran en el esquema. Frases negadas, con varias acciones o sin un prefijo claro pasan al esquema general. La perspectiva explícita de la cláusula principal se resuelve localmente con las mismas reglas, sin confundir al jugador relacionado. Se conservan las comprobaciones del modelo y la revisión antes de guardar.
-
-El editor muestra los segundos empleados por Whistle y Needle. La [investigación reproducible](benchmarks/needle/LEEME.md) recoge los esquemas comparados, tiempos, errores observados y límites: en dos frases españolas pasó de unos 34 segundos a 6–8 segundos en Chromium del servidor. No se extrapola esa cifra a Android físico ni a todos los idiomas/frases.
-
-
-## Selección de Needle
-
-Hay una única preferencia de modelo, compartida por Nuevo partido y Ajustes: 4, 8, 12 o 20 capas de Needle, con 12 por defecto. Se conserva en `handball-needle-depth`. La configuración no cambia Whistle ni añade un selector para él.
-
-Las variantes pequeñas se sirven desde `dist/models/`, tienen nombres con hash y pasan la misma verificación SHA-256 del SDK. Cada archivo tiene su propia entrada de CacheStorage; conservar 20 capas no basta para marcar 12 como preparado. Elegir una variante requiere cargarla explícitamente antes del partido. Cambiar entre variantes ya descargadas reutiliza la caché, también sin conexión. Whistle conserva su revisión y caché originales.
-
-Los archivos se preparan sin entrenamiento mediante `scripts/prepare-needle-models.mjs` y `scripts/needle-depths.py`. El primer script verifica el archivo base y el tamaño/hash de todas las salidas, y se ejecuta antes de desarrollo o compilación. Las variantes se distribuyen como archivos estáticos, no dentro del JavaScript ni en la precarga de todas las variantes.
+No se ha evaluado todavía con Android/iOS físicos, ruido de pista ni un corpus acústico equivalente en los otros seis idiomas. Los errores de Whistle y los límites semánticos de las reglas siguen requiriendo revisión antes de guardar.

@@ -20,13 +20,8 @@ test('refuses ready status if model files were not actually persisted',async()=>
  const setup=await import('./setup');await setup.chooseVoiceLanguage('en');mocks.present.mockResolvedValue(false);
  expect(await setup.prepareVoice(true)).toBe(false);expect(setup.voiceState().phase).toBe('error');expect(mocks.engine.close).toHaveBeenCalled();expect(()=>setup.preparedEngine()).toThrow();
 });
-test('one saved Needle selection defaults to 12 and invalidates readiness until the selected file is available',async()=>{
- const setup=await import('./setup');expect(setup.voiceState().needleDepth).toBe(12);
- await setup.chooseVoiceLanguage('es');await setup.prepareVoice(true);expect(mocks.created).toHaveBeenLastCalledWith('es',12);
- mocks.present.mockImplementation(async(depth:number)=>depth===12);
- await setup.chooseNeedleDepth(8);expect(localStorage.getItem('handball-needle-depth')).toBe('8');
- expect(setup.voiceState()).toMatchObject({needleDepth:8,phase:'missing'});expect(()=>setup.preparedEngine()).toThrow();
- mocks.present.mockResolvedValue(true);await setup.prepareVoice(true);expect(mocks.created).toHaveBeenLastCalledWith('es',8);
- await setup.chooseNeedleDepth(12);expect(setup.voiceState()).toMatchObject({needleDepth:12,phase:'cached'});
- await setup.prepareVoice(false);expect(mocks.created).toHaveBeenLastCalledWith('es',12);expect(mocks.engine.prepare.mock.lastCall?.[1]).toBe(true);
+test('old Needle preferences are ignored; only the capture language reaches the engine',async()=>{
+ localStorage.setItem('handball-needle-depth','20');
+ const setup=await import('./setup');await setup.chooseVoiceLanguage('es');await setup.prepareVoice(true);
+ expect(mocks.created).toHaveBeenLastCalledWith('es');expect(setup.voiceState()).not.toHaveProperty('needleDepth');
 });

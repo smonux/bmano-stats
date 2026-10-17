@@ -6,24 +6,22 @@ import { serveModels } from './voice-helpers';
 import { reportFixture } from './fixtures/report';
 test.beforeEach(async({page})=>{await page.addInitScript(()=>{localStorage.setItem('handball-language','es');localStorage.setItem('handball-welcome-v1','done');});});
 
-test('one Needle version choice defaults to 12, reuses Whistle and persists all four models offline',async({page,context},info)=>{
- test.setTimeout(150000);await serveModels(context);
- let whistle=0,models=0;
- page.on('request',request=>{if(request.url()===DEFAULT_SPEECH_MODEL.url)whistle++;if(request.url().includes('/models/')&&request.url().endsWith('.cact'))models++;});
- await page.goto('/#/ajustes');const preparation=page.getByRole('region',{name:'Preparación de voz'}),version=preparation.getByLabel('Versión de Needle',{exact:true});
- await expect(version).toHaveValue('12');await expect(version.locator('option')).toHaveCount(4);await expect(page.getByLabel('Versión de Whistle')).toHaveCount(0);
- await preparation.getByLabel('Idioma de voz',{exact:true}).selectOption('es');
- for(const depth of ['12','8','4','20']){
-  await version.selectOption(depth);await preparation.getByRole('button',{name:'Cargar Cactus',exact:true}).click();
-  await expect(version).toBeDisabled();await expect(preparation.getByText('Cactus listo',{exact:true})).toBeVisible({timeout:60000});
+test('downloads only Whistle, reuses it for language changes and reloads offline without Needle',async({page,context},info)=>{
+ test.setTimeout(90000);await serveModels(context);
+ const requests:string[]=[];page.on('request',request=>{if(request.url().endsWith('.cact'))requests.push(request.url());});
+ await page.addInitScript(()=>localStorage.setItem('handball-needle-depth','20'));
+ await page.goto('/#/ajustes');const preparation=page.getByRole('region',{name:'Preparación de voz'});
+ await expect(preparation.getByLabel('Versión de Needle')).toHaveCount(0);await expect(preparation.getByLabel('Versión de Whistle')).toHaveCount(0);
+ for(const language of ['es','en','fr','pl']){
+  await preparation.getByLabel('Idioma de voz',{exact:true}).selectOption(language);
+  await preparation.getByRole('button',{name:'Cargar Cactus',exact:true}).click();
+  await expect(preparation.getByText('Cactus listo',{exact:true})).toBeVisible({timeout:30000});
  }
- expect(whistle).toBe(1);expect(models).toBe(3);
- await version.selectOption('12');await preparation.getByRole('button',{name:'Cargar Cactus',exact:true}).click();await expect(preparation.getByText('Cactus listo',{exact:true})).toBeVisible({timeout:30000});
+ expect(requests).toEqual([DEFAULT_SPEECH_MODEL.url]);
  await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.reload();await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
- await expect(version).toHaveValue('12');const downloaded=models;
- await context.setOffline(true);await page.reload();await expect(version).toHaveValue('12');
+ await context.setOffline(true);await page.reload();
  await preparation.getByRole('button',{name:'Cargar Cactus',exact:true}).click();await expect(preparation.getByText('Cactus listo',{exact:true})).toBeVisible({timeout:30000});
- expect(models).toBe(downloaded);expect(whistle).toBe(1);await page.screenshot({path:info.outputPath('needle-selection.png'),fullPage:true});
+ expect(requests).toEqual([DEFAULT_SPEECH_MODEL.url]);await page.screenshot({path:info.outputPath('whistle-rules.png'),fullPage:true});
 });
 
 test('full ZIP export restores ZIP or legacy JSON only after confirmation',async({page},info)=>{

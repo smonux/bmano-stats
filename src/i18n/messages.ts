@@ -1696,14 +1696,6 @@ export const catalog: Record<string, readonly string[]> = {
     "Voorbeeld: ‘doelpunt voor ons, nummer zeven’. Je kunt ook de teamnaam gebruiken.",
     "Przykład: „nasza bramka, numer siedem”. Możesz też podać nazwę drużyny."
   ],
-  "Prepara Whistle y Needle (unos 53 MB). La primera descarga necesita conexión; después se reutilizan si el navegador conserva la caché. El audio se procesa aquí y se descarta tras transcribirlo.": [
-    "Prepare Whistle and Needle (about 53 MB). The first download needs internet; then models are reused while cached. Audio is processed here and discarded after transcription.",
-    "Whistle und Needle vorbereiten (ca. 53 MB). Der erste Download benötigt Internet; danach werden zwischengespeicherte Modelle genutzt. Audio wird hier verarbeitet und nach der Transkription verworfen.",
-    "Préparez Whistle et Needle (environ 53 Mo). Le premier téléchargement nécessite Internet ; les modèles en cache sont ensuite réutilisés. L’audio est traité ici puis supprimé après transcription.",
-    "Prepara Whistle e Needle (circa 53 MB). Il primo download richiede Internet; poi vengono riutilizzati dalla cache. L’audio viene elaborato qui e scartato dopo la trascrizione.",
-    "Bereid Whistle en Needle voor (circa 53 MB). De eerste download vereist internet; daarna worden modellen uit de cache gebruikt. Audio wordt hier verwerkt en na transcriptie verwijderd.",
-    "Przygotuj Whistle i Needle (około 53 MB). Pierwsze pobranie wymaga Internetu; później modele są używane z pamięci podręcznej. Dźwięk jest przetwarzany tutaj i usuwany po transkrypcji."
-  ],
   "Preparar voz local": [
     "Prepare local voice",
     "Lokale Spracheingabe vorbereiten",
@@ -1800,14 +1792,6 @@ export const catalog: Record<string, readonly string[]> = {
     "Whistle transcribeert…",
     "Whistle transkrybuje…"
   ],
-  "Needle está interpretando la jugada…": [
-    "Needle is interpreting the play…",
-    "Needle interpretiert die Aktion…",
-    "Needle interprète l’action…",
-    "Needle sta interpretando l’azione…",
-    "Needle interpreteert de actie…",
-    "Needle interpretuje akcję…"
-  ],
   "Cargando Whistle…": [
     "Loading Whistle…",
     "Whistle wird geladen…",
@@ -1815,14 +1799,6 @@ export const catalog: Record<string, readonly string[]> = {
     "Caricamento Whistle…",
     "Whistle laden…",
     "Ładowanie Whistle…"
-  ],
-  "Cargando Needle…": [
-    "Loading Needle…",
-    "Needle wird geladen…",
-    "Chargement de Needle…",
-    "Caricamento Needle…",
-    "Needle laden…",
-    "Ładowanie Needle…"
   ],
   "Modelos listos en este dispositivo.": [
     "Models ready on this device.",
@@ -1959,14 +1935,6 @@ export const catalog: Record<string, readonly string[]> = {
     "Premi, parla, controlla e salva",
     "Druk, spreek, controleer en sla op",
     "Naciśnij, powiedz, sprawdź i zapisz"
-  ],
-  "Una jugada por grabación. Mantén pulsado o usa un toque para empezar y otro para terminar. Whistle transcribe y Needle propone; tú confirmas. La entrada manual sigue disponible.": [
-    "One play per recording. Hold to talk or tap once to start and again to finish. Whistle transcribes and Needle proposes; you confirm. Manual entry stays available.",
-    "Eine Aktion pro Aufnahme. Gedrückt halten oder zum Starten und Stoppen tippen. Whistle transkribiert, Needle schlägt vor; du bestätigst. Manuelle Eingabe bleibt verfügbar.",
-    "Une action par enregistrement. Maintenez ou touchez pour démarrer puis terminer. Whistle transcrit, Needle propose ; vous confirmez. La saisie manuelle reste disponible.",
-    "Un’azione per registrazione. Tieni premuto o tocca per iniziare e di nuovo per finire. Whistle trascrive, Needle propone; tu confermi. L’inserimento manuale resta disponibile.",
-    "Eén actie per opname. Houd ingedrukt of tik om te starten en nogmaals om te stoppen. Whistle transcribeert, Needle stelt voor; jij bevestigt. Handmatige invoer blijft beschikbaar.",
-    "Jedna akcja na nagranie. Przytrzymaj lub dotknij, aby zacząć i ponownie, aby skończyć. Whistle transkrybuje, Needle proponuje; Ty potwierdzasz. Wpisywanie ręczne jest nadal dostępne."
   ],
   "Tu perspectiva manda": [
     "Your perspective matters",
@@ -2216,14 +2184,6 @@ export const catalog: Record<string, readonly string[]> = {
     "Bereid modellen voor het opnemen voor.",
     "Przygotuj modele przed nagrywaniem."
   ],
-  "Needle no está disponible.": [
-    "Needle is unavailable.",
-    "Needle ist nicht verfügbar.",
-    "Needle est indisponible.",
-    "Needle non è disponibile.",
-    "Needle is niet beschikbaar.",
-    "Needle jest niedostępny."
-  ],
   "La interpretación no está respaldada por la frase. Completa el evento a partir de la transcripción.": [
     "The interpretation is not supported by the phrase. Complete the event from the transcript.",
     "Die Interpretation wird vom Satz nicht gestützt. Aktion anhand des Transkripts ergänzen.",
@@ -2232,14 +2192,6 @@ export const catalog: Record<string, readonly string[]> = {
     "De interpretatie wordt niet ondersteund door de zin. Vul de actie aan vanuit de transcriptie.",
     "Interpretacja nie wynika z wypowiedzi. Uzupełnij zdarzenie na podstawie transkrypcji."
   ],
-  "Needle no ha devuelto una única propuesta. No se han supuesto los datos.": [
-    "Needle did not return a single proposal. No data was assumed.",
-    "Needle hat keinen einzelnen Vorschlag geliefert. Keine Daten wurden angenommen.",
-    "Needle n’a pas renvoyé une proposition unique. Aucune donnée n’a été supposée.",
-    "Needle non ha restituito una proposta unica. Nessun dato è stato ipotizzato.",
-    "Needle gaf geen enkelvoudig voorstel. Er zijn geen gegevens aangenomen.",
-    "Needle nie zwrócił jednej propozycji. Nie założono żadnych danych."
-  ],
   "Propuesta de voz: revisa todos los campos antes de guardar.": [
     "Voice draft: review every field before saving.",
     "Sprachentwurf: alle Felder vor dem Speichern prüfen.",
@@ -2247,14 +2199,6 @@ export const catalog: Record<string, readonly string[]> = {
     "Proposta vocale: controlla tutti i campi prima di salvare.",
     "Spraakvoorstel: controleer alle velden vóór opslaan.",
     "Propozycja głosowa: sprawdź wszystkie pola przed zapisem."
-  ],
-  "Needle ha retenido esta propuesta por incertidumbre. Solo se guardará si la confirmas.": [
-    "Needle withheld this uncertain proposal. It is saved only if you confirm.",
-    "Needle hat diesen unsicheren Vorschlag zurückgehalten. Er wird nur nach Bestätigung gespeichert.",
-    "Needle a retenu cette proposition incertaine. Elle ne sera enregistrée qu’après confirmation.",
-    "Needle ha trattenuto questa proposta incerta. Sarà salvata solo se confermi.",
-    "Needle hield dit onzekere voorstel tegen. Het wordt alleen na bevestiging opgeslagen.",
-    "Needle wstrzymał niepewną propozycję. Zostanie zapisana tylko po potwierdzeniu."
   ],
   "El modelo indica confianza baja.": [
     "The model reports low confidence.",
@@ -2656,22 +2600,6 @@ export const catalog: Record<string, readonly string[]> = {
     "Rugnummer (optioneel)",
     "Numer (opcjonalny)"
   ],
-  "Una jugada por grabación. Mantén pulsado para hablar y suelta para terminar. Whistle transcribe y Needle propone; tú revisas y guardas. La entrada manual sigue disponible.": [
-    "One play per recording. Hold to talk and release to finish. Whistle transcribes and Needle proposes; you review and save. Manual entry stays available.",
-    "Eine Aktion pro Aufnahme. Zum Sprechen gedrückt halten, zum Beenden loslassen. Whistle transkribiert, Needle schlägt vor; du prüfst und speicherst. Manuelle Eingabe bleibt verfügbar.",
-    "Une action par enregistrement. Maintenez pour parler et relâchez pour terminer. Whistle transcrit, Needle propose ; vous vérifiez et enregistrez. La saisie manuelle reste disponible.",
-    "Un’azione per registrazione. Tieni premuto per parlare e rilascia per finire. Whistle trascrive, Needle propone; tu controlli e salvi. L’inserimento manuale resta disponibile.",
-    "Eén actie per opname. Houd ingedrukt om te spreken en laat los om te stoppen. Whistle transcribeert, Needle stelt voor; jij controleert en slaat op. Handmatige invoer blijft beschikbaar.",
-    "Jedna akcja na nagranie. Przytrzymaj, aby mówić, i puść, aby zakończyć. Whistle transkrybuje, Needle proponuje; Ty sprawdzasz i zapisujesz. Wpisywanie ręczne nadal jest dostępne."
-  ],
-  "Whistle: {whistle} s · Needle: {needle} s": [
-    "Whistle: {whistle} s · Needle: {needle} s",
-    "Whistle: {whistle} s · Needle: {needle} s",
-    "Whistle: {whistle} s · Needle: {needle} s",
-    "Whistle: {whistle} s · Needle: {needle} s",
-    "Whistle: {whistle} s · Needle: {needle} s",
-    "Whistle: {whistle} s · Needle: {needle} s"
-  ],
   "No hay permiso para el micrófono. Revisa los permisos de este sitio y los permisos de micrófono del navegador en el dispositivo. Vuelve a intentarlo.": [
     "Microphone permission denied. Check permissions for this site and the browser’s microphone permission on your device. Try again.",
     "Mikrofonzugriff verweigert. Berechtigungen für diese Seite und den Mikrofonzugriff des Browsers auf dem Gerät prüfen. Erneut versuchen.",
@@ -2680,7 +2608,6 @@ export const catalog: Record<string, readonly string[]> = {
     "Geen microfoontoegang. Controleer rechten voor deze site en de microfoonrechten van de browser op het apparaat. Probeer opnieuw.",
     "Brak uprawnienia do mikrofonu. Sprawdź uprawnienia witryny i mikrofonu przeglądarki na urządzeniu. Spróbuj ponownie."
   ],
-  "Versión de Needle": ["Needle version","Needle-Version","Version de Needle","Versione di Needle","Needle-versie","Wersja Needle"],
   "{layers} capas · {size} MB": ["{layers} layers · {size} MB","{layers} Schichten · {size} MB","{layers} couches · {size} Mo","{layers} livelli · {size} MB","{layers} lagen · {size} MB","{layers} warstw · {size} MB"],
   "Menos capas: más rapidez. Más capas: mayor capacidad de interpretación.": ["Fewer layers: faster. More layers: greater interpretation capacity.","Weniger Schichten: schneller. Mehr Schichten: höhere Interpretationsleistung.","Moins de couches : plus rapide. Plus de couches : meilleure capacité d’interprétation.","Meno livelli: più velocità. Più livelli: maggiore capacità di interpretazione.","Minder lagen: sneller. Meer lagen: meer interpretatievermogen.","Mniej warstw: szybciej. Więcej warstw: większa zdolność interpretacji."],
   "Cargar Cactus": ["Load Cactus","Cactus laden","Charger Cactus","Carica Cactus","Cactus laden","Załaduj Cactus"],
@@ -2716,5 +2643,20 @@ export const catalog: Record<string, readonly string[]> = {
   "PDF descargado. Puedes compartirlo desde tus archivos.": ["PDF downloaded. You can share it from your files.", "PDF heruntergeladen. Du kannst es aus deinen Dateien teilen.", "PDF téléchargé. Vous pouvez le partager depuis vos fichiers.", "PDF scaricato. Puoi condividerlo dai tuoi file.", "PDF gedownload. Je kunt het delen vanuit je bestanden.", "PDF pobrany. Możesz udostępnić go ze swoich plików."],
   "Preparando PDF…": ["Preparing PDF…", "PDF wird vorbereitet…", "Préparation du PDF…", "Preparazione PDF…", "PDF voorbereiden…", "Przygotowywanie PDF…"],
   "Compartir PDF del partido": ["Share match PDF", "Spiel-PDF teilen", "Partager le PDF du match", "Condividi PDF della partita", "Wedstrijd-PDF delen", "Udostępnij PDF meczu"],
-  "Reintentar PDF": ["Retry PDF", "PDF erneut versuchen", "Réessayer le PDF", "Riprova PDF", "PDF opnieuw proberen", "Ponów PDF"]
+  "Reintentar PDF": ["Retry PDF", "PDF erneut versuchen", "Réessayer le PDF", "Riprova PDF", "PDF opnieuw proberen", "Ponów PDF"],
+  "Whistle transcribe. Las reglas detectan primero el evento y después equipo, jugadores y metadatos.": ["Whistle transcribes. Rules identify the event first, then the team, players and metadata.", "Whistle transkribiert. Regeln erkennen zuerst die Aktion, dann Team, Spieler und Zusatzdaten.", "Whistle transcrit. Les règles identifient l’action, puis l’équipe, les joueurs et les détails.", "Whistle trascrive. Le regole identificano prima l’evento, poi squadra, giocatori e dettagli.", "Whistle transcribeert. Regels bepalen eerst de actie, daarna team, spelers en details.", "Whistle transkrybuje. Reguły najpierw rozpoznają zdarzenie, potem drużynę, zawodników i szczegóły."],
+  "Aplicando reglas de evento y participantes…": ["Applying event and participant rules…", "Regeln für Aktion und Beteiligte werden angewendet…", "Application des règles de l’action et des participants…", "Applicazione delle regole di evento e partecipanti…", "Regels voor actie en deelnemers toepassen…", "Stosowanie reguł zdarzenia i uczestników…"],
+  "Whistle: {whistle} s · Reglas: {rules} ms": ["Whistle: {whistle} s · Rules: {rules} ms", "Whistle: {whistle} s · Regeln: {rules} ms", "Whistle : {whistle} s · Règles : {rules} ms", "Whistle: {whistle} s · Regole: {rules} ms", "Whistle: {whistle} s · Regels: {rules} ms", "Whistle: {whistle} s · Reguły: {rules} ms"],
+  "Interpretación por reglas: revisa los campos antes de guardar.": ["Rule-based proposal: review the fields before saving.", "Regelbasierter Vorschlag: Felder vor dem Speichern prüfen.", "Proposition par règles : vérifiez les champs avant d’enregistrer.", "Proposta basata su regole: verifica i campi prima di salvare.", "Voorstel op basis van regels: controleer de velden voor het opslaan.", "Propozycja na podstawie reguł: sprawdź pola przed zapisaniem."],
+  "No se ha identificado un evento por palabras clave.": ["No event keyword was identified.", "Kein Aktionsschlüsselwort erkannt.", "Aucun mot-clé d’action identifié.", "Nessuna parola chiave di evento identificata.", "Geen actietrefwoord gevonden.", "Nie rozpoznano słowa kluczowego zdarzenia."],
+  "La frase expresa una pregunta o duda. Completa el evento manualmente.": ["The phrase is a question or uncertain. Complete the event manually.", "Der Satz ist eine Frage oder unsicher. Aktion manuell ergänzen.", "La phrase exprime une question ou un doute. Complétez l’action manuellement.", "La frase esprime una domanda o un dubbio. Completa l’evento manualmente.", "De zin is een vraag of onzeker. Vul de actie handmatig aan.", "Zdanie wyraża pytanie lub wątpliwość. Uzupełnij zdarzenie ręcznie."],
+  "La jugada está negada o anulada. No se han supuesto datos.": ["The play is negated or cancelled. No facts were assumed.", "Die Aktion ist verneint oder annulliert. Keine Daten wurden angenommen.", "L’action est niée ou annulée. Aucune donnée n’a été supposée.", "L’azione è negata o annullata. Nessun dato è stato presunto.", "De actie is ontkend of afgekeurd. Er zijn geen gegevens aangenomen.", "Akcja jest zanegowana lub anulowana. Nie założono żadnych danych."],
+  "Hay varias acciones posibles. Registra una jugada por grabación.": ["Several actions are possible. Record one play per recording.", "Mehrere Aktionen möglich. Eine Aktion pro Aufnahme erfassen.", "Plusieurs actions sont possibles. Enregistrez une action par prise.", "Sono possibili più azioni. Registra una sola azione per registrazione.", "Meerdere acties mogelijk. Neem één actie per opname op.", "Możliwych jest kilka akcji. Rejestruj jedną akcję na nagranie."],
+  "Solo se ha reconocido un aviso de pasivo, sin infracción confirmada.": ["Only a passive-play warning was identified, without a confirmed violation.", "Nur eine Passivwarnung erkannt, kein bestätigter Regelverstoß.", "Seul un avertissement de jeu passif a été identifié, sans faute confirmée.", "Riconosciuto solo un avvertimento di gioco passivo, senza infrazione confermata.", "Alleen een waarschuwing voor passief spel herkend, geen bevestigde overtreding.", "Rozpoznano tylko ostrzeżenie o grze pasywnej, bez potwierdzonego przewinienia."],
+  "Hay un dorsal fuera de 0–99 o un número ambiguo; no se ha asignado.": ["A shirt number is outside 0–99 or ambiguous; it was left blank.", "Rückennummer außerhalb 0–99 oder mehrdeutig; nicht zugewiesen.", "Un numéro est hors de 0–99 ou ambigu ; il n’a pas été attribué.", "Un numero è fuori da 0–99 o ambiguo; non è stato assegnato.", "Een rugnummer valt buiten 0–99 of is onduidelijk; niet toegewezen.", "Numer jest poza zakresem 0–99 lub niejednoznaczny; nie przypisano go."],
+  "Hay varios jugadores posibles en un mismo rol; revisa los participantes.": ["Several players fit the same role; review the participants.", "Mehrere Spieler für dieselbe Rolle; Beteiligte prüfen.", "Plusieurs joueurs possibles pour le même rôle ; vérifiez les participants.", "Più giocatori possibili nello stesso ruolo; verifica i partecipanti.", "Meerdere spelers voor dezelfde rol; controleer de deelnemers.", "Kilku zawodników pasuje do tej samej roli; sprawdź uczestników."],
+  "El equipo del participante relacionado no coincide con su rol. Revísalo.": ["The related player’s team does not fit the role. Review it.", "Das Team des zugehörigen Spielers passt nicht zur Rolle. Bitte prüfen.", "L’équipe du joueur associé ne correspond pas à son rôle. Vérifiez-la.", "La squadra del giocatore correlato non corrisponde al ruolo. Verifica.", "Het team van de betrokken speler past niet bij de rol. Controleer dit.", "Drużyna powiązanego zawodnika nie pasuje do jego roli. Sprawdź ją."],
+  "Evento reconocido por aproximación de palabra clave. Revisa el tipo de evento.": ["Event identified by approximate keyword matching. Review the event type.", "Aktion durch ähnliches Schlüsselwort erkannt. Aktionstyp prüfen.", "Action reconnue par mot-clé approchant. Vérifiez son type.", "Evento riconosciuto da una parola chiave simile. Verifica il tipo.", "Actie herkend via een vergelijkbaar trefwoord. Controleer het actietype.", "Zdarzenie rozpoznane przez podobne słowo kluczowe. Sprawdź jego typ."],
+  "La sanción está clara, pero su tipo no. Completa el evento manualmente.": ["A sanction is clear, but its type is not. Complete the event manually.", "Eine Strafe ist klar, ihr Typ nicht. Aktion manuell ergänzen.", "La sanction est claire, mais pas son type. Complétez l’action manuellement.", "La sanzione è chiara, ma il tipo no. Completa l’evento manualmente.", "Een straf is duidelijk, het type niet. Vul de actie handmatig aan.", "Kara jest potwierdzona, ale jej typ nie. Uzupełnij zdarzenie ręcznie."],
+  "Una jugada por grabación. Mantén pulsado para hablar y suelta para terminar. Whistle transcribe y las reglas proponen los campos; tú revisas y guardas. La entrada manual sigue disponible.": ["One play per recording. Hold to talk and release to finish. Whistle transcribes and rules propose the fields; you review and save. Manual entry stays available.", "Eine Aktion pro Aufnahme. Zum Sprechen gedrückt halten, zum Beenden loslassen. Whistle transkribiert und Regeln schlagen die Felder vor; du prüfst und speicherst. Manuelle Eingabe bleibt verfügbar.", "Une action par prise. Maintenez pour parler, relâchez pour terminer. Whistle transcrit et les règles proposent les champs ; vous vérifiez et enregistrez. La saisie manuelle reste disponible.", "Un’azione per registrazione. Tieni premuto per parlare e rilascia per finire. Whistle trascrive e le regole propongono i campi; tu verifichi e salvi. L’inserimento manuale resta disponibile.", "Eén actie per opname. Houd ingedrukt om te spreken en laat los om te stoppen. Whistle transcribeert en regels stellen de velden voor; jij controleert en slaat op. Handmatige invoer blijft beschikbaar.", "Jedna akcja na nagranie. Przytrzymaj, aby mówić, i puść, aby zakończyć. Whistle transkrybuje, a reguły proponują pola; sprawdzasz i zapisujesz. Wpisywanie ręczne pozostaje dostępne."]
 };

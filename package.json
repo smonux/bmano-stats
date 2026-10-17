@@ -4,17 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "models:prepare": "node scripts/prepare-needle-models.mjs",
-    "predev": "npm run models:prepare",
     "dev": "vite --host 0.0.0.0",
-    "prebuild": "npm run models:prepare",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "dataset:build": "node scripts/build-voice-dataset.mjs",
     "dataset:check": "node scripts/build-voice-dataset.mjs --check",
-    "check": "tsc -b"
+    "check": "tsc -b",
+    "voice:evaluate": "node scripts/evaluate-voice-rules.mjs"
   },
   "engines": {
     "node": ">=22.18.0"

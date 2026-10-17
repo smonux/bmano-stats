@@ -4,8 +4,6 @@ import { languages, tr, type Language } from '../i18n';
 import { chooseVoiceLanguage, prepareVoice, refreshVoiceFiles, useVoiceSetup } from '../voice/setup';
 import { checkMicrophone, microphoneProblem } from '../voice/readiness';
 import { voiceError } from '../voice/engine';
-import { chooseNeedleDepth } from '../voice/setup';
-import { NEEDLE_DEPTHS, needleArtifacts, type NeedleDepth } from '../voice/models';
 import { ErrorMessage } from './ui';
 export function VoicePreparation({live=false}:{live?:boolean}) {
  const setup=useVoiceSetup(),[mic,setMic]=useState<'idle'|'asking'|'ok'>('idle'),[error,setError]=useState('');
@@ -22,8 +20,7 @@ export function VoicePreparation({live=false}:{live?:boolean}) {
   {missing&&<p role="alert" className="preparation-alert">{tr('Cactus no está cargado en este navegador. Elige el idioma y carga los modelos antes de iniciar el partido.')}</p>}
   {setup.phase==='cached'&&<p className="caption">{tr('Los modelos están en local. Cárgalos antes del partido.')}</p>}
   <label>{tr('Idioma de voz')}<select aria-label={tr('Idioma de voz')} value={setup.languageChosen?setup.language:''} disabled={setup.phase==='loading'||live} onChange={e=>void chooseVoiceLanguage(e.target.value as Language)}><option value="" disabled>{tr('Elige el idioma de voz')}</option>{Object.entries(languages).map(([code,name])=><option key={code} value={code}>{name}</option>)}</select></label>
-  <label>{tr('Versión de Needle')}<select aria-label={tr('Versión de Needle')} value={setup.needleDepth} disabled={setup.phase==='loading'||live} onChange={e=>void chooseNeedleDepth(Number(e.target.value) as NeedleDepth)}>{NEEDLE_DEPTHS.map(depth=><option key={depth} value={depth}>{tr('{layers} capas · {size} MB',{layers:depth,size:(needleArtifacts[depth].size/1e6).toLocaleString(undefined,{maximumFractionDigits:1})})}</option>)}</select></label>
-  <p className="caption">{tr('Menos capas: más rapidez. Más capas: mayor capacidad de interpretación.')}</p>
+  <p className="caption">{tr('Whistle transcribe. Las reglas detectan primero el evento y después equipo, jugadores y metadatos.')}</p>
   {setup.phase==='loading'?<p role="status">{tr('Cargando modelos…')} {setup.progress}</p>:setup.phase!=='ready'&&<button type="button" className="primary" disabled={!setup.languageChosen||setup.phase==='checking'||Boolean(problem)||live} onClick={()=>void prepareVoice(true)}><Download size={16}/>{tr('Cargar Cactus')}</button>}
   <button type="button" disabled={mic==='asking'||Boolean(problem)} onClick={()=>void testMic()}><Mic size={16}/>{tr(mic==='asking'?'Solicitando permiso…':mic==='ok'?'Micrófono comprobado':'Comprobar micrófono')}</button>
   {mic==='ok'&&<p className="caption" role="status">{tr('Permiso concedido. El micrófono se ha cerrado; solo se abrirá mientras mantengas pulsado para hablar.')}</p>}

@@ -1,33 +1,26 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 import { languages } from '../i18n';
-const mocks=vi.hoisted(()=>({transcribe:vi.fn(async(_audio:unknown,_options:unknown)=>({text:'test'})),complete:vi.fn(async(_text:string,_options:unknown)=>({success:true,function_calls:[],suppressed_calls:[],confidence:0})),createNeedle:vi.fn(),createWhistle:vi.fn()}));
-vi.mock('cactus-needle/browser',()=>({createNeedle:mocks.createNeedle,createWhistle:mocks.createWhistle}));
+const mocks=vi.hoisted(()=>({transcribe:vi.fn(async(_audio:unknown,_options:unknown)=>({text:'test'})),close:vi.fn(),createWhistle:vi.fn(),createNeedle:vi.fn()}));
+vi.mock('cactus-needle/browser',()=>({createWhistle:mocks.createWhistle,createNeedle:mocks.createNeedle}));
 import { VoiceEngine } from './engine';
-import { NEEDLE_DEPTHS, needleModel } from './models';
-beforeEach(()=>{vi.clearAllMocks();mocks.createWhistle.mockResolvedValue({transcribe:mocks.transcribe,close:async()=>{}});mocks.createNeedle.mockResolvedValue({complete:mocks.complete,close:async()=>{}});});
-test('the chosen weights and hash reach Needle, while Whistle keeps its existing options',async()=>{
- for(const depth of NEEDLE_DEPTHS){
-  const engine=new VoiceEngine('es',depth);await engine.prepare(()=>{},true);
-  expect(mocks.createNeedle.mock.lastCall?.[0]).toMatchObject({model:needleModel(depth).url,modelSha256:needleModel(depth).sha256,offline:true});
-  expect(mocks.createWhistle.mock.lastCall?.[0]).toMatchObject({offline:true});
-  expect(mocks.createWhistle.mock.lastCall?.[0]).not.toHaveProperty('model');
-  expect(mocks.createWhistle.mock.lastCall?.[0]).not.toHaveProperty('modelSha256');await engine.close();
- }
+beforeEach(()=>{vi.clearAllMocks();mocks.createWhistle.mockResolvedValue({transcribe:mocks.transcribe,close:mocks.close});});
+test('preparation loads only unchanged Whistle; interpretation needs no model session',async()=>{
+ const engine=new VoiceEngine('es');
+ expect((await engine.interpret('Gol nuestro, dorsal siete.',['La Jota','Rival'])).proposal).toEqual({evento:'gol',equipo:'equipo1',dorsal:7});
+ expect(mocks.createNeedle).not.toHaveBeenCalled();expect(mocks.createWhistle).not.toHaveBeenCalled();
+ await engine.prepare(()=>{},true);expect(engine.ready).toBe(true);
+ expect(mocks.createWhistle.mock.lastCall?.[0]).toMatchObject({offline:true});
+ expect(mocks.createWhistle.mock.lastCall?.[0]).not.toHaveProperty('model');expect(mocks.createWhistle.mock.lastCall?.[0]).not.toHaveProperty('modelSha256');
+ await engine.close();expect(engine.ready).toBe(false);expect(mocks.close).toHaveBeenCalledTimes(1);expect(mocks.createNeedle).not.toHaveBeenCalled();
 });
-test('all supported speech languages reach Whistle and Needle without changing canonical event schema',async()=>{
- for(const code of Object.keys(languages) as (keyof typeof languages)[]) {
-  const engine=new VoiceEngine(code);await engine.prepare(()=>{});await engine.transcribe(new Float32Array(100),16000,['example']);await engine.interpret('example',['La Jota','Rival']);
-  expect(mocks.transcribe.mock.lastCall?.[1]).toMatchObject({language:code,keywords:['example']});
-  expect(mocks.createNeedle.mock.lastCall?.[0].system).toContain(`locale:${code}`);
-  expect(mocks.createNeedle.mock.lastCall?.[0].system).toContain('NEVER home/away');
-  expect(mocks.complete.mock.lastCall?.[1]).toMatchObject({tools:{registrar_jugada:{inputSchema:{properties:{evento:{enum:expect.arrayContaining(['gol'])}}}}}});
-  await engine.close();
+test('all seven languages still reach Whistle unchanged',async()=>{
+ for(const language of Object.keys(languages) as (keyof typeof languages)[]){
+  const engine=new VoiceEngine(language);await engine.prepare(()=>{});await engine.transcribe(new Float32Array(100),16000,['example']);
+  expect(mocks.transcribe.mock.lastCall?.[1]).toMatchObject({language,keywords:['example']});await engine.close();
  }
+ expect(mocks.createNeedle).not.toHaveBeenCalled();
 });
-
-test('specific play tools are normalized back to the stable reviewed proposal without execution',async()=>{
- mocks.complete.mockResolvedValueOnce({success:true,function_calls:[{name:'gol',arguments:{equipo:'nuestro',dorsal:7}}],suppressed_calls:[],confidence:0.8} as never);
- const engine=new VoiceEngine('es');await engine.prepare(()=>{});const result=await engine.interpret('Gol nuestro, dorsal siete.',['La Jota','Rival']);
- expect(mocks.complete.mock.lastCall?.[0]).toBe('Gol nuestro, dorsal 7.');expect(mocks.complete.mock.lastCall?.[1]).toMatchObject({maxNewTokens:128,tools:{gol:{inputSchema:{properties:{dorsal:{type:'integer'}}}}}});
- expect(result.proposal).toMatchObject({evento:'gol',equipo:'equipo1',dorsal:7});expect(result.warnings.join(' ')).toContain('revisa');expect(result.timing.schemaCharacters).toBeLessThan(450);await engine.close();
+test('rule extraction reports its duration and preserves literal roster names',async()=>{
+ const engine=new VoiceEngine('es');const result=await engine.interpret('Gol nuestro, ana maría.',['La Jota','Rival'],[{name:'Ana María',team:'equipo1'}]);
+ expect(result.proposal).toEqual({evento:'gol',equipo:'equipo1',nombre:'ana maría'});expect(result.timing.method).toBe('deterministic');expect(result.timing.elapsedMs).toBeGreaterThanOrEqual(0);expect(result.warnings.join(' ')).toContain('revisa');
 });

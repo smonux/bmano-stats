@@ -4,7 +4,7 @@ Primera versión web de registro local de estadísticas de balonmano. React, Typ
 
 ## Arranque
 
-Requiere Node.js 22.18 o superior y Python 3 para preparar las variantes de Needle.
+Requiere Node.js 22.18 o superior. Las pruebas de navegador usan Python 3 como servidor estático temporal.
 
 ```sh
 npm ci
@@ -26,7 +26,7 @@ La primera visita requiere conexión para almacenar la aplicación. El service w
 - Inicio de partido con equipos del catálogo o nuevos y fecha.
 - Reloj con pausa, reanudación, nuevos tiempos y finalización; corrección de partidos finalizados.
 - Captura manual de los 11 eventos, participantes relacionados y metadatos aplicables.
-- Captura local por voz con Whistle y Needle, revisión de la propuesta y transcripción literal conservada.
+- Captura local por voz con Whistle y reglas deterministas, revisión de la propuesta y transcripción literal conservada.
 - Eventos pendientes sin cómputo; atribución de acciones sin dorsal al jugador virtual Desconocido.
 - Marcador y estadísticas derivados de eventos; las correcciones y eliminaciones actualizan sus consecuencias.
 - Estadísticas por equipo, jugador y partido, además de acumuladas.
@@ -68,11 +68,13 @@ Vite acepta cualquier nombre de host (`allowedHosts: true`) en desarrollo y vist
 
 ## Modelos y publicación estática
 
-En la preparación de voz hay una única selección de versión: Needle de 4, 8, 12 o 20 capas. La primera selección es 12 y se conserva en este navegador. El idioma sigue eligiéndose por separado. Whistle mantiene su modelo, revisión y funcionamiento actuales. Cambiar Needle cierra el intérprete anterior y verifica los archivos de la versión elegida; se reutilizan Whistle y las variantes ya descargadas. Las descargas se hacen antes del partido.
+La voz carga únicamente Whistle, sin selector ni descarga de Needle. Su modelo y configuración se mantienen. Antes del partido se elige el idioma y se prepara Whistle; los nombres conocidos y dorsales de ambas plantillas, en cifras y palabras, se pasan como pistas junto al vocabulario de balonmano.
 
-`npm run build` prepara y verifica los archivos reducidos de Needle antes de compilar. Esa preparación usa Python 3 (solo biblioteca estándar), descarga el archivo base fijado si falta y selecciona capas sin entrenamiento. Los archivos generados se excluyen de Git. También puede ejecutarse `npm run models:prepare`; `VOICE_MODELS_DIR` permite reutilizar un directorio con el modelo base verificado. Las variantes experimentales conservan las limitaciones de precisión documentadas en `docs/benchmarks/needle/MODELOS-LIGEROS.md`.
+Un intérprete determinista identifica primero el evento por palabras clave del idioma; si no hay coincidencia literal, intenta una aproximación acotada. Después extrae equipo, participantes y metadatos con reglas específicas. Nuestro/nosotros equivale siempre a equipo 1 y rival/ellos a equipo 2. Los dorsales admiten 0–99. Las dudas se conservan para revisión. Consulta la [guía de voz](docs/voz.md).
 
-Se publica únicamente `dist/`, directamente como directorio estático con Tailscale Serve. Contiene las variantes de 4, 8 y 12 capas; no se precargan las tres en el navegador. El usuario descarga la elegida. Needle completo y Whistle se obtienen de sus revisiones oficiales en Hugging Face. El navegador conserva los modelos verificados para trabajar sin conexión. No se necesita un proceso Node/Vite en producción.
+`npm run build` genera `dist/` sin preparar pesos de Needle. Se publica ese directorio estático con Tailscale Serve; no necesita Node/Vite en producción. Whistle se descarga desde su revisión fijada en Hugging Face y se conserva en el navegador. Los scripts y mediciones anteriores de Needle quedan como referencia histórica y no se ejecutan durante la compilación ni la captura actual.
+
+`npm run voice:evaluate` ejecuta las reglas sobre el dataset español y publica [métricas, errores y límites](docs/benchmarks/reglas/LEEME.md). No entrena ni ejecuta modelos de audio.
 
 ## Compartir un partido
 

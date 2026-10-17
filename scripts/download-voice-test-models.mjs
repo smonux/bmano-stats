@@ -1,11 +1,11 @@
 // Explicit test setup. Application users download through the voice panel.
-import { DEFAULT_MODEL, DEFAULT_SPEECH_MODEL } from 'cactus-needle';
+import { DEFAULT_SPEECH_MODEL } from 'cactus-needle';
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile, rename } from 'node:fs/promises';
 import { resolve } from 'node:path';
 const directory=resolve(process.env.VOICE_MODELS_DIR ?? 'node_modules/.cache/voice-models');
 await mkdir(directory,{recursive:true});
-for(const model of [DEFAULT_MODEL,DEFAULT_SPEECH_MODEL]) {
+for(const model of [DEFAULT_SPEECH_MODEL]) {
  const path=resolve(directory,`${model.name}.cact`);
  const valid=bytes=>bytes.length===model.size&&createHash('sha256').update(bytes).digest('hex')===model.sha256;
  try{if(valid(await readFile(path))){console.log(`${model.name}: verificado`);continue;}}catch{}

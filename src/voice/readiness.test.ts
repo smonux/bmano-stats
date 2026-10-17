@@ -1,24 +1,21 @@
 import { afterEach, expect, test, vi } from 'vitest';
 import { DEFAULT_MODEL, DEFAULT_SPEECH_MODEL } from 'cactus-needle/browser';
 import { checkMicrophone, localModelsPresent, microphoneProblem } from './readiness';
-import { needleModel } from './models';
 afterEach(()=>vi.unstubAllGlobals());
 test('checks real cache entries and sizes rather than a remembered readiness flag',async()=>{
  vi.stubGlobal('caches',undefined);expect(await localModelsPresent()).toBe(false);
  const match=vi.fn(async(_key:string)=>undefined as unknown),has=vi.fn(async()=>false);
  vi.stubGlobal('caches',{has,open:async()=>({match})});expect(await localModelsPresent()).toBe(false);
  has.mockResolvedValue(true);match.mockResolvedValue({blob:async()=>({size:DEFAULT_MODEL.size})});expect(await localModelsPresent()).toBe(false);
- match.mockImplementation(async(key:string)=>{const url=new URL(key);const model=[needleModel(12),DEFAULT_SPEECH_MODEL].find(m=>m.url===url.origin+url.pathname)!;expect(url.searchParams.get('__needle_sha256')).toBe(model.sha256);return {blob:async()=>({size:model.size})};});
+ match.mockImplementation(async(key:string)=>{const url=new URL(key);const model=[DEFAULT_SPEECH_MODEL].find(m=>m.url===url.origin+url.pathname)!;expect(url.searchParams.get('__needle_sha256')).toBe(model.sha256);return {blob:async()=>({size:model.size})};});
  expect(await localModelsPresent()).toBe(true);
 });
-test('readiness belongs to the selected Needle version and still requires the unchanged Whistle',async()=>{
+test('Whistle alone is sufficient; cached Needle without Whistle is not ready',async()=>{
  const entries=new Map<string,number>();
  const add=(model:{url:string;sha256:string;size:number})=>{const key=new URL(model.url);key.searchParams.set('__needle_sha256',model.sha256);entries.set(key.href,model.size);};
- add(DEFAULT_MODEL);add(DEFAULT_SPEECH_MODEL);
  vi.stubGlobal('caches',{has:async()=>true,open:async()=>({match:async(key:string)=>entries.has(key)?{blob:async()=>({size:entries.get(key)})}:undefined})});
- expect(await localModelsPresent(20)).toBe(true);expect(await localModelsPresent(12)).toBe(false);
- add(needleModel(12));expect(await localModelsPresent(12)).toBe(true);expect(await localModelsPresent(8)).toBe(false);
- entries.clear();add(needleModel(12));expect(await localModelsPresent(12)).toBe(false);
+ add(DEFAULT_MODEL);expect(await localModelsPresent()).toBe(false);
+ entries.clear();add(DEFAULT_SPEECH_MODEL);expect(await localModelsPresent()).toBe(true);
 });
 test('explicit microphone check requests audio and immediately releases every track',async()=>{
  const stop=vi.fn(),getUserMedia=vi.fn(async()=>({getTracks:()=>[{stop},{stop}]}));
