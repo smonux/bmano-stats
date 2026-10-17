@@ -1,7 +1,7 @@
-import { toolForPlay, captureFacts } from '../src/voice/routing';
-import { normalizeShirtNumbers } from '../src/voice/numbers';
+import { toolForPlay, captureFacts } from '../src/voice/legacy/routing';
+import { normalizeShirtNumbers } from '../src/voice/legacy/numbers';
 import { createNeedle } from 'cactus-needle/browser';
-import { schemaForTeams, perspectiveFor } from '../src/voice/interpretation';
+import { schemaForTeams, perspectiveFor } from '../src/voice/legacy/needle';
 const teams = ['La Jota', 'Rival'];
 const events = [
   'gol',
@@ -79,8 +79,9 @@ export async function benchmark(
   };
   const before = performance.now();
   try {
-    if (variant === 'current') await run(schemaForTeams(teams));
-    else if (variant === 'optimized') {
+    if (variant === 'current') {
+      await run(schemaForTeams(teams));
+    } else if (variant === 'optimized') {
       const route = toolForPlay(text, 'es', teams);
       schemaCharacters = route.schemaCharacters;
       const start = performance.now();
@@ -120,14 +121,14 @@ export async function benchmark(
         { tools, maxNewTokens: 128, abortSignal: AbortSignal.timeout(65000) },
       );
       calls.push({ ms: performance.now() - start, result });
-    } else if (variant === 'compact')
+    } else if (variant === 'compact') {
       await run({
         type: 'object',
         properties,
         required: ['evento', 'equipo'],
         additionalProperties: false,
       });
-    else {
+    } else {
       const classification = await run(
         {
           type: 'object',

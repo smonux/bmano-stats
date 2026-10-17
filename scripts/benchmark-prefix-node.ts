@@ -2,7 +2,8 @@
 import { createNeedle } from 'cactus-needle';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { extractionSchema, perspectiveFor } from '../src/voice/interpretation';
+import { extractionSchema } from '../src/voice/schema';
+import { perspectiveFor } from '../src/voice/legacy/needle';
 const tools = {
   registrar_jugada: {
     description:

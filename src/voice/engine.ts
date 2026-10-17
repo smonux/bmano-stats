@@ -12,7 +12,9 @@ export class VoiceEngine {
     return Boolean(this.whistle);
   }
   async prepare(progress: (text: string) => void, offline = !navigator.onLine) {
-    if (this.ready) return;
+    if (this.ready) {
+      return;
+    }
     const options = (name: string) => ({
       offline,
       abortSignal: this.controller.signal,
@@ -31,7 +33,9 @@ export class VoiceEngine {
     }
   }
   async transcribe(samples: Float32Array, sampleRate: number, keywords: string[]) {
-    if (!this.whistle) throw new Error('Prepara los modelos antes de grabar.');
+    if (!this.whistle) {
+      throw new Error('Prepara los modelos antes de grabar.');
+    }
     return this.whistle.transcribe(
       { samples, sampleRate },
       { language: this.language, keywords, abortSignal: this.controller.signal },
@@ -54,14 +58,18 @@ export class VoiceEngine {
   }
 }
 export function voiceError(error: unknown, loading = false) {
-  if (error instanceof DOMException && error.name === 'NotAllowedError')
+  if (error instanceof DOMException && error.name === 'NotAllowedError') {
     return 'No hay permiso para el micrófono. Revisa los permisos de este sitio y los permisos de micrófono del navegador en el dispositivo. Vuelve a intentarlo.';
-  if (error instanceof DOMException && error.name === 'NotFoundError')
+  }
+  if (error instanceof DOMException && error.name === 'NotFoundError') {
     return 'No se encontró un micrófono. Conecta uno o usa la entrada manual.';
-  if (error instanceof DOMException && error.name === 'NotReadableError')
+  }
+  if (error instanceof DOMException && error.name === 'NotReadableError') {
     return 'El micrófono está ocupado o no se puede abrir.';
-  if (loading && !navigator.onLine)
+  }
+  if (loading && !navigator.onLine) {
     return 'No se pudieron cargar los modelos sin conexión. Prepáralos una vez con conexión en este navegador.';
+  }
   return error instanceof Error
     ? tr('No se pudo procesar la voz: {reason}', { reason: tr(error.message) })
     : 'No se pudo procesar la voz. Puedes usar la entrada manual.';

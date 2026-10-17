@@ -1,8 +1,8 @@
 import type { JsonSchema } from 'cactus-needle/browser';
-import { tr, type Language } from '../i18n';
-import { definitions, eventTypes, type EventType } from '../domain/model';
-import { normalize } from './interpretation';
-import { voiceKeywords } from '../i18n/voice';
+import { tr, type Language } from '../../i18n';
+import { definitions, eventTypes, type EventType } from '../../domain/model';
+import { normalize } from '../interpretation';
+import { voiceKeywords } from '../../i18n/voice';
 import { normalizeShirtNumbers } from './numbers';
 const canonical: Record<EventType, string> = {
   goal: 'gol',
@@ -25,16 +25,21 @@ export function captureFacts(language: Language) {
 }
 export function routeSpokenEvent(text: string, language: Language): EventType | null {
   const value = normalize(text);
-  if (/\b(no|not|nicht|kein|keine|pas|non|geen|nie|anulado|annulled)\b/u.test(value)) return null;
+  if (/\b(no|not|nicht|kein|keine|pas|non|geen|nie|anulado|annulled)\b/u.test(value)) {
+    return null;
+  }
   const options = eventTypes.map((type) => ({
     type,
     phrase: normalize(tr(definitions[type].label, {}, language)),
   }));
   const first = options.find(({ phrase }) => value === phrase || value.startsWith(phrase + ' '));
-  if (!first) return null;
+  if (!first) {
+    return null;
+  }
   let count = 0;
-  for (const { phrase } of options)
+  for (const { phrase } of options) {
     count += [...value.matchAll(new RegExp(`(?:^|\\s)${escaped(phrase)}(?=\\s|$)`, 'gu'))].length;
+  }
   return count === 1 ? first.type : null;
 }
 const penaltyMention =
@@ -93,11 +98,11 @@ function literalPerspective(primary: string, language: Language) {
 }
 /** Routing only narrows the schema; Needle still extracts the proposal and applies its gates. */
 export function toolForPlay(rawText: string, language: Language, names: string[]) {
-  const text = normalizeShirtNumbers(rawText, language),
-    plain = normalize(text),
-    type = routeSpokenEvent(text, language);
-  const relation = relatedMention.exec(plain),
-    primary = relation ? plain.slice(0, relation.index) : plain;
+  const text = normalizeShirtNumbers(rawText, language);
+  const plain = normalize(text);
+  const type = routeSpokenEvent(text, language);
+  const relation = relatedMention.exec(plain);
+  const primary = relation ? plain.slice(0, relation.index) : plain;
   const teamReference = type ? literalPerspective(primary, language) : undefined;
   const team = {
     type: 'string' as const,
@@ -107,42 +112,48 @@ export function toolForPlay(rawText: string, language: Language, names: string[]
   const properties: Record<string, JsonSchema> = { equipo: team };
   if (type !== 'passive') {
     properties.dorsal = { ...number, description: 'Primary shirt number.' };
-    if (!/\d/.test(primary))
+    if (!/\d/.test(primary)) {
       properties.nombre = { type: 'string', description: 'Primary player name, verbatim.' };
+    }
     if ((!type || definitions[type].related) && relation) {
       properties.dorsal_relacionado = {
         ...number,
         description: type === 'goal' ? 'Assist provider number.' : 'Related opponent number.',
       };
-      if (!/\d/.test(plain.slice(relation.index)))
+      if (!/\d/.test(plain.slice(relation.index))) {
         properties.nombre_relacionado = {
           type: 'string',
           description: 'Related player name, verbatim.',
         };
+      }
     }
   }
-  if ((!type || definitions[type].penalty) && penaltyMention.test(plain))
+  if ((!type || definitions[type].penalty) && penaltyMention.test(plain)) {
     properties.penalti = {
       type: 'boolean',
       description: 'Seven metre penalty, not a shirt number.',
     };
+  }
   if (
     (!type || type === 'disqualification') &&
     /\b(azul|blue|blau\w*|bleu|blu|niebiesk\w*)\b/u.test(plain)
-  )
+  ) {
     properties.azul = { type: 'boolean', description: 'Blue card.' };
-  if (!type || type === 'infraction')
+  }
+  if (!type || type === 'infraction') {
     properties.infraccion = {
       type: 'string',
       enum: ['Pasos', 'Dobles', 'Pisando'],
       description: 'Steps, double dribble or goal area violation.',
     };
-  if (!type)
+  }
+  if (!type) {
     properties.evento = {
       type: 'string',
       enum: [...Object.values(canonical), 'desconocido'],
       description: 'One handball action; unknown if not one action.',
     };
+  }
   const name = type ? canonical[type] : 'registrar_jugada';
   const inputSchema = {
     type: 'object' as const,

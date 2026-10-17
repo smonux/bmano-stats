@@ -17,7 +17,7 @@ assert(
 
 // Read the application's real schema without maintaining a second field list.
 const bundle = await rolldown({
-  input: resolve(root, 'src/voice/interpretation.ts'),
+  input: resolve(root, 'src/voice/schema.ts'),
   platform: 'node',
   logLevel: 'silent',
 });
@@ -44,12 +44,14 @@ const seeds = JSON.parse(await readFile(resolve(directory, 'seeds.json'), 'utf8'
 assert(Array.isArray(seeds), 'seeds.json debe ser una lista');
 assert.equal(seeds.length, 215, 'Se esperan 215 familias semánticas');
 
-const ids = new Set(),
-  texts = new Set(),
-  normalizedFamilies = new Map();
+const ids = new Set();
+const texts = new Set();
+const normalizedFamilies = new Map();
 const errors = [];
 const requireThat = (condition, message) => {
-  if (!condition) errors.push(message);
+  if (!condition) {
+    errors.push(message);
+  }
 };
 const normalize = (text) =>
   text
@@ -154,7 +156,9 @@ for (const family of seeds) {
       typeof variant.style === 'string' && variant.style.length > 0,
       `${label}: falta estilo`,
     );
-    if (typeof variant.text !== 'string') continue;
+    if (typeof variant.text !== 'string') {
+      continue;
+    }
     if (index === 2) {
       requireThat(
         variant.style === 'parafrasis',
@@ -180,7 +184,9 @@ for (const family of seeds) {
     }
     const parsed = proposalSchema.strict().safeParse(args);
     requireThat(parsed.success, `${label}: respuesta fuera del esquema (${parsed.error?.message})`);
-    if (!parsed.success) continue;
+    if (!parsed.success) {
+      continue;
+    }
     requireThat(
       Object.hasOwn(args, 'equipo') && schema.properties.equipo.enum.includes(args.equipo),
       `${label}: equipo canónico obligatorio`,
@@ -208,30 +214,35 @@ for (const family of seeds) {
         (!Object.hasOwn(args, 'dorsal_relacionado') && !Object.hasOwn(args, 'nombre_relacionado')),
       `${label}: participante relacionado incompatible`,
     );
-    if (args.evento === 'pasivo')
+    if (args.evento === 'pasivo') {
       requireThat(
         Object.keys(args).every((key) => ['evento', 'equipo'].includes(key)),
         `${label}: pasivo solo tiene evento y equipo`,
       );
+    }
     for (const field of ['nombre', 'nombre_relacionado']) {
-      if (Object.hasOwn(args, field))
+      if (Object.hasOwn(args, field)) {
         requireThat(
           typeof args[field] === 'string' &&
             args[field].trim().length > 0 &&
             variant.text.includes(args[field]),
           `${label}: ${field} no es literal en el texto`,
         );
+      }
     }
     for (const field of ['dorsal', 'dorsal_relacionado']) {
-      if (Object.hasOwn(args, field))
+      if (Object.hasOwn(args, field)) {
         requireThat(
           numberIsMentioned(variant.text, args[field]),
           `${label}: ${field}=${args[field]} sin número literal en el texto`,
         );
+      }
     }
   }
 }
-if (errors.length) throw new Error(`Dataset inválido:\n${errors.join('\n')}`);
+if (errors.length) {
+  throw new Error(`Dataset inválido:\n${errors.join('\n')}`);
+}
 
 const hash = (value) => createHash('sha256').update(value).digest('hex');
 const splitSeed = 'bmano-voz-es-v1';
@@ -323,22 +334,25 @@ assert(
   'Faltan participantes relacionados',
 );
 for (const event of events) {
-  for (const team of ['equipo1', 'equipo2', 'desconocido'])
+  for (const team of ['equipo1', 'equipo2', 'desconocido']) {
     assert(
       calls.some((args) => args.evento === event && args.equipo === team),
       `${event}: falta ${team}`,
     );
+  }
 }
-for (const kind of ['Pasos', 'Dobles', 'Pisando'])
+for (const kind of ['Pasos', 'Dobles', 'Pisando']) {
   assert(
     calls.some((args) => args.infraccion === kind),
     `Falta infracción ${kind}`,
   );
-for (const event of ['gol', 'parada', 'fallo'])
+}
+for (const event of ['gol', 'parada', 'fallo']) {
   assert(
     calls.some((args) => args.evento === event && args.penalti),
     `Falta ${event} de siete metros`,
   );
+}
 assert(
   calls.some((args) => args.azul),
   'Falta tarjeta azul',
@@ -423,13 +437,15 @@ const files = new Map([
 ]);
 await mkdir(directory, { recursive: true });
 for (const [name, content] of files) {
-  if (checkOnly)
+  if (checkOnly) {
     assert.equal(
       await readFile(resolve(directory, name), 'utf8'),
       content,
       `${name} desactualizado; ejecuta npm run dataset:build`,
     );
-  else await writeFile(resolve(directory, name), content);
+  } else {
+    await writeFile(resolve(directory, name), content);
+  }
 }
 const archiveFiles = new Map([
   ...files,
@@ -446,9 +462,11 @@ const archive = zipSync(
   { level: 9 },
 );
 const archivePath = resolve(directory, '../voz-es.zip');
-if (checkOnly)
+if (checkOnly) {
   assert.deepEqual(await readFile(archivePath), Buffer.from(archive), 'voz-es.zip desactualizado');
-else await writeFile(archivePath, archive);
+} else {
+  await writeFile(archivePath, archive);
+}
 console.log(
   `${checkOnly ? 'Validado' : 'Generado'}: ${rows.length} muestras / ${seeds.length} familias; ${events.length} eventos; sin fuga de familias entre particiones.`,
 );

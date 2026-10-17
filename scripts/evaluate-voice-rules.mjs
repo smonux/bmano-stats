@@ -3,21 +3,15 @@ import { createHash } from 'node:crypto';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
-import { rolldown } from 'rolldown';
-const root = fileURLToPath(new URL('../', import.meta.url)),
-  directory = resolve(root, 'docs/benchmarks/reglas');
+import { loadVoiceModule } from './lib/voice-bundle.mjs';
+const root = fileURLToPath(new URL('../', import.meta.url));
+const directory = resolve(root, 'docs/benchmarks/reglas');
 const dataset = await readFile(resolve(root, 'datasets/voz-es/dataset.jsonl'), 'utf8');
 const rows = dataset.trim().split('\n').map(JSON.parse);
-const bundle = await rolldown({
-  input: resolve(root, 'src/voice/deterministic.ts'),
-  platform: 'node',
-  logLevel: 'silent',
-});
-const { output } = await bundle.generate({ format: 'esm' });
-await bundle.close();
-const { interpretDeterministically: interpret } = await import(
-  'data:text/javascript;base64,' + Buffer.from(output[0].code).toString('base64')
-);
+const {
+  code: implementationCode,
+  exports: { interpretDeterministically: interpret },
+} = await loadVoiceModule(resolve(root, 'src/voice/deterministic.ts'));
 const stable = (value) =>
   value === null
     ? 'null'
@@ -27,8 +21,8 @@ const stable = (value) =>
 // Warm regex compilation before measuring, without reading annotations or player names.
 interpret('Gol nuestro dorsal siete', 'es', ['A', 'B']);
 const results = rows.map((row) => {
-  const expected = row.answers[0]?.arguments ?? null,
-    start = performance.now();
+  const expected = row.answers[0]?.arguments ?? null;
+  const start = performance.now();
   const result = interpret(row.query, 'es', row.metadata.teams);
   const elapsedMs = performance.now() - start;
   return {
@@ -53,9 +47,9 @@ const ratio = (correct, total) => ({
   percent: total ? Number(((correct / total) * 100).toFixed(2)) : null,
 });
 const summarize = (items) => {
-  const known = items.filter((row) => row.expected && row.expected.evento !== 'desconocido'),
-    negative = items.filter((row) => !row.expected),
-    uncertain = items.filter((row) => row.expected?.evento === 'desconocido');
+  const known = items.filter((row) => row.expected && row.expected.evento !== 'desconocido');
+  const negative = items.filter((row) => !row.expected);
+  const uncertain = items.filter((row) => row.expected?.evento === 'desconocido');
   return {
     samples: items.length,
     exact: ratio(items.filter((row) => row.exact).length, items.length),
@@ -123,13 +117,6 @@ const fieldScores = Object.fromEntries(
   }),
 );
 const hash = (value) => createHash('sha256').update(value).digest('hex');
-const implementationFiles = [
-  'src/voice/deterministic.ts',
-  'src/voice/lexicon.ts',
-  'src/voice/approximate.ts',
-  'src/voice/numbers.ts',
-  'src/voice/substitution.ts',
-];
 const report = {
   date: new Date().toISOString(),
   runtime: process.version,
@@ -137,11 +124,7 @@ const report = {
   language: 'es',
   rosterProvided: false,
   datasetSha256: hash(dataset),
-  implementationSha256: hash(
-    (
-      await Promise.all(implementationFiles.map((path) => readFile(resolve(root, path), 'utf8')))
-    ).join('\n'),
-  ),
+  implementationSha256: hash(implementationCode),
   evaluationNotice:
     'Rules were developed using this synthetic corpus, including its test partition. Partition scores are regression results, not an independent generalization estimate.',
   summary: summarize(results),

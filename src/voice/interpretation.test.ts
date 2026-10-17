@@ -58,8 +58,9 @@ test('speaker perspective always assigns our team to team 1, independent of venu
     'nosotras',
     'mi equipo',
     'equipo1',
-  ])
+  ]) {
     expect(resolveTeam(word, context)).toBe('a');
+  }
   for (const word of [
     'ellos',
     'ellas',
@@ -71,10 +72,12 @@ test('speaker perspective always assigns our team to team 1, independent of venu
     'suyas',
     'su equipo',
     'equipo2',
-  ])
+  ]) {
     expect(resolveTeam(word, context)).toBe('b');
-  for (const word of ['local', 'visitante', '', 'desconocido'])
+  }
+  for (const word of ['local', 'visitante', '', 'desconocido']) {
     expect(resolveTeam(word, context)).toBeNull();
+  }
   expect(
     toVoiceDraft('gol nuestro, Marta', { ...proposal, nombre: 'Marta' }, context).draft
       .primaryDorsal,
@@ -124,42 +127,18 @@ test('related players follow event roles; incompatible fields are dropped', () =
   });
 });
 test('invalid or withheld interpretation preserves a pending draft', () => {
-  for (const result of [null, {}, { ...proposal, evento: 'inventado' }, { ...proposal, equipo: 5 }])
+  for (const result of [
+    null,
+    {},
+    { ...proposal, evento: 'inventado' },
+    { ...proposal, equipo: 5 },
+  ]) {
     expect(toVoiceDraft('literal', result, context).draft).toMatchObject({
       type: null,
       teamId: null,
       rawText: 'literal',
     });
-});
-
-test('multiple, ungrounded and negated calls remain pending; one withheld candidate requires visible review', async () => {
-  const { selectProposal } = await import('./interpretation');
-  const accepted = {
-    success: true,
-    function_calls: [{ name: 'registrar_jugada', arguments: proposal }],
-    suppressed_calls: [],
-    confidence: 0.8,
-  };
-  expect(selectProposal(accepted).proposal).toEqual(proposal);
-  const withheld = selectProposal({
-    ...accepted,
-    function_calls: [],
-    suppressed_calls: accepted.function_calls,
-  });
-  expect(withheld.proposal).toEqual(proposal);
-  expect(withheld.warnings.join(' ')).toContain('incertidumbre');
-  expect(selectProposal({ ...accepted, confidence: 0.1 }).warnings.join(' ')).toContain(
-    'confianza baja',
-  );
-  for (const change of [
-    { success: false },
-    { function_calls: [] },
-    { suppressed_calls: accepted.function_calls },
-    { function_calls: [...accepted.function_calls, ...accepted.function_calls] },
-    { validation: { ungrounded: ['equipo'] } },
-    { validation: { negation: true } },
-  ])
-    expect(selectProposal({ ...accepted, ...change }).proposal).toBeNull();
+  }
 });
 
 test('recorder perspective resolves across all seven Whistle languages without assuming venue', () => {
@@ -176,8 +155,9 @@ test('recorder perspective resolves across all seven Whistle languages without a
     'wij',
     'nasz',
     'my',
-  ])
+  ]) {
     expect(resolveTeam(word, context)).toBe('a');
+  }
   for (const word of [
     'their',
     'opponent',
@@ -191,10 +171,12 @@ test('recorder perspective resolves across all seven Whistle languages without a
     'tegenstander',
     'oni',
     'rywal',
-  ])
+  ]) {
     expect(resolveTeam(word, context)).toBe('b');
-  for (const word of ['home', 'away', 'Heim', 'domicile', 'casa', 'thuis', 'gospodarz'])
+  }
+  for (const word of ['home', 'away', 'Heim', 'domicile', 'casa', 'thuis', 'gospodarz']) {
     expect(resolveTeam(word, context)).toBeNull();
+  }
   const polish = {
     ...data,
     players: [...data.players, { ...data.players[0], id: 'pl', name: 'Łukasz', dorsal: 4 }],

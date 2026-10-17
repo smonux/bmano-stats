@@ -13,7 +13,9 @@ export class VoiceRecorder {
   private timer?: ReturnType<typeof setTimeout>;
   async start(limit: () => void) {
     const problem = microphoneProblem();
-    if (problem) throw new Error(problem);
+    if (problem) {
+      throw new Error(problem);
+    }
     // Construct/resume in the user gesture for Safari and mobile autoplay policies.
     this.context = new AudioContext();
     const resume = this.context.resume();
@@ -42,7 +44,9 @@ export class VoiceRecorder {
           this.chunks.push(chunk);
           this.count += chunk.length;
         }
-        if (data.done) this.done?.();
+        if (data.done) {
+          this.done?.();
+        }
       };
       this.source.connect(this.node);
       this.node.connect(this.context.destination);
@@ -54,9 +58,13 @@ export class VoiceRecorder {
     }
   }
   stop(): Promise<Recording> {
-    if (this.stopping) return this.stopping;
+    if (this.stopping) {
+      return this.stopping;
+    }
     this.stopping = (async () => {
-      if (!this.node || !this.context) throw new Error('La grabación no ha comenzado.');
+      if (!this.node || !this.context) {
+        throw new Error('La grabación no ha comenzado.');
+      }
       clearTimeout(this.timer);
       const sampleRate = this.context.sampleRate;
       await new Promise<void>((resolve) => {
@@ -91,6 +99,8 @@ export class VoiceRecorder {
     this.stream?.getTracks().forEach((t) => t.stop());
     this.node?.disconnect();
     this.source?.disconnect();
-    if (this.context && this.context.state !== 'closed') void this.context.close().catch(() => {});
+    if (this.context && this.context.state !== 'closed') {
+      void this.context.close().catch(() => {});
+    }
   }
 }

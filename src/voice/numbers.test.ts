@@ -1,23 +1,70 @@
 import { expect, test } from 'vitest';
-import { normalizeShirtNumbers } from './numbers';
-test('normalizes only explicit shirt-number spans in the seven capture languages', () => {
-  const cases = [
-    ['es', 'Gol nuestro, dorsal siete.', 'Gol nuestro, dorsal 7.'],
-    ['en', 'Our goal, number twenty one.', 'Our goal, number 21.'],
-    ['de', 'Tor für uns, Nummer einundzwanzig.', 'Tor für uns, Nummer 21.'],
-    ['fr', 'But pour nous, numéro quatre-vingt-dix-neuf.', 'But pour nous, numéro 99.'],
-    ['it', 'Gol nostro numero ventotto.', 'Gol nostro numero 28.'],
-    ['nl', 'Doelpunt voor ons, rugnummer tweeëntwintig.', 'Doelpunt voor ons, rugnummer 22.'],
-    ['pl', 'Nasza bramka, numer dziewięćdziesiąt dziewięć.', 'Nasza bramka, numer 99.'],
-  ] as const;
-  for (const [language, text, expected] of cases)
-    expect(normalizeShirtNumbers(text, language)).toBe(expected);
-  expect(normalizeShirtNumbers('Gol de Siete, dorsal cero, asistencia de Ana.', 'es')).toBe(
-    'Gol de Siete, dorsal 0, asistencia de Ana.',
-  );
-  expect(normalizeShirtNumbers('number one hundred', 'en')).toBe('number one hundred');
-  expect(normalizeShirtNumbers('dorsal tres cuatro', 'es')).toBe('dorsal tres cuatro');
-  expect(normalizeShirtNumbers('No es gol. Siete metros. Número de Juan.', 'es')).toBe(
-    'No es gol. Siete metros. Número de Juan.',
-  );
+import type { Language } from '../i18n';
+import { interpretDeterministically as parse } from './deterministic';
+import { teams, utterances, goldenNumbers } from './fixtures/utterances';
+import { parseSpokenNumber, spokenNumber } from './numbers';
+
+for (const language of Object.keys(utterances) as Language[]) {
+  test(`${language}: every shirt 0–99 in digits and Whistle's spoken hints`, () => {
+    for (let n = 0; n < 100; n++) {
+      const text = utterances[language].gol;
+      expect(parse(text.replace('21', String(n)), language, teams).proposal, text).toMatchObject({
+        evento: 'gol',
+        equipo: 'equipo1',
+        dorsal: n,
+      });
+      expect(
+        parse(text.replace('21', spokenNumber(n, language)), language, teams).proposal,
+        spokenNumber(n, language),
+      ).toMatchObject({ evento: 'gol', equipo: 'equipo1', dorsal: n });
+    }
+  });
+}
+
+test('independent word spellings, French regional numbers and range rejection', () => {
+  for (const language of Object.keys(goldenNumbers) as Language[]) {
+    for (const [n, text] of Object.entries(goldenNumbers[language])) {
+      expect(parseSpokenNumber(text, language), text).toBe(Number(n));
+    }
+  }
+  for (const [text, n] of [
+    ['septante et un', 71],
+    ['huitante', 80],
+    ['octante', 80],
+    ['nonante-neuf', 99],
+  ] as const) {
+    expect(parseSpokenNumber(text, 'fr')).toBe(n);
+  }
+  for (const text of [
+    '100',
+    '123',
+    '1.5',
+    '-1',
+    'one hundred',
+    'ciento veintitrés',
+    'tres cuatro',
+  ]) {
+    expect(parseSpokenNumber(text, 'es')).toBeUndefined();
+  }
+});
+
+test('gender and ASR-split compound numbers keep their full value', () => {
+  const cases: [Language, string, number][] = [
+    ['es', 'veinti seis', 26],
+    ['es', 'treinta y una', 31],
+    ['es', 'noventa y un', 91],
+    ['fr', 'vingt et une', 21],
+    ['fr', 'soixante et une', 61],
+    ['fr', 'quatre-vingt-une', 81],
+    ['it', 'ventuna', 21],
+    ['pl', 'dwadzieścia dwie', 22],
+    ['pl', 'trzydzieści jedna', 31],
+  ];
+  for (const [language, words, number] of cases) {
+    expect(parseSpokenNumber(words, language), words).toBe(number);
+    expect(
+      parse(utterances[language].gol.replace('21', words), language, teams).proposal,
+      words,
+    ).toHaveProperty('dorsal', number);
+  }
 });

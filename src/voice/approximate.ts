@@ -1,162 +1,112 @@
 import type { Language } from '../i18n';
-import type { SpokenEvent } from './lexicon';
+import type { SpokenEvent } from './event-types';
 import { numberKey } from './numbers';
-const vocabulary: Record<Language, Record<SpokenEvent, string>> = {
-  es: {
-    sustitucion: 'sustitucion|substitucion|cambio',
-    gol: 'gol|asistencia',
-    parada: 'parada',
-    fallo: 'fallo|fallado',
-    perdida: 'pérdida',
-    recuperacion: 'recuperación',
-    penalti_cometido: 'penalti|penal|penalty',
-    exclusion: 'exclusión|dos minutos|2 minutos',
-    amarilla: 'amarilla|amonestación',
-    descalificacion: 'descalificación|roja|azul',
-    pasivo: 'pasivo',
-    infraccion: 'infracción|pasos|dobles|pisando',
-  },
-  en: {
-    sustitucion: 'substitution|substitute|swap',
-    gol: 'goal|assist',
-    parada: 'save',
-    fallo: 'miss|missed',
-    perdida: 'turnover',
-    recuperacion: 'recovery|steal',
-    penalti_cometido: 'penalty',
-    exclusion: 'suspension|two minutes|2 minutes',
-    amarilla: 'yellow',
-    descalificacion: 'disqualification|red|blue',
-    pasivo: 'passive',
-    infraccion: 'violation|steps|double dribble',
-  },
-  de: {
-    sustitucion: 'wechsel|auswechslung|spielerwechsel',
-    gol: 'Tor|Vorlage',
-    parada: 'Parade',
-    fallo: 'Fehlwurf',
-    perdida: 'Ballverlust',
-    recuperacion: 'Ballgewinn',
-    penalti_cometido: 'Siebenmeter',
-    exclusion: 'Zeitstrafe|zwei Minuten|2 Minuten',
-    amarilla: 'gelb|Verwarnung',
-    descalificacion: 'Disqualifikation|rot|blau',
-    pasivo: 'passiv',
-    infraccion: 'Schritte|Doppeldribbling|Kreisbetreten',
-  },
-  fr: {
-    sustitucion: 'changement|remplacement',
-    gol: 'but|passe décisive',
-    parada: 'arrêt',
-    fallo: 'raté',
-    perdida: 'perte',
-    recuperacion: 'récupération|interception',
-    penalti_cometido: 'penalty|sept mètres',
-    exclusion: 'exclusion|deux minutes|2 minutes',
-    amarilla: 'jaune',
-    descalificacion: 'disqualification|rouge|bleu',
-    pasivo: 'passif',
-    infraccion: 'marcher|reprise de dribble|empiètement',
-  },
-  it: {
-    sustitucion: 'cambio|sostituzione',
-    gol: 'gol|assist',
-    parada: 'parata',
-    fallo: 'sbagliato',
-    perdida: 'palla persa',
-    recuperacion: 'recupero',
-    penalti_cometido: 'rigore',
-    exclusion: 'esclusione|due minuti|2 minuti',
-    amarilla: 'giallo',
-    descalificacion: 'squalifica|rosso|blu',
-    pasivo: 'passivo',
-    infraccion: 'passi|doppio palleggio|invasione area',
-  },
-  nl: {
-    sustitucion: 'wissel|wisselt|spelerswissel',
-    gol: 'doelpunt|assist',
-    parada: 'redding',
-    fallo: 'misser',
-    perdida: 'balverlies',
-    recuperacion: 'balwinst',
-    penalti_cometido: 'strafworp|penalty',
-    exclusion: 'tijdstraf|twee minuten|2 minuten',
-    amarilla: 'geel',
-    descalificacion: 'diskwalificatie|rood|blauw',
-    pasivo: 'passief',
-    infraccion: 'loopfout|dubbele dribbel',
-  },
-  pl: {
-    sustitucion: 'zmiana|zmiany',
-    gol: 'bramka|asysta',
-    parada: 'obrona',
-    fallo: 'pudło',
-    perdida: 'strata',
-    recuperacion: 'przechwyt',
-    penalti_cometido: 'karny',
-    exclusion: 'wykluczenie|dwie minuty|2 minuty',
-    amarilla: 'żółta',
-    descalificacion: 'dyskwalifikacja|czerwona|niebieska',
-    pasivo: 'pasywna',
-    infraccion: 'kroki|podwójne kozłowanie',
-  },
-};
-/** Bounded optimal-string-alignment distance, including adjacent ASR letter swaps. */
-function distance(left: string, right: string) {
-  const rows = Array.from({ length: left.length + 1 }, (_, i) => [
-    i,
+import { languageRules } from './languages';
+
+const MIN_CANDIDATE_LENGTH = 4;
+const MIN_PREFIX_LENGTH = 5;
+const MIN_PREFIX_COVERAGE = 0.55;
+const PREFIX_SCORE = 0.8;
+const MIN_COMPETING_EVENT_GAP = 0.12;
+const LONG_ALIAS_LENGTH = 9;
+
+type Candidate = { event: SpokenEvent; from: number; to: number; score: number };
+
+/** Edit distance with adjacent transpositions, as commonly produced by ASR spelling errors. */
+function editDistance(left: string, right: string): number {
+  const distances = Array.from({ length: left.length + 1 }, (_, index) => [
+    index,
     ...Array(right.length).fill(0),
   ]);
-  for (let j = 0; j <= right.length; j++) rows[0][j] = j;
-  for (let i = 1; i <= left.length; i++)
-    for (let j = 1; j <= right.length; j++) {
-      rows[i][j] = Math.min(
-        rows[i - 1][j] + 1,
-        rows[i][j - 1] + 1,
-        rows[i - 1][j - 1] + Number(left[i - 1] !== right[j - 1]),
-      );
-      if (i > 1 && j > 1 && left[i - 1] === right[j - 2] && left[i - 2] === right[j - 1])
-        rows[i][j] = Math.min(rows[i][j], rows[i - 2][j - 2] + 1);
+  for (let rightIndex = 0; rightIndex <= right.length; rightIndex++) {
+    distances[0][rightIndex] = rightIndex;
+  }
+  for (let leftIndex = 1; leftIndex <= left.length; leftIndex++) {
+    for (let rightIndex = 1; rightIndex <= right.length; rightIndex++) {
+      const deletion = distances[leftIndex - 1][rightIndex] + 1;
+      const insertion = distances[leftIndex][rightIndex - 1] + 1;
+      const substitution =
+        distances[leftIndex - 1][rightIndex - 1] +
+        Number(left[leftIndex - 1] !== right[rightIndex - 1]);
+      distances[leftIndex][rightIndex] = Math.min(deletion, insertion, substitution);
+      const transposed =
+        leftIndex > 1 &&
+        rightIndex > 1 &&
+        left[leftIndex - 1] === right[rightIndex - 2] &&
+        left[leftIndex - 2] === right[rightIndex - 1];
+      if (transposed) {
+        distances[leftIndex][rightIndex] = Math.min(
+          distances[leftIndex][rightIndex],
+          distances[leftIndex - 2][rightIndex - 2] + 1,
+        );
+      }
     }
-  return rows[left.length][right.length];
+  }
+  return distances[left.length][right.length];
 }
+
+/** Fallback for event keywords only; known player/team spans are excluded by the caller. */
 export function approximateEvent(
   words: readonly string[],
   language: Language,
   excluded: ReadonlySet<number>,
-) {
-  const options: { event: SpokenEvent; from: number; to: number; score: number }[] = [];
-  for (const [event, aliases] of Object.entries(vocabulary[language]) as [SpokenEvent, string][])
-    for (const alias of aliases.split('|')) {
-      const reference = numberKey(alias),
-        size = reference.split(' ').length;
-      for (let from = 0; from + size <= words.length; from++) {
-        const to = from + size;
-        if (Array.from({ length: size }, (_, i) => from + i).some((index) => excluded.has(index)))
+): Candidate | undefined {
+  const candidates: Candidate[] = [];
+  const vocabulary = Object.entries(languageRules[language].approximateAliases) as [
+    SpokenEvent,
+    readonly string[],
+  ][];
+  for (const [event, aliases] of vocabulary) {
+    for (const alias of aliases) {
+      const reference = numberKey(alias);
+      const wordCount = reference.split(' ').length;
+      for (let from = 0; from + wordCount <= words.length; from++) {
+        const to = from + wordCount;
+        if (wordsAreExcluded(from, to, excluded)) {
           continue;
+        }
         const value = words.slice(from, to).join(' ');
-        if (value.length < 4) continue;
+        if (value.length < MIN_CANDIDATE_LENGTH) {
+          continue;
+        }
         const prefix =
-          size === 1 &&
-          value.length >= 5 &&
+          wordCount === 1 &&
+          value.length >= MIN_PREFIX_LENGTH &&
           reference.startsWith(value) &&
-          value.length / reference.length >= 0.55;
-        if (Math.abs(value.length - reference.length) > 2 && !prefix) continue;
-        const edits = distance(value, reference),
-          limit = reference.length >= 9 ? 2 : 1;
-        if (edits > limit && !prefix) continue;
-        options.push({
-          event,
-          from,
-          to,
-          score: prefix ? 0.8 : 1 - edits / Math.max(reference.length, value.length),
-        });
+          value.length / reference.length >= MIN_PREFIX_COVERAGE;
+        if (Math.abs(value.length - reference.length) > 2 && !prefix) {
+          continue;
+        }
+        const edits = editDistance(value, reference);
+        const allowedEdits = reference.length >= LONG_ALIAS_LENGTH ? 2 : 1;
+        if (edits > allowedEdits && !prefix) {
+          continue;
+        }
+        const score = prefix ? PREFIX_SCORE : 1 - edits / Math.max(reference.length, value.length);
+        candidates.push({ event, from, to, score });
       }
     }
-  options.sort((a, b) => b.score - a.score || a.from - b.from);
-  const best = options[0];
-  if (!best) return undefined;
-  if (options.some((option) => option.event !== best.event && best.score - option.score < 0.12))
+  }
+  candidates.sort((left, right) => right.score - left.score || left.from - right.from);
+  const best = candidates[0];
+  if (!best) {
     return undefined;
+  }
+  const ambiguous = candidates.some(
+    (candidate) =>
+      candidate.event !== best.event && best.score - candidate.score < MIN_COMPETING_EVENT_GAP,
+  );
+  if (ambiguous) {
+    return undefined;
+  }
   return best;
+}
+
+function wordsAreExcluded(from: number, to: number, excluded: ReadonlySet<number>): boolean {
+  for (let index = from; index < to; index++) {
+    if (excluded.has(index)) {
+      return true;
+    }
+  }
+  return false;
 }

@@ -1,0 +1,31 @@
+{
+  "referenceCommit": "6805b024d6284a0f935988726d182bda9ef9faf2",
+  "date": "2026-10-17T05:44:17.491Z",
+  "runtime": "v22.22.1",
+  "method": "Same process, warmed interpreters, 12 alternating full-corpus rounds. Text only; no audio/Whistle timing.",
+  "preserved": {
+    "corpusOutputs": 645,
+    "languageVocabularies": 7,
+    "whistleKeywordLists": 7,
+    "numberSpellings": 700,
+    "numberDictionaries": 7
+  },
+  "implementationSha256": {
+    "before": "24f0bbc0bda5c06a4d40d8290fbb753f4716f56bc8300d3baec9c3f282a12cfc",
+    "after": "ad4bf47fe9f162644fb2ba73b5304665c988d27e30cd6cf9a032cc4e4f20a7b1"
+  },
+  "timingMs": {
+    "before": {
+      "samples": 7740,
+      "p50": 0.15012799999999515,
+      "p95": 0.4463269999998829,
+      "mean": 0.1815421810077533
+    },
+    "after": {
+      "samples": 7740,
+      "p50": 0.1232279999999264,
+      "p95": 0.36316099999999096,
+      "mean": 0.1635930795865647
+    }
+  }
+}

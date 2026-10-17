@@ -30,7 +30,9 @@ export function whistleKeywords(
     .map((value) => value.replace(/[\r\n]/g, ' ').trim())
     .filter((value) => {
       const key = numberKey(value);
-      if (!key || seen.has(key)) return false;
+      if (!key || seen.has(key)) {
+        return false;
+      }
       seen.add(key);
       return true;
     });

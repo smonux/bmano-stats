@@ -16,7 +16,7 @@ const results = [];
 browser.on('disconnected', () => console.error('BENCH browser disconnected'));
 try {
   const context = await browser.newContext();
-  for (const model of [DEFAULT_MODEL, DEFAULT_SPEECH_MODEL])
+  for (const model of [DEFAULT_MODEL, DEFAULT_SPEECH_MODEL]) {
     await context.route(model.url, (route) =>
       route.fulfill({
         path: resolve(
@@ -27,6 +27,7 @@ try {
         headers: { 'access-control-allow-origin': '*' },
       }),
     );
+  }
   const page = await context.newPage();
   page.on('crash', () => console.error('BENCH page crashed'));
   page.on('pageerror', (error) => console.error('BENCH page error', error.message));
@@ -54,18 +55,21 @@ try {
   const depths = (process.env.BENCH_DEPTHS ?? '20').split(',').map(Number);
   for (const depth of depths) {
     const artifact = depth === 20 ? null : manifest?.models.find((model) => model.depth === depth);
-    if (depth !== 20 && !artifact) throw new Error(`Missing model at depth ${depth}`);
+    if (depth !== 20 && !artifact) {
+      throw new Error(`Missing model at depth ${depth}`);
+    }
     const model = artifact
       ? { model: base + `/__needle-model-${depth}.cact`, modelSha256: artifact.sha256 }
       : undefined;
-    if (model)
+    if (model) {
       await context.route(model.model, (route) =>
         route.fulfill({
           path: resolve(depthDir, artifact.path),
           contentType: 'application/octet-stream',
         }),
       );
-    for (const text of texts)
+    }
+    for (const text of texts) {
       for (const variant of variants) {
         console.log('BENCH starting', depth, variant, text);
         const result = await page
@@ -98,6 +102,7 @@ try {
         );
         console.log(JSON.stringify(result));
       }
+    }
   }
 } finally {
   await browser.close();

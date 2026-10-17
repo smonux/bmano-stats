@@ -17,9 +17,13 @@ for (const model of [DEFAULT_SPEECH_MODEL]) {
     }
   } catch {}
   const response = await fetch(model.url);
-  if (!response.ok) throw new Error(`${model.name}: HTTP ${response.status}`);
+  if (!response.ok) {
+    throw new Error(`${model.name}: HTTP ${response.status}`);
+  }
   const bytes = new Uint8Array(await response.arrayBuffer());
-  if (!valid(bytes)) throw new Error(`${model.name}: tamaño o SHA-256 incorrecto`);
+  if (!valid(bytes)) {
+    throw new Error(`${model.name}: tamaño o SHA-256 incorrecto`);
+  }
   await writeFile(path + '.tmp', bytes);
   await rename(path + '.tmp', path);
   console.log(`${model.name}: descargado y verificado`);

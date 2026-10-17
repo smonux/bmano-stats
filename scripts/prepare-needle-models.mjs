@@ -36,9 +36,13 @@ if (
   const source = resolve(cache, 'needle3.cact');
   if (!(await exists(source, needleSource))) {
     const response = await fetch(needleSource.url);
-    if (!response.ok) throw new Error(`Needle: HTTP ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`Needle: HTTP ${response.status}`);
+    }
     const bytes = new Uint8Array(await response.arrayBuffer());
-    if (!valid(bytes, needleSource)) throw new Error('Needle: tamaño o SHA-256 incorrecto.');
+    if (!valid(bytes, needleSource)) {
+      throw new Error('Needle: tamaño o SHA-256 incorrecto.');
+    }
     await writeFile(source + '.tmp', bytes);
     await rename(source + '.tmp', source);
   }
@@ -53,9 +57,11 @@ if (
       temporary,
     ]);
     for (const depth of depths) {
-      const artifact = needleArtifacts[depth],
-        bytes = await readFile(resolve(temporary, `needle3-${depth}l.cact`));
-      if (!valid(bytes, artifact)) throw new Error(`Needle ${depth}: tamaño o SHA-256 incorrecto.`);
+      const artifact = needleArtifacts[depth];
+      const bytes = await readFile(resolve(temporary, `needle3-${depth}l.cact`));
+      if (!valid(bytes, artifact)) {
+        throw new Error(`Needle ${depth}: tamaño o SHA-256 incorrecto.`);
+      }
       const path = resolve(directory, artifact.file);
       await writeFile(path + '.tmp', bytes);
       await rename(path + '.tmp', path);

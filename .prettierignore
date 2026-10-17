@@ -5,6 +5,6 @@ test-results/
 playwright-report/
 datasets/
 docs/benchmarks/
-src/voice/fixtures/
+src/voice/fixtures/*.json
 package-lock.json
 *.tsbuildinfo

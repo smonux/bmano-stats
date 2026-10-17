@@ -9,8 +9,9 @@ test('only an unambiguous action prefix selects a narrow tool', () => {
     'Gol nuestro y gol rival',
     'Me han dicho gol nuestro',
     'Una jugada cualquiera',
-  ])
+  ]) {
     expect(routeSpokenEvent(text, 'es')).toBeNull();
+  }
 });
 test('a simple goal asks only team and number, with exact number normalization', () => {
   const route = toolForPlay('Gol nuestro, dorsal siete.', 'es', ['La Jota', 'Rival']);

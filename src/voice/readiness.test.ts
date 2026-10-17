@@ -5,8 +5,8 @@ afterEach(() => vi.unstubAllGlobals());
 test('checks real cache entries and sizes rather than a remembered readiness flag', async () => {
   vi.stubGlobal('caches', undefined);
   expect(await localModelsPresent()).toBe(false);
-  const match = vi.fn(async (_key: string) => undefined as unknown),
-    has = vi.fn(async () => false);
+  const match = vi.fn(async (_key: string) => undefined as unknown);
+  const has = vi.fn(async () => false);
   vi.stubGlobal('caches', { has, open: async () => ({ match }) });
   expect(await localModelsPresent()).toBe(false);
   has.mockResolvedValue(true);
@@ -41,8 +41,8 @@ test('Whistle alone is sufficient; cached Needle without Whistle is not ready', 
   expect(await localModelsPresent()).toBe(true);
 });
 test('explicit microphone check requests audio and immediately releases every track', async () => {
-  const stop = vi.fn(),
-    getUserMedia = vi.fn(async () => ({ getTracks: () => [{ stop }, { stop }] }));
+  const stop = vi.fn();
+  const getUserMedia = vi.fn(async () => ({ getTracks: () => [{ stop }, { stop }] }));
   vi.stubGlobal('isSecureContext', true);
   vi.stubGlobal('AudioContext', class {});
   vi.stubGlobal('AudioWorkletNode', class {});
