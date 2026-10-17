@@ -4,7 +4,7 @@ import { definitions, eventTypes, type EventType } from '../domain/model';
 import { normalize } from './interpretation';
 import { voiceKeywords } from '../i18n/voice';
 import { normalizeShirtNumbers } from './numbers';
-const canonical:Record<EventType,string>={goal:'gol',save:'parada',miss:'fallo',loss:'perdida',recovery:'recuperacion',penalty:'penalti_cometido',exclusion:'exclusion',yellow:'amarilla',disqualification:'descalificacion',passive:'pasivo',infraction:'infraccion'};
+const canonical:Record<EventType,string>={goal:'gol',save:'parada',miss:'fallo',loss:'perdida',recovery:'recuperacion',penalty:'penalti_cometido',exclusion:'exclusion',yellow:'amarilla',disqualification:'descalificacion',passive:'pasivo',infraction:'infraccion',substitution:'sustitucion'};
 const escaped=(value:string)=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 export function captureFacts(language:Language) {
  const words=voiceKeywords[language];return `locale:${language}; sport:handball; equipo1=${words[2]}/${words[3]}; equipo2=${words[4]}/${words[5]}; NEVER home/away`;

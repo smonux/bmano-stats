@@ -1,18 +1,18 @@
 # Evaluación del intérprete por reglas
 
-Ejecutar desde la raíz: `npm run voice:evaluate`. No abre Whistle ni Needle, no descarga archivos y no entrena. Usa las 600 transcripciones sintéticas españolas del dataset y solo el contexto de nombres de equipo. **No se pasan nombres ni dorsales extraídos de las respuestas esperadas como entrada.**
+Ejecutar desde la raíz: `npm run voice:evaluate`. No abre Whistle ni Needle, no descarga archivos y no entrena. Usa las 645 transcripciones sintéticas españolas del dataset y solo el contexto de nombres de equipo. **No se pasan nombres ni dorsales extraídos de las respuestas esperadas como entrada.**
 
 | Medida | Resultado |
 | --- | --- |
-| Evento en las 495 acciones con tipo conocido | 493/495 (99.6 %) |
-| Equipo en esas acciones | 493/495 (99.6 %) |
-| Evento y equipo simultáneamente | 493/495 (99.6 %) |
-| Respuesta completa exacta, incluidas abstenciones | 597/600 (99.5 %) |
+| Evento en las 540 acciones con tipo conocido | 538/540 (99.63 %) |
+| Equipo en esas acciones | 538/540 (99.63 %) |
+| Evento y equipo simultáneamente | 538/540 (99.63 %) |
+| Respuesta completa exacta, incluidas abstenciones | 642/645 (99.53 %) |
 | Rechazos correctos | 96/96 (100 %) |
 | Acciones inciertas sin tipo inventado | 9/9 (100 %) |
 | Falsos positivos entre rechazos | 0 |
 
-Tiempo exclusivo del intérprete en Node v22.22.1 de este servidor: mediana 0.195 ms, percentil 95 0.678 ms. No incluye audio ni Whistle y no predice el tiempo en Android. La compilación de expresiones regulares se calienta antes de medir.
+Tiempo exclusivo del intérprete en Node v22.22.1 de este servidor: mediana 0.208 ms, percentil 95 0.726 ms. No incluye audio ni Whistle y no predice el tiempo en Android. La compilación de expresiones regulares se calienta antes de medir.
 
 ## Casos que requieren revisión
 

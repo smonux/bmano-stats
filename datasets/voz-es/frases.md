@@ -604,3 +604,48 @@ Texto sintético, no transcripciones observadas de Whistle. Los nombres son fict
 | ambiguo-005-1 | train | Siete metros. | [] |
 | ambiguo-005-2 | train | Siete metros | [] |
 | ambiguo-005-3 | train | ¿Se ha señalado un lanzamiento de siete metros? | [] |
+| sustitucion-001-1 | train | Cambio nuestro, sale el 6 y entra el 9. | {"evento":"sustitucion","equipo":"equipo1","dorsal":6,"dorsal_relacionado":9} |
+| sustitucion-001-2 | train | cambio nuestro sale seis entra nueve | {"evento":"sustitucion","equipo":"equipo1","dorsal":6,"dorsal_relacionado":9} |
+| sustitucion-001-3 | train | Sustitución nuestra: entra el nueve por el seis. | {"evento":"sustitucion","equipo":"equipo1","dorsal":6,"dorsal_relacionado":9} |
+| sustitucion-002-1 | train | Cambio rival: entra el 0 por el 99. | {"evento":"sustitucion","equipo":"equipo2","dorsal":99,"dorsal_relacionado":0} |
+| sustitucion-002-2 | train | cambio rival entra cero por noventa y nueve | {"evento":"sustitucion","equipo":"equipo2","dorsal":99,"dorsal_relacionado":0} |
+| sustitucion-002-3 | train | Sustitución de ellos, sale el noventa y nueve y entra el cero. | {"evento":"sustitucion","equipo":"equipo2","dorsal":99,"dorsal_relacionado":0} |
+| sustitucion-003-1 | train | Cambio de La Jota, sale María y entra Ana. | {"evento":"sustitucion","equipo":"equipo1","nombre":"María","nombre_relacionado":"Ana"} |
+| sustitucion-003-2 | train | cambio de La Jota María sale Ana entra | {"evento":"sustitucion","equipo":"equipo1","nombre":"María","nombre_relacionado":"Ana"} |
+| sustitucion-003-3 | train | Sustitución de La Jota, entra Ana por María. | {"evento":"sustitucion","equipo":"equipo1","nombre":"María","nombre_relacionado":"Ana"} |
+| sustitucion-004-1 | train | Sustitución de Águilas: sale Luis y entra Juan. | {"evento":"sustitucion","equipo":"equipo2","nombre":"Luis","nombre_relacionado":"Juan"} |
+| sustitucion-004-2 | train | cambio de Águilas sale Luis entra Juan | {"evento":"sustitucion","equipo":"equipo2","nombre":"Luis","nombre_relacionado":"Juan"} |
+| sustitucion-004-3 | train | Cambio en Águilas, entra Juan por Luis. | {"evento":"sustitucion","equipo":"equipo2","nombre":"Luis","nombre_relacionado":"Juan"} |
+| sustitucion-005-1 | validation | Sustitución: sale el 7 y entra el 8. | {"evento":"sustitucion","equipo":"desconocido","dorsal":7,"dorsal_relacionado":8} |
+| sustitucion-005-2 | validation | cambio sale siete entra ocho | {"evento":"sustitucion","equipo":"desconocido","dorsal":7,"dorsal_relacionado":8} |
+| sustitucion-005-3 | validation | Cambio, entra el ocho por el siete. | {"evento":"sustitucion","equipo":"desconocido","dorsal":7,"dorsal_relacionado":8} |
+| sustitucion-006-1 | train | Cambio nuestro: sale Carlos dorsal 4 y entra Pablo dorsal 12. | {"evento":"sustitucion","equipo":"equipo1","nombre":"Carlos","dorsal":4,"nombre_relacionado":"Pablo","dorsal_relacionado":12} |
+| sustitucion-006-2 | train | cambio nuestro sale Carlos dorsal cuatro entra Pablo dorsal doce | {"evento":"sustitucion","equipo":"equipo1","nombre":"Carlos","dorsal":4,"nombre_relacionado":"Pablo","dorsal_relacionado":12} |
+| sustitucion-006-3 | train | Sustitución nuestra, entra Pablo número doce por Carlos número cuatro. | {"evento":"sustitucion","equipo":"equipo1","nombre":"Carlos","dorsal":4,"nombre_relacionado":"Pablo","dorsal_relacionado":12} |
+| sustitucion-007-1 | train | Cambio de ellas: sale Lucía, dorsal 23, y entra Sofía, dorsal 21. | {"evento":"sustitucion","equipo":"equipo2","nombre":"Lucía","dorsal":23,"nombre_relacionado":"Sofía","dorsal_relacionado":21} |
+| sustitucion-007-2 | train | cambio de ellas sale Lucía dorsal veintitrés entra Sofía dorsal veintiuno | {"evento":"sustitucion","equipo":"equipo2","nombre":"Lucía","dorsal":23,"nombre_relacionado":"Sofía","dorsal_relacionado":21} |
+| sustitucion-007-3 | train | Sustitución rival, entra Sofía número veintiuno por Lucía número veintitrés. | {"evento":"sustitucion","equipo":"equipo2","nombre":"Lucía","dorsal":23,"nombre_relacionado":"Sofía","dorsal_relacionado":21} |
+| sustitucion-008-1 | test | Cambio nuestro, sale el 15. | {"evento":"sustitucion","equipo":"equipo1","dorsal":15} |
+| sustitucion-008-2 | test | sustitución nuestra sale quince | {"evento":"sustitucion","equipo":"equipo1","dorsal":15} |
+| sustitucion-008-3 | test | En nuestra sustitución, el quince sale. | {"evento":"sustitucion","equipo":"equipo1","dorsal":15} |
+| sustitucion-009-1 | train | Sustitución rival, entra el 16. | {"evento":"sustitucion","equipo":"equipo2","dorsal_relacionado":16} |
+| sustitucion-009-2 | train | cambio rival entra dieciséis | {"evento":"sustitucion","equipo":"equipo2","dorsal_relacionado":16} |
+| sustitucion-009-3 | train | En el cambio de ellos, el dieciséis entra. | {"evento":"sustitucion","equipo":"equipo2","dorsal_relacionado":16} |
+| sustitucion-010-1 | train | Sustitución confirmada. | {"evento":"sustitucion","equipo":"desconocido"} |
+| sustitucion-010-2 | train | cambio confirmado | {"evento":"sustitucion","equipo":"desconocido"} |
+| sustitucion-010-3 | train | Hay un cambio en pista. | {"evento":"sustitucion","equipo":"desconocido"} |
+| sustitucion-011-1 | train | Cambio del equipo uno, sale el 2 y entra el 3. | {"evento":"sustitucion","equipo":"equipo1","dorsal":2,"dorsal_relacionado":3} |
+| sustitucion-011-2 | train | sustitución del equipo 1 sale dos entra tres | {"evento":"sustitucion","equipo":"equipo1","dorsal":2,"dorsal_relacionado":3} |
+| sustitucion-011-3 | train | Entra el tres por el dos, cambio del equipo uno. | {"evento":"sustitucion","equipo":"equipo1","dorsal":2,"dorsal_relacionado":3} |
+| sustitucion-012-1 | train | Cambio de su equipo, sale el 45 y entra el 54. | {"evento":"sustitucion","equipo":"equipo2","dorsal":45,"dorsal_relacionado":54} |
+| sustitucion-012-2 | train | cambio equipo dos sale cuarenta y cinco entra cincuenta y cuatro | {"evento":"sustitucion","equipo":"equipo2","dorsal":45,"dorsal_relacionado":54} |
+| sustitucion-012-3 | train | Sustitución de ellos: entra el cincuenta y cuatro por el cuarenta y cinco. | {"evento":"sustitucion","equipo":"equipo2","dorsal":45,"dorsal_relacionado":54} |
+| sustitucion-013-1 | validation | En el minuto seis, cambio nuestro: sale el 4 y entra el 5. | {"evento":"sustitucion","equipo":"equipo1","dorsal":4,"dorsal_relacionado":5} |
+| sustitucion-013-2 | validation | minuto 6 cambio nuestro sale cuatro entra cinco | {"evento":"sustitucion","equipo":"equipo1","dorsal":4,"dorsal_relacionado":5} |
+| sustitucion-013-3 | validation | Sustitución nuestra en el minuto seis: entra el cinco por el cuatro. | {"evento":"sustitucion","equipo":"equipo1","dorsal":4,"dorsal_relacionado":5} |
+| sustitucion-014-1 | test | Sustitución, sale Ana María y entra Juan Carlos. | {"evento":"sustitucion","equipo":"desconocido","nombre":"Ana María","nombre_relacionado":"Juan Carlos"} |
+| sustitucion-014-2 | test | cambio Ana María sale Juan Carlos entra | {"evento":"sustitucion","equipo":"desconocido","nombre":"Ana María","nombre_relacionado":"Juan Carlos"} |
+| sustitucion-014-3 | test | Cambio de Ana María por Juan Carlos. | {"evento":"sustitucion","equipo":"desconocido","nombre":"Ana María","nombre_relacionado":"Juan Carlos"} |
+| sustitucion-015-1 | train | Cambio nuestro, entra el 31 por el 40. | {"evento":"sustitucion","equipo":"equipo1","dorsal":40,"dorsal_relacionado":31} |
+| sustitucion-015-2 | train | cambio nuestro entra treinta y uno por cuarenta | {"evento":"sustitucion","equipo":"equipo1","dorsal":40,"dorsal_relacionado":31} |
+| sustitucion-015-3 | train | Sustitución nuestra, sale el cuarenta y entra el treinta y uno. | {"evento":"sustitucion","equipo":"equipo1","dorsal":40,"dorsal_relacionado":31} |

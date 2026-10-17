@@ -1,7 +1,7 @@
 import { syncExclusions } from './exclusions';
 import { z } from 'zod';
 
-export const eventTypes = ['goal', 'save', 'miss', 'loss', 'recovery', 'penalty', 'exclusion', 'yellow', 'disqualification', 'passive', 'infraction'] as const;
+export const eventTypes = ['goal', 'save', 'miss', 'loss', 'recovery', 'penalty', 'exclusion', 'yellow', 'disqualification', 'passive', 'infraction', 'substitution'] as const;
 export type EventType = typeof eventTypes[number];
 export const definitions: Record<EventType, { label: string; icon: string; principal: string; related?: string; sameTeam?: boolean; penalty?: boolean }> = {
   goal: { label: 'Gol', icon: '●', principal: 'Goleador', related: 'Asistente', sameTeam: true, penalty: true },
@@ -15,6 +15,7 @@ export const definitions: Record<EventType, { label: string; icon: string; princ
   disqualification: { label: 'Descalificación', icon: '▣', principal: 'Descalificado', related: 'Provocador rival' },
   passive: { label: 'Pasivo', icon: '◷', principal: 'No aplica' },
   infraction: { label: 'Infracción', icon: '!', principal: 'Infractor' },
+  substitution: { label: 'Sustitución', icon: '⇄', principal: 'Sale', related: 'Entra', sameTeam: true },
 };
 const id = z.string().min(1).max(100);
 const stamp = z.number().finite().nonnegative();
@@ -56,12 +57,14 @@ export function eventIssues(event: GameEvent, match: Match, players: Player[]): 
   if (event.type === 'infraction' && !event.metadata.infraction) issues.push('Selecciona el tipo de infracción');
   if (event.primaryPlayerId && !players.some(p => p.id === event.primaryPlayerId && p.teamId === event.teamId)) issues.push('Jugador principal de otro equipo');
   if (event.relatedPlayerId && event.type && event.teamId && !players.some(p => p.id === event.relatedPlayerId && p.teamId === relatedTeam(match, event.type!, event.teamId!))) issues.push('Jugador relacionado de otro equipo');
+  if (event.type === 'substitution' && event.primaryPlayerId && event.primaryPlayerId === event.relatedPlayerId && players.some(p => p.id === event.primaryPlayerId && !p.isUnknown)) issues.push('El jugador que sale y el que entra deben ser distintos.');
   return issues;
 }
 export function eventState(event: GameEvent, match: Match, players: Player[]) {
   if (event.deletedAt !== null) return 'deleted';
   if (eventIssues(event, match, players).length) return 'pending';
   if (event.type !== 'passive' && (!event.primaryPlayerId || players.find(p => p.id === event.primaryPlayerId)?.isUnknown)) return 'unidentified';
+  if (event.type === 'substitution' && (!event.relatedPlayerId || players.find(p => p.id === event.relatedPlayerId)?.isUnknown)) return 'unidentified';
   return 'valid';
 }
 export const elapsed = (clock: Clock, now = Date.now()) => clock.elapsedMs + (clock.startedAt === null ? 0 : Math.max(0, now - clock.startedAt));

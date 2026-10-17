@@ -25,7 +25,8 @@ La primera visita requiere conexión para almacenar la aplicación. El service w
 - Equipos y jugadores, nombre opcional, dorsal fijo y creación automática al registrar una acción.
 - Inicio de partido con equipos del catálogo o nuevos y fecha.
 - Reloj con pausa, reanudación, nuevos tiempos y finalización; corrección de partidos finalizados.
-- Captura manual de los 11 eventos, participantes relacionados y metadatos aplicables.
+- Captura manual de los 12 eventos, participantes relacionados y metadatos aplicables.
+- Sustituciones con jugador que sale y jugador que entra del mismo equipo; recuentos de cambios, entradas y salidas.
 - Captura local por voz con Whistle y reglas deterministas, revisión de la propuesta y transcripción literal conservada.
 - Eventos pendientes sin cómputo; atribución de acciones sin dorsal al jugador virtual Desconocido.
 - Marcador y estadísticas derivados de eventos; las correcciones y eliminaciones actualizan sus consecuencias.
@@ -84,4 +85,4 @@ La generación ocurre en un worker para mantener libre la interfaz. Cuando el na
 
 ## Dataset de voz en español
 
-El [dataset de frases](datasets/voz-es/README.md) contiene 600 ejemplos sintéticos anotados para los 11 eventos, con dorsales en cifras y palabras y nombres ficticios de hombre y de mujer. Incluye casos de rechazo y particiones separadas por familia. Está disponible como [ZIP](datasets/voz-es.zip). `npm run dataset:build` regenera los archivos y `npm run dataset:check` valida su cobertura y correspondencia con el esquema actual. Su preparación no entrena modelos ni modifica Whistle.
+El [dataset de frases](datasets/voz-es/README.md) contiene 645 ejemplos sintéticos anotados para los 12 eventos, con dorsales en cifras y palabras y nombres ficticios de hombre y de mujer. Incluye casos de rechazo y particiones separadas por familia. Está disponible como [ZIP](datasets/voz-es.zip). `npm run dataset:build` regenera los archivos y `npm run dataset:check` valida su cobertura y correspondencia con el esquema actual. Su preparación no entrena modelos ni modifica Whistle.

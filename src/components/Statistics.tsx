@@ -6,9 +6,9 @@ import { calculate, efficacy, emptyStats, labels, type Metric, type Stats } from
 import { Empty } from './ui';
 import { ScoreCharts } from './ScoreCharts';
 import { ShareMatchPdf } from './ShareMatchPdf';
-const rows: Metric[] = ['losses', 'recoveries', 'exclusions', 'infractions', 'passives'];
+const rows: Metric[] = ['losses', 'recoveries', 'exclusions', 'infractions', 'passives', 'substitutions'];
 function Metrics({ stats, player = false }: { stats: Stats; player?: boolean }) {
-  return <><div className="metrics"><div><span>{tr("Goles")}</span><strong>{stats.goals}</strong></div><div><span>{tr("Fallados")}</span><strong>{stats.misses}</strong></div><div><span>{tr("Eficacia de tiro")}</span><strong>{efficacy(stats)}</strong></div><div><span>{tr("Paradas")}</span><strong>{stats.saves}</strong></div></div><dl className="stat-list">{[...rows.filter(k => !player || k !== 'passives'), ...(player ? ['forcedExclusions', 'assists'] as Metric[] : [])].map(k => <div key={k}><dt>{tr(labels[k] ?? k)}</dt><dd>{stats[k]}</dd></div>)}</dl></>;
+  return <><div className="metrics"><div><span>{tr("Goles")}</span><strong>{stats.goals}</strong></div><div><span>{tr("Fallados")}</span><strong>{stats.misses}</strong></div><div><span>{tr("Eficacia de tiro")}</span><strong>{efficacy(stats)}</strong></div><div><span>{tr("Paradas")}</span><strong>{stats.saves}</strong></div></div><dl className="stat-list">{[...rows.filter(k => !player || !['passives', 'substitutions'].includes(k)), ...(player ? ['forcedExclusions', 'assists', 'substitutionsOut', 'substitutionsIn'] as Metric[] : [])].map(k => <div key={k}><dt>{tr(labels[k] ?? k)}</dt><dd>{stats[k]}</dd></div>)}</dl></>;
 }
 export function Statistics({ data, matchId }: { data: Snapshot; matchId?: string }) {
   const matches = data.matches.filter(m => !m.deletedAt && (!matchId || m.id === matchId));

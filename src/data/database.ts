@@ -1,7 +1,7 @@
 import { createId } from '../domain/id';
 import { exclusionRemaining } from '../domain/exclusions';
 import Dexie, { type EntityTable } from 'dexie';
-import { changeClock, cleanEvent, eventSchema, nameKey, relatedTeam, unknownId, validateBackup, type Backup, type GameEvent, type Match, type Player, type Snapshot, type Team } from '../domain/model';
+import { changeClock, cleanEvent, definitions, eventSchema, nameKey, relatedTeam, unknownId, validateBackup, type Backup, type GameEvent, type Match, type Player, type Snapshot, type Team } from '../domain/model';
 
 export class HandballDatabase extends Dexie {
   teams!: EntityTable<Team, 'id'>;
@@ -86,7 +86,7 @@ export function repository(database = db) {
         const events = await database.events.where('matchId').equals(match.id).toArray();
         const cfg = draft.type;
         const primary = cfg && cfg !== 'passive' && draft.teamId ? await resolvePlayer(draft.teamId, draft.primaryDorsal) : null;
-        const secondary = cfg && draft.teamId && ['goal','save','recovery','penalty','exclusion','disqualification'].includes(cfg) ? await resolvePlayer(relatedTeam(match, cfg, draft.teamId), draft.relatedDorsal) : null;
+        const secondary = cfg && draft.teamId && definitions[cfg].related ? await resolvePlayer(relatedTeam(match, cfg, draft.teamId), draft.relatedDorsal) : null;
         const event = cleanEvent(eventSchema.parse({ ...draft, id: old?.id ?? createId(), primaryPlayerId: primary, relatedPlayerId: secondary, createdAt: old?.createdAt ?? Date.now(), updatedAt: Math.max(Date.now(), (old?.updatedAt ?? 0) + 1), deletedAt: null, orderKey: old?.orderKey ?? Math.max(0, ...events.map(e => e.orderKey)) + 1, schemaVersion: 1 }));
         // Editing minute changes its chronological position; tie order is stable.
         await database.events.put(event); return event;

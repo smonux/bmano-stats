@@ -29,7 +29,7 @@ const tools = [{
 }];
 const seeds = JSON.parse(await readFile(resolve(directory, 'seeds.json'), 'utf8'));
 assert(Array.isArray(seeds), 'seeds.json debe ser una lista');
-assert.equal(seeds.length, 200, 'Se esperan 200 familias semánticas');
+assert.equal(seeds.length, 215, 'Se esperan 215 familias semánticas');
 
 const ids = new Set(), texts = new Set(), normalizedFamilies = new Map();
 const errors = [];
@@ -46,7 +46,7 @@ const numberIsMentioned = (text, number) => {
   const spellings = [String(number), words, ...(number === 1 ? ['un', 'una'] : number === 21 ? ['veintiun', 'veintiuna'] : [])];
   return spellings.some(value => haystack.includes(` ${normalize(value)} `));
 };
-const relatedEvents = new Set(['gol', 'parada', 'recuperacion', 'penalti_cometido', 'exclusion', 'descalificacion']);
+const relatedEvents = new Set(['gol', 'parada', 'recuperacion', 'penalti_cometido', 'exclusion', 'descalificacion', 'sustitucion']);
 for (const family of seeds) {
   const where = family.id ?? '(sin id)';
   requireThat(typeof family.id === 'string' && /^[a-z][a-z0-9_-]+$/.test(family.id), `${where}: identificador inválido`);
@@ -117,10 +117,10 @@ const rows = seeds.flatMap(family => family.variants.map((variant, index) => ({
   metadata: {
     family_id: family.id, category: family.category, split: familySplits.get(family.id),
     style: variant.style, teams: family.teams, annotation_note: family.reason,
-    source: 'synthetic_text', author: 'gpt-6-luna', review: 'Codex; schema_and_manual', revision: 1,
+    source: 'synthetic_text', author: family.author ?? 'gpt-6-luna', review: 'Codex; schema_and_manual', revision: family.revision ?? 1,
   },
 })));
-assert.equal(rows.length, 600);
+assert.equal(rows.length, 645);
 const count = (items, key) => Object.fromEntries([...new Set(items.map(key))].sort().map(value => [value, items.filter(item => key(item) === value).length]));
 const calls = rows.flatMap(row => row.answers.map(call => call.arguments));
 const nameValues = calls.flatMap(args => [args.nombre, args.nombre_relacionado].filter(Boolean));
@@ -142,7 +142,7 @@ for (const split of ['train', 'validation', 'test']) {
 }
 
 const stats = {
-  version: 1, language: 'es', source: 'synthetic_text', author: 'gpt-6-luna', review: 'Codex; schema_and_manual',
+  version: 2, language: 'es', source: 'synthetic_text', authors: ['gpt-6-luna', 'Codex'], review: 'Codex; schema_and_manual',
   samples: rows.length, families: seeds.length,
   split_seed: splitSeed,
   splits: Object.fromEntries(['train', 'validation', 'test'].map(split => [split, {

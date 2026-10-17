@@ -7289,5 +7289,650 @@
         "arguments": null
       }
     ]
+  },
+  {
+    "id": "sustitucion-001",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Una sustitución: principal sale, relacionado entra; ambos pertenecen al equipo indicado.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Cambio nuestro, sale el 6 y entra el 9.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 6,
+          "dorsal_relacionado": 9
+        }
+      },
+      {
+        "text": "cambio nuestro sale seis entra nueve",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 6,
+          "dorsal_relacionado": 9
+        }
+      },
+      {
+        "text": "Sustitución nuestra: entra el nueve por el seis.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 6,
+          "dorsal_relacionado": 9
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-002",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Una sustitución: principal sale, relacionado entra; ambos pertenecen al equipo indicado.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Cambio rival: entra el 0 por el 99.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "dorsal": 99,
+          "dorsal_relacionado": 0
+        }
+      },
+      {
+        "text": "cambio rival entra cero por noventa y nueve",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "dorsal": 99,
+          "dorsal_relacionado": 0
+        }
+      },
+      {
+        "text": "Sustitución de ellos, sale el noventa y nueve y entra el cero.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "dorsal": 99,
+          "dorsal_relacionado": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-003",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Una sustitución: principal sale, relacionado entra; ambos pertenecen al equipo indicado.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Cambio de La Jota, sale María y entra Ana.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "nombre": "María",
+          "nombre_relacionado": "Ana"
+        }
+      },
+      {
+        "text": "cambio de La Jota María sale Ana entra",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "nombre": "María",
+          "nombre_relacionado": "Ana"
+        }
+      },
+      {
+        "text": "Sustitución de La Jota, entra Ana por María.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "nombre": "María",
+          "nombre_relacionado": "Ana"
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-004",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Una sustitución: principal sale, relacionado entra; ambos pertenecen al equipo indicado.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Sustitución de Águilas: sale Luis y entra Juan.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "nombre": "Luis",
+          "nombre_relacionado": "Juan"
+        }
+      },
+      {
+        "text": "cambio de Águilas sale Luis entra Juan",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "nombre": "Luis",
+          "nombre_relacionado": "Juan"
+        }
+      },
+      {
+        "text": "Cambio en Águilas, entra Juan por Luis.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "nombre": "Luis",
+          "nombre_relacionado": "Juan"
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-005",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Sin perspectiva ni nombre de equipo, no se presupone el equipo.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Sustitución: sale el 7 y entra el 8.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "desconocido",
+          "dorsal": 7,
+          "dorsal_relacionado": 8
+        }
+      },
+      {
+        "text": "cambio sale siete entra ocho",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "desconocido",
+          "dorsal": 7,
+          "dorsal_relacionado": 8
+        }
+      },
+      {
+        "text": "Cambio, entra el ocho por el siete.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "desconocido",
+          "dorsal": 7,
+          "dorsal_relacionado": 8
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-006",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Una sustitución: principal sale, relacionado entra; ambos pertenecen al equipo indicado.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Cambio nuestro: sale Carlos dorsal 4 y entra Pablo dorsal 12.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "nombre": "Carlos",
+          "dorsal": 4,
+          "nombre_relacionado": "Pablo",
+          "dorsal_relacionado": 12
+        }
+      },
+      {
+        "text": "cambio nuestro sale Carlos dorsal cuatro entra Pablo dorsal doce",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "nombre": "Carlos",
+          "dorsal": 4,
+          "nombre_relacionado": "Pablo",
+          "dorsal_relacionado": 12
+        }
+      },
+      {
+        "text": "Sustitución nuestra, entra Pablo número doce por Carlos número cuatro.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "nombre": "Carlos",
+          "dorsal": 4,
+          "nombre_relacionado": "Pablo",
+          "dorsal_relacionado": 12
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-007",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Una sustitución: principal sale, relacionado entra; ambos pertenecen al equipo indicado.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Cambio de ellas: sale Lucía, dorsal 23, y entra Sofía, dorsal 21.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "nombre": "Lucía",
+          "dorsal": 23,
+          "nombre_relacionado": "Sofía",
+          "dorsal_relacionado": 21
+        }
+      },
+      {
+        "text": "cambio de ellas sale Lucía dorsal veintitrés entra Sofía dorsal veintiuno",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "nombre": "Lucía",
+          "dorsal": 23,
+          "nombre_relacionado": "Sofía",
+          "dorsal_relacionado": 21
+        }
+      },
+      {
+        "text": "Sustitución rival, entra Sofía número veintiuno por Lucía número veintitrés.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "nombre": "Lucía",
+          "dorsal": 23,
+          "nombre_relacionado": "Sofía",
+          "dorsal_relacionado": 21
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-008",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Solo se menciona quién sale; no se inventa quién entra.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Cambio nuestro, sale el 15.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 15
+        }
+      },
+      {
+        "text": "sustitución nuestra sale quince",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 15
+        }
+      },
+      {
+        "text": "En nuestra sustitución, el quince sale.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 15
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-009",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Solo se menciona quién entra; no se inventa quién sale.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Sustitución rival, entra el 16.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "dorsal_relacionado": 16
+        }
+      },
+      {
+        "text": "cambio rival entra dieciséis",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "dorsal_relacionado": 16
+        }
+      },
+      {
+        "text": "En el cambio de ellos, el dieciséis entra.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "dorsal_relacionado": 16
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-010",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Hay sustitución pero no hay equipo ni participantes identificados.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Sustitución confirmada.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "desconocido"
+        }
+      },
+      {
+        "text": "cambio confirmado",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "desconocido"
+        }
+      },
+      {
+        "text": "Hay un cambio en pista.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "desconocido"
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-011",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Una sustitución: principal sale, relacionado entra; ambos pertenecen al equipo indicado.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Cambio del equipo uno, sale el 2 y entra el 3.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 2,
+          "dorsal_relacionado": 3
+        }
+      },
+      {
+        "text": "sustitución del equipo 1 sale dos entra tres",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 2,
+          "dorsal_relacionado": 3
+        }
+      },
+      {
+        "text": "Entra el tres por el dos, cambio del equipo uno.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 2,
+          "dorsal_relacionado": 3
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-012",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Una sustitución: principal sale, relacionado entra; ambos pertenecen al equipo indicado.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Cambio de su equipo, sale el 45 y entra el 54.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "dorsal": 45,
+          "dorsal_relacionado": 54
+        }
+      },
+      {
+        "text": "cambio equipo dos sale cuarenta y cinco entra cincuenta y cuatro",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "dorsal": 45,
+          "dorsal_relacionado": 54
+        }
+      },
+      {
+        "text": "Sustitución de ellos: entra el cincuenta y cuatro por el cuarenta y cinco.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo2",
+          "dorsal": 45,
+          "dorsal_relacionado": 54
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-013",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "El seis es el minuto, no un dorsal; principal sale 4 y relacionado entra 5.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "En el minuto seis, cambio nuestro: sale el 4 y entra el 5.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 4,
+          "dorsal_relacionado": 5
+        }
+      },
+      {
+        "text": "minuto 6 cambio nuestro sale cuatro entra cinco",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 4,
+          "dorsal_relacionado": 5
+        }
+      },
+      {
+        "text": "Sustitución nuestra en el minuto seis: entra el cinco por el cuatro.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 4,
+          "dorsal_relacionado": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-014",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Una sustitución: principal sale, relacionado entra; ambos pertenecen al equipo indicado.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Sustitución, sale Ana María y entra Juan Carlos.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "desconocido",
+          "nombre": "Ana María",
+          "nombre_relacionado": "Juan Carlos"
+        }
+      },
+      {
+        "text": "cambio Ana María sale Juan Carlos entra",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "desconocido",
+          "nombre": "Ana María",
+          "nombre_relacionado": "Juan Carlos"
+        }
+      },
+      {
+        "text": "Cambio de Ana María por Juan Carlos.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "desconocido",
+          "nombre": "Ana María",
+          "nombre_relacionado": "Juan Carlos"
+        }
+      }
+    ]
+  },
+  {
+    "id": "sustitucion-015",
+    "category": "sustitucion",
+    "teams": [
+      "La Jota",
+      "Águilas"
+    ],
+    "reason": "Una sustitución: principal sale, relacionado entra; ambos pertenecen al equipo indicado.",
+    "author": "Codex",
+    "revision": 2,
+    "variants": [
+      {
+        "text": "Cambio nuestro, entra el 31 por el 40.",
+        "style": "natural",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 40,
+          "dorsal_relacionado": 31
+        }
+      },
+      {
+        "text": "cambio nuestro entra treinta y uno por cuarenta",
+        "style": "transcripcion_asr",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 40,
+          "dorsal_relacionado": 31
+        }
+      },
+      {
+        "text": "Sustitución nuestra, sale el cuarenta y entra el treinta y uno.",
+        "style": "parafrasis",
+        "arguments": {
+          "evento": "sustitucion",
+          "equipo": "equipo1",
+          "dorsal": 40,
+          "dorsal_relacionado": 31
+        }
+      }
+    ]
   }
 ]

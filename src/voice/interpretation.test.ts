@@ -45,3 +45,8 @@ test('recorder perspective resolves across all seven Whistle languages without a
  for(const word of ['home','away','Heim','domicile','casa','thuis','gospodarz'])expect(resolveTeam(word,context)).toBeNull();
  const polish={...data,players:[...data.players,{...data.players[0],id:'pl',name:'Łukasz',dorsal:4}]};expect(resolveDorsal('łukasz','a',polish)).toBe('4');
 });
+
+test('substitution incoming player names resolve in the same team as the outgoing player',()=>{
+ const result=toVoiceDraft('Cambio nuestro, sale el 6 y entra Ana',{evento:'sustitucion',equipo:'equipo1',dorsal:6,nombre_relacionado:'Ana'},context);
+ expect(result.draft).toMatchObject({type:'substitution',teamId:'a',primaryDorsal:'6',relatedDorsal:'9',metadata:{}});
+});

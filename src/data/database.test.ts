@@ -84,3 +84,23 @@ test('suspension timer accepts an unknown shirt number and preserves it in backu
  const backup=await repo.exportBackup();expect(backup.matches[0].exclusions![0]!.dorsal).toBeNull();
  await repo.importBackup(JSON.parse(JSON.stringify(backup)));expect((await db.matches.get(match.id))!.exclusions![0]).toMatchObject({teamId:match.localTeamId,dorsal:null});
 });
+
+test('substitutions store two teammates, count one change with per-player entries/exits, and survive restore',async()=>{
+ const event=await repo.saveEvent(draft('substitution',{primaryDorsal:'6',relatedDorsal:'9',metadata:{penalty:true,blue:true,infraction:'Pasos'}}));
+ const snapshot=await db.snapshot();
+ expect(snapshot.players.find(p=>p.id===event.primaryPlayerId)).toMatchObject({teamId:match.localTeamId,dorsal:6});
+ expect(snapshot.players.find(p=>p.id===event.relatedPlayerId)).toMatchObject({teamId:match.localTeamId,dorsal:9});
+ expect(event.metadata).toEqual({});expect(eventState(event,match,snapshot.players)).toBe('valid');
+ const calculated=await stats();expect(calculated.teams[match.localTeamId]).toEqual({...emptyStats(),substitutions:1});expect(calculated.teams[match.visitorTeamId]).toBeUndefined();
+ expect(calculated.players[event.primaryPlayerId!]).toEqual({...emptyStats(),substitutionsOut:1});expect(calculated.players[event.relatedPlayerId!]).toEqual({...emptyStats(),substitutionsIn:1});
+ const backup=await repo.exportBackup();await repo.importBackup(JSON.parse(JSON.stringify(backup)));expect(await stats()).toEqual(calculated);
+ const invalid=structuredClone(backup);invalid.events[0].relatedPlayerId=unknownId(match.visitorTeamId);await expect(repo.importBackup(invalid)).rejects.toThrow('relacionado');
+ await repo.deleteEvent(event.id);expect((await stats()).teams).toEqual({});
+});
+test('unknown substitution participants remain usable; the same known player cannot enter and exit',async()=>{
+ const event=await repo.saveEvent(draft('substitution',{primaryDorsal:'6',relatedDorsal:'6'}));
+ expect(eventState(event,match,(await db.snapshot()).players)).toBe('pending');expect((await stats()).teams).toEqual({});
+ await repo.saveEvent(draft('substitution',{id:event.id,expectedUpdatedAt:event.updatedAt,relatedDorsal:'9'}));
+ const snapshot=await db.snapshot();expect(eventState(snapshot.events[0],match,snapshot.players)).toBe('unidentified');
+ expect((await stats()).teams[match.localTeamId].substitutions).toBe(1);expect((await stats()).players[unknownId(match.localTeamId)].substitutionsOut).toBe(1);
+});

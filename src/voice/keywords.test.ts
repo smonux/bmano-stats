@@ -8,7 +8,7 @@ test('Whistle receives sport words, names and only known 0–99 numbers in digit
   expect(hints).toEqual(expect.arrayContaining(['La Jota','Águilas','Ana María','Íñigo','0','21','99']));
   expect(hints.filter(value=>value==='Ana María')).toHaveLength(1);expect(hints).not.toContain('6');
  }
- expect(whistleKeywords('es',[],players)).toEqual(expect.arrayContaining(['cero','veintiuno','noventa y nueve','penalti','asistencia','amarilla','roja']));
+ expect(whistleKeywords('es',[],players)).toEqual(expect.arrayContaining(['cero','veintiuno','noventa y nueve','penalti','asistencia','amarilla','roja','cambio','sustitución','sale','entra']));
  expect(whistleKeywords('fr',[],players)).toContain('quatre-vingt-dix-neuf');
  expect(whistleKeywords('pl',[],players)).toContain('dziewięćdziesiąt dziewięć');
 });

@@ -1,10 +1,10 @@
 import { eventState, opponent, relatedTeam, unknownId, type GameEvent, type Match, type Player } from './model';
-export const metrics = ['goals', 'shots', 'misses', 'saves', 'goalsReceived', 'shotsReceived', 'losses', 'recoveries', 'penalties', 'penaltiesReceived', 'exclusions', 'yellow', 'disqualifications', 'blue', 'passives', 'infractions', 'Pasos', 'Dobles', 'Pisando', 'assists', 'forcedExclusions', 'penaltyGoals', 'penaltyMisses', 'penaltySaves'] as const;
+export const metrics = ['goals', 'shots', 'misses', 'saves', 'goalsReceived', 'shotsReceived', 'losses', 'recoveries', 'penalties', 'penaltiesReceived', 'exclusions', 'yellow', 'disqualifications', 'blue', 'passives', 'infractions', 'Pasos', 'Dobles', 'Pisando', 'assists', 'forcedExclusions', 'penaltyGoals', 'penaltyMisses', 'penaltySaves', 'substitutions', 'substitutionsOut', 'substitutionsIn'] as const;
 export type Metric = typeof metrics[number];
 export type Stats = Record<Metric, number>;
 export const emptyStats = (): Stats => Object.fromEntries(metrics.map(k => [k, 0])) as Stats;
 export const efficacy = (s: Stats) => s.shots ? `${Math.round(100 * s.goals / s.shots)} %` : '—';
-export const labels: Partial<Record<Metric, string>> = { goals: 'Goles', misses: 'Lanzamientos fallados', saves: 'Paradas', losses: 'Pérdidas', recoveries: 'Recuperaciones', exclusions: 'Exclusiones (2 min)', passives: 'Pasivos', infractions: 'Infracciones', forcedExclusions: 'Exclusiones forzadas', assists: 'Asistencias', penalties: 'Penaltis cometidos', yellow: 'Amarillas', disqualifications: 'Descalificaciones' };
+export const labels: Partial<Record<Metric, string>> = { substitutions: 'Sustituciones', substitutionsOut: 'Salidas', substitutionsIn: 'Entradas', goals: 'Goles', misses: 'Lanzamientos fallados', saves: 'Paradas', losses: 'Pérdidas', recoveries: 'Recuperaciones', exclusions: 'Exclusiones (2 min)', passives: 'Pasivos', infractions: 'Infracciones', forcedExclusions: 'Exclusiones forzadas', assists: 'Asistencias', penalties: 'Penaltis cometidos', yellow: 'Amarillas', disqualifications: 'Descalificaciones' };
 
 export function calculate(matches: Match[], events: GameEvent[], players: Player[]) {
   const teams: Record<string, Stats> = {};
@@ -19,6 +19,7 @@ export function calculate(matches: Match[], events: GameEvent[], players: Player
     const own = (...keys: Metric[]) => keys.forEach(k => { add(teams, t, k); add(individual, p, k); });
     const rivalTeam = (...keys: Metric[]) => keys.forEach(k => add(teams, other, k));
     switch (e.type) {
+      case 'substitution': add(teams, t, 'substitutions'); add(individual, p, 'substitutionsOut'); add(individual, r, 'substitutionsIn'); break;
       case 'goal': own('goals', 'shots'); rivalTeam('goalsReceived', 'shotsReceived'); if (e.relatedPlayerId) add(individual, r, 'assists'); if (e.metadata.penalty) own('penaltyGoals'); break;
       case 'save': own('saves'); add(teams, t, 'shotsReceived'); rivalTeam('shots', 'misses'); add(individual, r, 'shots'); add(individual, r, 'misses'); if (e.metadata.penalty) { own('penaltySaves'); rivalTeam('penaltyMisses'); add(individual, r, 'penaltyMisses'); } break;
       case 'miss': own('shots', 'misses'); rivalTeam('shotsReceived'); if (e.metadata.penalty) own('penaltyMisses'); break;

@@ -111,7 +111,7 @@ export async function createMatchPdf(data:Snapshot,matchId:string,language:Langu
   table([t('Minuto'),t('Equipo'),t('Evento'),t('Jugadores')],events.map(event=>{
    const definition=event.type?definitions[event.type]:null;
    const kind=[definition?t(definition.label):t('Evento sin indicar'),event.metadata.penalty?'7 m':'',event.metadata.blue?t('Tarjeta azul'):'',event.metadata.infraction?t(event.metadata.infraction):'',eventState(event,report.match,data.players)==='pending'?t('Pendiente'):''].filter(Boolean).join(' · ');
-   const participants=event.type==='passive'?'':player(event.primaryPlayerId)+(event.relatedPlayerId&&definition?.related?` / ${t(definition.related)}: ${player(event.relatedPlayerId)}`:'');
+   const participants=event.type==='passive'?'':(event.type==='substitution'?`${t('Sale')}: `:'')+player(event.primaryPlayerId)+(event.relatedPlayerId&&definition?.related?` / ${t(definition.related)}: ${player(event.relatedPlayerId)}`:'');
    const team=report.teams.findIndex(team=>team.id===event.teamId);
    return [String(event.minute),team<0?t('Sin equipo'):String(team+1),kind,participants];
   }),{columnStyles:{0:{cellWidth:13},1:{cellWidth:15},2:{cellWidth:47},3:{cellWidth:111}},styles:{font:'Handball',fontSize:7,cellPadding:1,lineWidth:.1,lineColor:[225,225,220],textColor:ink,overflow:'linebreak'},didDrawPage:({pageNumber}:{pageNumber:number})=>{

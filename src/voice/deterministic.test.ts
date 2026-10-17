@@ -4,17 +4,17 @@ import { interpretDeterministically as parse } from './deterministic';
 import { spokenEvents } from './lexicon';
 import { parseSpokenNumber,spokenNumber } from './numbers';
 const utterances:Record<Language,string[]>={
- es:['Gol nuestro dorsal 21','Parada nuestra dorsal 21','Fallo nuestro dorsal 21','Pérdida nuestra dorsal 21','Recuperación nuestra dorsal 21','Penalti cometido por nuestro dorsal 21','Exclusión nuestra dorsal 21','Amarilla nuestra dorsal 21','Descalificación nuestra dorsal 21','Pasivo nuestro','Pasos de nuestro dorsal 21'],
- en:['Our goal number 21','Our save number 21','Our missed shot number 21','Our turnover number 21','Our recovery number 21','Our conceded penalty number 21','Our suspension number 21','Our yellow card number 21','Our red card number 21','Our passive play','Our steps number 21'],
- de:['Tor für uns Nummer 21','Parade für uns Nummer 21','Fehlwurf für uns Nummer 21','Ballverlust für uns Nummer 21','Ballgewinn für uns Nummer 21','Siebenmeter gegen uns Nummer 21','Zeitstrafe für uns Nummer 21','Gelbe Karte für uns Nummer 21','Rote Karte für uns Nummer 21','Passives Spiel für uns','Schritte für uns Nummer 21'],
- fr:['But pour nous numéro 21','Arrêt pour nous numéro 21','Tir raté pour nous numéro 21','Perte de balle pour nous numéro 21','Récupération pour nous numéro 21','Penalty commis par nous numéro 21','Exclusion pour nous numéro 21','Carton jaune pour nous numéro 21','Carton rouge pour nous numéro 21','Jeu passif pour nous','Marcher pour nous numéro 21'],
- it:['Gol nostro numero 21','Parata nostra numero 21','Tiro sbagliato nostro numero 21','Palla persa nostra numero 21','Recupero nostro numero 21','Rigore commesso da noi numero 21','Esclusione nostra numero 21','Cartellino giallo nostro numero 21','Cartellino rosso nostro numero 21','Gioco passivo nostro','Passi nostri numero 21'],
- nl:['Doelpunt voor ons rugnummer 21','Redding voor ons rugnummer 21','Misser voor ons rugnummer 21','Balverlies voor ons rugnummer 21','Balwinst voor ons rugnummer 21','Onze speler veroorzaakt een strafworp rugnummer 21','Tijdstraf voor ons rugnummer 21','Gele kaart voor ons rugnummer 21','Rode kaart voor ons rugnummer 21','Passief spel voor ons','Loopfout voor ons rugnummer 21'],
- pl:['Nasza bramka numer 21','Nasza obrona numer 21','Nasz niecelny rzut numer 21','Nasza strata numer 21','Nasz przechwyt numer 21','Nasz karny numer 21','Nasze wykluczenie numer 21','Nasza żółta kartka numer 21','Nasza czerwona kartka numer 21','Nasza pasywna gra','Nasze kroki numer 21'],
+ es:['Gol nuestro dorsal 21','Parada nuestra dorsal 21','Fallo nuestro dorsal 21','Pérdida nuestra dorsal 21','Recuperación nuestra dorsal 21','Penalti cometido por nuestro dorsal 21','Exclusión nuestra dorsal 21','Amarilla nuestra dorsal 21','Descalificación nuestra dorsal 21','Pasivo nuestro','Pasos de nuestro dorsal 21','Cambio nuestro, sale el 21 y entra el 9'],
+ en:['Our goal number 21','Our save number 21','Our missed shot number 21','Our turnover number 21','Our recovery number 21','Our conceded penalty number 21','Our suspension number 21','Our yellow card number 21','Our red card number 21','Our passive play','Our steps number 21','Our substitution, number 21 off, number 9 on'],
+ de:['Tor für uns Nummer 21','Parade für uns Nummer 21','Fehlwurf für uns Nummer 21','Ballverlust für uns Nummer 21','Ballgewinn für uns Nummer 21','Siebenmeter gegen uns Nummer 21','Zeitstrafe für uns Nummer 21','Gelbe Karte für uns Nummer 21','Rote Karte für uns Nummer 21','Passives Spiel für uns','Schritte für uns Nummer 21','Wechsel für uns, Nummer 21 raus, Nummer 9 rein'],
+ fr:['But pour nous numéro 21','Arrêt pour nous numéro 21','Tir raté pour nous numéro 21','Perte de balle pour nous numéro 21','Récupération pour nous numéro 21','Penalty commis par nous numéro 21','Exclusion pour nous numéro 21','Carton jaune pour nous numéro 21','Carton rouge pour nous numéro 21','Jeu passif pour nous','Marcher pour nous numéro 21','Changement pour nous, le numéro 21 sort, le numéro 9 entre'],
+ it:['Gol nostro numero 21','Parata nostra numero 21','Tiro sbagliato nostro numero 21','Palla persa nostra numero 21','Recupero nostro numero 21','Rigore commesso da noi numero 21','Esclusione nostra numero 21','Cartellino giallo nostro numero 21','Cartellino rosso nostro numero 21','Gioco passivo nostro','Passi nostri numero 21','Cambio nostro, esce il numero 21 ed entra il numero 9'],
+ nl:['Doelpunt voor ons rugnummer 21','Redding voor ons rugnummer 21','Misser voor ons rugnummer 21','Balverlies voor ons rugnummer 21','Balwinst voor ons rugnummer 21','Onze speler veroorzaakt een strafworp rugnummer 21','Tijdstraf voor ons rugnummer 21','Gele kaart voor ons rugnummer 21','Rode kaart voor ons rugnummer 21','Passief spel voor ons','Loopfout voor ons rugnummer 21','Wissel voor ons, rugnummer 21 eruit, rugnummer 9 erin'],
+ pl:['Nasza bramka numer 21','Nasza obrona numer 21','Nasz niecelny rzut numer 21','Nasza strata numer 21','Nasz przechwyt numer 21','Nasz karny numer 21','Nasze wykluczenie numer 21','Nasza żółta kartka numer 21','Nasza czerwona kartka numer 21','Nasza pasywna gra','Nasze kroki numer 21','Nasza zmiana, schodzi numer 21, wchodzi numer 9'],
 };
 const teams=['La Jota','Águilas'];
 for(const language of Object.keys(utterances) as Language[]){
- test(`${language}: all 11 events and recorder perspective`,()=>{
+ test(`${language}: all 12 events and recorder perspective`,()=>{
   utterances[language].forEach((text,index)=>{
    const result=parse(text,language,teams).proposal;
    expect(result,text).toMatchObject({evento:spokenEvents[index],equipo:'equipo1',...(index===9?{}:{dorsal:21})});
@@ -107,4 +107,34 @@ test('known player names are not event cues or shirt numbers',()=>{
 test('gender and ASR-split compound numbers keep their full value',()=>{
  const cases:[Language,string,number][]=[['es','veinti seis',26],['es','treinta y una',31],['es','noventa y un',91],['fr','vingt et une',21],['fr','soixante et une',61],['fr','quatre-vingt-une',81],['it','ventuna',21],['pl','dwadzieścia dwie',22],['pl','trzydzieści jedna',31]];
  for(const [language,words,number]of cases){expect(parseSpokenNumber(words,language),words).toBe(number);expect(parse(utterances[language][0].replace('21',words),language,teams).proposal,words).toHaveProperty('dorsal',number);}
+});
+
+test('cambio and sustitución resolve explicit outgoing/incoming roles, either order and names',()=>{
+ const cases:[string,object][]=[
+  ['Cambio del equipo uno, sale el 2 y entra el 3',{equipo:'equipo1',dorsal:2,dorsal_relacionado:3}],
+  ['Cambio nuestro, sale el 6 y entra el 9',{equipo:'equipo1',dorsal:6,dorsal_relacionado:9}],
+  ['Sustitución rival, entra el nueve por el seis',{equipo:'equipo2',dorsal:6,dorsal_relacionado:9}],
+  ['Sale el cero y entra el noventa y nueve de La Jota',{equipo:'equipo1',dorsal:0,dorsal_relacionado:99}],
+  ['Entra el 9 por el 6 nuestro',{equipo:'equipo1',dorsal:6,dorsal_relacionado:9}],
+  ['Cambio nuestro, Ana sale y María entra',{equipo:'equipo1',nombre:'Ana',nombre_relacionado:'María'}],
+  ['Cambio de ellos, entra Juan, sale Luis',{equipo:'equipo2',nombre:'Luis',nombre_relacionado:'Juan'}],
+  ['Sustitución de Ana por María',{equipo:'desconocido',nombre:'Ana',nombre_relacionado:'María'}],
+  ['Cambio nuestro, sale Ana dorsal 6 y entra María dorsal 9',{equipo:'equipo1',nombre:'Ana',dorsal:6,nombre_relacionado:'María',dorsal_relacionado:9}],
+ ];
+ for(const [text,expected]of cases)expect(parse(text,'es',teams).proposal,text).toEqual({evento:'sustitucion',...expected});
+ expect(parse('Cambio nuestro, entra el 9','es',teams).proposal).toEqual({evento:'sustitucion',equipo:'equipo1',dorsal_relacionado:9});
+ expect(parse('Cambio rival, sale el 6','es',teams).proposal).toEqual({evento:'sustitucion',equipo:'equipo2',dorsal:6});
+ expect(parse('Sustituición nuestra, sale 6 entra 9','es',teams).proposal).toMatchObject({evento:'sustitucion',dorsal:6,dorsal_relacionado:9});
+ const unclear=parse('Cambio nuestro 6 y 9','es',teams);expect(unclear.proposal).toEqual({evento:'sustitucion',equipo:'equipo1'});expect(unclear.warnings.join(' ')).toContain('quién sale');
+ expect(parse('Cambio nuestro, sale el 6 rival, entra el 9','es',teams).proposal).toHaveProperty('equipo','desconocido');
+});
+test('substitutions do not convert non-play changes, ball movement or multiple actions into a substitution',()=>{
+ for(const text of ['Cambio de tiempo','Cambio de idioma','Cambio de equipo','Entra el balón en el área','No hay cambio nuestro','Cambio nuestro sale 6 entra 9, sale 8 entra 12','Cambio nuestro y gol rival'])expect(parse(text,'es',teams).proposal,text).toBeNull();
+ expect(parse('Gol nuestro, entra el balón','es',teams).proposal).toEqual({evento:'gol',equipo:'equipo1'});
+});
+test('incoming-first substitution phrases across every capture language preserve roles',()=>{
+ const cases:Record<Language,string>={
+  es:'Cambio rival, entra el 9 por el 6',en:'Their substitution, number 9 on for number 6',de:'Wechsel Gegner, Nummer 9 rein für Nummer 6',fr:'Changement adversaire, le numéro 9 entre, le numéro 6 sort',it:'Cambio loro, entra il numero 9, esce il numero 6',nl:'Wissel tegenstander, rugnummer 9 erin voor rugnummer 6',pl:'Zmiana rywala, wchodzi numer 9 za numer 6',
+ };
+ for(const language of Object.keys(cases) as Language[])expect(parse(cases[language],language,teams).proposal,cases[language]).toEqual({evento:'sustitucion',equipo:'equipo2',dorsal:6,dorsal_relacionado:9});
 });

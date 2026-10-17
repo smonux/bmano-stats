@@ -1,16 +1,19 @@
 {
-  "version": 1,
+  "version": 2,
   "language": "es",
   "source": "synthetic_text",
-  "author": "gpt-6-luna",
+  "authors": [
+    "gpt-6-luna",
+    "Codex"
+  ],
   "review": "Codex; schema_and_manual",
-  "samples": 600,
-  "families": 200,
+  "samples": 645,
+  "families": 215,
   "split_seed": "bmano-voz-es-v1",
   "splits": {
     "train": {
-      "samples": 438,
-      "families": 146,
+      "samples": 471,
+      "families": 157,
       "categories": {
         "amarilla": 33,
         "ambiguo": 9,
@@ -24,12 +27,13 @@
         "penalti_cometido": 33,
         "perdida": 33,
         "rechazo": 66,
-        "recuperacion": 33
+        "recuperacion": 33,
+        "sustitucion": 33
       }
     },
     "validation": {
-      "samples": 81,
-      "families": 27,
+      "samples": 87,
+      "families": 29,
       "categories": {
         "amarilla": 6,
         "ambiguo": 3,
@@ -43,12 +47,13 @@
         "penalti_cometido": 6,
         "perdida": 6,
         "rechazo": 12,
-        "recuperacion": 6
+        "recuperacion": 6,
+        "sustitucion": 6
       }
     },
     "test": {
-      "samples": 81,
-      "families": 27,
+      "samples": 87,
+      "families": 29,
       "categories": {
         "amarilla": 6,
         "ambiguo": 3,
@@ -62,7 +67,8 @@
         "penalti_cometido": 6,
         "perdida": 6,
         "rechazo": 12,
-        "recuperacion": 6
+        "recuperacion": 6,
+        "sustitucion": 6
       }
     }
   },
@@ -79,26 +85,28 @@
     "penalti_cometido": 45,
     "perdida": 45,
     "rechazo": 90,
-    "recuperacion": 45
+    "recuperacion": 45,
+    "sustitucion": 45
   },
   "teams": {
-    "desconocido": 120,
-    "equipo1": 180,
-    "equipo2": 204
+    "desconocido": 129,
+    "equipo1": 201,
+    "equipo2": 219
   },
   "abstentions": 96,
   "styles": {
-    "natural": 200,
+    "natural": 215,
     "palabras_sin_puntuacion": 61,
-    "parafrasis": 200,
+    "parafrasis": 215,
     "sin_puntuacion": 1,
+    "transcripcion_asr": 15,
     "transcripcion_sin_tildes": 133,
     "vacilacion_sin_puntuacion": 5
   },
-  "primary_name_samples": 255,
-  "primary_number_samples": 198,
-  "primary_name_and_number_samples": 81,
-  "related_name_samples": 48,
+  "primary_name_samples": 270,
+  "primary_number_samples": 228,
+  "primary_name_and_number_samples": 87,
+  "related_name_samples": 63,
   "unique_literal_names": [
     "Alicia",
     "Alvaro",
@@ -110,6 +118,7 @@
     "Angel",
     "Antonio",
     "Beatriz",
+    "Carlos",
     "Carmen",
     "Carmen Ruiz",
     "Celia",
@@ -136,6 +145,8 @@
     "Jose Luis",
     "José",
     "José Luis",
+    "Juan",
+    "Juan Carlos",
     "Julia",
     "Lucia",
     "Lucía",
@@ -170,6 +181,7 @@
     "Sara",
     "Sergio",
     "Silvia",
+    "Sofía",
     "Teresa",
     "Álvaro",
     "Ángel",
@@ -179,6 +191,9 @@
   "shirt_numbers": [
     0,
     2,
+    3,
+    4,
+    5,
     6,
     7,
     8,
@@ -187,6 +202,7 @@
     11,
     12,
     13,
+    15,
     16,
     17,
     21,
@@ -194,8 +210,11 @@
     23,
     26,
     30,
+    31,
     33,
     40,
+    45,
+    54,
     55,
     60,
     66,
@@ -206,5 +225,5 @@
     90,
     99
   ],
-  "seed_sha256": "3d005c00d0b962aea1966d628c3f31c1a67ecef1c19b6e8cdea8595b04fc8fea"
+  "seed_sha256": "b70b12bb550c497d6f0aef8ba0a48cda2ed7b38936c878c9398c855e8f39c604"
 }

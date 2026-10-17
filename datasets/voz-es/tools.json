@@ -19,9 +19,10 @@
             "descalificacion",
             "pasivo",
             "infraccion",
+            "sustitucion",
             "desconocido"
           ],
-          "description": "Canonical event: gol=goal, parada=goalkeeper save, fallo=missed shot, perdida=turnover, recuperacion=ball recovery, penalti_cometido=conceded penalty, exclusion=two-minute suspension, amarilla=yellow card, descalificacion=disqualification, pasivo=passive play, infraccion=rule violation. desconocido=unknown or not exactly one play."
+          "description": "Canonical event: gol=goal, parada=goalkeeper save, fallo=missed shot, perdida=turnover, recuperacion=ball recovery, penalti_cometido=conceded penalty, exclusion=two-minute suspension, amarilla=yellow card, descalificacion=disqualification, pasivo=passive play, infraccion=rule violation, sustitucion=player substitution (outgoing primary, incoming related, same team). desconocido=unknown or not exactly one play."
         },
         "equipo": {
           "type": "string",
@@ -46,7 +47,7 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 99,
-          "description": "Shirt number of assist provider for a goal, opponent shooter for a save, or related opponent."
+          "description": "Shirt number of assist provider for a goal, opponent shooter for a save, related opponent, or incoming player for a substitution (same team)."
         },
         "nombre_relacionado": {
           "type": "string",

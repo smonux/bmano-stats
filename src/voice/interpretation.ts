@@ -23,7 +23,7 @@ const secondTeamWords = ['they','them','their','theirs','opponent','opponents','
 const spokenTypes = {
   gol: 'goal', parada: 'save', fallo: 'miss', perdida: 'loss', recuperacion: 'recovery',
   penalti_cometido: 'penalty', exclusion: 'exclusion', amarilla: 'yellow',
-  descalificacion: 'disqualification', pasivo: 'passive', infraccion: 'infraction',
+  descalificacion: 'disqualification', pasivo: 'passive', infraccion: 'infraction', sustitucion: 'substitution',
 } as const satisfies Record<string, EventType>;
 export const proposalSchema = z.object({
   evento: z.enum(['desconocido', ...Object.keys(spokenTypes)]),
@@ -34,11 +34,11 @@ export const proposalSchema = z.object({
 });
 export const extractionSchema = {
   type: 'object', properties: {
-    evento: {type:'string',enum:[...Object.keys(spokenTypes),'desconocido'],description:'Canonical event: gol=goal, parada=goalkeeper save, fallo=missed shot, perdida=turnover, recuperacion=ball recovery, penalti_cometido=conceded penalty, exclusion=two-minute suspension, amarilla=yellow card, descalificacion=disqualification, pasivo=passive play, infraccion=rule violation. desconocido=unknown or not exactly one play.'},
+    evento: {type:'string',enum:[...Object.keys(spokenTypes),'desconocido'],description:'Canonical event: gol=goal, parada=goalkeeper save, fallo=missed shot, perdida=turnover, recuperacion=ball recovery, penalti_cometido=conceded penalty, exclusion=two-minute suspension, amarilla=yellow card, descalificacion=disqualification, pasivo=passive play, infraccion=rule violation, sustitucion=player substitution (outgoing primary, incoming related, same team). desconocido=unknown or not exactly one play.'},
     equipo: {type:'string',enum:['equipo1','equipo2','nuestro','rival','desconocido'],description:'Primary player team. '+perspectiveRule},
     dorsal: {type:'integer',minimum:0,maximum:99,description:'Primary player shirt number, only if mentioned.'},
     nombre: {type:'string',description:'Literal primary player name, only if mentioned.'},
-    dorsal_relacionado: {type:'integer',minimum:0,maximum:99,description:'Shirt number of assist provider for a goal, opponent shooter for a save, or related opponent.'},
+    dorsal_relacionado: {type:'integer',minimum:0,maximum:99,description:'Shirt number of assist provider for a goal, opponent shooter for a save, related opponent, or incoming player for a substitution (same team).'},
     nombre_relacionado: {type:'string',description:'Literal related player name.'},
     penalti: {type:'boolean',description:'True if the goal, save or miss is a seven-metre penalty.'},
     azul: {type:'boolean',description:'True if a blue card is mentioned.'},

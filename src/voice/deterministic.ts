@@ -2,6 +2,7 @@ import type { Language } from '../i18n';
 import { lexicons, spokenEvents, type SpokenEvent } from './lexicon';
 import { numberAt, numberKey } from './numbers';
 import { approximateEvent } from './approximate';
+import { substitutionRoles } from './substitution';
 export type RulePlayer={name:string;team:'equipo1'|'equipo2'};
 export type RuleProposal={evento:SpokenEvent|'desconocido';equipo:'equipo1'|'equipo2'|'desconocido';dorsal?:number;nombre?:string;dorsal_relacionado?:number;nombre_relacionado?:string;penalti?:boolean;azul?:boolean;infraccion?:'Pasos'|'Dobles'|'Pisando'};
 type Span={from:number;to:number};
@@ -64,7 +65,15 @@ export function interpretDeterministically(text:string,language:Language,teams:s
   pl:{clothes:'koszulka|koszulki|stroj',card:'kartka|dyskwalifikacja',score:'tablica|wynik',remaining:'pozostaly|pozostalo|zostaly',suspension:'wykluczenie|wykluczony|wykluczona'},
  };
  const ctx=context[language];
+ const sub=lex.substitution;
+ const roleMatches=(source:string)=>matches(source).filter(span=>![...knownNames,...teamNames].some(name=>overlaps(name,span)));
+ const outgoing=roleMatches(sub.out),incoming=roleMatches(sub.in),connectors=roleMatches(sub.connector);
+ const blockedSubstitution=matches(sub.irrelevant).length>0;
+ const substitutionNoun=roleMatches(sub.noun).length>0;
+ const directionalSubstitution=outgoing.length>0&&incoming.length>0||language==='es'&&connectors.length>0&&(outgoing.length>0||incoming.length>0);
+
  const candidates=spokenEvents.flatMap(event=>matches(lex.events[event]).filter(span=>![...teamNames,...knownNames].some(name=>overlaps(name,span))).map(span=>({...span,event}))).filter(cue=>{
+  if(cue.event==='sustitucion'&&(blockedSubstitution||!substitutionNoun&&!directionalSubstitution))return false;
   if(cue.event==='descalificacion'&&matches(ctx.clothes).length&&!matches(ctx.card).length)return false;
   if(cue.event==='gol'&&matches(ctx.score).length)return false;
   if(cue.event==='exclusion'&&matches(ctx.remaining).length&&!matches(ctx.suspension).length)return false;
@@ -77,7 +86,7 @@ export function interpretDeterministically(text:string,language:Language,teams:s
   for(const span of teamNames)for(let i=span.from;i<span.to;i++)excluded.add(i);
   for(const player of players)for(const span of matches(escaped(numberKey(player.name))))for(let i=span.from;i<span.to;i++)excluded.add(i);
   const closest=approximateEvent(keys,language,excluded);
-  if(closest){candidates.push(closest);approximated=true;warnings.push('Evento reconocido por aproximación de palabra clave. Revisa el tipo de evento.');}
+  if(closest&&!(closest.event==='sustitucion'&&blockedSubstitution)){candidates.push(closest);approximated=true;warnings.push('Evento reconocido por aproximación de palabra clave. Revisa el tipo de evento.');}
  }
  const missedNegations=matches(lex.missNegation);
  const negations=matches(lex.negation).filter(span=>!missedNegations.some(miss=>contains(miss,span)));
@@ -104,7 +113,7 @@ export function interpretDeterministically(text:string,language:Language,teams:s
  if(distinct.size!==1)return empty(distinct.size?'Hay varias acciones posibles. Registra una jugada por grabación.':'No se ha identificado un evento por palabras clave.');
  const event=[...distinct][0],eventCues=candidates.filter(cue=>cue.event===event);
  // Repeated explicit event nouns with a second participant are ambiguous even if the type agrees.
- const noun=numberKey(({gol:'gol',parada:'parada',fallo:'fallo',perdida:'perdida',recuperacion:'recuperacion',penalti_cometido:'penalti',exclusion:'exclusion',amarilla:'amarilla',descalificacion:'descalificacion',pasivo:'pasivo',infraccion:'infraccion'})[event]);
+ const noun=numberKey(({gol:'gol',parada:'parada',fallo:'fallo',perdida:'perdida',recuperacion:'recuperacion',penalti_cometido:'penalti',exclusion:'exclusion',amarilla:'amarilla',descalificacion:'descalificacion',pasivo:'pasivo',infraccion:'infraccion',sustitucion:'sustitucion'})[event]);
  if(eventCues.filter(cue=>keys.slice(cue.from,cue.to).join(' ')===noun).length>1)return empty('Hay varias acciones posibles. Registra una jugada por grabación.');
  const proposal:RuleProposal={evento:event,equipo:'desconocido'};
  if(['gol','parada','fallo'].includes(event)&&matches(lex.penalty).length)proposal.penalti=true;
@@ -150,7 +159,8 @@ export function interpretDeterministically(text:string,language:Language,teams:s
   return true;
  }):[];
  const before=relation?matches(relation.before):[];
- [...after,...before].forEach(occupy);
+ const roleBarriers=event==='sustitucion'?[...outgoing,...incoming,...connectors]:after;
+ [...after,...before,...(event==='sustitucion'?roleBarriers:[])].forEach(occupy);
  const stop=new Set(lex.stop.split(' '));
  const names:Entity[]=[];
  for(const player of [...players].sort((a,b)=>b.name.length-a.name.length)){
@@ -173,7 +183,7 @@ export function interpretDeterministically(text:string,language:Language,teams:s
  }
  const entities:Entity[]=[...names];
  for(const number of numbers){
-  const nearby=names.filter(name=>Math.min(Math.abs(name.to-number.from),Math.abs(number.to-name.from))<=3&&!after.some(marker=>marker.from>=Math.min(name.to,number.to)&&marker.to<=Math.max(name.from,number.from)));
+  const nearby=names.filter(name=>Math.min(Math.abs(name.to-number.from),Math.abs(number.to-name.from))<=3&&!roleBarriers.some(marker=>marker.from>=Math.min(name.to,number.to)&&marker.to<=Math.max(name.from,number.from)));
   nearby.sort((a,b)=>Math.min(Math.abs(a.to-number.from),Math.abs(number.to-a.from))-Math.min(Math.abs(b.to-number.from),Math.abs(number.to-b.from)));
   const name=nearby[0];
   if(name&&name.dorsal===undefined){name.dorsal=number.dorsal;name.from=Math.min(name.from,number.from);name.to=Math.max(name.to,number.to);}
@@ -181,6 +191,24 @@ export function interpretDeterministically(text:string,language:Language,teams:s
  }
  entities.sort((a,b)=>a.from-b.from);
  const cue=eventCues[0];
+ if(event==='sustitucion'){
+  const roles=substitutionRoles(entities,outgoing,incoming,connectors,tokens.length);
+  if(roles.multiple)return empty('Hay varias acciones posibles. Registra una jugada por grabación.');
+  if(roles.ambiguous){
+   // Keep the event and perspective, but leave ambiguous participants for review.
+   warnings.push('No se ha resuelto quién sale y quién entra. Revisa los participantes.');
+  }else{
+   if(roles.out?.dorsal!==undefined)proposal.dorsal=roles.out.dorsal;
+   if(roles.out?.nombre)proposal.nombre=roles.out.nombre;
+   if(roles.in?.dorsal!==undefined)proposal.dorsal_relacionado=roles.in.dorsal;
+   if(roles.in?.nombre)proposal.nombre_relacionado=roles.in.nombre;
+  }
+  const teamValues=new Set(references.map(ref=>ref.team));
+  if(teamValues.size===1)proposal.equipo=[...teamValues][0];
+  if(proposal.equipo==='desconocido')warnings.push('Equipo sin resolver. No se ha supuesto equipo 1 ni equipo 2.');
+  return {proposal,warnings:[...new Set(warnings)],eventKeyword:raw(cue),eventMatch:approximated?'approximate' as const:'literal' as const};
+ }
+
  let primaryRegion:Span={from:0,to:tokens.length},relatedRegion:Span|undefined;
  const beforeMarker=before.find(marker=>!after.some(other=>overlaps(marker,other)&&other.to-other.from>=marker.to-marker.from)&&entities.some(entity=>entity.to<=marker.from&&marker.from-entity.to<=2));
  const afterMarker=after[0];
