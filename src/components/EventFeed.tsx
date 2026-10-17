@@ -79,6 +79,18 @@ function EventCard({
   const primaryPlayer = data.players.find((player) => player.id === event.primaryPlayerId);
   const incomingPlayer = data.players.find((player) => player.id === event.relatedPlayerId);
   const definition = event.type ? definitions[event.type] : undefined;
+  let side = 'unassigned';
+  let teamNumber: number | null = null;
+  let perspectiveLabel = '';
+  if (event.teamId === match.localTeamId) {
+    side = 'home';
+    teamNumber = 1;
+    perspectiveLabel = tr('Equipo 1 (nuestro)');
+  } else if (event.teamId === match.visitorTeamId) {
+    side = 'away';
+    teamNumber = 2;
+    perspectiveLabel = tr('Equipo 2 (rival)');
+  }
   let statusLabel = tr('✓ Registrado');
   if (state === 'pending') {
     statusLabel = tr('! Pendiente · no computa');
@@ -86,19 +98,33 @@ function EventCard({
     statusLabel = tr('✓ Registrado · sin identificar');
   }
   return (
-    <article
-      className={`event-card ${event.teamId === match.visitorTeamId ? 'away' : 'home'} ${state}`}
-    >
+    <article className={`event-card ${side} ${state}`}>
       <div className="event-icon">{definition?.icon ?? '?'}</div>
       <div className="event-copy">
-        <div>
-          <strong>{definition ? tr(definition.label) : tr('Evento sin indicar')}</strong>
+        <div className="event-heading">
+          <strong className="event-title">
+            {definition ? tr(definition.label) : tr('Evento sin indicar')}
+          </strong>
           <time>
             T{event.period} · {event.minute}′
           </time>
         </div>
         <p>
-          {event.teamId ? teamName(data, event.teamId) : tr('Equipo pendiente')}
+          <span className="event-team">
+            {teamNumber !== null && (
+              <span
+                className="event-team-number"
+                role="img"
+                aria-label={perspectiveLabel}
+                title={perspectiveLabel}
+              >
+                {teamNumber}
+              </span>
+            )}
+            <b className="event-team-name">
+              {event.teamId ? teamName(data, event.teamId) : tr('Equipo pendiente')}
+            </b>
+          </span>
           {event.type !== 'passive' && (
             <>
               {' '}

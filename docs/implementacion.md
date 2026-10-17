@@ -108,3 +108,15 @@ Se añade el duodécimo evento, Sustitución, tanto manual como por voz. «Cambi
 ## Refactorización de legibilidad (17 de octubre de 2026)
 
 Se aplica formato automático al código, se añaden comprobaciones de formato y detección de importaciones/parámetros sin uso, y se separan las pantallas de App.tsx. El intérprete queda organizado por fases en voice/analysis; vocabularios, pistas de Whistle y formas numéricas están agrupados por idioma. Los auxiliares históricos de Needle quedan en voice/legacy. Las 645 respuestas anteriores, con advertencias y coincidencias, se conservan como referencia de regresión. voice:compare permite comprobar equivalencia y rendimiento frente al commit 6805b02. La guía docs/lectura-del-codigo.md explica el recorrido y la edición de reglas.
+
+## Ruedas de selección e información adicional (17 de octubre de 2026)
+
+Equipo, tiempo, jugadores y subtipo de infracción del editor utilizan ruedas, igual que el catálogo de equipos al crear un partido. El mismo control se aplica a equipos de exclusiones, filtros estadísticos e idiomas. Las ruedas admiten desplazamiento con ajuste al centro, selección directa y teclado; los estados no aplicables se deshabilitan explícitamente. Se conserva la entrada rápida de dorsal para jugadores nuevos. Cambiar de equipo limpia los participantes para evitar atribuciones cruzadas.
+
+Guardar y Cancelar permanecen visibles mientras se desplazan los campos del editor. «Información adicional» agrupa la nota editable y el texto identificado como «Transcripción original». Se conserva `rawText` sin modificar al corregir jugadores, equipo, tipo o nota, también al volver a abrir un evento.
+
+El aviso de fin de exclusión está activado por defecto. El primer toque o pulsación en la pantalla del partido habilita el audio del navegador. Al llegar a cero se programan dos secuencias «din-don» durante cinco segundos; los contadores que terminan a la vez comparten el aviso para evitar superposiciones. Silenciar corta el sonido en curso. Se liberan las notas y el contexto al abandonar la vista. Las limitaciones de pestañas suspendidas o pantalla bloqueada siguen siendo las del navegador.
+
+El registro distingue visualmente la perspectiva: equipo 1 a la izquierda, amarillo y número 1; equipo 2 a la derecha, negro y número 2. En el rival se reflejan el icono, el título y las acciones. El nombre del equipo aparece destacado. Los eventos sin equipo quedan centrados y no se presentan como propios.
+
+Validación de este bloque: 721 pruebas de código y 23 recorridos únicos de navegador en Chromium móvil/escritorio superados; se omite intencionadamente la repetición móvil del PDF largo. Se comprueban selección por teclado y desplazamiento, limpieza de participantes al cambiar de equipo, guardado visible, conservación de nota y transcripción tras recargar, posición real de iconos/títulos y programación de las cuatro notas durante cinco segundos en Web Audio. Revisadas visualmente las capturas de móvil y escritorio. Compilación de producción actualizada en `dist/`.

@@ -1,3 +1,4 @@
+import { selectWheelOption } from './wheel-helpers';
 import { serveModels, prepareMatchVoice } from './voice-helpers';
 import { test, expect } from '@playwright/test';
 async function spanish(page: import('@playwright/test').Page, skip = true) {
@@ -35,7 +36,7 @@ test('first-use gallery changes language, persists completion and reopens from s
   await page.goto('/');
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
-  await dialog.getByLabel('Idioma', { exact: true }).selectOption('en');
+  await selectWheelOption(dialog.getByRole('listbox', { name: 'Idioma', exact: true }), 'English');
   await expect(
     dialog.getByRole('heading', { name: 'Watch the match. Describe the play.' }),
   ).toBeVisible();
@@ -54,15 +55,15 @@ test('first-use gallery changes language, persists completion and reopens from s
   await page.getByRole('button', { name: 'View welcome guide' }).click();
   await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: 'Skip guide' }).click();
-  for (const [code, label] of [
-    ['es', 'Tus datos'],
-    ['de', 'Deine Daten'],
-    ['fr', 'Vos données'],
-    ['it', 'I tuoi dati'],
-    ['nl', 'Je gegevens'],
-    ['pl', 'Twoje dane'],
+  for (const [language, label] of [
+    ['Español', 'Tus datos'],
+    ['Deutsch', 'Deine Daten'],
+    ['Français', 'Vos données'],
+    ['Italiano', 'I tuoi dati'],
+    ['Nederlands', 'Je gegevens'],
+    ['Polski', 'Twoje dane'],
   ]) {
-    await page.locator('.language-picker select').selectOption(code);
+    await selectWheelOption(page.locator('.language-picker').getByRole('listbox'), language);
     await expect(page.getByRole('heading', { name: label, exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
@@ -76,8 +77,36 @@ test('three independent suspension timers persist, pause with match clock and si
   test.setTimeout(90000);
   await serveModels(context);
   await spanish(page);
+  await page.addInitScript(() => {
+    const probe = window as unknown as {
+      exclusionNotes: { frequency: number; start: number; stop: number }[];
+    };
+    probe.exclusionNotes = [];
+    const createOscillator = AudioContext.prototype.createOscillator;
+    AudioContext.prototype.createOscillator = function () {
+      const oscillator = createOscillator.call(this);
+      const note = { frequency: 0, start: 0, stop: 0 };
+      probe.exclusionNotes.push(note);
+      const start = oscillator.start.bind(oscillator);
+      const stop = oscillator.stop.bind(oscillator);
+      oscillator.start = (when = 0) => {
+        note.frequency = oscillator.frequency.value;
+        note.start = when;
+        start(when);
+      };
+      oscillator.stop = (when = 0) => {
+        note.stop = when;
+        stop(when);
+      };
+      return oscillator;
+    };
+  });
   await page.clock.install({ time: new Date('2026-10-16T12:00:00Z') });
   await match(page);
+  await expect(page.getByRole('button', { name: 'Sonido activado', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   for (let i = 1; i <= 3; i++) {
     await page
       .getByRole('group', { name: `Exclusión ${i}`, exact: true })
@@ -123,6 +152,30 @@ test('three independent suspension timers persist, pause with match clock and si
   await expect(slots.nth(0)).toContainText('Puede volver');
   await expect(slots.nth(2)).toContainText('Puede volver');
   await expect(slots.nth(1).locator('.timer-digits')).toHaveText(individuallyPaused!);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () => (window as unknown as { exclusionNotes: unknown[] }).exclusionNotes.length,
+      ),
+    )
+    .toBe(4);
+  const notes = await page.evaluate(
+    () =>
+      (
+        window as unknown as {
+          exclusionNotes: { frequency: number; start: number; stop: number }[];
+        }
+      ).exclusionNotes,
+  );
+  expect(notes.map((note) => note.frequency)).toEqual([880, 660, 880, 660]);
+  expect(
+    Math.max(...notes.map((note) => note.stop)) - Math.min(...notes.map((note) => note.start)),
+  ).toBeCloseTo(5);
+  await page.getByRole('button', { name: 'Sonido activado', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Aviso sonoro', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  );
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: info.outputPath('exclusions.png'), fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

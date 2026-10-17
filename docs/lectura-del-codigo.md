@@ -10,6 +10,9 @@ La aplicación usa React y TypeScript. Los datos y las consecuencias estadístic
 | Pantallas de inicio, equipos, partidos, partido en curso y ajustes | `src/pages/` |
 | Registro de eventos y presentación de sus jugadores | `src/components/EventFeed.tsx` |
 | Edición manual y revisión de propuestas de voz | `src/components/EventEditor.tsx` |
+| Rueda de selección compartida, teclado y desplazamiento | `src/components/WheelPicker.tsx` |
+| Selección de participantes y metadatos del editor | `src/components/event-editor/` |
+| Aviso sonoro de exclusiones y desbloqueo por gesto | `src/audio/exclusion-alert.ts`, `src/components/exclusions/useExclusionSound.ts` |
 | Definiciones de eventos y validación de copias | `src/domain/model.ts` |
 | Consecuencias estadísticas de cada evento | `src/domain/statistics.ts` |
 | Persistencia y transacciones | `src/data/database.ts` |
@@ -55,6 +58,8 @@ Después de cambiar una regla, añade un caso con frase y resultado esperado en 
 - Funciones organizadas por responsabilidad y comentarios sobre decisiones lingüísticas.
 - TypeScript comprueba tipos, parámetros e importaciones sin uso.
 - Las correcciones de comportamiento deben poder distinguirse de los cambios de organización.
+
+Las selecciones de opciones usan `WheelPicker`, con etiquetas traducidas, selección táctil, clic y teclado. El componente controla explícitamente sus estados deshabilitados: un `fieldset disabled` por sí solo no bloquea un `div` con rol `listbox`. `ParticipantPicker` conserva los dorsales nuevos y los reconocidos por voz aunque todavía no existan en el catálogo, y mantiene una entrada numérica directa. `EventMetadata` contiene las opciones compatibles con cada evento. El editor mantiene sus acciones fuera del área desplazable y agrupa la nota y la transcripción original identificada en «Información adicional»; conserva la transcripción en `rawText`, independiente de la nota editable.
 
 ```sh
 npm run format

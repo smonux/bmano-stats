@@ -1,3 +1,4 @@
+import { selectWheelOption } from './wheel-helpers';
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 import { resolve } from 'node:path';
 import { DEFAULT_SPEECH_MODEL } from 'cactus-needle';
@@ -25,7 +26,10 @@ export async function serveModels(context: BrowserContext, request?: () => void)
 export async function prepareMatchVoice(page: Page) {
   const preparation = page.getByRole('region', { name: 'Preparación de voz' });
   await expect(preparation.getByRole('alert').first()).toContainText('Cactus no está cargado');
-  await preparation.getByLabel('Idioma de voz', { exact: true }).selectOption('es');
+  await selectWheelOption(
+    preparation.getByRole('listbox', { name: 'Idioma de voz', exact: true }),
+    'Español',
+  );
   await expect(preparation.getByLabel('Versión de Needle', { exact: true })).toHaveCount(0);
   await preparation.getByRole('button', { name: 'Cargar Cactus', exact: true }).click();
   await expect(preparation.getByText('Cactus listo', { exact: true })).toBeVisible({

@@ -2,23 +2,21 @@ import { useState } from 'react';
 import { ArrowRight, Check, Mic, ShieldCheck, Timer, Users } from 'lucide-react';
 import { languages, setLanguage, tr, useLanguage, type Language } from '../i18n';
 import { Modal } from './ui';
+import { WheelPicker } from './WheelPicker';
 export function LanguagePicker() {
   const language = useLanguage();
   return (
-    <label className="language-picker">
-      {tr('Idioma')}
-      <select
-        aria-label={tr('Idioma')}
+    <div className="language-picker">
+      <WheelPicker<Language>
+        label={tr('Idioma')}
         value={language}
-        onChange={(e) => setLanguage(e.target.value as Language)}
-      >
-        {Object.entries(languages).map(([code, name]) => (
-          <option key={code} value={code}>
-            {name}
-          </option>
-        ))}
-      </select>
-    </label>
+        options={(Object.keys(languages) as Language[]).map((code) => ({
+          value: code,
+          label: languages[code],
+        }))}
+        change={setLanguage}
+      />
+    </div>
   );
 }
 const slides = [

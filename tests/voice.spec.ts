@@ -1,3 +1,4 @@
+import { selectWheelOption } from './wheel-helpers';
 import { serveModels, prepareMatchVoice, selectEvent } from './voice-helpers';
 import { test, expect } from '@playwright/test';
 const models = process.env.VOICE_MODELS_DIR;
@@ -83,14 +84,17 @@ test('real Whistle and deterministic rules: microphone to reviewed event, then r
         .getByRole('listbox', { name: 'Evento', exact: true })
         .getByRole('option', { selected: true })
         .textContent(),
-      equipo: await editor.getByLabel('Equipo', { exact: true }).inputValue(),
+      equipo: await editor
+        .getByRole('listbox', { name: 'Equipo', exact: true })
+        .getByRole('option', { selected: true })
+        .textContent(),
       dorsal: await editor.getByLabel('Dorsal principal', { exact: true }).inputValue(),
     }),
     contentType: 'application/json',
   });
   // Recognition is a proposal: explicitly review/correct it before committing.
   await selectEvent(page, 'Gol');
-  await editor.getByLabel('Equipo', { exact: true }).selectOption({ label: 'Águilas' });
+  await selectWheelOption(editor.getByRole('listbox', { name: 'Equipo', exact: true }), 'Águilas');
   await editor.getByLabel('Dorsal principal', { exact: true }).fill('7');
   await expect(page.getByLabel('Marcador 0 a 0')).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('voz-revision.png'), fullPage: true });

@@ -477,8 +477,7 @@ textarea {
   gap: 10px;
   align-items: center;
 }
-.picker-row input,
-.picker-row select {
+.picker-row input {
   flex: 1;
   min-width: 0;
 }
@@ -773,9 +772,25 @@ textarea {
 .event-card.away {
   margin-left: auto;
   border-right: 3px solid #333333;
+  flex-direction: row-reverse;
+  text-align: right;
+}
+.event-card.away .event-heading,
+.event-card.away .event-bottom,
+.event-card.away .event-team {
+  flex-direction: row-reverse;
+}
+.event-card.away .event-icon,
+.event-card.away .event-team-number {
+  background: var(--ink);
+  color: var(--accent);
 }
 .event-card.home {
   border-left: 3px solid #ffd600;
+}
+.event-card.unassigned {
+  margin-inline: auto;
+  border-style: dashed;
 }
 .event-card.pending {
   background: #fff4ed;
@@ -798,7 +813,7 @@ textarea {
   flex: 1;
   min-width: 0;
 }
-.event-copy > div:first-child {
+.event-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -817,6 +832,29 @@ textarea {
   font-size: 12px;
   color: #626262;
   overflow-wrap: anywhere;
+}
+.event-team {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  max-width: 100%;
+  vertical-align: baseline;
+}
+.event-team-name {
+  color: var(--ink);
+  font-weight: 750;
+}
+.event-team-number {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  background: var(--accent);
+  color: var(--ink);
 }
 .event-bottom {
   display: flex;
@@ -874,7 +912,7 @@ textarea {
   gap: 15px;
   margin-bottom: 20px;
 }
-.filter-row > label {
+.filter-row > .wheel-field {
   flex: 1;
   min-width: 0;
 }
@@ -982,6 +1020,45 @@ textarea {
   gap: 12px;
   margin-top: 20px;
 }
+.event-editor[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.event-editor > .section-heading,
+.event-editor > .modal-handle {
+  flex-shrink: 0;
+}
+.event-editor form {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.event-editor-fields {
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
+  overscroll-behavior-y: contain;
+}
+.event-editor-fields > label {
+  margin: 16px 0;
+}
+.event-editor .actions {
+  flex-shrink: 0;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  margin-top: 12px;
+}
+.event-additional {
+  margin: 16px 0;
+}
+.event-additional h3 {
+  font-size: 13px;
+  margin: 0 0 12px;
+}
+.event-additional .voice-transcript {
+  margin: 12px 0 0;
+}
 .actions button {
   flex: 1;
 }
@@ -989,28 +1066,6 @@ textarea {
   display: flex;
   gap: 14px;
   margin-bottom: 16px;
-}
-.event-top > label {
-  flex: 1;
-  min-width: 0;
-}
-.event-wheel {
-  display: flex;
-  gap: 4px;
-}
-.event-wheel select {
-  min-width: 0;
-  padding-right: 2px;
-}
-.event-wheel > span {
-  display: flex;
-  flex-direction: column;
-  margin-top: 8px;
-}
-.event-wheel button {
-  min-height: 22px;
-  padding: 0 5px;
-  border-radius: 4px;
 }
 .number-wheel {
   width: 137px;
@@ -1062,20 +1117,23 @@ textarea {
 }
 .participant-team {
   font-size: 11px;
-  flex: 1;
-  min-width: 60px;
+  display: block;
   overflow-wrap: anywhere;
+}
+.participant-number {
+  width: 95px;
+  flex-shrink: 0;
 }
 .participant-row input {
   width: 53px;
   margin: 0;
   padding: 10px;
 }
-.participant-row select {
-  width: 44%;
-  margin: 0;
-  padding: 10px 4px;
-  font-size: 12px;
+.participant-number input {
+  margin-top: 8px;
+}
+.participant .wheel-shell {
+  margin-top: 0;
 }
 .participant small {
   font-size: 10px;
@@ -1097,12 +1155,16 @@ textarea {
   min-height: 44px;
   padding: 8px 12px;
 }
-.metadata select {
-  width: 47%;
-  font-size: 12px;
-  margin: 0;
-  padding: 6px;
-  min-height: 34px;
+.metadata-flags {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.metadata-flags label {
+  gap: 8px;
+}
+.metadata-flags input {
+  flex-shrink: 0;
 }
 .metadata .disabled {
   background: #ebebe6;
@@ -1375,9 +1437,6 @@ textarea {
   .filter-row {
     gap: 10px;
   }
-  .filter-row select {
-    font-size: 12px;
-  }
   .local-note p {
     font-size: 10px;
   }
@@ -1410,9 +1469,6 @@ textarea {
   }
   .event-top {
     gap: 8px;
-  }
-  .event-wheel select {
-    font-size: 12px;
   }
   .number-wheel {
     width: 118px;
@@ -2085,6 +2141,36 @@ textarea {
   color: var(--muted);
   cursor: pointer;
   user-select: none;
+}
+.scroll-wheel [role='option'] > span {
+  min-width: 0;
+  max-width: 100%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+}
+.scroll-wheel:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+  border-radius: 9px;
+}
+.wheel-field[data-disabled] .scroll-wheel {
+  overflow-y: hidden;
+  pointer-events: none;
+}
+.wheel-field[data-disabled] .wheel-shell {
+  background: #ebebe6;
+  color: var(--muted);
+}
+.wheel-field[data-disabled] .wheel-selection {
+  background: #deded7;
+  border-color: #c6c6bc;
+}
+.scroll-wheel [aria-disabled='true'] {
+  cursor: default;
 }
 .scroll-wheel [aria-selected='true'] {
   color: var(--ink);

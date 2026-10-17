@@ -7,6 +7,7 @@ import { repo, type TeamChoice } from '../data/database';
 import { type Snapshot } from '../domain/model';
 import { ErrorMessage, PageTitle, navigate, useAction } from '../components/ui';
 import { todayDateString } from '../presentation/matches';
+import { WheelPicker } from '../components/WheelPicker';
 
 function TeamPicker({
   label,
@@ -33,20 +34,21 @@ function TeamPicker({
             onChange={(e) => change({ name: e.target.value })}
           />
         ) : (
-          <select
-            aria-label={label}
+          <WheelPicker
+            label={label}
+            hideLabel
             value={value.id}
-            onChange={(e) => change({ id: e.target.value })}
-          >
-            <option value="">{tr('Seleccionar equipo')}</option>
-            {data.teams
-              .filter((t) => !t.deletedAt)
-              .map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-          </select>
+            options={[
+              { value: '', label: tr('Seleccionar equipo') },
+              ...data.teams
+                .filter((team) => !team.deletedAt)
+                .map((team) => ({
+                  value: team.id,
+                  label: team.name,
+                })),
+            ]}
+            change={(id) => change({ id })}
+          />
         )}
         <button type="button" onClick={() => change(isNew ? { id: '' } : { name: '' })}>
           {isNew ? (

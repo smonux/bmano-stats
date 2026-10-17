@@ -5,6 +5,8 @@ import { exclusionRemaining } from '../domain/exclusions';
 import { repo } from '../data/database';
 import { tr } from '../i18n';
 import { Confirm, ErrorMessage, Modal, useAction } from './ui';
+import { WheelPicker } from './WheelPicker';
+import { useExclusionSound } from './exclusions/useExclusionSound';
 export function ExclusionTimers({
   match,
   data,
@@ -21,17 +23,9 @@ export function ExclusionTimers({
   const [clearing, setClearing] = useState<number | null>(null);
   const [teamId, setTeam] = useState(match.localTeamId);
   const [dorsal, setDorsal] = useState('');
-  const [sound, setSound] = useState(false);
-  const [soundError, setSoundError] = useState('');
-  const audio = useRef<AudioContext | null>(null);
+  const sound = useExclusionSound();
   const announced = useRef(new Set<string>());
   const action = useAction();
-  useEffect(
-    () => () => {
-      void audio.current?.close();
-    },
-    [],
-  );
   useEffect(() => {
     onDialogChange(editing !== null || clearing !== null);
     return () => onDialogChange(false);
@@ -39,46 +33,19 @@ export function ExclusionTimers({
   useEffect(() => {
     for (const timer of timers) {
       if (timer && exclusionRemaining(timer, now) === 0 && !announced.current.has(timer.id)) {
-        announced.current.add(timer.id);
-        if (sound && audio.current?.state === 'running') {
-          const ctx = audio.current;
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.frequency.value = 880;
-          gain.gain.setValueAtTime(0.15, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start();
-          osc.stop(ctx.currentTime + 0.8);
+        if (sound.notify()) {
+          announced.current.add(timer.id);
         }
       }
     }
-  }, [timers, now, sound]);
-  const toggleSound = async () => {
-    if (sound) {
-      setSound(false);
-      return;
-    }
-    try {
-      audio.current ??= new AudioContext();
-      await audio.current.resume();
-      if (audio.current.state !== 'running') {
-        throw new Error();
-      }
-      setSound(true);
-      setSoundError('');
-    } catch {
-      setSoundError(tr('No se pudo activar el sonido.'));
-    }
-  };
+  }, [timers, now, sound.notify]);
   return (
     <section className="exclusions" aria-label={tr('Cuenta atrás de exclusiones')}>
       <div className="exclusion-heading">
         <h2>{tr('Exclusiones (2 min)')}</h2>
-        <button className="text-button" aria-pressed={sound} onClick={() => void toggleSound()}>
+        <button className="text-button" aria-pressed={sound.enabled} onClick={sound.toggle}>
           <Volume2 size={16} />
-          {tr(sound ? 'Sonido activado' : 'Aviso sonoro')}
+          {tr(sound.enabled ? 'Sonido activado' : 'Aviso sonoro')}
         </button>
       </div>
       <div className="exclusion-grid">
@@ -164,7 +131,7 @@ export function ExclusionTimers({
           'Sigue el reloj del partido. Mantén la aplicación abierta para recibir avisos. Registra la exclusión como evento aparte.',
         )}
       </p>
-      <ErrorMessage text={action.error || soundError} />
+      <ErrorMessage text={action.error || sound.error} />
       {editing !== null && (
         <Modal
           title={tr('Exclusión {number}', { number: editing + 1 })}
@@ -182,20 +149,15 @@ export function ExclusionTimers({
               });
             }}
           >
-            <label>
-              {tr('Equipo')}
-              <select
-                aria-label={tr('Equipo')}
-                value={teamId}
-                onChange={(e) => setTeam(e.target.value)}
-              >
-                {[match.localTeamId, match.visitorTeamId].map((id) => (
-                  <option key={id} value={id}>
-                    {data.teams.find((t) => t.id === id)?.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <WheelPicker
+              label={tr('Equipo')}
+              value={teamId}
+              options={[match.localTeamId, match.visitorTeamId].map((id) => ({
+                value: id,
+                label: data.teams.find((team) => team.id === id)?.name ?? '',
+              }))}
+              change={setTeam}
+            />
             <label>
               {tr('Dorsal (opcional)')}
               <input

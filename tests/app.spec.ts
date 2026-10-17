@@ -1,3 +1,4 @@
+import { selectWheelOption } from './wheel-helpers';
 import { serveModels, prepareMatchVoice, selectEvent } from './voice-helpers';
 import { test, expect } from '@playwright/test';
 test.beforeEach(async ({ page }) => {
@@ -41,7 +42,7 @@ test('manual match lifecycle persists and works offline', async ({ page, context
     'true',
   );
   await selectEvent(page, 'Gol');
-  await dialog.getByLabel('Equipo', { exact: true }).selectOption({ label: 'Águilas' });
+  await selectWheelOption(dialog.getByRole('listbox', { name: 'Equipo', exact: true }), 'Águilas');
   await dialog.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(page.getByLabel('Marcador 1 a 0')).toBeVisible();
   await expect(page.getByText('Registrado · sin identificar', { exact: false })).toBeVisible();

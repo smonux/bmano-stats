@@ -1,4 +1,6 @@
 import { WheelPicker } from './WheelPicker';
+import { ParticipantPicker } from './event-editor/ParticipantPicker';
+import { EventMetadata } from './event-editor/EventMetadata';
 import { tr } from '../i18n';
 import { useState } from 'react';
 import {
@@ -61,86 +63,8 @@ export function EventEditor({
       relatedDorsal: '',
       primaryDorsal: type === 'passive' ? '' : previousDraft.primaryDorsal,
     }));
-  const participant = (related: boolean) => {
-    const enabled =
-      !!draft.teamId &&
-      !!eventDefinition &&
-      (related ? !!eventDefinition.related : draft.type !== 'passive');
-    const participantTeamId =
-      related && draft.type && draft.teamId
-        ? relatedTeam(match, draft.type, draft.teamId)
-        : draft.teamId;
-    const shirtNumber = related ? draft.relatedDorsal : draft.primaryDorsal;
-    const dorsalField = related ? 'relatedDorsal' : 'primaryDorsal';
-    const knownPlayers = data.players
-      .filter(
-        (candidatePlayer) =>
-          candidatePlayer.teamId === participantTeamId &&
-          !candidatePlayer.isUnknown &&
-          !candidatePlayer.deletedAt,
-      )
-      .sort((a, b) => a.dorsal! - b.dorsal!);
-    const player = knownPlayers.find(
-      (candidatePlayer) => candidatePlayer.dorsal === Number(shirtNumber) && shirtNumber !== '',
-    );
-    return (
-      <fieldset disabled={!enabled} className="participant">
-        <legend>
-          {related ? tr('Relacionado') : tr('Principal')} ·{' '}
-          {related
-            ? tr(eventDefinition?.related ?? 'No aplica')
-            : tr(eventDefinition?.principal ?? 'Jugador')}
-        </legend>
-        <div className="participant-row">
-          <span className="participant-team">
-            {participantTeamId ? teamName(participantTeamId) : tr('Sin equipo')}
-          </span>
-          <label className="sr-only" htmlFor={dorsalField}>
-            {related ? tr('Dorsal relacionado') : tr('Dorsal principal')}
-          </label>
-          <input
-            id={dorsalField}
-            inputMode="numeric"
-            pattern="[0-9]{1,2}"
-            maxLength={2}
-            placeholder="Nº"
-            value={shirtNumber}
-            onChange={(inputEvent) =>
-              setDraft((previousDraft) => ({
-                ...previousDraft,
-                [dorsalField]: inputEvent.target.value.replace(/\D/g, '').slice(0, 2),
-              }))
-            }
-          />
-          <select
-            aria-label={related ? tr('Jugador relacionado') : tr('Jugador principal')}
-            value={player ? shirtNumber : ''}
-            onChange={(inputEvent) =>
-              setDraft((previousDraft) => ({
-                ...previousDraft,
-                [dorsalField]: inputEvent.target.value,
-              }))
-            }
-          >
-            <option value="">{shirtNumber ? tr('Dorsal nuevo') : tr('Desconocido')}</option>
-            {knownPlayers.map((candidatePlayer) => (
-              <option key={candidatePlayer.id} value={String(candidatePlayer.dorsal)}>
-                #{candidatePlayer.dorsal} {candidatePlayer.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <small>
-          {!enabled
-            ? tr('No aplicable')
-            : shirtNumber
-              ? player?.name ||
-                tr('Dorsal {number} válido · nombre opcional', { number: Number(shirtNumber) })
-              : tr('Sin dorsal: se atribuye a Desconocido cuando corresponda.')}
-        </small>
-      </fieldset>
-    );
-  };
+  const relatedTeamId =
+    draft.type && draft.teamId ? relatedTeam(match, draft.type, draft.teamId) : draft.teamId;
   const duplicate =
     draft.type === 'substitution' &&
     draft.primaryDorsal !== '' &&
@@ -153,6 +77,7 @@ export function EventEditor({
     (draft.type === 'infraction' && !draft.metadata.infraction);
   return (
     <Modal
+      className="event-editor"
       title={event ? tr('Editar evento') : tr('Nuevo evento')}
       close={() => !action.busy && close()}
     >
@@ -165,180 +90,144 @@ export function EventEditor({
           });
         }}
       >
-        {voiceTimings && (
-          <p className="caption">
-            {tr('Whistle: {whistle} s · Reglas: {rules} ms', {
-              whistle: (voiceTimings.whistleMs / 1000).toFixed(1),
-              rules: voiceTimings.rulesMs.toFixed(1),
-            })}
-          </p>
-        )}
-        {voiceWarnings && draft.rawText && (
-          <p className="voice-transcript">
-            <strong>{tr('Transcripción original')}</strong>
-            <span>«{draft.rawText}»</span>
-          </p>
-        )}
-        {voiceWarnings && (
-          <ul className="voice-warnings">
-            {voiceWarnings.map((w) => (
-              <li key={w}>{tr(w)}</li>
-            ))}
-          </ul>
-        )}
-        <div className="event-top">
-          <WheelPicker
-            label={tr('Evento')}
-            value={draft.type ?? ''}
-            options={[
-              { value: '', label: tr('Seleccionar evento') },
-              ...eventTypes.map((value) => ({ value, label: tr(definitions[value].label) })),
-            ]}
-            change={(value) => setType((value as EventType) || null)}
-          />
-          <NumberWheel
-            label={tr('Minuto')}
-            value={draft.minute}
-            min={0}
-            max={999}
-            onChange={(minute) => setDraft((previousDraft) => ({ ...previousDraft, minute }))}
-          />
-        </div>
-        <div className="filter-row">
-          <label>
-            {tr('Equipo')}
-            <select
-              aria-label={tr('Equipo')}
+        <div className="event-editor-fields">
+          {voiceTimings && (
+            <p className="caption">
+              {tr('Whistle: {whistle} s · Reglas: {rules} ms', {
+                whistle: (voiceTimings.whistleMs / 1000).toFixed(1),
+                rules: voiceTimings.rulesMs.toFixed(1),
+              })}
+            </p>
+          )}
+          {voiceWarnings && (
+            <ul className="voice-warnings">
+              {voiceWarnings.map((w) => (
+                <li key={w}>{tr(w)}</li>
+              ))}
+            </ul>
+          )}
+          <div className="event-top">
+            <WheelPicker<EventType | ''>
+              label={tr('Evento')}
+              value={draft.type ?? ''}
+              options={[
+                { value: '', label: tr('Seleccionar evento') },
+                ...eventTypes.map((value) => ({ value, label: tr(definitions[value].label) })),
+              ]}
+              change={(value) => setType(value || null)}
+            />
+            <NumberWheel
+              label={tr('Minuto')}
+              value={draft.minute}
+              min={0}
+              max={999}
+              onChange={(minute) => setDraft((previousDraft) => ({ ...previousDraft, minute }))}
+            />
+          </div>
+          <div className="filter-row">
+            <WheelPicker
+              label={tr('Equipo')}
               value={draft.teamId ?? ''}
-              onChange={(inputEvent) =>
+              options={[
+                { value: '', label: tr('Seleccionar equipo') },
+                ...[match.localTeamId, match.visitorTeamId].map((value) => ({
+                  value,
+                  label: teamName(value),
+                })),
+              ]}
+              change={(teamId) =>
                 setDraft((previousDraft) => ({
                   ...previousDraft,
-                  teamId: inputEvent.target.value || null,
+                  teamId: teamId || null,
                   primaryDorsal: '',
                   relatedDorsal: '',
                 }))
               }
-            >
-              <option value="">{tr('Seleccionar equipo')}</option>
-              {[match.localTeamId, match.visitorTeamId].map((id) => (
-                <option key={id} value={id}>
-                  {teamName(id)}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            {tr('Tiempo')}
-            <select
-              aria-label={tr('Tiempo')}
-              value={draft.period}
-              onChange={(inputEvent) =>
+            />
+            <WheelPicker
+              label={tr('Tiempo')}
+              value={String(draft.period)}
+              options={Array.from({ length: match.clock.period }, (_, index) => ({
+                value: String(index + 1),
+                label: tr('Tiempo') + ' ' + (index + 1),
+              }))}
+              change={(period) =>
                 setDraft((previousDraft) => ({
                   ...previousDraft,
-                  period: Number(inputEvent.target.value),
-                }))
-              }
-            >
-              {Array.from({ length: match.clock.period }, (_, i) => (
-                <option key={i} value={i + 1}>
-                  {tr('Tiempo')} {i + 1}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-        {participant(false)}
-        {participant(true)}
-        <div className="metadata">
-          <label className={!eventDefinition?.penalty ? 'disabled' : ''}>
-            <span>{tr('Penalti (7 m)')}</span>
-            <input
-              type="checkbox"
-              disabled={!eventDefinition?.penalty}
-              checked={!!draft.metadata.penalty && !!eventDefinition?.penalty}
-              onChange={(inputEvent) =>
-                setDraft((previousDraft) => ({
-                  ...previousDraft,
-                  metadata: { ...previousDraft.metadata, penalty: inputEvent.target.checked },
+                  period: Number(period),
                 }))
               }
             />
-          </label>
-          <label className={draft.type !== 'disqualification' ? 'disabled' : ''}>
-            <span>{tr('Tarjeta azul')}</span>
-            <input
-              type="checkbox"
-              disabled={draft.type !== 'disqualification'}
-              checked={!!draft.metadata.blue && draft.type === 'disqualification'}
-              onChange={(inputEvent) =>
-                setDraft((previousDraft) => ({
-                  ...previousDraft,
-                  metadata: { ...previousDraft.metadata, blue: inputEvent.target.checked },
-                }))
-              }
-            />
-          </label>
-          <label className={draft.type !== 'infraction' ? 'disabled' : ''}>
-            {tr('Tipo de infracción')}
-            <select
-              aria-label={tr('Tipo de infracción')}
-              disabled={draft.type !== 'infraction'}
-              value={draft.metadata.infraction ?? ''}
-              onChange={(inputEvent) =>
-                setDraft((previousDraft) => ({
-                  ...previousDraft,
-                  metadata: {
-                    ...previousDraft.metadata,
-                    infraction:
-                      (inputEvent.target.value as 'Pasos' | 'Dobles' | 'Pisando') || undefined,
-                  },
-                }))
-              }
-            >
-              <option value="">{tr('Sin indicar')}</option>
-              {['Pasos', 'Dobles', 'Pisando'].map((t) => (
-                <option key={t} value={t}>
-                  {tr(t)}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-        <label>
-          {tr('Nota')}
-          <textarea
-            maxLength={10000}
-            rows={2}
-            value={draft.note}
-            placeholder={tr('Información adicional (opcional)')}
-            onChange={(inputEvent) =>
-              setDraft((previousDraft) => ({ ...previousDraft, note: inputEvent.target.value }))
+          </div>
+          <ParticipantPicker
+            role="primary"
+            participantLabel={tr(eventDefinition?.principal ?? 'Jugador')}
+            teamId={draft.teamId}
+            teamName={draft.teamId ? teamName(draft.teamId) : ''}
+            players={data.players}
+            shirtNumber={draft.primaryDorsal}
+            disabled={!draft.teamId || !eventDefinition || draft.type === 'passive'}
+            change={(primaryDorsal) =>
+              setDraft((previousDraft) => ({ ...previousDraft, primaryDorsal }))
             }
           />
-        </label>
-        {draft.rawText && !voiceWarnings && (
-          <p className="caption">
-            {tr('Transcripción original')}: «{draft.rawText}»
-          </p>
-        )}
-        {duplicate && (
-          <p className="pending-hint">
-            {tr('El jugador que sale y el que entra deben ser distintos.')}
-          </p>
-        )}
-        {missing && (
-          <p className="pending-hint">
-            {tr(
-              'Faltan datos obligatorios. Puedes guardar el evento pendiente; no contará en las estadísticas.',
+          <ParticipantPicker
+            role="related"
+            participantLabel={tr(eventDefinition?.related ?? 'No aplica')}
+            teamId={relatedTeamId}
+            teamName={relatedTeamId ? teamName(relatedTeamId) : ''}
+            players={data.players}
+            shirtNumber={draft.relatedDorsal}
+            disabled={!draft.teamId || !eventDefinition?.related}
+            change={(relatedDorsal) =>
+              setDraft((previousDraft) => ({ ...previousDraft, relatedDorsal }))
+            }
+          />
+          <EventMetadata
+            type={draft.type}
+            metadata={draft.metadata}
+            change={(metadata) => setDraft((previousDraft) => ({ ...previousDraft, metadata }))}
+          />
+          <section className="event-additional" aria-label={tr('Información adicional (opcional)')}>
+            <h3>{tr('Información adicional (opcional)')}</h3>
+            <label>
+              {tr('Nota')}
+              <textarea
+                maxLength={10000}
+                rows={2}
+                value={draft.note}
+                placeholder={tr('Información adicional (opcional)')}
+                onChange={(inputEvent) =>
+                  setDraft((previousDraft) => ({ ...previousDraft, note: inputEvent.target.value }))
+                }
+              />
+            </label>
+            {draft.rawText && (
+              <p className="voice-transcript">
+                <strong>{tr('Transcripción original')}</strong>
+                <span>«{draft.rawText}»</span>
+              </p>
             )}
-          </p>
-        )}
-        {event && (
-          <p className="caption">
-            {tr('Cambiar minuto o tiempo recoloca el evento en orden cronológico.')}
-          </p>
-        )}
-        <ErrorMessage text={action.error} />
+          </section>
+          {duplicate && (
+            <p className="pending-hint">
+              {tr('El jugador que sale y el que entra deben ser distintos.')}
+            </p>
+          )}
+          {missing && (
+            <p className="pending-hint">
+              {tr(
+                'Faltan datos obligatorios. Puedes guardar el evento pendiente; no contará en las estadísticas.',
+              )}
+            </p>
+          )}
+          {event && (
+            <p className="caption">
+              {tr('Cambiar minuto o tiempo recoloca el evento en orden cronológico.')}
+            </p>
+          )}
+          <ErrorMessage text={action.error} />
+        </div>
         <div className="actions">
           <button type="button" disabled={action.busy} onClick={close}>
             {tr('Cancelar')}

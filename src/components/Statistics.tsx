@@ -13,6 +13,7 @@ import {
 import { Empty } from './ui';
 import { ScoreCharts } from './ScoreCharts';
 import { ShareMatchPdf } from './ShareMatchPdf';
+import { WheelPicker } from './WheelPicker';
 const rows: Metric[] = [
   'losses',
   'recoveries',
@@ -85,41 +86,32 @@ export function Statistics({ data, matchId }: { data: Snapshot; matchId?: string
   return (
     <div className="statistics">
       <div className="filter-row">
-        <label>
-          {tr('Equipo')}
-          <select
-            value={team}
-            onChange={(e) => {
-              setTeam(e.target.value);
-              setMatch('all');
+        <WheelPicker
+          label={tr('Equipo')}
+          value={team}
+          options={teams.map((team) => ({ value: team.id, label: team.name }))}
+          change={(teamId) => {
+            setTeam(teamId);
+            setMatch('all');
+            setPlayer(null);
+          }}
+        />
+        {!matchId && (
+          <WheelPicker
+            label={tr('Partido')}
+            value={selectedMatch}
+            options={[
+              { value: 'all', label: tr('Todos los partidos') },
+              ...available.map((match) => ({
+                value: match.id,
+                label: `${match.date} · ${teamName(match.localTeamId)} — ${teamName(match.visitorTeamId)}`,
+              })),
+            ]}
+            change={(matchId) => {
+              setMatch(matchId);
               setPlayer(null);
             }}
-          >
-            {teams.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        {!matchId && (
-          <label>
-            {tr('Partido')}
-            <select
-              value={selectedMatch}
-              onChange={(e) => {
-                setMatch(e.target.value);
-                setPlayer(null);
-              }}
-            >
-              <option value="all">{tr('Todos los partidos')}</option>
-              {available.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.date} · {teamName(m.localTeamId)} — {teamName(m.visitorTeamId)}
-                </option>
-              ))}
-            </select>
-          </label>
+          />
         )}
       </div>
       <div className="tabs" role="tablist" aria-label={tr('Tipo de estadísticas')}>

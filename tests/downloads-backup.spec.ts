@@ -1,3 +1,4 @@
+import { selectWheelOption } from './wheel-helpers';
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { unzipSync, strFromU8, zipSync, strToU8 } from 'fflate';
@@ -28,8 +29,11 @@ test('downloads only Whistle, reuses it for language changes and reloads offline
   const preparation = page.getByRole('region', { name: 'Preparación de voz' });
   await expect(preparation.getByLabel('Versión de Needle')).toHaveCount(0);
   await expect(preparation.getByLabel('Versión de Whistle')).toHaveCount(0);
-  for (const language of ['es', 'en', 'fr', 'pl']) {
-    await preparation.getByLabel('Idioma de voz', { exact: true }).selectOption(language);
+  for (const language of ['Español', 'English', 'Français', 'Polski']) {
+    await selectWheelOption(
+      preparation.getByRole('listbox', { name: 'Idioma de voz', exact: true }),
+      language,
+    );
     await preparation.getByRole('button', { name: 'Cargar Cactus', exact: true }).click();
     await expect(preparation.getByText('Cactus listo', { exact: true })).toBeVisible({
       timeout: 30000,

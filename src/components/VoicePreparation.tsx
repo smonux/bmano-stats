@@ -10,6 +10,7 @@ import {
 import { checkMicrophone, microphoneProblem } from '../voice/readiness';
 import { voiceError } from '../voice/engine';
 import { ErrorMessage } from './ui';
+import { WheelPicker } from './WheelPicker';
 export function VoicePreparation({ live = false }: { live?: boolean }) {
   const setup = useVoiceSetup();
   const [mic, setMic] = useState<'idle' | 'asking' | 'ok'>('idle');
@@ -62,24 +63,23 @@ export function VoicePreparation({ live = false }: { live?: boolean }) {
       {setup.phase === 'cached' && (
         <p className="caption">{tr('Los modelos están en local. Cárgalos antes del partido.')}</p>
       )}
-      <label>
-        {tr('Idioma de voz')}
-        <select
-          aria-label={tr('Idioma de voz')}
-          value={setup.languageChosen ? setup.language : ''}
-          disabled={setup.phase === 'loading' || live}
-          onChange={(e) => void chooseVoiceLanguage(e.target.value as Language)}
-        >
-          <option value="" disabled>
-            {tr('Elige el idioma de voz')}
-          </option>
-          {Object.entries(languages).map(([code, name]) => (
-            <option key={code} value={code}>
-              {name}
-            </option>
-          ))}
-        </select>
-      </label>
+      <WheelPicker<Language | ''>
+        label={tr('Idioma de voz')}
+        value={setup.languageChosen ? setup.language : ''}
+        disabled={setup.phase === 'loading' || live}
+        options={[
+          { value: '', label: tr('Elige el idioma de voz'), disabled: true },
+          ...(Object.keys(languages) as Language[]).map((code) => ({
+            value: code,
+            label: languages[code],
+          })),
+        ]}
+        change={(language) => {
+          if (language) {
+            void chooseVoiceLanguage(language);
+          }
+        }}
+      />
       <p className="caption">
         {tr(
           'Whistle transcribe. Las reglas detectan primero el evento y después equipo, jugadores y metadatos.',
