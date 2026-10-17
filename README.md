@@ -84,7 +84,7 @@ Las reglas identifican solo el evento; si no hay coincidencia literal, intentan 
 
 ## Compartir un partido
 
-La vista de estadísticas de un partido muestra el tanteo por periodo: minutos en X, goles acumulados en Y y un escalón por cada gol en el minuto registrado. «Compartir PDF del partido» está disponible tanto en curso como finalizado. El PDF incluye ambos equipos, estadísticas individuales, gráficos y eventos por periodo en orden creciente, con tablas compactas. Los eventos pendientes se identifican y no cuentan en estadísticas o marcador.
+La vista de estadísticas de un partido muestra el tanteo por periodo: minutos en X, goles acumulados en Y y un escalón por cada gol en el minuto registrado. «Compartir PDF del partido» está disponible tanto en curso como finalizado. El PDF incluye ambos equipos, estadísticas individuales, gráficos y eventos por periodo en orden creciente, con tablas compactas. Cada evento incluye su nota y transcripción original cuando existen, debajo de los jugadores en la misma celda, con ajuste de líneas y paginación sin truncar el texto. Los eventos pendientes se identifican y no cuentan en estadísticas o marcador.
 
 La generación ocurre en un worker para mantener libre la interfaz. Cuando el navegador admite compartir archivos se abre la hoja nativa; en los demás se descarga el PDF. El informe funciona sin conexión después de almacenar la aplicación, sus fuentes y workers. No se envían los datos a un servidor para crear el PDF.
 

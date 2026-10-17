@@ -55,12 +55,14 @@ export function drawEvents(context: PdfContext) {
                 ? ` / ${t(definition.related)}: ${player(event.relatedPlayerId)}`
                 : '');
         const team = report.teams.findIndex((team) => team.id === event.teamId);
-        return [
-          String(event.minute),
-          team < 0 ? t('Sin equipo') : String(team + 1),
-          kind,
+        const details = [
           participants,
-        ];
+          event.note.trim() ? `${t('Nota')}: ${event.note}` : '',
+          event.rawText.trim() ? `${t('Transcripción original')}: ${event.rawText}` : '',
+        ]
+          .filter(Boolean)
+          .join('\n');
+        return [String(event.minute), team < 0 ? t('Sin equipo') : String(team + 1), kind, details];
       }),
       {
         columnStyles: {

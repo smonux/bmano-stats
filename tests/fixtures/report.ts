@@ -66,11 +66,15 @@ export function reportFixture(): Backup {
     ],
     events: [
       event('e8', 2, 6, 'infraction', 'a', 'a7', { metadata: { infraction: 'Pasos' } }),
-      event('e3', 1, 4, 'goal', 'a', 'a7'),
+      event('e3', 1, 4, 'goal', 'a', 'a7', { note: 'Contraataque por la banda izquierda.' }),
       event('e1', 1, 3, 'goal', 'a', 'a7', { rawText: 'Gol nuestro dorsal siete' }),
       event('e2', 1, 1, 'goal', 'b', 'b9'),
       event('e5', 2, 4, 'goal', 'b', 'b9'),
-      event('e4', 2, 2, 'goal', 'a', 'a7', { metadata: { penalty: true } }),
+      event('e4', 2, 2, 'goal', 'a', 'a7', {
+        metadata: { penalty: true },
+        note: 'Penalti provocado por Íker.\nRevisado por el entrenador.',
+        rawText: 'gol nuestro de penalti del siete',
+      }),
       event('e6', 1, 5, 'save', 'a', 'a1', { relatedPlayerId: 'b9' }),
       event('e7', 2, 5, 'loss', 'b', 'b9'),
       event('e9', 2, 7, null, null, null),

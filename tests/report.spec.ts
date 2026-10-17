@@ -106,7 +106,14 @@ test('a long match paginates compact events and handles long names', async ({ pa
     orderKey: index,
     period: Math.floor(index / 60) + 1,
     minute: Math.floor((index % 60) / 2) + 1,
+    note:
+      index % 15 === 0
+        ? `Nota de la jugada ${index}: presión defensiva y salida rápida.\nSegunda línea conservada.`
+        : '',
+    rawText: index % 15 === 0 ? `Transcripción ${index}: gol nuestro del siete pase de Íker` : '',
   }));
+  data.events[60].note = `${'Nota extensa de partido con áéíóú y saltos de línea.\n'.repeat(80)}Fin de nota extensa.`;
+  data.events[60].rawText = `${'gol nuestro del siete asistencia de Íker '.repeat(120)}fin de transcripción extensa`;
   await page.goto('/#/ajustes');
   await page.getByLabel('Importar copia', { exact: true }).setInputFiles({
     name: 'long.json',

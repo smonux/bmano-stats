@@ -4,6 +4,7 @@ dist/
 *.tsbuildinfo
 test-results/
 playwright-report/
+/output/pdf/
 public/models/*.cact
 public/models/*.tmp
 
