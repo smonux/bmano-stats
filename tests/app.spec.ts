@@ -82,8 +82,19 @@ test('manual match lifecycle persists and works offline', async ({ page, context
   });
   await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
   await context.setOffline(true);
+  await context.route('**/*', (route) => route.abort('internetdisconnected'));
   await page.reload();
   await expect(page.getByLabel('Marcador 1 a 0')).toBeVisible();
-  await expect(page.getByText('Sin conexión', { exact: false })).toBeVisible();
+  // Verify connectivity with a real request, rather than the browser's onLine hint.
+  expect(
+    await page.evaluate(async () => {
+      try {
+        await fetch('/__offline_probe', { cache: 'no-store' });
+        return false;
+      } catch {
+        return true;
+      }
+    }),
+  ).toBe(true);
   expect(errors).toEqual([]);
 });

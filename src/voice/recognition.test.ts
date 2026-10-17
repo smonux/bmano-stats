@@ -7,10 +7,12 @@ const mocks = vi.hoisted(() => ({
   transcribe: vi.fn(),
   interpret: vi.fn(),
   discard: vi.fn(),
+  voiceState: () => ({ defaultTeam: 'equipo2' }),
 }));
 vi.mock('./setup', () => ({
   preparedEngine: () => mocks,
   discardVoiceEngine: mocks.discard,
+  voiceState: mocks.voiceState,
 }));
 
 const base = { createdAt: 1, updatedAt: 1, deletedAt: null };
@@ -58,6 +60,7 @@ beforeEach(() => {
   mocks.interpret.mockResolvedValue({
     proposal: { evento: 'gol', equipo: 'equipo1', nombre: 'Ana' },
     warnings: ['advertencia'],
+    timing: { rulesMs: 0.25, needleMs: 1234 },
   });
   mocks.discard.mockResolvedValue(undefined);
 });
@@ -88,6 +91,7 @@ test('transcribes with match hints and interprets using the recording perspectiv
     rawText: 'gol nuestro de Ana',
   });
   expect(result?.warnings).toEqual(['advertencia']);
+  expect(result?.timings).toMatchObject({ rulesMs: 0.25, needleMs: 1234 });
   expect(progress.onInterpreting).toHaveBeenCalledOnce();
   expect(progress.onError).not.toHaveBeenCalled();
 });
@@ -109,7 +113,13 @@ test('preserves the transcript for manual review when interpretation fails', asy
   mocks.interpret.mockRejectedValue(failure);
   const progress = callbacks();
   const result = await recognizeCapture(audio, context, 'es', progress);
-  expect(result?.draft).toMatchObject({ type: null, teamId: null, rawText: 'gol nuestro de Ana' });
+  expect(result?.draft).toMatchObject({
+    type: 'goal',
+    teamId: 'rival',
+    primaryDorsal: '',
+    rawText: 'gol nuestro de Ana',
+  });
+  expect(result?.warnings.join(' ')).toContain('equipo por defecto');
   expect(mocks.discard).toHaveBeenCalledOnce();
   expect(progress.onError).toHaveBeenCalledWith(failure);
 });

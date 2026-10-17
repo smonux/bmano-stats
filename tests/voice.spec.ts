@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
     localStorage.setItem('handball-welcome-v1', 'done');
   });
 });
-test('real Whistle and deterministic rules: microphone to reviewed event, then reload offline', async ({
+test('real Whistle and hybrid Needle: microphone to reviewed event, then reload offline', async ({
   page,
   context,
 }, testInfo) => {
@@ -44,7 +44,7 @@ test('real Whistle and deterministic rules: microphone to reviewed event, then r
       .fill(label === 'Equipo 1 (nuestro)' ? 'Águilas' : 'Leones');
   }
   await prepareMatchVoice(page);
-  expect(modelRequests).toBe(1);
+  expect(modelRequests).toBe(2);
   const preparation = page.getByRole('region', { name: 'Preparación de voz' });
   await preparation.getByRole('button', { name: 'Comprobar micrófono' }).click();
   await expect(preparation.getByRole('button', { name: 'Micrófono comprobado' })).toBeVisible();
@@ -70,7 +70,12 @@ test('real Whistle and deterministic rules: microphone to reviewed event, then r
   const editor = page.getByRole('dialog', { name: 'Nuevo evento' });
   await expect(editor).toBeVisible({ timeout: 10000 });
   await expect(editor.getByText(/Transcripción original/)).toBeVisible();
-  await expect(editor.getByText(/Whistle:.*Reglas:/)).toBeVisible();
+  await expect(editor.getByText(/Whistle:.*Reglas:.*Needle:/)).toBeVisible();
+  await expect(
+    editor
+      .getByRole('listbox', { name: 'Equipo', exact: true })
+      .getByRole('option', { selected: true }),
+  ).not.toHaveText('—');
   await expect
     .poll(() =>
       editor.getByRole('listbox', { name: 'Evento', exact: true }).evaluate((el) => {
@@ -93,6 +98,8 @@ test('real Whistle and deterministic rules: microphone to reviewed event, then r
         .getByRole('option', { selected: true })
         .textContent(),
       dorsal: await readShirtNumber(editor, 'Dorsal principal'),
+      tiempos: await editor.getByText(/Whistle:.*Reglas:.*Needle:/).textContent(),
+      advertencias: await editor.locator('.voice-warnings').allTextContents(),
     }),
     contentType: 'application/json',
   });

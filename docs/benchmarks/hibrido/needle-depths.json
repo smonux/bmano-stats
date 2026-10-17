@@ -1,0 +1,749 @@
+{
+  "date": "2026-10-17T19:18:48.392Z",
+  "runtime": "v22.22.1",
+  "notice": "Single runs of four synthetic Spanish texts on server Node/WASM. Not Android, ASR or an independent accuracy evaluation.",
+  "results": [
+    {
+      "depth": 4,
+      "text": "Gol nuestro, dorsal siete.",
+      "loadMs": 774.327969,
+      "needleMs": 2155.9344929999997,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo1"
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo1"
+            }
+          }
+        ],
+        "reasoning": "Golden Retriever is a zero-argument tool. 'gol nestro' -> golden Retriever. 'dorsal siete' -> golden Retriever.",
+        "confidence": 0.0987,
+        "prefill_tps": 215.1,
+        "decode_tps": 116.7,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 4,
+      "text": "Nos han marcado gol, dorsal nueve.",
+      "loadMs": 774.327969,
+      "needleMs": 609.3915010000001,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo2"
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo2"
+            }
+          }
+        ],
+        "reasoning": "Gol\",\"dorsal_asistenteente 'gol' -> gol. 'dorsal nueve' -> gol.",
+        "confidence": 0.1092,
+        "prefill_tps": 212.4,
+        "decode_tps": 116.4,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 4,
+      "text": "gol nuestro del 7 pase d ana",
+      "loadMs": 774.327969,
+      "needleMs": 668.1103680000001,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo2"
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo2"
+            }
+          }
+        ],
+        "reasoning": "'gol nuestro del 7 pase d'un específica' -> gol. 'pase d'un específica' -> gol.",
+        "confidence": 0.1108,
+        "prefill_tps": 213.3,
+        "decode_tps": 120.4,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 4,
+      "text": "Gol del siete.",
+      "loadMs": 774.327969,
+      "needleMs": 645.5363319999997,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo2"
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo2"
+            }
+          }
+        ],
+        "reasoning": "Golden: 'Golden' -> 'Golden', 'siete.' -> 'Golden', 'siete.' -> 'Golden', 'siete.",
+        "confidence": 0.1028,
+        "prefill_tps": 212.7,
+        "decode_tps": 121.9,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 8,
+      "text": "Gol nuestro, dorsal siete.",
+      "loadMs": 1168.8551909999996,
+      "needleMs": 6116.626906,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo1",
+        "dorsal": 7,
+        "penalti": false,
+        "dorsal_relacionado": 7
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo1",
+              "dorsal_asistente": 7,
+              "dorsal": 7,
+              "penalti": false
+            }
+          }
+        ],
+        "reasoning": "Equipo1=La Jota, dorsal=Siete, nombre=Asistente. Nombre: asistente, asistente, nombre, asistente.",
+        "confidence": 0.0002,
+        "prefill_tps": 105.9,
+        "decode_tps": 37.2,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 8,
+      "text": "Nos han marcado gol, dorsal nueve.",
+      "loadMs": 1168.8551909999996,
+      "needleMs": 2876.0203649999985,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo1"
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle no ha devuelto una propuesta válida. Completa los datos desde la transcripción.",
+        "Se ha aplicado el equipo por defecto. Revisa el equipo."
+      ],
+      "raw": {
+        "type": "call",
+        "success": false,
+        "error": "tool call truncated: token budget exhausted",
+        "error_code": "truncated",
+        "reason": "runtime_failure",
+        "function_calls": [],
+        "suppressed_calls": [],
+        "reasoning": "Equipo1=Nos han marcado=gol, dorsal nueve. Nombre: Nueve. Dorsal=Nueve. Dorsal=Nueve. Nombre: Nueve. Dorsal=Nueve. Nombre: Nueve. Dorsal=Nueve. Nombre: Nueve. Dorsal=Nueve. Nombre: Nueve. Dorsal=Nueve. Nueve. Dorsal=Nueve. Nueve. Dorsal=Nueve. Nueve. Dorsal=Nueve. Nueve. Dorsal=Nue",
+        "confidence": 0.0031,
+        "prefill_tps": 104.6,
+        "decode_tps": 74.2,
+        "peak_ram_mb": 0
+      }
+    },
+    {
+      "depth": 8,
+      "text": "gol nuestro del 7 pase d ana",
+      "loadMs": 1168.8551909999996,
+      "needleMs": 1972.0879190000014,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo1",
+        "dorsal_relacionado": 7
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo1",
+              "dorsal_asistente": 7
+            }
+          }
+        ],
+        "reasoning": "Equipo1=La Jota, 7 pase d ana, nombre 'Nasa' -> 'Nasa', 7 pase d ana -> 7.",
+        "confidence": 0.0001,
+        "prefill_tps": 105.8,
+        "decode_tps": 55.2,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 8,
+      "text": "Gol del siete.",
+      "loadMs": 1168.8551909999996,
+      "needleMs": 1387.8512919999994,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo1",
+        "nombre": "equipo2"
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo1",
+              "nombre": "equipo2"
+            }
+          }
+        ],
+        "reasoning": "Equipo1: 'equipo1' -> Equipo1; 'equipo2' -> Equipo2; 'gol' -> nombre; no nombre -> omit.",
+        "confidence": 0.0216,
+        "prefill_tps": 105.6,
+        "decode_tps": 69.7,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 12,
+      "text": "Gol nuestro, dorsal siete.",
+      "loadMs": 1637.4615029999986,
+      "needleMs": 6970.335456000001,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo1"
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo1"
+            }
+          }
+        ],
+        "reasoning": "Equipo 'equipo1' from query; dorsal 'siete' from query; nombre 'Asistente' from query; no nombre or penalti stated.",
+        "confidence": 0.0253,
+        "prefill_tps": 70.9,
+        "decode_tps": 36.1,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 12,
+      "text": "Nos han marcado gol, dorsal nueve.",
+      "loadMs": 1637.4615029999986,
+      "needleMs": 3375.8899349999992,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo1",
+        "nombre": "Nueve",
+        "nombre_relacionado": "nueve"
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo1",
+              "nombre": "Nueve",
+              "nombre_asistente": "nueve"
+            }
+          }
+        ],
+        "reasoning": "Equipo 'equipo1' from query; nombre 'Nueve' from query; dorsal 'nueve' from query; nombre 'Gol' from query; no other fields.",
+        "confidence": 0.0015,
+        "prefill_tps": 70.5,
+        "decode_tps": 34.5,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 12,
+      "text": "gol nuestro del 7 pase d ana",
+      "loadMs": 1637.4615029999986,
+      "needleMs": 2679.553262999998,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo1",
+        "dorsal": 7,
+        "nombre": "ana"
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo1",
+              "dorsal": 7,
+              "nombre": "ana"
+            }
+          }
+        ],
+        "reasoning": "equipo 'equipo1' from 'gol nuestro del 7 pase d ana'; dorsal 'una' from 'una'; nombre 'ana' from 'ana'; no nombre or penalti stated",
+        "confidence": 0.0355,
+        "prefill_tps": 70.2,
+        "decode_tps": 38.8,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 12,
+      "text": "Gol del siete.",
+      "loadMs": 1637.4615029999986,
+      "needleMs": 3116.6855189999987,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo1",
+        "dorsal": 7,
+        "nombre": "Gol"
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo1",
+              "dorsal": 7,
+              "nombre": "Gol"
+            }
+          }
+        ],
+        "reasoning": "Equipo 'equipo1' from query. Dorsal 'asistente' from query. Nombre 'Gol' from query.",
+        "confidence": 0.0133,
+        "prefill_tps": 67.1,
+        "decode_tps": 25.7,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 20,
+      "text": "Gol nuestro, dorsal siete.",
+      "loadMs": 2660.6890630000053,
+      "needleMs": 12672.754534,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo1",
+        "dorsal": 7,
+        "nombre": "Gol",
+        "penalti": true,
+        "dorsal_relacionado": 7
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo1",
+              "dorsal": 7,
+              "nombre": "Gol",
+              "dorsal_asistente": 7,
+              "penalti": true
+            }
+          }
+        ],
+        "reasoning": "equipo1=La Jota; nombre=Gol; dorsal=7; nombre=Gol; penalti=true; description omitted.",
+        "confidence": 0.0057,
+        "prefill_tps": 42.6,
+        "decode_tps": 20.5,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 20,
+      "text": "Nos han marcado gol, dorsal nueve.",
+      "loadMs": 2660.6890630000053,
+      "needleMs": 7957.974392999997,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo1",
+        "nombre": "Gol",
+        "nombre_relacionado": "Gol"
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo1",
+              "nombre": "Gol",
+              "nombre_asistente": "Gol"
+            }
+          }
+        ],
+        "reasoning": "Equipo1=La Jota, Dorsal=90, Nombre=Gol. Dorsal=90, Nombre=Gol.",
+        "confidence": 0.0004,
+        "prefill_tps": 42.4,
+        "decode_tps": 13.4,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 20,
+      "text": "gol nuestro del 7 pase d ana",
+      "loadMs": 2660.6890630000053,
+      "needleMs": 4361.776202000001,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo1",
+        "dorsal": 7,
+        "nombre": "ana",
+        "penalti": false
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "dorsal": 7,
+              "nombre": "ana",
+              "penalti": false,
+              "equipo": "equipo1"
+            }
+          }
+        ],
+        "reasoning": "'gol' -> tool gol; 'nuestro del 7' -> dorsal 7; 'ana' -> nombre; 'una' -> penalti false; 'gol' -> description",
+        "confidence": 0.001,
+        "prefill_tps": 41.9,
+        "decode_tps": 28.3,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    },
+    {
+      "depth": 20,
+      "text": "Gol del siete.",
+      "loadMs": 2660.6890630000053,
+      "needleMs": 5852.860685999993,
+      "proposal": {
+        "evento": "gol",
+        "equipo": "equipo1",
+        "dorsal": 7,
+        "nombre": "Gol",
+        "penalti": true,
+        "nombre_relacionado": "Gol"
+      },
+      "warnings": [
+        "Propuesta de voz: revisa todos los campos antes de guardar.",
+        "Needle indica incertidumbre. Revisa la propuesta antes de guardar."
+      ],
+      "raw": {
+        "type": "call",
+        "success": true,
+        "error": null,
+        "error_code": null,
+        "reason": null,
+        "function_calls": [],
+        "suppressed_calls": [
+          {
+            "name": "gol",
+            "arguments": {
+              "equipo": "equipo1",
+              "dorsal": 7,
+              "nombre": "Gol",
+              "nombre_asistente": "Gol",
+              "penalti": true
+            }
+          }
+        ],
+        "reasoning": "'Gol' -> equipo; 'siete' -> dorsal 7; 'Gol' -> nombre; 'Gol' -> dorsal_asistente; 'siete' -> nombre.",
+        "confidence": 0.0004,
+        "prefill_tps": 42.4,
+        "decode_tps": 21.8,
+        "peak_ram_mb": null,
+        "validation": {
+          "ungrounded": [],
+          "negation": false
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "language": "es",
+    "teams": [
+      "La Jota",
+      "Leones"
+    ],
+    "defaultTeam": "equipo1",
+    "maxNewTokens": 192,
+    "system": "locale:es; handball; equipo1=nuestro/nosotros; equipo2=rival/ellos; nos han marcado=equipo2; never home/away; team=main actor, not recipient; default=equipo1; shirts 0-99; 7m is not shirt; omit absent facts; no call if negated/cancelled.",
+    "tools": {
+      "gol": {
+        "description": "Gol",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "equipo": {
+              "type": "string",
+              "enum": [
+                "equipo1",
+                "equipo2",
+                "desconocido"
+              ],
+              "default": "equipo1",
+              "description": "Equipo de Goleador: equipo1=La Jota; equipo2=Leones."
+            },
+            "dorsal": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 99,
+              "description": "Dorsal: Goleador."
+            },
+            "nombre": {
+              "type": "string",
+              "description": "Nombre: Goleador."
+            },
+            "dorsal_asistente": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 99,
+              "description": "Dorsal: Asistente."
+            },
+            "nombre_asistente": {
+              "type": "string",
+              "description": "Nombre: Asistente."
+            },
+            "penalti": {
+              "type": "boolean",
+              "description": "Lanzamiento de siete metros."
+            }
+          },
+          "required": [
+            "equipo"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "models": {
+      "4": {
+        "size": 9762644,
+        "sha256": "e0879f368849483a5bb9a93990afff2f983eb7ba60e4fa40dd224dffe3ec94ef",
+        "file": "needle3-4l-e0879f368849.cact"
+      },
+      "8": {
+        "size": 16155796,
+        "sha256": "5affba0c9dca9640adf6af141b22486865cb3079427f0077c968a401176c2037",
+        "file": "needle3-8l-5affba0c9dca.cact"
+      },
+      "12": {
+        "size": 22549012,
+        "sha256": "3d3d00da7dee03b79a83be72015714bf1aa8f556786b9215c991fe54ff47bfcd",
+        "file": "needle3-12l-3d3d00da7dee.cact"
+      },
+      "20": {
+        "size": 35335380,
+        "sha256": "c9d915eca282ed42d1a09b143b592adb4cc6744ffe2d294adf5cfc5548170c38",
+        "file": null
+      }
+    }
+  }
+}

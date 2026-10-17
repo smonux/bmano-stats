@@ -3,12 +3,16 @@ import { getLanguage, type Language } from '../i18n';
 import { savedVoiceLanguage } from '../i18n/voice';
 import { VoiceEngine, voiceError } from './engine';
 import { localModelsPresent } from './readiness';
+import { needleDepth, type NeedleDepth } from './model-artifacts';
+import type { TeamPerspective } from './analysis/types';
 
 type Phase = 'checking' | 'missing' | 'cached' | 'loading' | 'ready' | 'error';
 type State = {
   phase: Phase;
   language: Language;
   languageChosen: boolean;
+  needleDepth: NeedleDepth;
+  defaultTeam: TeamPerspective;
   progress: string;
   error: string;
 };
@@ -19,10 +23,19 @@ const hasChosenLanguage = () => {
     return false;
   }
 };
+function savedPreference(key: string) {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
 let state: State = {
   phase: 'checking',
   language: savedVoiceLanguage(),
   languageChosen: hasChosenLanguage(),
+  needleDepth: needleDepth(savedPreference('handball-needle-depth')),
+  defaultTeam: savedPreference('handball-voice-default-team') === 'equipo2' ? 'equipo2' : 'equipo1',
   progress: '',
   error: '',
 };
@@ -49,7 +62,9 @@ export async function refreshVoiceFiles() {
     return;
   }
   try {
-    const present = await localModelsPresent();
+    const depth = state.needleDepth;
+    const present = await localModelsPresent(depth);
+    if (state.needleDepth !== depth) return;
     if (['loading', 'ready'].includes(state.phase)) {
       return;
     }
@@ -57,6 +72,23 @@ export async function refreshVoiceFiles() {
   } catch {
     update({ phase: 'missing', error: '' });
   }
+}
+export async function chooseNeedleDepth(value: NeedleDepth) {
+  if (state.phase === 'loading') return;
+  const depth = needleDepth(value);
+  try {
+    localStorage.setItem('handball-needle-depth', String(depth));
+  } catch {}
+  update({ needleDepth: depth, error: '' });
+  await discardVoiceEngine();
+}
+export async function chooseDefaultVoiceTeam(defaultTeam: TeamPerspective) {
+  if (state.phase === 'loading') return;
+  try {
+    localStorage.setItem('handball-voice-default-team', defaultTeam);
+  } catch {}
+  update({ defaultTeam, error: '' });
+  await discardVoiceEngine();
 }
 export async function chooseVoiceLanguage(language: Language) {
   if (state.phase === 'loading') {
@@ -70,11 +102,13 @@ export async function chooseVoiceLanguage(language: Language) {
 }
 export async function discardVoiceEngine() {
   const session = engine;
+  const preparing = pendingPreparation;
   engine = undefined;
+  update({ phase: 'checking' });
   if (session) {
     await session.close();
   }
-  update({ phase: 'checking' });
+  await preparing;
   await refreshVoiceFiles();
 }
 /** Download only in preparation. A live match may load existing local files, never fetch models. */
@@ -91,12 +125,15 @@ export function prepareVoice(download: boolean): Promise<boolean> {
       update({ phase: 'error', error: 'Elige el idioma de voz antes de cargar Cactus.' });
       return false;
     }
-    const session = new VoiceEngine(language);
+    const session = new VoiceEngine(language, state.needleDepth, state.defaultTeam);
     engine = session;
     update({ phase: 'loading', progress: '', error: '' });
     try {
       await session.prepare((progress) => update({ progress }), !download);
-      if (!(await localModelsPresent())) {
+      if (engine !== session) return false;
+      const present = await localModelsPresent(state.needleDepth);
+      if (engine !== session) return false;
+      if (!present) {
         throw new Error(
           'Los modelos no se han guardado en este navegador. Libera espacio y vuelve a cargarlos antes del partido.',
         );
@@ -105,8 +142,10 @@ export function prepareVoice(download: boolean): Promise<boolean> {
       return true;
     } catch (error) {
       await session.close();
-      engine = undefined;
-      update({ phase: 'error', error: voiceError(error, true) });
+      if (engine === session) {
+        engine = undefined;
+        update({ phase: 'error', error: voiceError(error, true) });
+      }
       return false;
     }
   })().finally(() => {

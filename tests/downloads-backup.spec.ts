@@ -12,11 +12,11 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('downloads only Whistle, reuses it for language changes and reloads offline without Needle', async ({
+test('selects Needle depths and default team, reuses Whistle and reloads selected models offline', async ({
   page,
   context,
 }, info) => {
-  test.setTimeout(90000);
+  test.setTimeout(180000);
   await serveModels(context);
   const requests: string[] = [];
   page.on('request', (request) => {
@@ -24,10 +24,10 @@ test('downloads only Whistle, reuses it for language changes and reloads offline
       requests.push(request.url());
     }
   });
-  await page.addInitScript(() => localStorage.setItem('handball-needle-depth', '20'));
   await page.goto('/#/ajustes');
   const preparation = page.getByRole('region', { name: 'Preparación de voz' });
-  await expect(preparation.getByLabel('Versión de Needle')).toHaveCount(0);
+  const depth = preparation.getByRole('listbox', { name: 'Versión de Needle', exact: true });
+  await expect(depth.getByRole('option', { selected: true })).toContainText('12 capas');
   await expect(preparation.getByLabel('Versión de Whistle')).toHaveCount(0);
   for (const language of ['Español', 'English', 'Français', 'Polski']) {
     await selectWheelOption(
@@ -39,7 +39,26 @@ test('downloads only Whistle, reuses it for language changes and reloads offline
       timeout: 30000,
     });
   }
-  expect(requests).toEqual([DEFAULT_SPEECH_MODEL.url]);
+  expect(requests.filter((url) => url === DEFAULT_SPEECH_MODEL.url)).toHaveLength(1);
+  expect(requests.filter((url) => url.includes('needle3-12l-'))).toHaveLength(1);
+  for (const layers of [4, 8, 20]) {
+    await depth.getByRole('option', { name: new RegExp(`^${layers} capas`) }).click();
+    await expect(preparation.getByRole('alert').first()).toContainText('Cactus no está cargado');
+    await preparation.getByRole('button', { name: 'Cargar Cactus', exact: true }).click();
+    await expect(preparation.getByText('Cactus listo', { exact: true })).toBeVisible({
+      timeout: 30000,
+    });
+  }
+  expect(requests.filter((url) => url.includes('needle3'))).toHaveLength(4);
+  await selectWheelOption(
+    preparation.getByRole('listbox', { name: 'Equipo por defecto', exact: true }),
+    'Rival (equipo 2)',
+  );
+  await preparation.getByRole('button', { name: 'Cargar Cactus', exact: true }).click();
+  await expect(preparation.getByText('Cactus listo', { exact: true })).toBeVisible({
+    timeout: 30000,
+  });
+  const beforeReload = [...requests];
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
   });
@@ -51,8 +70,14 @@ test('downloads only Whistle, reuses it for language changes and reloads offline
   await expect(preparation.getByText('Cactus listo', { exact: true })).toBeVisible({
     timeout: 30000,
   });
-  expect(requests).toEqual([DEFAULT_SPEECH_MODEL.url]);
-  await page.screenshot({ path: info.outputPath('whistle-rules.png'), fullPage: true });
+  await expect(depth.getByRole('option', { selected: true })).toContainText('20 capas');
+  await expect(
+    preparation
+      .getByRole('listbox', { name: 'Equipo por defecto', exact: true })
+      .getByRole('option', { selected: true }),
+  ).toHaveText('Rival (equipo 2)');
+  expect(requests).toEqual(beforeReload);
+  await page.screenshot({ path: info.outputPath('whistle-needle.png'), fullPage: true });
 });
 
 test('full ZIP export restores ZIP or legacy JSON only after confirmation', async ({

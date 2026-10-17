@@ -1,6 +1,7 @@
 import { afterEach, expect, test, vi } from 'vitest';
 import { DEFAULT_MODEL, DEFAULT_SPEECH_MODEL } from 'cactus-needle/browser';
 import { checkMicrophone, localModelsPresent, microphoneProblem } from './readiness';
+import { needleModel } from './needle-model';
 afterEach(() => vi.unstubAllGlobals());
 test('checks real cache entries and sizes rather than a remembered readiness flag', async () => {
   vi.stubGlobal('caches', undefined);
@@ -14,13 +15,15 @@ test('checks real cache entries and sizes rather than a remembered readiness fla
   expect(await localModelsPresent()).toBe(false);
   match.mockImplementation(async (key: string) => {
     const url = new URL(key);
-    const model = [DEFAULT_SPEECH_MODEL].find((m) => m.url === url.origin + url.pathname)!;
+    const model = [DEFAULT_SPEECH_MODEL, needleModel(12)].find(
+      (m) => m.url === url.origin + url.pathname,
+    )!;
     expect(url.searchParams.get('__needle_sha256')).toBe(model.sha256);
     return { blob: async () => ({ size: model.size }) };
   });
   expect(await localModelsPresent()).toBe(true);
 });
-test('Whistle alone is sufficient; cached Needle without Whistle is not ready', async () => {
+test('both Whistle and the selected Needle depth are required; other depths do not count', async () => {
   const entries = new Map<string, number>();
   const add = (model: { url: string; sha256: string; size: number }) => {
     const key = new URL(model.url);
@@ -38,7 +41,13 @@ test('Whistle alone is sufficient; cached Needle without Whistle is not ready', 
   expect(await localModelsPresent()).toBe(false);
   entries.clear();
   add(DEFAULT_SPEECH_MODEL);
-  expect(await localModelsPresent()).toBe(true);
+  expect(await localModelsPresent()).toBe(false);
+  add(DEFAULT_MODEL);
+  expect(await localModelsPresent(20)).toBe(true);
+  expect(await localModelsPresent(12)).toBe(false);
+  add(needleModel(12));
+  expect(await localModelsPresent(12)).toBe(true);
+  expect(await localModelsPresent(4)).toBe(false);
 });
 test('explicit microphone check requests audio and immediately releases every track', async () => {
   const stop = vi.fn();

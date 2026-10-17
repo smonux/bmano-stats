@@ -95,6 +95,8 @@ Validación de esta ampliación: 42 pruebas de código superadas; recorridos de 
 
 ## Sustitución de Needle por reglas — 17 de octubre de 2026
 
+Este apartado describe la versión anterior; el modo híbrido documentado al final recupera Needle para extraer datos.
+
 La captura actual utiliza únicamente Whistle. Se retiran la selección de capas, la carga de Needle, su requisito de caché y la preparación automática de variantes al compilar. Los modelos generados dejan de publicarse en `dist/models/`. Los apartados anteriores sobre Needle documentan versiones históricas y ya no describen la captura activa.
 
 Se añaden léxicos por idioma para los 11 eventos, coincidencia literal y aproximación acotada cuando falla la literal, perspectiva de quien graba, números 0–99, roles de participantes y reglas por metadato. Whistle recibe vocabulario de balonmano, nombres de equipo/jugadores y únicamente los dorsales conocidos del partido, en cifras y palabras. La interfaz muestra indicador durante reconocimiento y duración separada de Whistle y reglas. Todas las propuestas se revisan antes de guardar.
@@ -120,3 +122,11 @@ El aviso de fin de exclusión está activado por defecto. El primer toque o puls
 El registro distingue visualmente la perspectiva: equipo 1 a la izquierda, amarillo y número 1; equipo 2 a la derecha, negro y número 2. En el rival se reflejan el icono, el título y las acciones. El nombre del equipo aparece destacado. Los eventos sin equipo quedan centrados y no se presentan como propios.
 
 Validación de este bloque: 721 pruebas de código y 23 recorridos únicos de navegador en Chromium móvil/escritorio superados; se omite intencionadamente la repetición móvil del PDF largo. Se comprueban selección por teclado y desplazamiento, limpieza de participantes al cambiar de equipo, guardado visible, conservación de nota y transcripción tras recargar, posición real de iconos/títulos y programación de las cuatro notas durante cinco segundos en Web Audio. Revisadas visualmente las capturas de móvil y escritorio. Compilación de producción actualizada en `dist/`.
+
+## Modo híbrido y selección de capas — 17 de octubre de 2026
+
+Las reglas eligen únicamente el evento. Needle recibe el texto original y un esquema fijo por evento, sin normalización previa de dorsales ni asignación posterior del equipo mediante reglas. Para gol, los seis campos son equipo, dorsal, nombre, dorsal_asistente, nombre_asistente y penalti. El resto de eventos expone solo sus campos pertinentes. Se mantiene la revisión antes de guardar y la transcripción original.
+
+Se recupera el selector de 4/8/12/20 capas con 12 inicialmente y restauración de la preferencia existente. Se añade un equipo por defecto configurable, inicialmente nuestro equipo, aplicado cuando falta un equipo válido en la respuesta y advertido en revisión. Whistle mantiene pesos y configuración. Se exige caché real de ambos modelos; cambiar capas invalida preparación. La compilación vuelve a preparar/verificar los tres archivos pequeños y publicarlos en `dist/models/`.
+
+Los tiempos de Whistle, selección por reglas y Needle aparecen separados. Las llamadas de Needle tienen 192 tokens y límite de 45 segundos; un fallo conserva el evento detectado y el equipo por defecto para completar manualmente. Las respuestas del modelo siguen requiriendo evaluación: el ensayo de cuatro textos sintéticos con 12 capas produjo tiempos de 2,7–7,1 segundos y errores de equipo, dorsal y asistencia, con baja confianza. No se presenta como mejora demostrada de precisión. No hay entrenamiento ni validación en dispositivos físicos.

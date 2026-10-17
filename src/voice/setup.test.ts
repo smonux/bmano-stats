@@ -62,11 +62,64 @@ test('refuses ready status if model files were not actually persisted', async ()
   expect(mocks.engine.close).toHaveBeenCalled();
   expect(() => setup.preparedEngine()).toThrow();
 });
-test('old Needle preferences are ignored; only the capture language reaches the engine', async () => {
+test('saved Needle depth is restored and the team defaults to our recording perspective', async () => {
   localStorage.setItem('handball-needle-depth', '20');
   const setup = await import('./setup');
   await setup.chooseVoiceLanguage('es');
   await setup.prepareVoice(true);
-  expect(mocks.created).toHaveBeenLastCalledWith('es');
-  expect(setup.voiceState()).not.toHaveProperty('needleDepth');
+  expect(mocks.created).toHaveBeenLastCalledWith('es', 20, 'equipo1');
+  expect(setup.voiceState()).toMatchObject({ needleDepth: 20, defaultTeam: 'equipo1' });
+});
+test('switching depths invalidates readiness and only checks the selected variant', async () => {
+  const setup = await import('./setup');
+  expect(setup.voiceState().needleDepth).toBe(12);
+  await setup.chooseVoiceLanguage('es');
+  await setup.prepareVoice(true);
+  mocks.present.mockResolvedValue(false);
+  await setup.chooseNeedleDepth(4);
+  expect(mocks.engine.close).toHaveBeenCalledOnce();
+  expect(mocks.present).toHaveBeenLastCalledWith(4);
+  expect(setup.voiceState()).toMatchObject({ phase: 'missing', needleDepth: 4 });
+  expect(localStorage.getItem('handball-needle-depth')).toBe('4');
+  await setup.chooseDefaultVoiceTeam('equipo2');
+  mocks.present.mockResolvedValue(true);
+  await setup.prepareVoice(true);
+  expect(mocks.created).toHaveBeenLastCalledWith('es', 4, 'equipo2');
+});
+test('discarding preparation cannot resurrect a closed engine or mark voice ready', async () => {
+  const setup = await import('./setup');
+  await setup.chooseVoiceLanguage('es');
+  let finish!: () => void;
+  mocks.engine.prepare.mockImplementationOnce(
+    () =>
+      new Promise<void>((resolve) => {
+        finish = resolve;
+      }),
+  );
+  const preparing = setup.prepareVoice(true);
+  const disposing = setup.discardVoiceEngine();
+  finish();
+  expect(await preparing).toBe(false);
+  await disposing;
+  expect(setup.voiceState().phase).toBe('cached');
+  expect(() => setup.preparedEngine()).toThrow();
+});
+test('discarding during cache verification cannot restore ready status', async () => {
+  const setup = await import('./setup');
+  await setup.chooseVoiceLanguage('es');
+  let confirm!: (present: boolean) => void;
+  mocks.present.mockImplementationOnce(
+    () =>
+      new Promise<boolean>((resolve) => {
+        confirm = resolve;
+      }),
+  );
+  const preparing = setup.prepareVoice(true);
+  await vi.waitFor(() => expect(confirm).toBeTypeOf('function'));
+  const disposing = setup.discardVoiceEngine();
+  confirm(true);
+  expect(await preparing).toBe(false);
+  await disposing;
+  expect(setup.voiceState().phase).toBe('cached');
+  expect(() => setup.preparedEngine()).toThrow();
 });

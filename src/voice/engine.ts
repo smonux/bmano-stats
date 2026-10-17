@@ -1,15 +1,26 @@
 import { tr, type Language } from '../i18n';
-import { createWhistle } from 'cactus-needle/browser';
-import { interpretDeterministically, type RulePlayer } from './deterministic';
+import { createWhistle, createNeedle } from 'cactus-needle/browser';
+import type { RulePlayer, TeamPerspective } from './analysis/types';
+import { DEFAULT_NEEDLE_DEPTH, type NeedleDepth } from './model-artifacts';
+import { needleModel } from './needle-model';
+import { routeVoiceEvent } from './event-routing';
+import { toolForEvent, extractionFacts } from './play-schema';
+import { adaptNeedleResult } from './hybrid';
 type WhistleSession = Awaited<ReturnType<typeof createWhistle>>;
+type NeedleSession = Awaited<ReturnType<typeof createNeedle>>;
 
 /** Reused from pre-match preparation. Closing cancels workers and active inference. */
 export class VoiceEngine {
-  constructor(private language: Language = 'es') {}
+  constructor(
+    private language: Language = 'es',
+    private depth: NeedleDepth = DEFAULT_NEEDLE_DEPTH,
+    private defaultTeam: TeamPerspective = 'equipo1',
+  ) {}
   private whistle?: WhistleSession;
+  private needle?: NeedleSession;
   private controller = new AbortController();
   get ready() {
-    return Boolean(this.whistle);
+    return Boolean(this.whistle && this.needle);
   }
   async prepare(progress: (text: string) => void, offline = !navigator.onLine) {
     if (this.ready) {
@@ -26,6 +37,16 @@ export class VoiceEngine {
     try {
       progress(tr('Cargando Whistle…'));
       this.whistle = await createWhistle(options('Whistle'));
+      const model = needleModel(this.depth);
+      progress(`Needle: ${this.depth}`);
+      this.needle = await createNeedle({
+        ...options('Needle'),
+        model: model.url,
+        modelSha256: model.sha256,
+        stateless: true,
+        system: extractionFacts(this.language, this.defaultTeam),
+        maxOutputTokens: 192,
+      });
       progress(tr('Modelos listos en este dispositivo.'));
     } catch (error) {
       await this.close();
@@ -43,17 +64,38 @@ export class VoiceEngine {
   }
   async interpret(text: string, teams: string[], players: RulePlayer[] = []) {
     const start = performance.now();
-    const result = interpretDeterministically(text, this.language, teams, players);
+    const routed = routeVoiceEvent(text, this.language, teams, players);
+    const rulesMs = performance.now() - start;
+    if (!routed.event) {
+      return {
+        proposal: { evento: 'desconocido' as const, equipo: this.defaultTeam },
+        warnings: [...routed.warnings, 'Se ha aplicado el equipo por defecto. Revisa el equipo.'],
+        timing: { rulesMs, needleMs: 0, method: 'hybrid' as const },
+      };
+    }
+    if (!this.needle) {
+      throw new Error('Prepara los modelos antes de grabar.');
+    }
+    const inferenceStartedAt = performance.now();
+    const result = await this.needle.complete(text, {
+      tools: toolForEvent(routed.event, teams, this.defaultTeam),
+      maxNewTokens: 192,
+      abortSignal: AbortSignal.any([this.controller.signal, AbortSignal.timeout(45_000)]),
+    });
+    const needleMs = performance.now() - inferenceStartedAt;
+    const adapted = adaptNeedleResult(routed.event, result, this.defaultTeam);
     return {
-      ...result,
-      timing: { elapsedMs: performance.now() - start, method: 'deterministic' as const },
+      ...adapted,
+      warnings: [...routed.warnings, ...adapted.warnings],
+      timing: { rulesMs, needleMs, method: 'hybrid' as const },
     };
   }
 
   async close() {
     this.controller.abort();
-    const sessions = [this.whistle];
+    const sessions = [this.whistle, this.needle];
     this.whistle = undefined;
+    this.needle = undefined;
     await Promise.allSettled(sessions.map((session) => session?.close()));
   }
 }

@@ -1,11 +1,12 @@
 import type { Language } from '../i18n';
 import { tr } from '../i18n';
 import { whistleKeywords } from './keywords';
-import { preparedEngine, discardVoiceEngine } from './setup';
+import { preparedEngine, discardVoiceEngine, voiceState } from './setup';
+import { routeVoiceEvent } from './event-routing';
 import { toVoiceDraft, type CaptureContext } from './interpretation';
 import type { Recording } from './recorder';
 
-export type RecognitionTimings = { whistleMs: number; rulesMs: number };
+export type RecognitionTimings = { whistleMs: number; rulesMs: number; needleMs: number };
 export type RecognizedEvent = ReturnType<typeof toVoiceDraft> & { timings: RecognitionTimings };
 type RecognitionCallbacks = {
   isActive: () => boolean;
@@ -40,7 +41,7 @@ export async function recognizeCapture(
   if (!callbacks.isActive()) {
     return null;
   }
-  const timings = { whistleMs: performance.now() - speechStartedAt, rulesMs: 0 };
+  const timings = { whistleMs: performance.now() - speechStartedAt, rulesMs: 0, needleMs: 0 };
   const text = transcript.text.trim();
   if (!text) {
     throw new Error(tr('No se ha reconocido voz. Acércate al micrófono y vuelve a intentarlo.'));
@@ -48,32 +49,29 @@ export async function recognizeCapture(
   callbacks.onInterpreting();
   let proposal: unknown = null;
   let warnings: string[] = [];
-  const rulesStartedAt = performance.now();
+  const interpretationStartedAt = performance.now();
+  const teams = matchTeamIds.map(
+    (teamId) => context.data.teams.find((team) => team.id === teamId)!.name,
+  );
+  const players = matchPlayers
+    .filter((player) => player.name)
+    .map((player) => ({
+      name: player.name,
+      team:
+        player.teamId === context.match.localTeamId ? ('equipo1' as const) : ('equipo2' as const),
+    }));
   try {
-    const response = await engine.interpret(
-      text,
-      matchTeamIds.map((teamId) => context.data.teams.find((team) => team.id === teamId)!.name),
-      context.data.players
-        .filter(
-          (player) =>
-            !player.isUnknown &&
-            !player.deletedAt &&
-            player.name &&
-            matchTeamIds.includes(player.teamId),
-        )
-        .map((player) => ({
-          name: player.name,
-          team:
-            player.teamId === context.match.localTeamId
-              ? ('equipo1' as const)
-              : ('equipo2' as const),
-        })),
-    );
+    const response = await engine.interpret(text, teams, players);
     proposal = response.proposal;
     warnings = response.warnings;
-    timings.rulesMs = performance.now() - rulesStartedAt;
+    timings.rulesMs = response.timing.rulesMs;
+    timings.needleMs = response.timing.needleMs;
   } catch (error) {
+    timings.needleMs = performance.now() - interpretationStartedAt;
     // Keep a usable transcript even if interpretation fails; the editor can complete it.
+    const routed = routeVoiceEvent(text, language, teams, players);
+    proposal = { evento: routed.event ?? 'desconocido', equipo: voiceState().defaultTeam };
+    warnings = [...routed.warnings, 'Se ha aplicado el equipo por defecto. Revisa el equipo.'];
     await discardVoiceEngine();
     if (callbacks.isActive()) {
       callbacks.onError(error);

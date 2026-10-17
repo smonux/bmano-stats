@@ -32,6 +32,7 @@ export function EventEditor({
   voiceTimings?: {
     whistleMs: number;
     rulesMs: number;
+    needleMs: number;
   };
   close: () => void;
 }) {
@@ -79,9 +80,10 @@ export function EventEditor({
         <div className="event-editor-fields">
           {voiceTimings && (
             <p className="caption">
-              {tr('Whistle: {whistle} s · Reglas: {rules} ms', {
+              {tr('Whistle: {whistle} s · Reglas: {rules} ms · Needle: {needle} s', {
                 whistle: (voiceTimings.whistleMs / 1000).toFixed(1),
                 rules: voiceTimings.rulesMs.toFixed(1),
+                needle: (voiceTimings.needleMs / 1000).toFixed(1),
               })}
             </p>
           )}

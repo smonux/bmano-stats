@@ -72,7 +72,7 @@ export function useVoiceCapture(match: Match, data: Snapshot) {
         isActive: () => mounted.current,
         onInterpreting: () => {
           setPhase('interpreting');
-          setStatus(tr('Aplicando reglas de evento y participantes…'));
+          setStatus(tr('Needle está interpretando los datos del evento…'));
         },
         onError: (error) => setError(voiceError(error)),
       });

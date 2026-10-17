@@ -27,7 +27,7 @@ La primera visita requiere conexión para almacenar la aplicación. El service w
 - Reloj con pausa, reanudación, nuevos tiempos y finalización; corrección de partidos finalizados.
 - Captura manual de los 12 eventos, participantes relacionados y metadatos aplicables.
 - Sustituciones con jugador que sale y jugador que entra del mismo equipo; recuentos de cambios, entradas y salidas.
-- Captura local por voz con Whistle y reglas deterministas, revisión de la propuesta y transcripción literal conservada.
+- Captura local por voz: Whistle transcribe, las reglas eligen el evento y Needle extrae sus datos; revisión y transcripción literal conservada.
 - Eventos pendientes sin cómputo; atribución de acciones sin dorsal al jugador virtual Desconocido.
 - Marcador y estadísticas derivados de eventos; las correcciones y eliminaciones actualizan sus consecuencias.
 - Estadísticas por equipo, jugador y partido, además de acumuladas.
@@ -74,13 +74,13 @@ Vite acepta cualquier nombre de host (`allowedHosts: true`) en desarrollo y vist
 
 ## Modelos y publicación estática
 
-La voz carga únicamente Whistle, sin selector ni descarga de Needle. Su modelo y configuración se mantienen. Antes del partido se elige el idioma y se prepara Whistle; los nombres conocidos y dorsales de ambas plantillas, en cifras y palabras, se pasan como pistas junto al vocabulario de balonmano.
+Antes del partido se eligen idioma, versión de Needle (4, 8, 12 o 20 capas; 12 inicialmente) y equipo por defecto (nuestro equipo inicialmente). Se cargan Whistle y únicamente la variante elegida de Needle. Whistle mantiene su modelo y configuración; recibe nombres y dorsales conocidos de ambas plantillas como pistas junto al vocabulario de balonmano.
 
-Un intérprete determinista identifica primero el evento por palabras clave del idioma; si no hay coincidencia literal, intenta una aproximación acotada. Después extrae equipo, participantes y metadatos con reglas específicas. Nuestro/nosotros equivale siempre a equipo 1 y rival/ellos a equipo 2. Los dorsales admiten 0–99. Las dudas se conservan para revisión. Consulta la [guía de voz](docs/voz.md).
+Las reglas identifican solo el evento; si no hay coincidencia literal, intentan una aproximación acotada. Needle recibe la transcripción original y un esquema fijo específico del evento para extraer equipo, participantes y metadatos. Nuestro/nosotros es equipo 1 y rival/ellos equipo 2, según quién realiza la acción. Si Needle no resuelve el equipo se aplica el elegido por defecto, con advertencia. Consulta la [guía de voz](docs/voz.md).
 
-`npm run build` genera `dist/` sin preparar pesos de Needle. Se publica ese directorio estático con Tailscale Serve; no necesita Node/Vite en producción. Whistle se descarga desde su revisión fijada en Hugging Face y se conserva en el navegador. Los scripts y mediciones anteriores de Needle quedan como referencia histórica y no se ejecutan durante la compilación ni la captura actual.
+`npm run build` prepara y verifica las variantes de Needle de 4/8/12 capas y genera `dist/`, incluidos los archivos estáticos en `models/`. Se publica ese directorio con Tailscale Serve; no necesita Node/Vite en producción. Whistle y Needle de 20 capas se descargan desde revisiones fijadas en Hugging Face. El navegador conserva los modelos para trabajar sin conexión. No se entrena ningún modelo.
 
-`npm run voice:evaluate` ejecuta las reglas sobre el dataset español y publica [métricas, errores y límites](docs/benchmarks/reglas/LEEME.md). No entrena ni ejecuta modelos de audio.
+`npm run voice:evaluate` conserva la evaluación del intérprete determinista anterior sobre el dataset español: sus [métricas y límites](docs/benchmarks/reglas/LEEME.md) no miden la precisión del modo híbrido actual ni del audio.
 
 ## Compartir un partido
 
