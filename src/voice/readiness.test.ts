@@ -23,7 +23,7 @@ test('checks real cache entries and sizes rather than a remembered readiness fla
   });
   expect(await localModelsPresent()).toBe(true);
 });
-test('both Whistle and the selected Needle depth are required; other depths do not count', async () => {
+test('only a complete Whistle cache is required; cached Needle files cannot mask its absence or truncation', async () => {
   const entries = new Map<string, number>();
   const add = (model: { url: string; sha256: string; size: number }) => {
     const key = new URL(model.url);
@@ -41,13 +41,13 @@ test('both Whistle and the selected Needle depth are required; other depths do n
   expect(await localModelsPresent()).toBe(false);
   entries.clear();
   add(DEFAULT_SPEECH_MODEL);
-  expect(await localModelsPresent()).toBe(false);
+  expect(await localModelsPresent()).toBe(true);
   add(DEFAULT_MODEL);
-  expect(await localModelsPresent(20)).toBe(true);
-  expect(await localModelsPresent(12)).toBe(false);
-  add(needleModel(12));
-  expect(await localModelsPresent(12)).toBe(true);
-  expect(await localModelsPresent(4)).toBe(false);
+  expect(await localModelsPresent()).toBe(true);
+  const key = new URL(DEFAULT_SPEECH_MODEL.url);
+  key.searchParams.set('__needle_sha256', DEFAULT_SPEECH_MODEL.sha256);
+  entries.set(key.href, DEFAULT_SPEECH_MODEL.size - 1);
+  expect(await localModelsPresent()).toBe(false);
 });
 test('explicit microphone check requests audio and immediately releases every track', async () => {
   const stop = vi.fn();

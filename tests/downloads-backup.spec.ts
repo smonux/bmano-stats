@@ -12,23 +12,25 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('selects Needle depths and default team, reuses Whistle and reloads selected models offline', async ({
+test('prepares only Whistle across languages and reuses its verified cache offline', async ({
   page,
   context,
 }, info) => {
-  test.setTimeout(180000);
+  test.setTimeout(120000);
   await serveModels(context);
   const requests: string[] = [];
   page.on('request', (request) => {
-    if (request.url().endsWith('.cact')) {
-      requests.push(request.url());
-    }
+    if (request.url().endsWith('.cact')) requests.push(request.url());
   });
   await page.goto('/#/ajustes');
   const preparation = page.getByRole('region', { name: 'Preparación de voz' });
-  const depth = preparation.getByRole('listbox', { name: 'Versión de Needle', exact: true });
-  await expect(depth.getByRole('option', { selected: true })).toContainText('12 capas');
-  await expect(preparation.getByLabel('Versión de Whistle')).toHaveCount(0);
+  await expect(
+    preparation.getByRole('listbox', { name: 'Versión de Needle', exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    preparation.getByRole('listbox', { name: 'Equipo por defecto', exact: true }),
+  ).toHaveCount(0);
+  await expect(preparation).toContainText('evento, equipo, jugador 1, jugador 2 y metadatos');
   for (const language of ['Español', 'English', 'Français', 'Polski']) {
     await selectWheelOption(
       preparation.getByRole('listbox', { name: 'Idioma de voz', exact: true }),
@@ -39,26 +41,7 @@ test('selects Needle depths and default team, reuses Whistle and reloads selecte
       timeout: 30000,
     });
   }
-  expect(requests.filter((url) => url === DEFAULT_SPEECH_MODEL.url)).toHaveLength(1);
-  expect(requests.filter((url) => url.includes('needle3-12l-'))).toHaveLength(1);
-  for (const layers of [4, 8, 20]) {
-    await depth.getByRole('option', { name: new RegExp(`^${layers} capas`) }).click();
-    await expect(preparation.getByRole('alert').first()).toContainText('Cactus no está cargado');
-    await preparation.getByRole('button', { name: 'Cargar Cactus', exact: true }).click();
-    await expect(preparation.getByText('Cactus listo', { exact: true })).toBeVisible({
-      timeout: 30000,
-    });
-  }
-  expect(requests.filter((url) => url.includes('needle3'))).toHaveLength(4);
-  await selectWheelOption(
-    preparation.getByRole('listbox', { name: 'Equipo por defecto', exact: true }),
-    'Rival (equipo 2)',
-  );
-  await preparation.getByRole('button', { name: 'Cargar Cactus', exact: true }).click();
-  await expect(preparation.getByText('Cactus listo', { exact: true })).toBeVisible({
-    timeout: 30000,
-  });
-  const beforeReload = [...requests];
+  expect(requests).toEqual([DEFAULT_SPEECH_MODEL.url]);
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
   });
@@ -70,14 +53,8 @@ test('selects Needle depths and default team, reuses Whistle and reloads selecte
   await expect(preparation.getByText('Cactus listo', { exact: true })).toBeVisible({
     timeout: 30000,
   });
-  await expect(depth.getByRole('option', { selected: true })).toContainText('20 capas');
-  await expect(
-    preparation
-      .getByRole('listbox', { name: 'Equipo por defecto', exact: true })
-      .getByRole('option', { selected: true }),
-  ).toHaveText('Rival (equipo 2)');
-  expect(requests).toEqual(beforeReload);
-  await page.screenshot({ path: info.outputPath('whistle-needle.png'), fullPage: true });
+  expect(requests).toEqual([DEFAULT_SPEECH_MODEL.url]);
+  await page.screenshot({ path: info.outputPath('whistle-commands.png'), fullPage: true });
 });
 
 test('full ZIP export restores ZIP or legacy JSON only after confirmation', async ({

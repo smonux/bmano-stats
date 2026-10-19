@@ -78,8 +78,8 @@ test('transcribes with match hints and interprets using the recording perspectiv
     'gol nuestro de Ana',
     ['La Jota', 'Leones'],
     [
-      { name: 'Ana', team: 'equipo1' },
-      { name: 'Leo', team: 'equipo2' },
+      { name: 'Ana', dorsal: 9, team: 'equipo1' },
+      { name: 'Leo', dorsal: 0, team: 'equipo2' },
     ],
   );
   expect(result?.draft).toMatchObject({
@@ -114,12 +114,12 @@ test('preserves the transcript for manual review when interpretation fails', asy
   const progress = callbacks();
   const result = await recognizeCapture(audio, context, 'es', progress);
   expect(result?.draft).toMatchObject({
-    type: 'goal',
-    teamId: 'rival',
+    type: null,
+    teamId: 'ours',
     primaryDorsal: '',
     rawText: 'gol nuestro de Ana',
   });
-  expect(result?.warnings.join(' ')).toContain('equipo por defecto');
+  expect(result?.warnings.join(' ')).toContain('Conserva la transcripción');
   expect(mocks.discard).toHaveBeenCalledOnce();
   expect(progress.onError).toHaveBeenCalledWith(failure);
 });

@@ -27,7 +27,7 @@ La primera visita requiere conexión para almacenar la aplicación. El service w
 - Reloj con pausa, reanudación, nuevos tiempos y finalización; corrección de partidos finalizados.
 - Captura manual de los 12 eventos, participantes relacionados y metadatos aplicables.
 - Sustituciones con jugador que sale y jugador que entra del mismo equipo; recuentos de cambios, entradas y salidas.
-- Captura local por voz: Whistle transcribe, las reglas eligen el evento y Needle extrae sus datos; revisión y transcripción literal conservada.
+- Captura local por voz: Whistle transcribe y las reglas interpretan comandos en orden evento/equipo/jugador 1/jugador 2/metadatos; revisión y transcripción literal conservada.
 - Eventos pendientes sin cómputo; atribución de acciones sin dorsal al jugador virtual Desconocido.
 - Marcador y estadísticas derivados de eventos; las correcciones y eliminaciones actualizan sus consecuencias.
 - Estadísticas por equipo, jugador y partido, además de acumuladas.

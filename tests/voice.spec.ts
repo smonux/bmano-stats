@@ -2,6 +2,7 @@ import { selectShirtNumber, readShirtNumber } from './wheel-helpers';
 import { selectWheelOption } from './wheel-helpers';
 import { serveModels, prepareMatchVoice, selectEvent } from './voice-helpers';
 import { test, expect } from '@playwright/test';
+import { writeFile } from 'node:fs/promises';
 const models = process.env.VOICE_MODELS_DIR;
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -9,7 +10,7 @@ test.beforeEach(async ({ page }) => {
     localStorage.setItem('handball-welcome-v1', 'done');
   });
 });
-test('real Whistle and hybrid Needle: microphone to reviewed event, then reload offline', async ({
+test('real Whistle and ordered commands: microphone to reviewed event, then reload offline', async ({
   page,
   context,
 }, testInfo) => {
@@ -44,7 +45,7 @@ test('real Whistle and hybrid Needle: microphone to reviewed event, then reload 
       .fill(label === 'Equipo 1 (nuestro)' ? 'Águilas' : 'Leones');
   }
   await prepareMatchVoice(page);
-  expect(modelRequests).toBe(2);
+  expect(modelRequests).toBe(1);
   const preparation = page.getByRole('region', { name: 'Preparación de voz' });
   await preparation.getByRole('button', { name: 'Comprobar micrófono' }).click();
   await expect(preparation.getByRole('button', { name: 'Micrófono comprobado' })).toBeVisible();
@@ -70,7 +71,8 @@ test('real Whistle and hybrid Needle: microphone to reviewed event, then reload 
   const editor = page.getByRole('dialog', { name: 'Nuevo evento' });
   await expect(editor).toBeVisible({ timeout: 10000 });
   await expect(editor.getByText(/Transcripción original/)).toBeVisible();
-  await expect(editor.getByText(/Whistle:.*Reglas:.*Needle:/)).toBeVisible();
+  await expect(editor.getByText(/Whistle:.*Reglas:/)).toBeVisible();
+  await expect(editor.getByText(/Needle:/)).toHaveCount(0);
   await expect(
     editor
       .getByRole('listbox', { name: 'Equipo', exact: true })
@@ -86,21 +88,26 @@ test('real Whistle and hybrid Needle: microphone to reviewed event, then reload 
       }),
     )
     .toBeLessThan(2);
+  const actualProposal = {
+    transcripcion: await page.locator('.voice-transcript').first().textContent(),
+    tipo: await editor
+      .getByRole('listbox', { name: 'Evento', exact: true })
+      .getByRole('option', { selected: true })
+      .textContent(),
+    equipo: await editor
+      .getByRole('listbox', { name: 'Equipo', exact: true })
+      .getByRole('option', { selected: true })
+      .textContent(),
+    dorsal: await readShirtNumber(editor, 'Dorsal principal'),
+    tiempos: await editor.getByText(/Whistle:.*Reglas:/).textContent(),
+    advertencias: await editor.locator('.voice-warnings').allTextContents(),
+  };
+  await writeFile(
+    testInfo.outputPath('propuesta-real.json'),
+    JSON.stringify(actualProposal, null, 2),
+  );
   await testInfo.attach('propuesta-real.json', {
-    body: JSON.stringify({
-      transcripcion: await page.locator('.voice-transcript').first().textContent(),
-      tipo: await editor
-        .getByRole('listbox', { name: 'Evento', exact: true })
-        .getByRole('option', { selected: true })
-        .textContent(),
-      equipo: await editor
-        .getByRole('listbox', { name: 'Equipo', exact: true })
-        .getByRole('option', { selected: true })
-        .textContent(),
-      dorsal: await readShirtNumber(editor, 'Dorsal principal'),
-      tiempos: await editor.getByText(/Whistle:.*Reglas:.*Needle:/).textContent(),
-      advertencias: await editor.locator('.voice-warnings').allTextContents(),
-    }),
+    body: JSON.stringify(actualProposal),
     contentType: 'application/json',
   });
   // Recognition is a proposal: explicitly review/correct it before committing.

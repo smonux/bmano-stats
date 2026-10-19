@@ -3,7 +3,7 @@ import type { SpokenEvent } from '../event-types';
 import type { LanguageRules } from '../languages/types';
 
 export type TeamPerspective = 'equipo1' | 'equipo2';
-export type RulePlayer = { name: string; team: TeamPerspective };
+export type RulePlayer = { name: string; team: TeamPerspective; dorsal?: number | null };
 
 /** Public proposal keys are Spanish to preserve the dataset and editor contract. */
 export type RuleProposal = {

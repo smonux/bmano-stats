@@ -1,6 +1,7 @@
 import type { Language } from '../i18n';
 import { voiceKeywords } from '../i18n/voice';
 import { numberKey, spokenNumber } from './numbers';
+import { commandHints } from './commands/vocabulary';
 /** Match-specific Whistle hints: domain vocabulary plus only known names/numbers. */
 export function whistleKeywords(
   language: Language,
@@ -21,6 +22,7 @@ export function whistleKeywords(
   ].sort((a, b) => a - b);
   const values = [
     ...voiceKeywords[language],
+    ...commandHints[language],
     ...teams,
     ...players.map((player) => player.name),
     ...numbers.flatMap((number) => [String(number), spokenNumber(number, language)]),

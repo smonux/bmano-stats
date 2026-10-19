@@ -49,6 +49,7 @@ export function toVoiceDraft(
   draft.teamId = resolveTeam(parsedProposal.equipo, context);
   if (!draft.type) {
     warnings.push('Tipo de evento sin resolver.');
+    draft.primaryDorsal = resolveDorsal(primaryReference, draft.teamId, context.data);
   }
   if (!draft.teamId) {
     warnings.push('Equipo sin resolver. No se ha supuesto equipo 1 ni equipo 2.');

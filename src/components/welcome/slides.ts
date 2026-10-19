@@ -13,7 +13,7 @@ export const slides = [
   },
   {
     title: 'Pulsa, habla, revisa y guarda',
-    body: 'Una jugada por grabación. Mantén pulsado para hablar y suelta para terminar. Whistle transcribe y Needle propone los datos del evento; tú revisas y guardas. La entrada manual sigue disponible.',
+    body: 'Una jugada por grabación: evento, equipo, jugador 1, jugador 2 y metadatos. Mantén pulsado para hablar y suelta para terminar. Whistle transcribe y las reglas proponen los datos; tú revisas y guardas.',
     icon: Mic,
   },
   {

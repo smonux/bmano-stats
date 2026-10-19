@@ -31,10 +31,11 @@ export async function prepareMatchVoice(page: Page) {
     'Español',
   );
   await expect(
-    preparation
-      .getByRole('listbox', { name: 'Versión de Needle', exact: true })
-      .getByRole('option', { selected: true }),
-  ).toContainText('12 capas');
+    preparation.getByRole('listbox', { name: 'Versión de Needle', exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    preparation.getByRole('listbox', { name: 'Equipo por defecto', exact: true }),
+  ).toHaveCount(0);
   await preparation.getByRole('button', { name: 'Cargar Cactus', exact: true }).click();
   await expect(preparation.getByText('Cactus listo', { exact: true })).toBeVisible({
     timeout: 60000,

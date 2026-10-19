@@ -1,65 +1,65 @@
 # Captura local por voz
 
-## Preparación y uso durante el partido
+## Preparación y uso
 
-Antes del partido, elige **Idioma de voz**, **Versión de Needle** y **Equipo por defecto**, y pulsa **Cargar Cactus** en Nuevo partido o Ajustes. Inicialmente se usan 12 capas y nuestro equipo (equipo 1). Se restauran las preferencias previas válidas. El selector ofrece 4, 8, 12 y 20 capas; las versiones pequeñas son las mismas variantes experimentales preparadas anteriormente, sin entrenamiento. No hay selector de Whistle.
+Antes del partido, elige **Idioma de voz** y pulsa **Cargar Cactus** en Nuevo partido o Ajustes. Se descarga y carga únicamente Whistle. Se mantiene el modelo, revisión, parámetros de transcripción y audio de Whistle; los siete idiomas son español, inglés, alemán, francés, italiano, neerlandés y polaco. No se usa Needle para preparar ni interpretar y las preferencias antiguas de capas/equipo por defecto no se aplican.
 
-La preparación carga Whistle y solo el Needle seleccionado. Se comprueban ambos archivos reales y sus tamaños en CacheStorage; el SDK verifica SHA-256 al cargar. Un Needle de otra profundidad no satisface la preparación. Cambiar capas invalida la sesión y exige preparar la variante elegida; cambiar idioma o equipo por defecto reutiliza los archivos ya almacenados. Los controles de configuración se bloquean durante la preparación y en el partido.
+La preparación comprueba la entrada real de Whistle y su tamaño en CacheStorage; el SDK verifica SHA-256 al cargar. Una caché ausente o truncada no permite preparar la voz. Cambiar idioma reutiliza el mismo archivo. En un partido en curso solo se permite cargar el archivo local, sin descargar modelos. El requisito de preparar voz antes de iniciar se conserva.
 
-Whistle conserva su modelo, revisión, configuración de audio y los siete idiomas: español, inglés, alemán, francés, italiano, neerlandés y polaco. Se amplían sus pistas `keywords` con vocabulario de balonmano, nombres de los dos equipos, nombres conocidos y dorsales reales de ambas plantillas, en cifras y palabras del idioma elegido. Se eliminan duplicados y no se corta arbitrariamente la lista en 80 entradas. No se añaden los cien dorsales posibles: únicamente los conocidos en ese partido. Estas pistas ayudan al reconocimiento, pero no garantizan su precisión.
+Whistle recibe palabras completas de balonmano, colores de tarjeta, equipos, nombres conocidos y dorsales reales de ambas plantillas en cifras y palabras. No se pasan raíces ni expresiones regulares como pistas y no se añaden los cien dorsales si no están en la plantilla. Estas pistas no garantizan la transcripción. El SDK 0.3.0 expone texto y opcionalmente palabras con probabilidad; no ofrece una lista de palabras alternativas para corregir cada posición. No se inventan esas alternativas ni se cambia la configuración de Whistle para obtenerlas.
 
-**Comprobar micrófono** solicita permiso y cierra inmediatamente las pistas. La publicación por Tailscale Serve usa HTTPS. Durante el partido, **Voz** es push to talk directo: mantener pulsado y soltar para terminar, también con Espacio o Intro. No hay segundo menú ni grabación con un toque. El límite es 20 segundos y el minuto se toma al comenzar la captura. Whistle trabaja en su worker; mientras transcribe se muestra un indicador animado y sigue disponible la entrada manual.
+**Comprobar micrófono** solicita permiso y cierra las pistas. **Voz** sigue siendo push to talk directo: mantener pulsado y soltar, también con Espacio o Intro. El límite es veinte segundos y el tiempo/minuto del evento se fija al comenzar. Mientras transcribe aparece el indicador animado y la entrada manual permanece disponible. El audio no se conserva ni se envía a un servicio externo.
 
-El editor conserva la transcripción literal y muestra por separado **Whistle en segundos**, **Reglas en milisegundos** y **Needle en segundos**. Durante ambas inferencias hay un indicador animado y sigue disponible la entrada manual. Se revisa antes de guardar; el marcador no cambia por recibir una propuesta. El audio no se conserva ni se envía a un servicio externo. Al recargar un partido solo se cargan archivos locales: si falta cualquiera de los dos modelos seleccionados, se deshabilita voz y aparece la alerta de preparación.
+## Forma obligatoria del comando
 
-## Intérprete híbrido
+**Evento → equipo → jugador principal → jugador relacionado → metadatos.**
 
-El recorrido actual usa `engine.ts`, `event-routing.ts`, `play-schema.ts` e `hybrid.ts`. Se mantiene una sesión de cada modelo en workers, con SDK `cactus-needle` 0.3.0. Las capturas de Needle son independientes entre sí y tienen un límite de 192 tokens y 45 segundos. No se ejecutan herramientas: solo se reciben datos para revisión.
+El evento debe aparecer al principio. Se admiten palabras, raíces y expresiones del vocabulario del idioma, con aproximación acotada de palabras de evento. No se interpreta una narración ni se reordenan funciones por verbos. La primera referencia explícita de equipo posterior al evento prevalece; si falta, se usa siempre el equipo 1. Nuestro/nosotras/nosotros se refieren a quien graba; rival/ellos/suyo al equipo 2, con equivalentes por idioma. Local y visitante no cambian esta perspectiva.
 
-1. **Evento por reglas.** Se reutilizan las palabras clave de `languages/` y la detección de `analysis/events.ts`, con aproximación acotada cuando no hay coincidencia literal. Se busca en toda la transcripción, incluido el comienzo habitual de la orden. Se distingue el penalti de lanzamiento del cometido; negaciones y varias acciones pueden dejar el tipo pendiente. No se consulta un catálogo de frases. Un signo de interrogación aislado no impide enviar un evento identificado a Needle.
-2. **Datos mediante una sola inferencia.** Needle recibe el texto original, sin convertir dorsales previamente, y una única herramienta correspondiente al evento. Cada evento tiene un esquema fijo: no se quitan nombre, asistente o penalti porque falte una palabra en la transcripción. No se aplican después las reglas deterministas de extracción de equipo o participantes.
-3. **Gol.** La herramienta `gol` contiene equipo, dorsal, nombre, dorsal_asistente, nombre_asistente y penalti. Solo equipo es obligatorio; los dorsales están limitados a 0–99. La aplicación añade el evento y adapta los campos de asistencia al contrato del editor. No se exponen tarjetas ni infracciones.
-4. **Perspectiva y valores por defecto.** Equipo es el del actor principal: goleador, portero, infractor, etc. Las instrucciones distinguen «gol nuestro» de «nos han marcado». El equipo válido devuelto por Needle se respeta. Si falta, es desconocido o inválido, se aplica el elegido en preparación y se advierte explícitamente en revisión. No se exige un dorsal para exclusiones. El asistente de gol y quien entra en una sustitución pertenecen al mismo equipo que el principal.
-5. **Validación y fallos.** Se validan campos, tipos, rango y pertinencia al evento. Una llamada retenida por baja confianza se muestra como borrador incierto. Respuestas múltiples, de otra herramienta, negadas o marcadas sin respaldo no rellenan participantes. Si el modelo falla, se conserva texto, tipo identificado y equipo por defecto para completar manualmente. Nunca se guardan eventos automáticamente.
+Los jugadores se asignan por aparición: se consume cada posición antes de examinar la siguiente, sin promover un dorsal conocido que aparezca después. Se reconocen nombres conocidos completos o partes únicas y dorsales 0–99, en cifras y palabras. El nombre se busca en el equipo del rol: asistencia y sustitución en el mismo equipo, lanzador de una parada y demás relacionados en el contrario. Los participantes adicionales se descartan. No hay marcadores de hueco: si solo aparece un jugador, ocupa el primer rol. Pasivo no guarda jugadores.
 
-El intérprete determinista completo permanece en `deterministic.ts` como referencia y para sus pruebas históricas. Su evaluación no mide el modo híbrido actual. Los experimentos previos de Needle quedan en `docs/benchmarks/needle/`. No se ha entrenado ningún modelo.
+Las coincidencias aproximadas de nombres requieren al menos cuatro letras en el nombre y cuatro en la palabra examinada. Para cuatro letras se permite una edición; para cinco a siete, dos; para más de siete, tres. Se usa Levenshtein y se advierte la aproximación. Los empates entre jugadores quedan sin resolver. Ana y Eva se admiten literalmente, pero no por parecido con palabras cortas. Los números de minutos y metros no se convierten en dorsales.
 
-## Ejemplos de los siete idiomas
+Tarjetas: **amarilla** registra amarilla; **roja** registra descalificación; **azul** registra descalificación con azul. «Tarjeta» sin color conserva el equipo/dorsal y deja el tipo pendiente. Las expresiones de siete metros son metadato en gol, parada y fallo; «siete metros» al principio identifica penalti cometido. Pasos, dobles y pisando identifican infracción con su subtipo; «infracción» permite dar el subtipo al final.
+
+| Comando | Resultado |
+| --- | --- |
+| Gol nuestro veintitrés siete penalti | Goleador 23, asistente 7, gol de 7 m |
+| Parada rival uno nueve | Portero rival 1, lanzador nuestro 9 |
+| Cambio nuestro siete nueve | Sale 7, entra 9 |
+| Tarjeta nuestra siete azul | Descalificación azul de nuestro 7 |
+| Infracción nuestra siete pasos | Pasos de nuestro 7 |
+
+No se admite invertir Sale/Entra ni anteponer una asistencia al gol. Nombres compuestos consecutivos y números compuestos pueden tener límites ambiguos, incluso con transcripción correcta. Usar dorsales y repetir «dorsal»/el marcador de número del idioma entre participantes ayuda a separarlos. No se promete reconocer esos casos sin ambigüedad.
 
 | Idioma | Gol propio | Parada rival con lanzador propio |
 | --- | --- | --- |
-| ES | Gol nuestro, dorsal veintiuno | Parada rival, dorsal uno; tiro de nuestro nueve |
-| EN | Our goal, number twenty-one | Save their number one; shot from our number nine |
-| DE | Tor für uns, Nummer einundzwanzig | Parade Gegner Nummer eins; Wurf von unser Nummer neun |
-| FR | But pour nous, numéro vingt et un | Arrêt adversaire numéro un; tir de notre numéro neuf |
-| IT | Gol nostro, numero ventuno | Parata loro numero uno; tiro di nostro numero nove |
-| NL | Doelpunt voor ons, rugnummer eenentwintig | Redding tegenstander rugnummer een; schot van ons rugnummer negen |
-| PL | Nasza bramka, numer dwadzieścia jeden | Obrona rywala numer jeden; rzut zawodnika nasz numer dziewięć |
+| ES | Gol nuestro 21 | Parada rival 1 9 |
+| EN | Goal our 21 | Save their 1 9 |
+| DE | Tor unser 21 | Parade Gegner 1 9 |
+| FR | But notre 21 | Arrêt adversaire 1 9 |
+| IT | Gol nostro 21 | Parata loro 1 9 |
+| NL | Doelpunt ons 21 | Redding tegenstander 1 9 |
+| PL | Bramka nasza 21 | Obrona rywala 1 9 |
 
-Los comandos breves y explícitos son más predecibles que una narración implícita. Se cubren las formas cardinales 0–99, variantes de género comunes y números compuestos; francés incluye septante/huitante/octante/nonante. La revisión sigue siendo necesaria con nombres nuevos, referencias pronominales ambiguas y expresiones sin palabra de acción reconocible.
+## Revisión y código
 
-Referencias lingüísticas usadas para revisar números compuestos: [Duden](https://www.duden.de/sprachwissen/rechtschreibregeln/getrennt-und-zusammenschreibung), [Académie française](https://www.dictionnaire-academie.fr/article/QDL078), [Treccani](https://www.treccani.it/vocabolario/ventuno/) y [Zintegrowana Platforma Edukacyjna](https://zpe.gov.pl/a/jezykowy-swiat-liczb/DpbQ4CKTd).
+Nunca se guarda al reconocer. El editor conserva la transcripción original y muestra **Whistle en segundos** y **Reglas en milisegundos**. La revisión permite corregir datos; sin evento o con infracción incompleta se guarda pendiente conforme a las reglas existentes. Un fallo conserva la transcripción y el equipo 1 para completar manualmente.
 
-## Verificación
+El recorrido activo es `engine.ts` → `commands/index.ts`: `events.ts` consume el evento inicial; `vocabulary.ts` define raíces por idioma; `players.ts` asigna participantes por posición; `distance.ts` contiene Levenshtein. Se reutilizan tokenización, referencias explícitas de equipo, números y contrato del editor. `deterministic.ts`, `event-routing.ts`, `play-schema.ts` e `hybrid.ts` se conservan como experimentos históricos y para comparar regresiones; no procesan la captura activa. Los artefactos antiguos de Needle y sus scripts experimentales se conservan, pero el cliente no los descarga ni carga.
+
+## Verificación y límites
 
 ```sh
 npm test
 npm run build
-npm run voice:evaluate
+npm run voice:evaluate:commands
 node scripts/download-voice-test-models.mjs
 VOICE_MODELS_DIR="$PWD/node_modules/.cache/voice-models" npm run test:e2e
 ```
 
-`voice:evaluate` ejecuta el intérprete determinista anterior sobre las 645 transcripciones sintéticas españolas y publica [resultados y conclusiones](benchmarks/reglas/LEEME.md). No ejecuta Whistle ni Needle y no mide reconocimiento acústico ni precisión del híbrido. Las reglas se ajustaron con ese corpus completo; son resultados de regresión.
+Las pruebas de comandos cubren los doce eventos, colores y dorsales numéricos y hablados 0–99 en siete idiomas; también nombres de hombre/mujer, aproximaciones, empates, perspectiva, orden mixto conocido/desconocido y metadatos. Los recorridos de navegador usan el Whistle real con audio sintético, cambios de idioma y recarga sin conexión; basta `whistle.cact`. `CHROMIUM_PATH` indica el ejecutable de Chromium.
 
-Las pruebas de código cubren selección del evento, esquemas por evento, valores por defecto y validación de las respuestas de Needle, además de las regresiones anteriores y las pistas de Whistle. Los recorridos de navegador usan ambos modelos reales, audio sintético, selección de capas, cambios de idioma y recarga sin conexión. Requieren Chromium y `VOICE_MODELS_DIR` con `whistle.cact` y `needle3.cact`; `CHROMIUM_PATH` permite indicar el ejecutable. Los modelos pequeños se sirven desde `dist/models/`.
+`voice:evaluate:commands` ejecuta el parser nuevo sobre las **645 transcripciones sintéticas originales**, sin retocar etiquetas ni extraer plantillas de las respuestas. Publica [resultados y límites](benchmarks/comandos/LEEME.md). Ese corpus contiene narración libre, participantes invertidos, nombres sin plantilla y equipo omitido etiquetado como desconocido: mide incompatibilidades con el contrato anterior, no precisión sobre comandos válidos. `voice:evaluate` conserva la evaluación del parser antiguo. Ninguna mide audio ni precisión en Android.
 
-`scripts/benchmark-hybrid-node.ts` permite comparar las mismas cuatro frases sintéticas con pesos reales y el esquema actual; conserva tiempos y respuestas originales, incluidas sus advertencias. Son ejecuciones individuales de texto en Node/WASM del servidor, sin audio ni extrapolación al teléfono. No sustituyen una evaluación con transcripciones reales independientes.
-
-No se ha evaluado todavía con Android/iOS físicos, ruido de pista ni un corpus acústico equivalente en los otros seis idiomas. La nueva extracción con Needle debe medirse en precisión y latencia; conservar las reglas solo para el evento no garantiza corregir una transcripción errónea.
-
-### Sustituciones
-
-«Cambio» y «sustitución» registran una sustitución. Ejemplo: «Cambio nuestro, sale el 6 y entra el 9», o «Cambio nuestro, entra el 9 por el 6». Quien sale es el participante principal y quien entra el relacionado, siempre del mismo equipo. Ambos campos pueden quedar desconocidos. La rueda manual ofrece «Sustitución» con «Sale» y «Entra». Las estadísticas cuentan una sustitución del equipo y las entradas y salidas de cada jugador, sin calcular minutos jugados. Los dos participantes aparecen en el registro y en el PDF; las copias ZIP/JSON los conservan.
-
-El vocabulario de sustituciones se incluye en las palabras clave que recibe Whistle y en las reglas de los siete idiomas. El dataset español añade 15 familias (45 muestras) de cambios, incluidas entradas antes que salidas, nombres y dorsales, equipo desconocido y participantes no mencionados.
+No se ha entrenado ningún modelo. Falta validar el protocolo con grabaciones humanas independientes y ruido de pista, además de Android/iOS físicos. La velocidad de texto en Node no acredita el tiempo total ni el consumo de memoria de un móvil.

@@ -141,6 +141,22 @@ test('invalid or withheld interpretation preserves a pending draft', () => {
   }
 });
 
+test('a colourless card keeps its recognized shirt and team while the event remains pending', () => {
+  expect(
+    toVoiceDraft(
+      'tarjeta nuestra siete',
+      { evento: 'desconocido', equipo: 'equipo1', dorsal: 7 },
+      context,
+    ).draft,
+  ).toMatchObject({
+    type: null,
+    teamId: 'a',
+    primaryDorsal: '7',
+    rawText: 'tarjeta nuestra siete',
+    metadata: {},
+  });
+});
+
 test('recorder perspective resolves across all seven Whistle languages without assuming venue', () => {
   for (const word of [
     'our',

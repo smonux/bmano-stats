@@ -1,6 +1,6 @@
 # Cómo leer y modificar el código
 
-La aplicación usa React y TypeScript. Los datos y las consecuencias estadísticas se guardan y calculan en el navegador. Whistle transcribe el audio, las reglas seleccionan el evento y Needle propone sus datos con un esquema específico.
+La aplicación usa React y TypeScript. Los datos y las consecuencias estadísticas se guardan y calculan en el navegador. Whistle transcribe el audio y un parser determinista interpreta comandos con orden fijo antes de la revisión.
 
 ## Por dónde empezar
 
@@ -24,12 +24,15 @@ La aplicación usa React y TypeScript. Los datos y las consecuencias estadístic
 | Tablas e índices IndexedDB | `src/data/connection.ts` |
 | Operaciones y transacciones por entidad | `src/data/repository/` |
 | Transcripción con Whistle | `src/voice/engine.ts` |
-| Recorrido híbrido activo | `src/voice/event-routing.ts`, `src/voice/play-schema.ts`, `src/voice/hybrid.ts` |
+| Comandos de voz activos: evento, equipo, jugadores, metadatos | `src/voice/commands/` |
+| Experimento híbrido anterior | `src/voice/event-routing.ts`, `src/voice/play-schema.ts`, `src/voice/hybrid.ts` |
 | Intérprete determinista anterior y regresiones | `src/voice/deterministic.ts` |
 
 ## Intérprete determinista anterior
 
-`interpretDeterministically(text, language, teams, players)` conserva el comportamiento anterior y sus regresiones. La captura activa solo reutiliza contexto y detección del evento; el resto de datos los extrae Needle. El intérprete anterior coordina estas fases:
+`interpretCommand(text, language, teams, players)` en `voice/commands/index.ts` es el parser activo. `events.ts` consume el evento al principio; `vocabulary.ts` mantiene las raíces por idioma y las palabras completas adicionales para Whistle; `players.ts` recorre nombres y números en orden sin adelantar a los conocidos; `distance.ts` implementa Levenshtein. La aridad y equipo del relacionado proceden de las definiciones de evento. Equipo 1 es el valor por defecto. No se soportan huecos ni reordenación por verbos. Consulta [voz.md](voz.md) para el contrato, tarjetas y límites de aproximación.
+
+`interpretDeterministically(text, language, teams, players)` conserva el comportamiento anterior y sus regresiones; no procesa la captura activa. El intérprete anterior coordina estas fases:
 
 1. **Contexto** (`analysis/context.ts`): conserva el texto original, crea tokens y localiza referencias a equipos y nombres conocidos. Estas referencias también evitan confundir un nombre con una palabra de evento.
 2. **Tipo de enunciado** (`analysis/utterance.ts`): distingue preguntas, dudas, sanciones de tipo incierto y cancelaciones. El orden de estas decisiones forma parte del comportamiento existente.
@@ -93,13 +96,13 @@ npm run voice:evaluate
 
 `voice:compare` exporta temporalmente el código de la referencia Git `6805b02`, compara resultados, vocabulario, números y pistas de Whistle, y mide ambos intérpretes en el mismo proceso. Se puede indicar otra referencia: `npm run voice:compare -- <referencia-git>`. Alterna doce rondas del corpus con ambos intérpretes ya calentados, publica `docs/benchmarks/reglas/refactor.json` y elimina su directorio temporal. La referencia debe tener la API y los eventos compatibles con el corpus actual.
 
-`voice:evaluate` compara el intérprete determinista anterior con las etiquetas del dataset y publica sus errores. Ambas mediciones son de texto en Node; no miden el modo híbrido. `scripts/benchmark-hybrid-node.ts` ejecuta pesos reales de Needle con los esquemas actuales; el tiempo de Whistle y el audio de un partido requieren su propia evaluación.
+`voice:evaluate` compara el intérprete determinista anterior con las etiquetas del dataset. `voice:evaluate:commands` compara el parser de comandos con esas mismas frases libres, sin retocar etiquetas, y documenta las incompatibilidades del contrato. Son mediciones de texto en Node, sin audio. `scripts/benchmark-hybrid-node.ts` conserva el experimento con pesos reales de Needle; el tiempo de Whistle requiere su propia evaluación.
 
 Las pruebas de navegador comprueban los recorridos completos, incluida la voz, los PDF y las copias ZIP. Se ejecutan con `npm run test:e2e`; los requisitos de Chromium y los archivos de Whistle están descritos en [voz.md](voz.md).
 
 ## Experimentos históricos
 
-`src/voice/legacy/` contiene los auxiliares y pruebas de los antiguos experimentos con Needle. Los scripts históricos los importan desde esa carpeta. El recorrido activo usa `engine.ts` → `event-routing.ts` (solo tipo de evento) → `play-schema.ts` (esquema fijo por evento) → Needle → `hybrid.ts` (validación, adaptación y equipo por defecto). `deterministic.ts` conserva el intérprete completo anterior como referencia; ya no extrae los datos de la captura activa. Consulta `voz.md` para preparación, capas y valores por defecto.
+`src/voice/legacy/` contiene los auxiliares y pruebas de antiguos experimentos con Needle. También se conservan `event-routing.ts`, `play-schema.ts` e `hybrid.ts` y sus pruebas. El recorrido activo usa `engine.ts` → `commands/index.ts`, sin sesiones de Needle. `deterministic.ts` conserva el intérprete libre anterior como referencia. Consulta `voz.md` para preparación y comandos.
 
 ## Captura y revisión de voz
 
@@ -107,7 +110,7 @@ Las pruebas de navegador comprueban los recorridos completos, incluida la voz, l
 
 `voice/capture-context.ts` fija la perspectiva y el instante; `voice/resolve-references.ts` resuelve equipos y dorsales dentro del equipo correspondiente; `voice/team-references.ts` contiene los alias. `interpretation.ts` conserva la entrada pública de este adaptador. Los números se organizan en `voice/numbers/`: normalización, escritura canónica, diccionario de variantes y lectura de intervalos. `numbers.ts` conserva la API anterior.
 
-`VoicePreparation` presenta descarga, idioma, capas de Needle y equipo por defecto; `useMicrophoneCheck` comprueba el permiso y cierra el micrófono. `voice/setup.ts` mantiene la preparación compartida y sesiones reutilizables. `needle-model.ts` construye la misma URL/hash para carga y comprobación de caché. `voice/recorder.ts` gestiona las pistas y el contexto de audio; `public/voice-recorder.js` produce fragmentos PCM y confirma su vaciado. El formato automático incluye también este worklet.
+`VoicePreparation` presenta descarga de Whistle, idioma y formato obligatorio; `useMicrophoneCheck` comprueba el permiso y cierra el micrófono. `voice/setup.ts` mantiene la preparación compartida y la sesión reutilizable; `readiness.ts` comprueba la caché real de Whistle. `needle-model.ts` queda para los experimentos anteriores. `voice/recorder.ts` gestiona pistas y contexto de audio; `public/voice-recorder.js` produce PCM y confirma su vaciado. El formato automático incluye este worklet.
 
 ## Presentación, controles e informes
 

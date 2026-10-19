@@ -7,11 +7,7 @@ import {
   prepareVoice,
   refreshVoiceFiles,
   useVoiceSetup,
-  chooseNeedleDepth,
-  chooseDefaultVoiceTeam,
 } from '../voice/setup';
-import { NEEDLE_DEPTHS, needleArtifacts, needleDepth } from '../voice/model-artifacts';
-import type { TeamPerspective } from '../voice/analysis/types';
 import { microphoneProblem } from '../voice/readiness';
 import { ErrorMessage } from './ui';
 import { WheelPicker } from './WheelPicker';
@@ -61,35 +57,9 @@ export function VoicePreparation({ live = false }: { live?: boolean }) {
           }
         }}
       />
-      <WheelPicker
-        label={tr('Versión de Needle')}
-        value={String(setup.needleDepth)}
-        disabled={setup.phase === 'loading' || live}
-        options={NEEDLE_DEPTHS.map((depth) => ({
-          value: String(depth),
-          label: tr('{layers} capas · {size} MB', {
-            layers: depth,
-            size: (needleArtifacts[depth].size / 1e6).toFixed(1),
-          }),
-        }))}
-        change={(depth) => void chooseNeedleDepth(needleDepth(depth))}
-      />
-      <p className="caption">
-        {tr('Menos capas: más rapidez. Más capas: mayor capacidad de interpretación.')}
-      </p>
-      <WheelPicker<TeamPerspective>
-        label={tr('Equipo por defecto')}
-        value={setup.defaultTeam}
-        disabled={setup.phase === 'loading' || live}
-        options={[
-          { value: 'equipo1', label: tr('Nuestro equipo (equipo 1)') },
-          { value: 'equipo2', label: tr('Rival (equipo 2)') },
-        ]}
-        change={(team) => void chooseDefaultVoiceTeam(team)}
-      />
       <p className="caption">
         {tr(
-          'Whistle transcribe, las reglas eligen el evento y Needle extrae sus datos. Si no resuelve el equipo, se aplica el elegido por defecto.',
+          'Di: evento, equipo, jugador 1, jugador 2 y metadatos. Sin equipo, se usa el equipo 1. En cambios: primero sale y después entra.',
         )}
       </p>
       {setup.phase === 'loading' ? (

@@ -30,6 +30,9 @@ test('Whistle receives sport words, names and only known 0–99 numbers in digit
       'sustitución',
       'sale',
       'entra',
+      'tarjeta',
+      'detención',
+      'expulsión',
     ]),
   );
   expect(whistleKeywords('fr', [], players)).toContain('quatre-vingt-dix-neuf');

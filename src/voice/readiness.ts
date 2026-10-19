@@ -1,21 +1,17 @@
 import { DEFAULT_MODEL, DEFAULT_SPEECH_MODEL } from 'cactus-needle/browser';
-import { DEFAULT_NEEDLE_DEPTH, type NeedleDepth } from './model-artifacts';
-import { needleModel } from './needle-model';
 
 /** Cache layout pinned to cactus-needle 0.3.0. Presence is rechecked, never a localStorage flag. */
-export async function localModelsPresent(
-  depth: NeedleDepth = DEFAULT_NEEDLE_DEPTH,
-): Promise<boolean> {
+export async function localModelsPresent(): Promise<boolean> {
   if (!globalThis.caches) {
     return false;
   }
-  // Both model kinds share the SDK's revision-keyed cache namespace.
+  // Whistle keeps the SDK's revision-keyed cache namespace even without Needle inference.
   const name = `cactus-needle-${DEFAULT_MODEL.revision}`;
   if (!(await caches.has(name))) {
     return false;
   }
   const cache = await caches.open(name);
-  for (const model of [DEFAULT_SPEECH_MODEL, needleModel(depth)]) {
+  for (const model of [DEFAULT_SPEECH_MODEL]) {
     const key = new URL(model.url);
     key.searchParams.set('__needle_sha256', model.sha256);
     const response = await cache.match(key.href);

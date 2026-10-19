@@ -80,10 +80,9 @@ export function EventEditor({
         <div className="event-editor-fields">
           {voiceTimings && (
             <p className="caption">
-              {tr('Whistle: {whistle} s · Reglas: {rules} ms · Needle: {needle} s', {
+              {tr('Whistle: {whistle} s · Reglas: {rules} ms', {
                 whistle: (voiceTimings.whistleMs / 1000).toFixed(1),
                 rules: voiceTimings.rulesMs.toFixed(1),
-                needle: (voiceTimings.needleMs / 1000).toFixed(1),
               })}
             </p>
           )}

@@ -21,6 +21,7 @@ export function numberAt(
   words: readonly string[],
   start: number,
   language: Language,
+  allowAdjacent = false,
 ): NumberSpan | undefined {
   const dictionary = numberDictionary(language);
   const first = words[start];
@@ -51,8 +52,7 @@ export function numberAt(
     // Prevent a partial reading of 'one hundred' or 'three four'.
     if (
       LARGE_NUMBER_WORDS.test(words[end] ?? '') ||
-      dictionary.has(words[end] ?? '') ||
-      /^\d+$/.test(words[end] ?? '')
+      (!allowAdjacent && (dictionary.has(words[end] ?? '') || /^\d+$/.test(words[end] ?? '')))
     ) {
       while (
         end < words.length &&

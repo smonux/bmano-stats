@@ -1,8 +1,7 @@
 import type { Language } from '../i18n';
 import { tr } from '../i18n';
 import { whistleKeywords } from './keywords';
-import { preparedEngine, discardVoiceEngine, voiceState } from './setup';
-import { routeVoiceEvent } from './event-routing';
+import { preparedEngine, discardVoiceEngine } from './setup';
 import { toVoiceDraft, type CaptureContext } from './interpretation';
 import type { Recording } from './recorder';
 
@@ -57,6 +56,7 @@ export async function recognizeCapture(
     .filter((player) => player.name)
     .map((player) => ({
       name: player.name,
+      dorsal: player.dorsal,
       team:
         player.teamId === context.match.localTeamId ? ('equipo1' as const) : ('equipo2' as const),
     }));
@@ -67,11 +67,12 @@ export async function recognizeCapture(
     timings.rulesMs = response.timing.rulesMs;
     timings.needleMs = response.timing.needleMs;
   } catch (error) {
-    timings.needleMs = performance.now() - interpretationStartedAt;
+    timings.rulesMs = performance.now() - interpretationStartedAt;
     // Keep a usable transcript even if interpretation fails; the editor can complete it.
-    const routed = routeVoiceEvent(text, language, teams, players);
-    proposal = { evento: routed.event ?? 'desconocido', equipo: voiceState().defaultTeam };
-    warnings = [...routed.warnings, 'Se ha aplicado el equipo por defecto. Revisa el equipo.'];
+    proposal = { evento: 'desconocido', equipo: 'equipo1' };
+    warnings = [
+      'No se pudo interpretar una única jugada. Conserva la transcripción y completa el evento.',
+    ];
     await discardVoiceEngine();
     if (callbacks.isActive()) {
       callbacks.onError(error);
