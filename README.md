@@ -74,13 +74,11 @@ Vite acepta cualquier nombre de host (`allowedHosts: true`) en desarrollo y vist
 
 ## Modelos y publicación estática
 
-Antes del partido se eligen idioma, versión de Needle (4, 8, 12 o 20 capas; 12 inicialmente) y equipo por defecto (nuestro equipo inicialmente). Se cargan Whistle y únicamente la variante elegida de Needle. Whistle mantiene su modelo y configuración; recibe nombres y dorsales conocidos de ambas plantillas como pistas junto al vocabulario de balonmano.
+Antes del partido se elige idioma y se carga Whistle. Mantiene su modelo y configuración; recibe nombres y dorsales conocidos de ambas plantillas como pistas junto al vocabulario de balonmano. Needle no se carga ni interpreta en el flujo activo.
 
-Las reglas identifican solo el evento; si no hay coincidencia literal, intentan una aproximación acotada. Needle recibe la transcripción original y un esquema fijo específico del evento para extraer equipo, participantes y metadatos. Nuestro/nosotros es equipo 1 y rival/ellos equipo 2, según quién realiza la acción. Si Needle no resuelve el equipo se aplica el elegido por defecto, con advertencia. Consulta la [guía de voz](docs/voz.md).
+Las reglas interpretan comandos en orden evento, equipo, jugador principal, relacionado y metadatos. Nuestro/nosotros es equipo 1 y rival/ellos equipo 2, desde la perspectiva de quien graba. Sin referencia de equipo se usa el equipo 1. Consulta la [guía de voz](docs/voz.md).
 
-`npm run build` prepara y verifica las variantes de Needle de 4/8/12 capas y genera `dist/`, incluidos los archivos estáticos en `models/`. Se publica ese directorio con Tailscale Serve; no necesita Node/Vite en producción. Whistle y Needle de 20 capas se descargan desde revisiones fijadas en Hugging Face. El navegador conserva los modelos para trabajar sin conexión. No se entrena ningún modelo.
-
-`npm run voice:evaluate` conserva la evaluación del intérprete determinista anterior sobre el dataset español: sus [métricas y límites](docs/benchmarks/reglas/LEEME.md) no miden la precisión del modo híbrido actual ni del audio.
+`npm run build` genera `dist/` y todavía prepara y verifica los artefactos históricos de Needle de 4/8/12 capas en `models/`; el cliente activo no los descarga ni carga. Se publica ese directorio con Tailscale Serve; no necesita Node/Vite en producción. Whistle se descarga desde una revisión fijada en Hugging Face y el navegador lo conserva para trabajar sin conexión. No se entrena ningún modelo.
 
 ## Compartir un partido
 
@@ -88,13 +86,9 @@ La vista de estadísticas de un partido muestra el tanteo por periodo: minutos e
 
 La generación ocurre en un worker para mantener libre la interfaz. Cuando el navegador admite compartir archivos se abre la hoja nativa; en los demás se descarga el PDF. El informe funciona sin conexión después de almacenar la aplicación, sus fuentes y workers. No se envían los datos a un servidor para crear el PDF.
 
-## Dataset de voz en español
-
-El [dataset de frases](datasets/voz-es/README.md) contiene 645 ejemplos sintéticos anotados para los 12 eventos, con dorsales en cifras y palabras y nombres ficticios de hombre y de mujer. Incluye casos de rechazo y particiones separadas por familia. Está disponible como [ZIP](datasets/voz-es.zip). `npm run dataset:build` regenera los archivos y `npm run dataset:check` valida su cobertura y correspondencia con el esquema actual. Su preparación no entrena modelos ni modifica Whistle.
-
 ## Trabajar con el código
 
-`npm run format` aplica el formato automático; `npm run format:check` lo comprueba. TypeScript también detecta importaciones y parámetros sin uso. La [guía de lectura](docs/lectura-del-codigo.md) explica las pantallas, las fases de voz y cómo añadir una palabra clave. `npm run voice:compare` compara el intérprete actual con la referencia anterior a la refactorización, incluidos resultados, advertencias, vocabularios y rendimiento de texto.
+`npm run format` aplica el formato automático; `npm run format:check` lo comprueba. TypeScript también detecta importaciones y parámetros sin uso. La [guía de lectura](docs/lectura-del-codigo.md) explica las pantallas, las fases de voz y cómo añadir una palabra clave. Las pruebas del protocolo de voz están en `src/voice/commands/commands.test.ts`; el corpus anterior y sus herramientas de evaluación se han retirado.
 
 La [auditoría integral](docs/refactorizacion-integral.md) registra el alcance y las comprobaciones de equivalencia. Las [indicaciones de interfaz posteriores](docs/tareas-pendientes.md) se completaron después de cerrar esa refactorización.
 

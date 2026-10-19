@@ -53,13 +53,12 @@ El recorrido activo es `engine.ts` → `commands/index.ts`: `events.ts` consume 
 ```sh
 npm test
 npm run build
-npm run voice:evaluate:commands
 node scripts/download-voice-test-models.mjs
 VOICE_MODELS_DIR="$PWD/node_modules/.cache/voice-models" npm run test:e2e
 ```
 
 Las pruebas de comandos cubren los doce eventos, colores y dorsales numéricos y hablados 0–99 en siete idiomas; también nombres de hombre/mujer, aproximaciones, empates, perspectiva, orden mixto conocido/desconocido y metadatos. Los recorridos de navegador usan el Whistle real con audio sintético, cambios de idioma y recarga sin conexión; basta `whistle.cact`. `CHROMIUM_PATH` indica el ejecutable de Chromium.
 
-`voice:evaluate:commands` ejecuta el parser nuevo sobre las **645 transcripciones sintéticas originales**, sin retocar etiquetas ni extraer plantillas de las respuestas. Publica [resultados y límites](benchmarks/comandos/LEEME.md). Ese corpus contiene narración libre, participantes invertidos, nombres sin plantilla y equipo omitido etiquetado como desconocido: mide incompatibilidades con el contrato anterior, no precisión sobre comandos válidos. `voice:evaluate` conserva la evaluación del parser antiguo. Ninguna mide audio ni precisión en Android.
+El corpus anterior de frases libres, sus informes y sus herramientas de generación/evaluación se han retirado. Se conservan las pruebas unitarias del protocolo actual y los recorridos de navegador; no constituyen una evaluación independiente de precisión acústica.
 
 No se ha entrenado ningún modelo. Falta validar el protocolo con grabaciones humanas independientes y ruido de pista, además de Android/iOS físicos. La velocidad de texto en Node no acredita el tiempo total ni el consumo de memoria de un móvil.

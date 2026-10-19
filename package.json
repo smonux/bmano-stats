@@ -10,14 +10,9 @@
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "dataset:build": "node scripts/build-voice-dataset.mjs",
-    "dataset:check": "node scripts/build-voice-dataset.mjs --check",
     "check": "tsc -b",
-    "voice:evaluate": "node scripts/evaluate-voice-rules.mjs",
-    "voice:evaluate:commands": "node scripts/evaluate-voice-rules.mjs --commands",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"tests/**/*.ts\" \"scripts/**/*.{ts,mjs}\" \"public/**/*.js\" \"*.ts\" tsconfig.json package.json .prettierrc.json",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"tests/**/*.ts\" \"scripts/**/*.{ts,mjs}\" \"public/**/*.js\" \"*.ts\" tsconfig.json package.json .prettierrc.json",
-    "voice:compare": "node scripts/compare-voice-refactor.mjs"
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"tests/**/*.ts\" \"scripts/**/*.{ts,mjs}\" \"public/**/*.js\" \"*.ts\" tsconfig.json package.json .prettierrc.json"
   },
   "engines": {
     "node": ">=22.18.0"

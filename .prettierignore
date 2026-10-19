@@ -3,7 +3,6 @@ dist/
 .vite/
 test-results/
 playwright-report/
-datasets/
 docs/benchmarks/
 src/voice/fixtures/*.json
 package-lock.json

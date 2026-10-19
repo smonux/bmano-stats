@@ -101,7 +101,7 @@ La captura actual utiliza únicamente Whistle. Se retiran la selección de capas
 
 Se añaden léxicos por idioma para los 11 eventos, coincidencia literal y aproximación acotada cuando falla la literal, perspectiva de quien graba, números 0–99, roles de participantes y reglas por metadato. Whistle recibe vocabulario de balonmano, nombres de equipo/jugadores y únicamente los dorsales conocidos del partido, en cifras y palabras. La interfaz muestra indicador durante reconocimiento y duración separada de Whistle y reglas. Todas las propuestas se revisan antes de guardar.
 
-La evaluación reproducible del corpus español y sus límites se conservan en `benchmarks/reglas/`. Las pruebas específicas cubren los siete idiomas; el corpus acústico y la validación en móviles físicos siguen pendientes. No se ha entrenado ningún modelo.
+La evaluación del corpus español de esta etapa se retiró posteriormente junto con sus datos. Las pruebas específicas cubren los siete idiomas; la evaluación acústica y la validación en móviles físicos siguen pendientes. No se ha entrenado ningún modelo.
 
 ## Sustituciones (17 de octubre de 2026)
 
@@ -109,7 +109,7 @@ Se añade el duodécimo evento, Sustitución, tanto manual como por voz. «Cambi
 
 ## Refactorización de legibilidad (17 de octubre de 2026)
 
-Se aplica formato automático al código, se añaden comprobaciones de formato y detección de importaciones/parámetros sin uso, y se separan las pantallas de App.tsx. El intérprete queda organizado por fases en voice/analysis; vocabularios, pistas de Whistle y formas numéricas están agrupados por idioma. Los auxiliares históricos de Needle quedan en voice/legacy. Las 645 respuestas anteriores, con advertencias y coincidencias, se conservan como referencia de regresión. voice:compare permite comprobar equivalencia y rendimiento frente al commit 6805b02. La guía docs/lectura-del-codigo.md explica el recorrido y la edición de reglas.
+Se aplica formato automático al código, se añaden comprobaciones de formato y detección de importaciones/parámetros sin uso, y se separan las pantallas de App.tsx. El intérprete queda organizado por fases en voice/analysis; vocabularios, pistas de Whistle y formas numéricas están agrupados por idioma. Los auxiliares históricos de Needle quedan en voice/legacy. La referencia de regresión y el comparador del corpus de esta etapa se retiraron posteriormente. La guía docs/lectura-del-codigo.md explica el recorrido y la edición de reglas.
 
 ## Ruedas de selección e información adicional (17 de octubre de 2026)
 
@@ -147,6 +147,12 @@ La regla de tarjetas identifica amarilla, roja como descalificación y azul como
 
 La preparación deja de exigir o cargar Needle, y se retiran sus controles de capas/equipo por defecto; sus preferencias antiguas se ignoran. Se conserva la elección de idioma, la verificación real del archivo Whistle en caché, la carga previa al partido y el uso offline. Los scripts y artefactos históricos de Needle permanecen para los experimentos anteriores. El editor mantiene la revisión antes de guardar y muestra Whistle en segundos y reglas en milisegundos, con la transcripción original intacta.
 
-La evaluación reproducible `npm run voice:evaluate:commands` conserva las 645 frases y etiquetas históricas sin crear plantillas a partir de las respuestas. Obtiene 184/645 respuestas exactas (28,53 %), evento 196/540 (36,30 %), equipo 137/540 (25,37 %) y diez falsos positivos entre las frases originalmente negativas. Ese corpus contiene narración libre, roles invertidos, nombres sin plantilla y equipo omitido etiquetado como desconocido: expone incompatibilidades con el formato anterior, no acredita precisión del protocolo nuevo. Mediana de texto 0,183 ms y p95 0,423 ms en Node de este servidor; no son mediciones de Android ni del audio completo. Los resultados, entradas y hashes se conservan en `benchmarks/comandos/`.
+Se comprobó la incompatibilidad del nuevo protocolo con el corpus histórico de narración libre. Ese corpus, sus resultados y las herramientas asociadas se retiraron después por petición del usuario; no constituyen una evaluación vigente del formato nuevo.
 
 Validación: 762 pruebas de código y 12 recorridos de Chromium móvil/escritorio aprobados, incluidos doce eventos, colores y números 0–99 escritos y hablados en siete idiomas, orden de participantes, aproximaciones y empates. Compilación de producción regenerada. Los recorridos de navegador verifican preparación solo de Whistle, idioma, descarga única, recarga offline, push to talk, revisión/corrección, permisos, copias ZIP, partido y exclusiones; sus capturas se inspeccionan. En el audio sintético real, Whistle transcribió «Gol» como «Por»: se conservó el texto y el evento quedó pendiente, permitiendo corregirlo. Esa evidencia no demuestra precisión acústica; sigue pendiente probar grabaciones humanas con ruido y dispositivos físicos.
+
+## Retirada del corpus anterior — 19 de octubre de 2026
+
+Se eliminan las frases libres y sus particiones, semillas, ZIP, anotaciones, resultados congelados y métricas derivadas. Se retiran sus generadores, evaluadores, comparador y prueba de regresión dependiente del corpus. Las pruebas del protocolo actual y los casos unitarios independientes se conservan. Las cifras de validación de los apartados históricos describen lo ejecutado en su fecha, antes de esta retirada.
+
+Validación de la retirada: 116 pruebas restantes aprobadas, formato correcto y sin referencias a rutas o comandos retirados. La reducción del recuento corresponde a las 646 comprobaciones que dependían del corpus eliminado.

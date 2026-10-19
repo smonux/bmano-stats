@@ -59,7 +59,7 @@ Cada idioma tiene un archivo en `src/voice/languages/`: `es.ts`, `en.ts`, `de.ts
 
 Por ejemplo, «cambio» aparece en los patrones de sustitución españoles, sus alias aproximados y las pistas de Whistle. Son tres usos distintos y explícitos. `patterns()` une alternativas respetando su orden y agrupación. Una expresión compleja debe acompañarse de un ejemplo que explique su intención.
 
-Después de cambiar una regla, añade un caso con frase y resultado esperado en las pruebas correspondientes. Las pruebas se agrupan en eventos, participantes, números, sustituciones, adaptación al editor y regresión del corpus.
+Después de cambiar una regla, añade un caso con frase y resultado esperado en las pruebas correspondientes. Las pruebas se agrupan en comandos, eventos, participantes, números, sustituciones y adaptación al editor.
 
 ## Convenciones de legibilidad
 
@@ -81,22 +81,12 @@ npm run format
 npm run format:check
 npm run check
 npm test
-npm run dataset:check
 npm run build
 ```
 
-## Comprobar equivalencia y rendimiento
+## Comprobar el protocolo de voz
 
-`src/voice/fixtures/regression-baseline.json` conserva los resultados de las 645 frases anteriores a la refactorización, incluidas advertencias y coincidencias. Sus pruebas verifican también la huella del corpus. Esa referencia registra el comportamiento existente, incluidos los tres casos cuya respuesta aún difiere de la etiqueta esperada; no constituye una medida independiente de precisión.
-
-```sh
-npm run voice:compare
-npm run voice:evaluate
-```
-
-`voice:compare` exporta temporalmente el código de la referencia Git `6805b02`, compara resultados, vocabulario, números y pistas de Whistle, y mide ambos intérpretes en el mismo proceso. Se puede indicar otra referencia: `npm run voice:compare -- <referencia-git>`. Alterna doce rondas del corpus con ambos intérpretes ya calentados, publica `docs/benchmarks/reglas/refactor.json` y elimina su directorio temporal. La referencia debe tener la API y los eventos compatibles con el corpus actual.
-
-`voice:evaluate` compara el intérprete determinista anterior con las etiquetas del dataset. `voice:evaluate:commands` compara el parser de comandos con esas mismas frases libres, sin retocar etiquetas, y documenta las incompatibilidades del contrato. Son mediciones de texto en Node, sin audio. `scripts/benchmark-hybrid-node.ts` conserva el experimento con pesos reales de Needle; el tiempo de Whistle requiere su propia evaluación.
+`src/voice/commands/commands.test.ts` cubre los eventos, equipos, orden de participantes, nombres, colores y dorsales 0–99 en siete idiomas. El corpus anterior, sus resultados congelados y sus scripts de generación, evaluación y comparación se han retirado. Las pruebas específicas de números y del adaptador al editor siguen separadas; no miden precisión acústica.
 
 Las pruebas de navegador comprueban los recorridos completos, incluida la voz, los PDF y las copias ZIP. Se ejecutan con `npm run test:e2e`; los requisitos de Chromium y los archivos de Whistle están descritos en [voz.md](voz.md).
 
@@ -124,9 +114,7 @@ Las pruebas de navegador comprueban los recorridos completos, incluida la voz, l
 
 ## Herramientas y datos
 
-`build-voice-dataset.mjs` coordina los módulos de `scripts/dataset/`: contrato real de la aplicación, evidencia de las anotaciones, particiones por familia, filas, resumen y publicación de JSONL/Markdown/ZIP. `dataset:check` compara también el ZIP byte a byte. El lint de anotaciones comprueba datos sintéticos; no se utiliza para interpretar la entrada de la aplicación.
-
-`evaluate-voice-rules.mjs` coordina la medición; `scripts/evaluation/` contiene las medidas y el informe legible. `scripts/benchmarks/needle-schemas.ts` conserva la configuración de los experimentos históricos. `needle-depths.py` separa lectura, selección de bloques y filas, remapeo de cabecera y empaquetado. Declara sus dependencias y se ejecuta con uv:
+`scripts/benchmark-hybrid-node.ts` y `scripts/benchmarks/needle-schemas.ts` conservan experimentos históricos de Needle independientes del corpus retirado. `needle-depths.py` separa lectura, selección de bloques y filas, remapeo de cabecera y empaquetado. Declara sus dependencias y se ejecuta con uv:
 
 ```sh
 uv run --no-project scripts/needle-depths.py --help
