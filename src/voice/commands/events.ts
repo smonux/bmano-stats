@@ -5,7 +5,8 @@ import { commandVocabulary } from './vocabulary';
 import { levenshtein } from './distance';
 
 export type CommandEvent = TokenSpan & {
-  event: SpokenEvent | 'desconocido';
+  event: SpokenEvent;
+  colour?: 'yellow' | 'red' | 'blue';
   match: 'literal' | 'approximate';
 };
 
@@ -16,23 +17,33 @@ export function commandEvent(context: AnalysisContext): CommandEvent | undefined
   const colours = [
     ...context
       .findPattern(vocabulary.yellow)
-      .map((span) => ({ ...span, event: 'amarilla' as const })),
+      .map((span) => ({ ...span, event: 'amarilla' as const, colour: 'yellow' as const })),
     ...context
-      .findPattern(`${vocabulary.red}|${vocabulary.blue}`)
-      .map((span) => ({ ...span, event: 'descalificacion' as const })),
+      .findPattern(vocabulary.red)
+      .map((span) => ({ ...span, event: 'descalificacion' as const, colour: 'red' as const })),
+    ...context
+      .findPattern(vocabulary.blue)
+      .map((span) => ({ ...span, event: 'descalificacion' as const, colour: 'blue' as const })),
   ].sort((a, b) => a.from - b.from);
   const cues = spokenEvents.flatMap((event) =>
     context.findPattern(vocabulary.events[event]).map((span) => ({ ...span, event })),
   );
-  cues.push(...colours);
   // The recording protocol starts with the event; do not search later in free-form speech.
   const from = 0;
   if (cards.some((span) => span.from === from)) {
     const card = cards.find((span) => span.from === from)!;
     const colour = colours.find((span) => span.from >= from);
-    return { ...card, event: colour?.event ?? 'desconocido', match: 'literal' };
+    // Only a complete, literal colour overrides yellow; never approximate a card colour.
+    return {
+      ...card,
+      event: colour?.event ?? 'amarilla',
+      colour: colour?.colour ?? 'yellow',
+      match: 'literal',
+    };
   }
-  const literal = cues.filter((cue) => cue.from === from).sort((a, b) => b.to - a.to)[0];
+  const literal = [...colours, ...cues]
+    .filter((cue) => cue.from === from)
+    .sort((a, b) => b.to - a.to)[0];
   if (literal) return { ...literal, match: 'literal' };
   // Roster/team words do not become approximate event keywords.
   if (

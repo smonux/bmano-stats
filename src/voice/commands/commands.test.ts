@@ -137,7 +137,7 @@ test('the command must start with its event; unsupported free-form speech stays 
     expect(command(text)).toBeNull();
 });
 
-test('yellow/red/blue cards and colourless cards have explicit outcomes', () => {
+test('cards default to yellow; only literal colours override it and the first colour wins', () => {
   expect(command('tarjeta amarilla nuestra 7')).toEqual({
     evento: 'amarilla',
     equipo: 'equipo1',
@@ -155,10 +155,28 @@ test('yellow/red/blue cards and colourless cards have explicit outcomes', () => 
     azul: true,
   });
   expect(command('tarjeta nuestra 7')).toEqual({
-    evento: 'desconocido',
+    evento: 'amarilla',
     equipo: 'equipo1',
     dorsal: 7,
   });
+  for (const colour of ['rojj', 'roj', 'rojiza', 'azull', 'azulado'])
+    expect(command(`tarjeta nuestra 7 ${colour}`)).toEqual({
+      evento: 'amarilla',
+      equipo: 'equipo1',
+      dorsal: 7,
+    });
+  expect(command('tarjeta nuestra 7 ROJAS')).toEqual({
+    evento: 'descalificacion',
+    equipo: 'equipo1',
+    dorsal: 7,
+  });
+  expect(command('tarjeta nuestra 7 azules')).toMatchObject({
+    evento: 'descalificacion',
+    azul: true,
+  });
+  expect(command('tarjeta nuestra 7 roja azul')).not.toHaveProperty('azul');
+  expect(command('tarjeta nuestra 7 azul roja')).toHaveProperty('azul', true);
+  expect(command('tarjeta nuestra 7 amarillenta roja')).toHaveProperty('evento', 'descalificacion');
   expect(command('amarilla nuestra 7 azul')).not.toHaveProperty('azul');
 });
 
@@ -317,6 +335,11 @@ const events = [
 for (const language of Object.keys(examples) as Language[]) {
   test(`${language}: all event commands, cards, and numeric/spoken shirts 0–99`, () => {
     const example = examples[language];
+    expect(parse(`${example.card} ${example.own} 7`, language, teams).proposal).toEqual({
+      evento: 'amarilla',
+      equipo: 'equipo1',
+      dorsal: 7,
+    });
     example.events.forEach((word, index) =>
       expect(parse(`${word} ${example.own} 21 9`, language, teams).proposal, word).toMatchObject({
         evento: events[index],
@@ -324,15 +347,18 @@ for (const language of Object.keys(examples) as Language[]) {
         ...(index === 9 ? {} : { dorsal: 21 }),
       }),
     );
-    example.colours.forEach((colour, index) =>
+    example.colours.forEach((colour, index) => {
       expect(
         parse(`${example.card} ${colour} ${example.own} 7`, language, teams).proposal,
       ).toMatchObject({
         evento: index ? 'descalificacion' : 'amarilla',
         dorsal: 7,
         ...(index === 2 ? { azul: true } : {}),
-      }),
-    );
+      });
+      expect(
+        parse(`${example.card} ${example.own} 7 ${colour}xyz`, language, teams).proposal,
+      ).toEqual({ evento: 'amarilla', equipo: 'equipo1', dorsal: 7 });
+    });
     for (let number = 0; number <= 99; number++) {
       expect(
         parse(`${example.events[0]} ${example.own} ${number} 9`, language, teams).proposal,

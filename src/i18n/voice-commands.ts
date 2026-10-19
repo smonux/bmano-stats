@@ -32,14 +32,6 @@ export const voiceCommandMessages: Record<string, readonly string[]> = {
     'Speler herkend via een vergelijkbare naam. Controleer het rugnummer.',
     'Zawodnik rozpoznany po podobnym imieniu. Sprawdź numer.',
   ],
-  'Tarjeta sin color. Indica amarilla, roja o azul.': [
-    'Card without a colour. Specify yellow, red or blue.',
-    'Karte ohne Farbe. Gelb, Rot oder Blau angeben.',
-    'Carton sans couleur. Précisez jaune, rouge ou bleu.',
-    'Cartellino senza colore. Indica giallo, rosso o blu.',
-    'Kaart zonder kleur. Geef geel, rood of blauw op.',
-    'Kartka bez koloru. Podaj żółtą, czerwoną lub niebieską.',
-  ],
   'Una jugada por grabación: evento, equipo, jugador 1, jugador 2 y metadatos. Mantén pulsado para hablar y suelta para terminar. Whistle transcribe y las reglas proponen los datos; tú revisas y guardas.':
     [
       'One play per recording: event, team, player 1, player 2, then metadata. Hold to talk and release to finish. Whistle transcribes and rules propose the details; you review and save.',

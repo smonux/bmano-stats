@@ -143,7 +143,7 @@ La captura activa vuelve a usar únicamente Whistle y reglas, ahora con un proto
 
 La primera referencia de equipo prevalece y la ausencia aplica equipo 1 desde la perspectiva de quien graba. Los participantes se asignan por aparición, mezclando nombres conocidos y dorsales conocidos/desconocidos sin promover menciones posteriores. No se contemplan huecos y se descartan participantes adicionales según el evento. Los dorsales admiten 0–99 en cifras y palabras; minutos, metros y cifras de tiempo no se convierten en jugadores. La aproximación de nombres exige al menos cuatro letras: una edición para cuatro, dos para cinco a siete y tres para más de siete. Los nombres más cortos se reconocen literalmente; los empates entre jugadores quedan sin resolver.
 
-La regla de tarjetas identifica amarilla, roja como descalificación y azul como descalificación con azul. Sin color conserva equipo/jugador y deja el tipo pendiente. Las raíces y expresiones del evento tienen vocabulario para los siete idiomas. Whistle recibe palabras completas de balonmano, colores, equipos, nombres y dorsales de la plantilla. El SDK instalado no ofrece listas de palabras alternativas; no se inventan candidatos ni se cambia su configuración para obtenerlos.
+La regla de tarjetas identifica amarilla, roja como descalificación y azul como descalificación con azul. La decisión inicial de dejar pendiente una tarjeta sin color se sustituyó después por amarilla por defecto, según la indicación del usuario. Las raíces y expresiones del evento tienen vocabulario para los siete idiomas. Whistle recibe palabras completas de balonmano, colores, equipos, nombres y dorsales de la plantilla. El SDK instalado no ofrece listas de palabras alternativas; no se inventan candidatos ni se cambia su configuración para obtenerlos.
 
 La preparación deja de exigir o cargar Needle, y se retiran sus controles de capas/equipo por defecto; sus preferencias antiguas se ignoran. Se conserva la elección de idioma, la verificación real del archivo Whistle en caché, la carga previa al partido y el uso offline. Los scripts y artefactos históricos de Needle permanecen para los experimentos anteriores. El editor mantiene la revisión antes de guardar y muestra Whistle en segundos y reglas en milisegundos, con la transcripción original intacta.
 
@@ -156,3 +156,9 @@ Validación: 762 pruebas de código y 12 recorridos de Chromium móvil/escritori
 Se eliminan las frases libres y sus particiones, semillas, ZIP, anotaciones, resultados congelados y métricas derivadas. Se retiran sus generadores, evaluadores, comparador y prueba de regresión dependiente del corpus. Las pruebas del protocolo actual y los casos unitarios independientes se conservan. Las cifras de validación de los apartados históricos describen lo ejecutado en su fecha, antes de esta retirada.
 
 Validación de la retirada: 116 pruebas restantes aprobadas, formato correcto y sin referencias a rutas o comandos retirados. La reducción del recuento corresponde a las 646 comprobaciones que dependían del corpus eliminado.
+
+## Tarjeta amarilla por defecto — 19 de octubre de 2026
+
+«Tarjeta» propone amarilla si no se reconoce literalmente un color completo. Roja propone descalificación y azul descalificación con azul; no se aproximan colores ni se aceptan raíces incompletas. Se mantienen las formas gramaticales explícitas por idioma y prevalece el primer color literal, también para el metadato azul. Se retira el aviso de tarjeta sin color pendiente.
+
+Validación: 116 pruebas aprobadas, con tarjeta sin color en siete idiomas, colores literales, errores de transcripción, formas gramaticales y colores en conflicto; el adaptador al editor recibe amarilla y conserva equipo/dorsal. Compilación de producción regenerada en `dist/`.

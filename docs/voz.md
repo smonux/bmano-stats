@@ -20,7 +20,7 @@ Los jugadores se asignan por aparición: se consume cada posición antes de exam
 
 Las coincidencias aproximadas de nombres requieren al menos cuatro letras en el nombre y cuatro en la palabra examinada. Para cuatro letras se permite una edición; para cinco a siete, dos; para más de siete, tres. Se usa Levenshtein y se advierte la aproximación. Los empates entre jugadores quedan sin resolver. Ana y Eva se admiten literalmente, pero no por parecido con palabras cortas. Los números de minutos y metros no se convierten en dorsales.
 
-Tarjetas: **amarilla** registra amarilla; **roja** registra descalificación; **azul** registra descalificación con azul. «Tarjeta» sin color conserva el equipo/dorsal y deja el tipo pendiente. Las expresiones de siete metros son metadato en gol, parada y fallo; «siete metros» al principio identifica penalti cometido. Pasos, dobles y pisando identifican infracción con su subtipo; «infracción» permite dar el subtipo al final.
+Tarjetas: **amarilla** registra amarilla; **roja** registra descalificación; **azul** registra descalificación con azul. «Tarjeta» es **amarilla por defecto**. Solo un color literal completo del idioma puede cambiarla; no se aproxima ni se acepta únicamente su raíz («roj», «azulado»). Se admiten las formas gramaticales de color del vocabulario, como roja/rojo/rojas/rojos. Si aparecen varios colores, prevalece el primero. Las expresiones de siete metros son metadato en gol, parada y fallo; «siete metros» al principio identifica penalti cometido. Pasos, dobles y pisando identifican infracción con su subtipo; «infracción» permite dar el subtipo al final.
 
 | Comando | Resultado |
 | --- | --- |

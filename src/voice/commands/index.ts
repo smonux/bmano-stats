@@ -28,8 +28,6 @@ export function interpretCommand(
   const warnings = [REVIEW_WARNING];
   if (event.match === 'approximate')
     warnings.push('Evento reconocido por aproximación de palabra clave. Revisa el tipo de evento.');
-  if (event.event === 'desconocido')
-    warnings.push('Tarjeta sin color. Indica amarilla, roja o azul.');
   const team =
     [...context.teamReferences]
       .filter((span) => span.from >= event.to)
@@ -48,24 +46,19 @@ export function interpretCommand(
   );
   const excluded: TokenSpan[] = [...context.teamReferences, ...penalty, ...colours, ...subtypes];
   if (['gol', 'parada', 'fallo'].includes(event.event) && penalty.length) proposal.penalti = true;
-  if (event.event === 'descalificacion' && blue.length) proposal.azul = true;
+  if (event.event === 'descalificacion' && (event.colour ? event.colour === 'blue' : blue.length))
+    proposal.azul = true;
   if (event.event === 'infraccion' && subtypes[0]) proposal.infraccion = subtypes[0].kind;
-  if (event.event !== 'desconocido') {
-    const definition = definitions[spokenTypes[event.event]];
-    if (spokenTypes[event.event] !== 'passive') {
-      const relatedTeam = definition.sameTeam ? team : team === 'equipo1' ? 'equipo2' : 'equipo1';
-      const slots: TeamPerspective[] = definition.related ? [team, relatedTeam] : [team];
-      const mentions = commandPlayers(context, event.to, slots, excluded, warnings);
-      mentions.forEach((mention, index) => {
-        if (mention.shirtNumber !== undefined)
-          proposal[index ? 'dorsal_relacionado' : 'dorsal'] = mention.shirtNumber;
-        else if (mention.name) proposal[index ? 'nombre_relacionado' : 'nombre'] = mention.name;
-      });
-    }
-  } else {
-    const [mention] = commandPlayers(context, event.to, [team], excluded, warnings);
-    if (mention?.shirtNumber !== undefined) proposal.dorsal = mention.shirtNumber;
-    else if (mention?.name) proposal.nombre = mention.name;
+  const definition = definitions[spokenTypes[event.event]];
+  if (spokenTypes[event.event] !== 'passive') {
+    const relatedTeam = definition.sameTeam ? team : team === 'equipo1' ? 'equipo2' : 'equipo1';
+    const slots: TeamPerspective[] = definition.related ? [team, relatedTeam] : [team];
+    const mentions = commandPlayers(context, event.to, slots, excluded, warnings);
+    mentions.forEach((mention, index) => {
+      if (mention.shirtNumber !== undefined)
+        proposal[index ? 'dorsal_relacionado' : 'dorsal'] = mention.shirtNumber;
+      else if (mention.name) proposal[index ? 'nombre_relacionado' : 'nombre'] = mention.name;
+    });
   }
   return {
     proposal,

@@ -7,6 +7,7 @@ import {
   type CaptureContext,
 } from './interpretation';
 import type { Snapshot, Match } from '../domain/model';
+import { interpretCommand } from './commands';
 const base = { createdAt: 1, updatedAt: 1, deletedAt: null };
 const match: Match = {
   ...base,
@@ -141,15 +142,11 @@ test('invalid or withheld interpretation preserves a pending draft', () => {
   }
 });
 
-test('a colourless card keeps its recognized shirt and team while the event remains pending', () => {
-  expect(
-    toVoiceDraft(
-      'tarjeta nuestra siete',
-      { evento: 'desconocido', equipo: 'equipo1', dorsal: 7 },
-      context,
-    ).draft,
-  ).toMatchObject({
-    type: null,
+test('a colourless card reaches the editor as yellow with its recognized shirt and team', () => {
+  const text = 'tarjeta nuestra siete';
+  const result = interpretCommand(text, 'es', ['Águilas', 'Leones']);
+  expect(toVoiceDraft(text, result.proposal, context).draft).toMatchObject({
+    type: 'yellow',
     teamId: 'a',
     primaryDorsal: '7',
     rawText: 'tarjeta nuestra siete',
