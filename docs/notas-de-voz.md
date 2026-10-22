@@ -30,3 +30,25 @@ transcripción. Las copias anteriores sin notas siguen siendo compatibles.
 
 Estas pruebas de voz parten de una transcripción conocida y ejercitan el intérprete
 real; no miden la precisión acústica de Whistle. No cambia su modelo ni configuración.
+
+## Guía de introducción
+
+La guía explica el orden evento → equipo → jugador 1 → jugador 2 → metadatos,
+incluye ejemplos de gol y sustitución, los valores por defecto de equipo, el orden
+de participantes y la pausa del guardado automático de cinco segundos. Una página
+propia recoge los dos ejemplos de Nota/Comentario. Sus explicaciones se traducen a
+los siete idiomas; los ejemplos de notas se marcan como español porque este atajo
+no se ha extendido a otros idiomas. Los ejemplos deportivos traducidos se ejecutan
+contra las reglas en pruebas unitarias para detectar instrucciones que no funcionen.
+
+El contenido largo tiene desplazamiento propio y la navegación queda visible en
+390×664 y 390×520. Se conservan la elección de idioma, la finalización de la guía y
+su acceso posterior desde Ajustes; no se fuerza a repetirla a usuarios existentes.
+
+Validación conjunta: 134 pruebas unitarias en 29 archivos; 25 recorridos de navegador
+móvil/escritorio entre guía, revisión de voz, notas, registro y PDF. El recorrido largo
+de PDF se ejecutó en escritorio y mantiene su omisión móvil existente. Formato,
+comprobación de tipos y compilación de producción correctos. Las capturas de gramática,
+notas y editor se revisaron visualmente. Además del problema de etiqueta corregido,
+la primera prueba de ZIP comparaba un orden de plantilla diferente; se ajustó la
+comparación por identificador sin cambiar los datos esperados.

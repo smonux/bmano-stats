@@ -43,7 +43,7 @@ test('first-use gallery changes language, persists completion and reopens from s
   ).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await page.screenshot({ path: info.outputPath('welcome-en.png') });
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 5; i++) {
     await dialog.getByRole('button', { name: 'Next', exact: true }).click();
   }
   await expect(dialog.getByText('Track the two minutes', { exact: true })).toBeVisible();

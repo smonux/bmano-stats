@@ -1,8 +1,10 @@
 import { ArrowRight, Check, Mic } from 'lucide-react';
 import { tr } from '../../i18n';
-export function Illustration({ step }: { step: number }) {
-  switch (step) {
-    case 0:
+export type WelcomeIllustration =
+  'score' | 'recognition' | 'play' | 'perspective' | 'note' | 'timers';
+export function Illustration({ kind }: { kind: WelcomeIllustration }) {
+  switch (kind) {
+    case 'score':
       return (
         <div className="welcome-score">
           <span>01</span>
@@ -10,7 +12,7 @@ export function Illustration({ step }: { step: number }) {
           <span>02</span>
         </div>
       );
-    case 1:
+    case 'recognition':
       return (
         <>
           <b>Whistle</b>
@@ -18,7 +20,7 @@ export function Illustration({ step }: { step: number }) {
           <div className="welcome-wave">▂ ▅ ▃ █ ▅ ▂ ▆ ▃</div>
         </>
       );
-    case 2:
+    case 'play':
       return (
         <>
           <div className="welcome-wave">▂ ▅ ▃ █ ▅ ▂ ▆ ▃</div>
@@ -31,14 +33,23 @@ export function Illustration({ step }: { step: number }) {
           </div>
         </>
       );
-    case 3:
+    case 'perspective':
       return (
         <div className="welcome-teams">
           <b>{tr('Equipo 1 (nuestro)')}</b>
           <span>{tr('Equipo 2 (rival)')}</span>
         </div>
       );
-    default:
+    case 'note':
+      return (
+        <div className="welcome-teams">
+          <b>{tr('Nota del partido')}</b>
+          <span>
+            {tr('Tiempo')} · {tr('Minuto')}
+          </span>
+        </div>
+      );
+    case 'timers':
       return (
         <div className="welcome-timers">
           <span>

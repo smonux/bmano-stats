@@ -1,5 +1,57 @@
 /* Responsive rules retain their cascade order; superseded declarations have been removed. */
 
+.welcome-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.welcome-dialog > .section-heading,
+.welcome-dialog > .modal-handle {
+  flex-shrink: 0;
+}
+.welcome {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.welcome-content {
+  overflow-y: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+  padding: 4px;
+}
+.welcome-footer {
+  flex-shrink: 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+.welcome .welcome-grammar {
+  margin-top: 14px;
+  padding: 10px;
+  background: var(--accent);
+  color: var(--ink);
+  border-radius: 8px;
+  font-weight: 700;
+}
+.welcome-examples figure {
+  margin: 14px 0;
+  overflow-wrap: anywhere;
+}
+.welcome-examples blockquote {
+  margin: 0 0 4px;
+  border-left: 3px solid var(--accent);
+  padding-left: 10px;
+  font-size: 15px;
+}
+.welcome-examples figcaption {
+  font-size: 13px;
+  color: var(--muted);
+  padding-left: 13px;
+}
+.welcome-footer .actions {
+  margin-top: 4px;
+}
+
 .language-picker {
   max-width: 320px;
 }
