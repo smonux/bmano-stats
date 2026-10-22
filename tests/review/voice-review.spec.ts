@@ -1,0 +1,119 @@
+import { test, expect, type Page } from '@playwright/test';
+import { selectWheelOption } from '../wheel-helpers';
+const dialog = (page: Page) => page.getByRole('dialog', { name: 'Confirmar jugada', exact: true });
+async function open(page: Page, query = '') {
+  await page.goto(`/tests/review/index.html${query}`);
+  await page.clock.install();
+  await page.getByRole('button', { name: 'Mostrar propuesta', exact: true }).click();
+  await expect(dialog(page)).toBeVisible();
+  await expect(dialog(page).getByRole('button', { name: 'Continuar' })).toBeFocused();
+}
+test('the five-second default saves once, preserves the captured position and persists', async ({
+  page,
+}) => {
+  await open(page);
+  await expect(dialog(page)).toContainText('#7 · Ana Łukasz');
+  await expect(dialog(page)).toContainText('#1 · Íker');
+  await expect(dialog(page)).toContainText('2 / 9′');
+  await expect(page.getByTestId('score')).toHaveText('0:0');
+  // Exact boundary/cancellation is unit-tested; browser assertions consume elapsed time.
+  await page.clock.fastForward(5100);
+  await expect(dialog(page)).toHaveCount(0);
+  await expect(page.getByTestId('score')).toHaveText('1:0');
+  const events = JSON.parse((await page.getByTestId('events').textContent())!);
+  expect(events).toHaveLength(1);
+  expect(events[0]).toMatchObject({
+    period: 2,
+    minute: 9,
+    primaryPlayerId: 'a7',
+    relatedPlayerId: 'a1',
+    rawText: 'gol nuestro 7 1 penalti',
+    metadata: { penalty: true },
+  });
+  await page.clock.runFor(10000);
+  await page.reload();
+  await expect(page.getByTestId('score')).toHaveText('1:0');
+  expect(JSON.parse((await page.getByTestId('events').textContent())!)).toHaveLength(1);
+});
+test('pointer and keyboard stop the countdown; editing preserves text and changes the intended event', async ({
+  page,
+}) => {
+  await open(page);
+  await dialog(page).getByText('Transcripción original', { exact: true }).click();
+  await expect(dialog(page)).toContainText('Guardado automático detenido.');
+  await page.clock.runFor(6000);
+  await expect(dialog(page)).toBeVisible();
+  await dialog(page).getByRole('button', { name: 'Editar', exact: true }).click();
+  const editor = page.getByRole('dialog', { name: 'Nuevo evento', exact: true });
+  await expect(editor).toBeVisible();
+  await selectWheelOption(
+    editor.getByRole('listbox', { name: 'Evento', exact: true }),
+    'Tarjeta amarilla',
+  );
+  await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
+  await expect(editor).toHaveCount(0);
+  await expect(page.getByTestId('events')).toContainText('gol nuestro 7 1 penalti');
+  await expect(page.getByTestId('score')).toHaveText('0:0');
+  await page.getByRole('button', { name: 'Mostrar propuesta', exact: true }).click();
+  await expect(dialog(page)).toBeVisible();
+  await page.keyboard.press('Tab');
+  await expect(dialog(page)).toContainText('Guardado automático detenido.');
+  await page.clock.runFor(6000);
+  await dialog(page).getByRole('button', { name: 'Continuar' }).press('Enter');
+  await expect(dialog(page)).toHaveCount(0);
+  expect(JSON.parse((await page.getByTestId('events').textContent())!)).toHaveLength(2);
+});
+test('an unresolved event auto-saves pending without inventing a goal', async ({ page }) => {
+  await open(page, '?text=por%20nuestro%207');
+  await expect(dialog(page)).toContainText('Evento sin indicar');
+  await expect(dialog(page)).toContainText('Se guardará pendiente');
+  await page.clock.runFor(5100);
+  await expect(dialog(page)).toHaveCount(0);
+  await expect(page.getByTestId('score')).toHaveText('0:0');
+  expect(JSON.parse((await page.getByTestId('events').textContent())!)[0].type).toBeNull();
+});
+test('hiding, X, Escape and discard stop saving; persistence failures stay visible', async ({
+  page,
+}) => {
+  await open(page);
+  await page.evaluate(() => {
+    Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await page.clock.runFor(6000);
+  await expect(dialog(page)).toBeVisible();
+  await page.evaluate(() =>
+    Object.defineProperty(document, 'hidden', { configurable: true, value: false }),
+  );
+  await dialog(page).getByRole('button', { name: 'Cerrar', exact: true }).click();
+  for (const action of ['Escape', 'Descartar']) {
+    await page.getByRole('button', { name: 'Mostrar propuesta', exact: true }).click();
+    await expect(dialog(page)).toBeVisible();
+    if (action === 'Escape') await page.keyboard.press('Escape');
+    else await dialog(page).getByRole('button', { name: action, exact: true }).click();
+    await expect(dialog(page)).toHaveCount(0);
+    await page.clock.runFor(6000);
+    await expect(page.getByTestId('events')).toHaveText('[]');
+  }
+  await page.goto('/tests/review/index.html?invalid');
+  await page.getByRole('button', { name: 'Mostrar propuesta', exact: true }).click();
+  await expect(dialog(page)).toBeVisible();
+  await dialog(page).getByRole('button', { name: 'Continuar' }).click();
+  await expect(dialog(page).getByRole('alert')).toContainText('El tiempo indicado aún no existe');
+  await expect(page.getByTestId('events')).toHaveText('[]');
+});
+test('substitution shows outgoing/incoming and long names fit a short viewport', async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: info.project.name === 'mobile' ? 390 : 1000, height: 520 });
+  await open(page, '?text=cambio%207%201&long');
+  await dialog(page).getByText('Transcripción original', { exact: true }).click();
+  await expect(dialog(page)).toContainText('Sale');
+  await expect(dialog(page)).toContainText('Entra');
+  await expect(dialog(page)).toContainText('Equipo por defecto');
+  expect(await dialog(page).evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+  const button = dialog(page).getByRole('button', { name: 'Continuar' });
+  const box = await button.boundingBox();
+  expect(box!.y + box!.height).toBeLessThanOrEqual(520);
+  await page.screenshot({ path: info.outputPath('compact-review-short.png'), fullPage: true });
+});

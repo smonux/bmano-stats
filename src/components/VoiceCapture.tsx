@@ -4,6 +4,8 @@ import { tr } from '../i18n';
 import { EventEditor } from './EventEditor';
 import { ErrorMessage } from './ui';
 import { useVoiceCapture } from './voice/useVoiceCapture';
+import { useEffect, useRef, useState } from 'react';
+import { VoiceReview } from './voice/VoiceReview';
 
 export function VoiceCapture({
   match,
@@ -27,9 +29,21 @@ export function VoiceCapture({
     ready,
     problem,
   } = useVoiceCapture(match, data);
+  const [editing, setEditing] = useState(false);
+  const talkButton = useRef<HTMLButtonElement>(null);
+  const hadReview = useRef(false);
+  useEffect(() => {
+    if (result) hadReview.current = true;
+    else if (hadReview.current) {
+      hadReview.current = false;
+      setEditing(false);
+      talkButton.current?.focus({ preventScroll: true });
+    }
+  }, [result]);
   return (
     <>
       <button
+        ref={talkButton}
         className={`hold-to-talk ${phase === 'recording' ? 'recording' : ''}`}
         aria-label={
           phase === 'recording' ? tr('Grabando · {seconds} s', { seconds }) : tr('Voz (mantener)')
@@ -97,14 +111,24 @@ export function VoiceCapture({
       {phase === 'review' &&
         result &&
         (allowReview ? (
-          <EventEditor
-            data={data}
-            match={match}
-            initialDraft={result.draft}
-            voiceWarnings={result.warnings}
-            voiceTimings={result.timings}
-            close={closeReview}
-          />
+          editing ? (
+            <EventEditor
+              data={data}
+              match={match}
+              initialDraft={result.draft}
+              voiceWarnings={result.warnings}
+              voiceTimings={result.timings}
+              close={closeReview}
+            />
+          ) : (
+            <VoiceReview
+              result={result}
+              data={data}
+              match={match}
+              edit={() => setEditing(true)}
+              close={closeReview}
+            />
+          )
         ) : (
           <p className="capture-status" role="status">
             {tr('Propuesta lista. Termina la edición manual para revisarla.')}

@@ -6,7 +6,10 @@ import { toVoiceDraft, type CaptureContext } from './interpretation';
 import type { Recording } from './recorder';
 
 export type RecognitionTimings = { whistleMs: number; rulesMs: number; needleMs: number };
-export type RecognizedEvent = ReturnType<typeof toVoiceDraft> & { timings: RecognitionTimings };
+export type RecognizedEvent = ReturnType<typeof toVoiceDraft> & {
+  timings: RecognitionTimings;
+  defaultTeamApplied?: boolean;
+};
 type RecognitionCallbacks = {
   isActive: () => boolean;
   onInterpreting: () => void;
@@ -48,6 +51,7 @@ export async function recognizeCapture(
   callbacks.onInterpreting();
   let proposal: unknown = null;
   let warnings: string[] = [];
+  let defaultTeamApplied = false;
   const interpretationStartedAt = performance.now();
   const teams = matchTeamIds.map(
     (teamId) => context.data.teams.find((team) => team.id === teamId)!.name,
@@ -64,12 +68,14 @@ export async function recognizeCapture(
     const response = await engine.interpret(text, teams, players);
     proposal = response.proposal;
     warnings = response.warnings;
+    defaultTeamApplied = response.defaultTeamApplied === true;
     timings.rulesMs = response.timing.rulesMs;
     timings.needleMs = response.timing.needleMs;
   } catch (error) {
     timings.rulesMs = performance.now() - interpretationStartedAt;
     // Keep a usable transcript even if interpretation fails; the editor can complete it.
     proposal = { evento: 'desconocido', equipo: 'equipo1' };
+    defaultTeamApplied = true;
     warnings = [
       'No se pudo interpretar una única jugada. Conserva la transcripción y completa el evento.',
     ];
@@ -83,5 +89,5 @@ export async function recognizeCapture(
   }
   const result = toVoiceDraft(text, proposal, context);
   result.warnings.unshift(...warnings);
-  return { ...result, timings };
+  return { ...result, timings, defaultTeamApplied };
 }

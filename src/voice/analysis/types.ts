@@ -62,4 +62,5 @@ export type InterpretationResult = {
   warnings: string[];
   eventKeyword: string;
   eventMatch: 'none' | 'literal' | 'approximate';
+  defaultTeamApplied?: boolean;
 };

@@ -64,3 +64,58 @@
   color: var(--ink);
   font-weight: 700;
 }
+.voice-review[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.voice-review-copy {
+  overflow-y: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+.voice-review .modal-handle {
+  display: none;
+}
+.voice-review > .section-heading {
+  margin-bottom: 10px;
+}
+.voice-review h2 {
+  font-size: 18px;
+}
+.voice-review .voice-transcript {
+  padding: 10px;
+  margin: 0 0 10px;
+  font-size: 13px;
+}
+.voice-review-summary {
+  display: grid;
+  grid-template-columns: minmax(85px, 1fr) minmax(0, 2fr);
+  gap: 6px 10px;
+  font-size: 13px;
+  margin: 0;
+}
+.voice-review-summary dt {
+  color: var(--muted);
+}
+.voice-review-summary dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.voice-review-footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--line);
+  margin-top: 12px;
+  padding-top: 10px;
+}
+.voice-review-footer .actions {
+  margin-top: 8px;
+}
+.voice-review-footer > .text-button {
+  min-height: 44px;
+  margin: 4px auto 0;
+  display: block;
+}
+.voice-review-footer .caption {
+  margin-bottom: 8px;
+}

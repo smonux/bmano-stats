@@ -28,10 +28,10 @@ export function interpretCommand(
   const warnings = [REVIEW_WARNING];
   if (event.match === 'approximate')
     warnings.push('Evento reconocido por aproximación de palabra clave. Revisa el tipo de evento.');
-  const team =
-    [...context.teamReferences]
-      .filter((span) => span.from >= event.to)
-      .sort((a, b) => a.from - b.from || b.to - a.to)[0]?.team ?? 'equipo1';
+  const teamReference = [...context.teamReferences]
+    .filter((span) => span.from >= event.to)
+    .sort((a, b) => a.from - b.from || b.to - a.to)[0];
+  const team = teamReference?.team ?? 'equipo1';
   const proposal: RuleProposal = { evento: event.event, equipo: team };
   const vocabulary = commandVocabulary[language];
   const penalty = context.findPattern(context.rules.penalty);
@@ -65,5 +65,6 @@ export function interpretCommand(
     warnings: [...new Set(warnings)],
     eventKeyword: context.originalText(event),
     eventMatch: event.match,
+    defaultTeamApplied: !teamReference,
   };
 }

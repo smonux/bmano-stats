@@ -68,6 +68,11 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
     page.getByText('Propuesta lista. Termina la edición manual para revisarla.'),
   ).toBeVisible({ timeout: 60000 });
   await page.getByRole('dialog').getByRole('button', { name: 'Cancelar', exact: true }).click();
+  const review = page.getByRole('dialog', { name: 'Confirmar jugada', exact: true });
+  await expect(review).toBeVisible({ timeout: 10000 });
+  await expect(review.getByText('Transcripción original', { exact: true })).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath('voz-confirmacion.png'), fullPage: true });
+  await review.getByRole('button', { name: 'Editar', exact: true }).click();
   const editor = page.getByRole('dialog', { name: 'Nuevo evento' });
   await expect(editor).toBeVisible({ timeout: 10000 });
   await expect(editor.getByText(/Transcripción original/)).toBeVisible();
@@ -135,9 +140,9 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
   await expect(page.getByRole('button', { name: /Grabando ·/ })).toBeVisible();
   await page.waitForTimeout(6500);
   await page.mouse.up();
-  await expect(editor).toBeVisible({ timeout: 40000 });
-  await expect(editor.getByText(/Transcripción original/)).toBeVisible();
-  await editor.getByRole('button', { name: 'Cancelar', exact: true }).click();
+  await expect(review).toBeVisible({ timeout: 40000 });
+  await expect(review.getByText(/Transcripción original/)).toBeVisible();
+  await review.getByRole('button', { name: 'Descartar', exact: true }).click();
   await expect(page.getByLabel('Marcador 1 a 0')).toBeVisible();
   expect(modelRequests).toBe(downloads);
   expect(

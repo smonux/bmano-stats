@@ -1,0 +1,20 @@
+import { afterEach, expect, test, vi } from 'vitest';
+import { startReviewCountdown } from './review-countdown';
+afterEach(() => vi.useRealTimers());
+test('saves once after five seconds; cancellation at the boundary prevents saving', () => {
+  vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'performance'] });
+  const tick = vi.fn();
+  const complete = vi.fn();
+  const cancel = startReviewCountdown(tick, complete);
+  expect(tick).toHaveBeenLastCalledWith(5);
+  vi.advanceTimersByTime(4900);
+  expect(complete).not.toHaveBeenCalled();
+  cancel();
+  vi.advanceTimersByTime(5000);
+  expect(complete).not.toHaveBeenCalled();
+  startReviewCountdown(tick, complete);
+  vi.advanceTimersByTime(5000);
+  expect(complete).toHaveBeenCalledOnce();
+  vi.advanceTimersByTime(10000);
+  expect(complete).toHaveBeenCalledOnce();
+});

@@ -49,6 +49,7 @@ export class VoiceEngine {
     return {
       ...result,
       proposal: result.proposal ?? { evento: 'desconocido' as const, equipo: 'equipo1' as const },
+      defaultTeamApplied: result.defaultTeamApplied ?? !result.proposal,
       timing: { rulesMs, needleMs: 0, method: 'commands' as const },
     };
   }
