@@ -77,6 +77,14 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
   await expect(editor).toBeVisible({ timeout: 10000 });
   await expect(editor.getByText(/Transcripción original/)).toBeVisible();
   await expect(editor.getByText(/Whistle:.*Reglas:/)).toBeVisible();
+  expect(
+    await editor.locator('.event-editor-fields > :last-child').getAttribute('class'),
+  ).toContain('voice-diagnostics');
+  expect(
+    await editor
+      .locator('.voice-diagnostics')
+      .evaluate((el) => parseFloat(getComputedStyle(el).fontSize)),
+  ).toBeLessThanOrEqual(11);
   await expect(editor.getByText(/Needle:/)).toHaveCount(0);
   await expect(
     editor

@@ -17,6 +17,11 @@
   color: #8a541c;
   font-size: 13px;
 }
+.voice-diagnostics {
+  font-size: 11px !important;
+  color: var(--muted);
+  margin-top: 16px;
+}
 .hold-to-talk.recording {
   background: #a93c32;
   border-color: #a93c32;

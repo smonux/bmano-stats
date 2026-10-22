@@ -78,14 +78,6 @@ export function EventEditor({
         }}
       >
         <div className="event-editor-fields">
-          {voiceTimings && (
-            <p className="caption">
-              {tr('Whistle: {whistle} s · Reglas: {rules} ms', {
-                whistle: (voiceTimings.whistleMs / 1000).toFixed(1),
-                rules: voiceTimings.rulesMs.toFixed(1),
-              })}
-            </p>
-          )}
           {voiceWarnings && (
             <ul className="voice-warnings">
               {voiceWarnings.map((warning) => (
@@ -244,6 +236,14 @@ export function EventEditor({
           {event && (
             <p className="caption">
               {tr('Cambiar minuto o tiempo recoloca el evento en orden cronológico.')}
+            </p>
+          )}
+          {voiceTimings && (
+            <p className="caption voice-diagnostics">
+              {tr('Whistle: {whistle} s · Reglas: {rules} ms', {
+                whistle: (voiceTimings.whistleMs / 1000).toFixed(1),
+                rules: voiceTimings.rulesMs.toFixed(1),
+              })}
             </p>
           )}
         </div>

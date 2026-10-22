@@ -29,3 +29,7 @@ Tras transcribir se muestra una propuesta compacta: texto original, evento, equi
 El resumen reutiliza `eventIssues` sin crear jugadores ni escribir datos. Una propuesta incompleta se identifica y se guarda pendiente, sin cómputo. La cuenta no empieza hasta que termina una edición manual concurrente. Se conserva el push to talk directo y se devuelve el foco al botón de voz al cerrar.
 
 Validación con pruebas de temporizador y de adaptación al dominio; diez recorridos de componente con IndexedDB real y reloj controlado en móvil/escritorio, separados de la precisión de ASR. El fixture de pruebas vive fuera de la distribución de la aplicación. También se comprueba el recorrido de audio con Whistle real.
+
+## 6. Tiempos al final
+
+Los tiempos de procesamiento pasan al último elemento del contenido desplazable del editor, después de nota, transcripción y demás campos. Se muestran a 11 px y no ocupan la entrada del formulario. La prueba de voz comprueba su posición y tamaño.
