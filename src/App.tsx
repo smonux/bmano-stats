@@ -1,7 +1,7 @@
 import { NavigationDrawer } from './components/NavigationDrawer';
 import { usePortraitOrientation } from './hooks/usePortraitOrientation';
 import { AppPage } from './pages/AppPage';
-import { refreshVoiceFiles } from './voice/setup';
+import { restoreVoice } from './voice/setup';
 import { Welcome, hasSeenWelcome } from './components/Welcome';
 import { tr, useLanguage } from './i18n';
 import { useEffect, useRef, useState } from 'react';
@@ -11,7 +11,7 @@ import { db } from './data/database';
 import { navigate, useRoute } from './components/ui';
 export default function App() {
   useEffect(() => {
-    void refreshVoiceFiles();
+    void restoreVoice();
   }, []);
   const language = useLanguage();
   const [welcome, setWelcome] = useState(() => !hasSeenWelcome());

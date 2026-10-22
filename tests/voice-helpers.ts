@@ -37,7 +37,7 @@ export async function prepareMatchVoice(page: Page) {
     preparation.getByRole('listbox', { name: 'Equipo por defecto', exact: true }),
   ).toHaveCount(0);
   await preparation.getByRole('button', { name: 'Cargar Cactus', exact: true }).click();
-  await expect(preparation.getByText('Cactus listo', { exact: true })).toBeVisible({
+  await expect(preparation).toHaveCount(0, {
     timeout: 60000,
   });
 }

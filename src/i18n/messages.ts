@@ -1,10 +1,12 @@
 // Each row follows this language order; the Spanish phrase is its stable key.
 import { voiceCommandMessages } from './voice-commands';
+import { improvementMessages } from './improvements';
 export const translationLanguages = ['en', 'de', 'fr', 'it', 'nl', 'pl'] as const;
 
 // Order: English, German, French, Italian, Dutch, Polish. Spanish keys are the source text.
 export const catalog: Record<string, readonly string[]> = {
   ...voiceCommandMessages,
+  ...improvementMessages,
   Ajustes: ['Settings', 'Einstellungen', 'Réglages', 'Impostazioni', 'Instellingen', 'Ustawienia'],
   'Abrir menú': [
     'Open menu',

@@ -30,6 +30,24 @@ beforeEach(() => {
   });
 });
 afterEach(() => vi.unstubAllGlobals());
+test('restores a configured language from real local files once, without a download', async () => {
+  localStorage.setItem('handball-voice-language', 'es');
+  const setup = await import('./setup');
+  await Promise.all([setup.restoreVoice(), setup.restoreVoice()]);
+  expect(mocks.engine.prepare).toHaveBeenCalledTimes(1);
+  expect(mocks.engine.prepare.mock.lastCall?.[1]).toBe(true);
+  expect(setup.voiceState()).toMatchObject({ configured: true, phase: 'ready' });
+  expect(localStorage.getItem('handball-voice-configured')).toBe('yes');
+});
+test('a completed flag cannot bypass absent cache on the next visit', async () => {
+  localStorage.setItem('handball-voice-language', 'es');
+  localStorage.setItem('handball-voice-configured', 'yes');
+  mocks.present.mockResolvedValue(false);
+  const setup = await import('./setup');
+  await setup.restoreVoice();
+  expect(setup.voiceState()).toMatchObject({ configured: true, phase: 'missing' });
+  expect(mocks.engine.prepare).not.toHaveBeenCalled();
+});
 test('requires an explicit language and never loads models before it is selected', async () => {
   const setup = await import('./setup');
   expect(await setup.prepareVoice(true)).toBe(false);

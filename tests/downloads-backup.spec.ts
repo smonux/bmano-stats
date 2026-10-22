@@ -49,11 +49,14 @@ test('prepares only Whistle across languages and reuses its verified cache offli
   await page.waitForFunction(() => !!navigator.serviceWorker.controller);
   await context.setOffline(true);
   await page.reload();
-  await preparation.getByRole('button', { name: 'Cargar Cactus', exact: true }).click();
   await expect(preparation.getByText('Cactus listo', { exact: true })).toBeVisible({
     timeout: 30000,
   });
   expect(requests).toEqual([DEFAULT_SPEECH_MODEL.url]);
+  await page.goto('/#/nuevo');
+  await expect(page.getByRole('heading', { name: 'Nuevo partido', exact: true })).toBeVisible();
+  await expect(preparation).toHaveCount(0);
+  await page.goto('/#/ajustes');
   await page.screenshot({ path: info.outputPath('whistle-commands.png'), fullPage: true });
 });
 

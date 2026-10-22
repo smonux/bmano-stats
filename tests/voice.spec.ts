@@ -44,11 +44,11 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
       .getByLabel(label, { exact: true })
       .fill(label === 'Equipo 1 (nuestro)' ? 'Águilas' : 'Leones');
   }
-  await prepareMatchVoice(page);
-  expect(modelRequests).toBe(1);
   const preparation = page.getByRole('region', { name: 'Preparación de voz' });
   await preparation.getByRole('button', { name: 'Comprobar micrófono' }).click();
   await expect(preparation.getByRole('button', { name: 'Micrófono comprobado' })).toBeVisible();
+  await prepareMatchVoice(page);
+  expect(modelRequests).toBe(1);
   await page.getByRole('button', { name: 'Iniciar partido' }).click();
   const talk = page.getByRole('button', { name: 'Mantén pulsado para hablar' });
   await expect(talk).toBeEnabled({ timeout: 30000 });

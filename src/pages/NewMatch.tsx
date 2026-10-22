@@ -104,9 +104,23 @@ function NewMatch({ data }: { data: Snapshot }) {
   return (
     <>
       <PageTitle title={tr('Nuevo partido')} subtitle={tr('Lo esencial para empezar.')} />
-      <div className="panel form-panel">
-        <VoicePreparation />
-      </div>
+      {!setup.configured ? (
+        <div className="panel form-panel">
+          <VoicePreparation />
+        </div>
+      ) : setup.phase !== 'ready' ? (
+        <div className="panel" role="status">
+          <p>
+            {tr(
+              ['checking', 'cached', 'loading'].includes(setup.phase)
+                ? 'Preparando reconocimiento de voz desde este dispositivo…'
+                : 'El reconocimiento de voz necesita atención antes de empezar.',
+            )}
+          </p>
+          {setup.error && <ErrorMessage text={setup.error} />}
+          <a href="#/ajustes">{tr('Revisar reconocimiento de voz en Ajustes')}</a>
+        </div>
+      ) : null}
       <form
         className="panel form-panel"
         onSubmit={(inputEvent) => {

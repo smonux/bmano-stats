@@ -9,6 +9,7 @@ type State = {
   phase: Phase;
   language: Language;
   languageChosen: boolean;
+  configured: boolean;
   progress: string;
   error: string;
 };
@@ -23,12 +24,20 @@ let state: State = {
   phase: 'checking',
   language: savedVoiceLanguage(),
   languageChosen: hasChosenLanguage(),
+  configured: (() => {
+    try {
+      return localStorage.getItem('handball-voice-configured') === 'yes';
+    } catch {
+      return false;
+    }
+  })(),
   progress: '',
   error: '',
 };
 const listeners = new Set<() => void>();
 let engine: VoiceEngine | undefined;
 let pendingPreparation: Promise<boolean> | undefined;
+let restoration: Promise<void> | undefined;
 const update = (change: Partial<State>) => {
   state = { ...state, ...change };
   listeners.forEach((fn) => fn());
@@ -44,6 +53,13 @@ export const useVoiceSetup = () =>
     () => state,
   );
 export const voiceState = () => state;
+/** Restore workers from verified local files, without prompting for microphone or network. */
+export function restoreVoice(): Promise<void> {
+  return (restoration ??= (async () => {
+    await refreshVoiceFiles();
+    if (state.phase === 'cached' && state.languageChosen) await prepareVoice(false);
+  })());
+}
 export async function refreshVoiceFiles() {
   if (['loading', 'ready'].includes(state.phase)) {
     return;
@@ -106,7 +122,10 @@ export function prepareVoice(download: boolean): Promise<boolean> {
           'Los modelos no se han guardado en este navegador. Libera espacio y vuelve a cargarlos antes del partido.',
         );
       }
-      update({ phase: 'ready', error: '' });
+      try {
+        localStorage.setItem('handball-voice-configured', 'yes');
+      } catch {}
+      update({ phase: 'ready', configured: true, error: '' });
       return true;
     } catch (error) {
       await session.close();
