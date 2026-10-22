@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { tr, useLanguage } from '../../i18n';
 import type { Snapshot } from '../../domain/schema';
 import type { PdfResponse } from '../../reports/pdf-messages';
+import { canShareFile, shareFile } from '../../reports/share-file';
 
 /** Prepares off the main thread, while sharing still runs in the user's click gesture. */
 export function useMatchPdf(data: Snapshot, matchId: string) {
@@ -57,18 +58,27 @@ export function useMatchPdf(data: Snapshot, matchId: string) {
     setNotice('');
     setError('');
     try {
-      if (navigator.canShare?.({ files: [file] }) && navigator.share) {
-        await navigator.share({ files: [file], title: tr('Estadísticas del partido') });
-      } else {
-        download(file);
-      }
-    } catch (reason) {
-      if (!(reason instanceof DOMException && reason.name === 'AbortError')) {
-        download(file);
-      }
+      const outcome = await shareFile(file, tr('Estadísticas del partido'));
+      if (outcome === 'unsupported') download(file);
+    } catch {
+      setError(tr('No se pudo abrir Enviar a. Puedes descargar el PDF.'));
     } finally {
       setBusy(false);
     }
   };
-  return { file, error, busy, notice, share, retry: () => setAttempt((value) => value + 1) };
+  return {
+    file,
+    error,
+    busy,
+    notice,
+    share,
+    nativeShare: Boolean(file && canShareFile(file)),
+    download: () => {
+      if (file) {
+        setError('');
+        download(file);
+      }
+    },
+    retry: () => setAttempt((value) => value + 1),
+  };
 }

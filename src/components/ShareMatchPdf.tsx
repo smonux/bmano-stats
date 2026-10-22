@@ -5,7 +5,10 @@ import { ErrorMessage } from './ui';
 import { useMatchPdf } from './statistics/useMatchPdf';
 
 export function ShareMatchPdf({ data, matchId }: { data: Snapshot; matchId: string }) {
-  const { file, error, busy, notice, share, retry } = useMatchPdf(data, matchId);
+  const { file, error, busy, notice, share, retry, nativeShare, download } = useMatchPdf(
+    data,
+    matchId,
+  );
 
   return (
     <div className="share-match-pdf">
@@ -15,8 +18,23 @@ export function ShareMatchPdf({ data, matchId }: { data: Snapshot; matchId: stri
         onClick={() => (file ? void share() : retry())}
       >
         {!file && !error ? <LoaderCircle className="spin" size={17} /> : <Share2 size={17} />}{' '}
-        {tr(error ? 'Reintentar PDF' : !file ? 'Preparando PDF…' : 'Compartir PDF del partido')}
+        {tr(
+          !file
+            ? error
+              ? 'Reintentar PDF'
+              : 'Preparando PDF…'
+            : busy
+              ? 'Abriendo Enviar a…'
+              : nativeShare
+                ? 'Enviar PDF a…'
+                : 'Descargar PDF',
+        )}
       </button>
+      {file && error && nativeShare && (
+        <button disabled={busy} onClick={download}>
+          {tr('Descargar PDF')}
+        </button>
+      )}
       {notice && (
         <p className="caption" role="status">
           {notice}

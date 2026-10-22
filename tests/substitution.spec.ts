@@ -71,7 +71,7 @@ test('substitution editor preserves two teammates, statistics, PDF and ZIP resto
   await expect(
     page.locator('.stat-list div').filter({ hasText: 'Entradas' }).locator('dd'),
   ).toHaveText('1');
-  const share = page.getByRole('button', { name: 'Compartir PDF del partido', exact: true });
+  const share = page.getByRole('button', { name: 'Descargar PDF', exact: true });
   await expect(share).toBeEnabled({ timeout: 30000 });
   const nextPdf = page.waitForEvent('download');
   await share.click();

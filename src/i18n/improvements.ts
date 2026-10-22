@@ -1,5 +1,37 @@
 /** Small interface improvements requested in Mejoras 1. Language order matches messages.ts. */
 export const improvementMessages: Record<string, readonly string[]> = {
+  'Enviar PDF a…': [
+    'Send PDF to…',
+    'PDF senden an…',
+    'Envoyer le PDF à…',
+    'Invia PDF a…',
+    'PDF verzenden naar…',
+    'Wyślij PDF do…',
+  ],
+  'Descargar PDF': [
+    'Download PDF',
+    'PDF herunterladen',
+    'Télécharger le PDF',
+    'Scarica PDF',
+    'PDF downloaden',
+    'Pobierz PDF',
+  ],
+  'Abriendo Enviar a…': [
+    'Opening sharing options…',
+    'Teilen-Auswahl wird geöffnet…',
+    'Ouverture du partage…',
+    'Apertura della condivisione…',
+    'Deelopties openen…',
+    'Otwieranie opcji udostępniania…',
+  ],
+  'No se pudo abrir Enviar a. Puedes descargar el PDF.': [
+    'Could not open sharing options. You can download the PDF.',
+    'Die Teilen-Auswahl konnte nicht geöffnet werden. Du kannst das PDF herunterladen.',
+    'Impossible d’ouvrir le partage. Vous pouvez télécharger le PDF.',
+    'Impossibile aprire la condivisione. Puoi scaricare il PDF.',
+    'Kan de deelopties niet openen. Je kunt de PDF downloaden.',
+    'Nie udało się otworzyć udostępniania. Możesz pobrać PDF.',
+  ],
   'Último portero utilizado': [
     'Last goalkeeper used',
     'Zuletzt gewählter Torwart',

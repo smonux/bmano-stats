@@ -49,3 +49,17 @@ Campos opcionales preservan las copias antiguas. ZIP/JSON conservan rol y selecc
 El recorrido detectó que insertar un dorsal nuevo antes del seleccionado podía activar el anclaje de desplazamiento del navegador y cambiarlo. La rueda desactiva ese anclaje, cancela desplazamientos pendientes al recibir un valor y se recoloca también cuando cambia el valor sin cambiar su índice.
 
 Validación: 125 pruebas de código aprobadas y seis recorridos de porteros/ruedas en móvil/escritorio; cancelación de alta de rol, varios porteros, dorsal cero, recarga y restauración ZIP, referencias inválidas y copias antiguas. Las pruebas del adaptador cubren prioridad del reconocimiento explícito y aislamiento por equipo/partido.
+
+## 9. Enviar el PDF
+
+El archivo se genera en segundo plano y se invalida al cambiar datos/idioma. Con soporte de compartir archivos, el botón dice «Enviar PDF a…» y llama al selector nativo directamente desde la pulsación, conservando la activación del usuario. Sin soporte, dice «Descargar PDF» y descarga. Cancelar el selector no descarga ni genera error. Un fallo real explica lo ocurrido y ofrece descargar el mismo archivo, sin confundirlo con un error de generación.
+
+Los recorridos de navegador comprueban PDF válido, llamada con gesto activo, cancelación, fallo, alternativa de descarga y funcionamiento offline. La API nativa se simula en Chromium automatizado; la presentación del selector y los destinos disponibles dependen del navegador/sistema y no se certifican en un teléfono físico.
+
+Para repetir la confirmación compacta aislada de ASR: `npx playwright test --config playwright.review.config.ts`. La batería principal usa `npm run test:e2e`; ambas admiten `CHROMIUM_PATH`. El audio real requiere `VOICE_MODELS_DIR` como se documenta en `voz.md`.
+
+## Validación final
+
+128 pruebas de código aprobadas; tipos, formato y compilación correctos. Se validan 43 recorridos principales de móvil/escritorio y diez de confirmación compacta. En la batería principal pasaron 41; los dos nuevos de compartir se repitieron y pasaron tras acotar su selector de aviso, que encontraba también el aviso de voz sin preparar. Se omite solo la repetición móvil del PDF largo, validado en escritorio. Capturas del resumen, nombres largos en altura corta, editor y portero cero revisadas.
+
+`dist/` contiene la aplicación final y no incluye el fixture de pruebas. Los servidores temporales se cierran al terminar. No se cambia Whistle ni se entrena, publica o mezcla otra rama. La rama de interfaz supervisada se conserva.

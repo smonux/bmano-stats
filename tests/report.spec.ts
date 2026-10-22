@@ -36,8 +36,9 @@ test('active match shares a PDF snapshot; completed match downloads one, also of
   await expect(
     page.getByRole('img', { name: 'Marcador por minuto del tiempo 2', exact: true }),
   ).toBeVisible();
-  const share = page.getByRole('button', { name: 'Compartir PDF del partido', exact: true });
+  const share = page.getByRole('button', { name: /^(Enviar PDF a…|Descargar PDF)$/ });
   await expect(share).toBeEnabled({ timeout: 30000 });
+  await expect(share).toHaveText('Enviar PDF a…');
   await share.click();
   await expect
     .poll(() =>
@@ -85,6 +86,69 @@ test('active match shares a PDF snapshot; completed match downloads one, also of
   expect(errors).toEqual([]);
 });
 
+test('native cancellation does not download; a genuine sharing failure offers the prepared PDF', async ({
+  page,
+}, info) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('handball-language', 'es');
+    localStorage.setItem('handball-welcome-v1', 'done');
+    const state = window as unknown as {
+      shareMode: string;
+      shareCalls: number;
+      activeGesture: boolean;
+    };
+    state.shareMode = 'cancel';
+    state.shareCalls = 0;
+    Object.defineProperty(navigator, 'canShare', { configurable: true, value: () => true });
+    Object.defineProperty(navigator, 'share', {
+      configurable: true,
+      value: async () => {
+        state.shareCalls++;
+        state.activeGesture = navigator.userActivation.isActive;
+        if (state.shareMode === 'cancel') throw new DOMException('Cancelled', 'AbortError');
+        throw new DOMException('Blocked', 'NotAllowedError');
+      },
+    });
+  });
+  let downloads = 0;
+  page.on('download', () => downloads++);
+  await page.goto('/#/ajustes');
+  await page.getByLabel('Importar copia', { exact: true }).setInputFiles({
+    name: 'report.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(reportFixture())),
+  });
+  await page.getByRole('dialog').getByRole('button', { name: 'Confirmar', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.goto('/#/partidos/report-match');
+  await page.getByRole('tab', { name: 'Estadísticas', exact: true }).click();
+  const share = page.getByRole('button', { name: 'Enviar PDF a…', exact: true });
+  await expect(share).toBeEnabled({ timeout: 30000 });
+  await share.click();
+  await expect(share).toBeEnabled();
+  expect(await page.evaluate(() => (window as unknown as { shareCalls: number }).shareCalls)).toBe(
+    1,
+  );
+  expect(
+    await page.evaluate(() => (window as unknown as { activeGesture: boolean }).activeGesture),
+  ).toBe(true);
+  expect(downloads).toBe(0);
+  await page.evaluate(() => {
+    (window as unknown as { shareMode: string }).shareMode = 'fail';
+  });
+  await share.click();
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'No se pudo abrir Enviar a' }),
+  ).toBeVisible();
+  expect(downloads).toBe(0);
+  const next = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Descargar PDF', exact: true }).click();
+  const file = await next;
+  const path = info.outputPath('share-fallback.pdf');
+  await file.saveAs(path);
+  expect((await readFile(path)).subarray(0, 5).toString()).toBe('%PDF-');
+});
+
 test('a long match paginates compact events and handles long names', async ({ page }, info) => {
   test.skip(info.project.name !== 'desktop', 'One desktop PDF is enough to verify pagination.');
   await page.addInitScript(() => {
@@ -124,7 +188,7 @@ test('a long match paginates compact events and handles long names', async ({ pa
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.goto('/#/partidos/report-match');
   await page.getByRole('tab', { name: 'Estadísticas', exact: true }).click();
-  const share = page.getByRole('button', { name: 'Compartir PDF del partido', exact: true });
+  const share = page.getByRole('button', { name: /^(Enviar PDF a…|Descargar PDF)$/ });
   await expect(share).toBeEnabled({ timeout: 30000 });
   const next = page.waitForEvent('download');
   await share.click();

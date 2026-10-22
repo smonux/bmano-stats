@@ -27,7 +27,8 @@ La primera visita requiere conexión para almacenar la aplicación. El service w
 - Reloj con pausa, reanudación, nuevos tiempos y finalización; corrección de partidos finalizados.
 - Captura manual de los 12 eventos, participantes relacionados y metadatos aplicables.
 - Sustituciones con jugador que sale y jugador que entra del mismo equipo; recuentos de cambios, entradas y salidas.
-- Captura local por voz: Whistle transcribe y las reglas interpretan comandos en orden evento/equipo/jugador 1/jugador 2/metadatos; revisión y transcripción literal conservada.
+- Captura local por voz: Whistle transcribe y las reglas interpretan comandos en orden evento/equipo/jugador 1/jugador 2/metadatos; resumen con guardado a los cinco segundos, edición y transcripción original conservada.
+- Porteros editables en la plantilla y último portero confirmado por equipo/partido como propuesta cuando falta en una parada.
 - Eventos pendientes sin cómputo; atribución de acciones sin dorsal al jugador virtual Desconocido.
 - Marcador y estadísticas derivados de eventos; las correcciones y eliminaciones actualizan sus consecuencias.
 - Estadísticas por equipo, jugador y partido, además de acumuladas.
@@ -63,7 +64,7 @@ Si Chromium ya está instalado, se puede indicar su ejecutable con `CHROMIUM_PAT
 
 ## Idiomas y uso durante el partido
 
-La interfaz y la voz pueden usar idiomas distintos: español, inglés, alemán, francés, italiano, neerlandés y polaco. El idioma de la interfaz se cambia en Ajustes o en la galería de bienvenida; el de captura, en la preparación previa al partido. Cactus se descarga y prepara antes de iniciar el partido; durante el juego el botón Voz es push to talk directo, sin panel adicional. Los siete comparten el mismo Whistle descargado.
+La interfaz y la voz pueden usar idiomas distintos: español, inglés, alemán, francés, italiano, neerlandés y polaco. El idioma de la interfaz se cambia en Ajustes o en la galería de bienvenida; el de captura, en la preparación previa al partido. El reconocimiento se prepara la primera vez y se restaura desde archivos locales en las siguientes visitas; durante el juego el botón Voz es push to talk directo, sin panel adicional. Los siete comparten el mismo Whistle descargado.
 
 La bienvenida aparece en el primer uso y se puede reabrir en Ajustes. Explica cómo preparar la voz, registrar una jugada, revisar el borrador y trabajar desde la perspectiva de quien graba.
 
@@ -82,7 +83,7 @@ Las reglas interpretan comandos en orden evento, equipo, jugador principal, rela
 
 ## Compartir un partido
 
-La vista de estadísticas de un partido muestra el tanteo por periodo: minutos en X, goles acumulados en Y y un escalón por cada gol en el minuto registrado. «Compartir PDF del partido» está disponible tanto en curso como finalizado. El PDF incluye ambos equipos, estadísticas individuales, gráficos y eventos por periodo en orden creciente, con tablas compactas. Cada evento incluye su nota y transcripción original cuando existen, debajo de los jugadores en la misma celda, con ajuste de líneas y paginación sin truncar el texto. Los eventos pendientes se identifican y no cuentan en estadísticas o marcador.
+La vista de estadísticas de un partido muestra el tanteo por periodo: minutos en X, goles acumulados en Y y un escalón por cada gol en el minuto registrado. «Enviar PDF a…» abre el selector nativo de archivos cuando está disponible; en los demás casos se ofrece «Descargar PDF». Ambas opciones están disponibles tanto en curso como finalizado. El PDF incluye ambos equipos, estadísticas individuales, gráficos y eventos por periodo en orden creciente, con tablas compactas. Cada evento incluye su nota y transcripción original cuando existen, debajo de los jugadores en la misma celda, con ajuste de líneas y paginación sin truncar el texto. Los eventos pendientes se identifican y no cuentan en estadísticas o marcador.
 
 La generación ocurre en un worker para mantener libre la interfaz. Cuando el navegador admite compartir archivos se abre la hoja nativa; en los demás se descarga el PDF. El informe funciona sin conexión después de almacenar la aplicación, sus fuentes y workers. No se envían los datos a un servidor para crear el PDF.
 
