@@ -6,7 +6,7 @@ import { ArrowRight, Plus } from 'lucide-react';
 import { repo, type TeamChoice } from '../data/database';
 import { type Snapshot } from '../domain/model';
 import { ErrorMessage, PageTitle, navigate, useAction } from '../components/ui';
-import { todayDateString } from '../presentation/matches';
+import { lastOurTeam, todayDateString } from '../presentation/matches';
 import { WheelPicker } from '../components/WheelPicker';
 function TeamPicker({
   label,
@@ -92,9 +92,7 @@ function TeamPicker({
   );
 }
 function NewMatch({ data }: { data: Snapshot }) {
-  const [local, setLocal] = useState<TeamChoice>({
-    id: '',
-  });
+  const [local, setLocal] = useState<TeamChoice>(() => ({ id: lastOurTeam(data) }));
   const [visitor, setVisitor] = useState<TeamChoice>({
     id: '',
   });

@@ -11,3 +11,9 @@ Validación: ocho pruebas de preparación; recorridos de móvil/escritorio de pr
 ## 2. Textos de reconocimiento
 
 El botón se llama «Cargar reconocimiento de voz». Estados y errores de preparación usan el mismo concepto, con traducción en los siete idiomas. Los modelos y parámetros de Whistle no cambian.
+
+## 3. Último equipo nuestro
+
+Nuevo partido preselecciona el equipo 1 del último partido creado que siga disponible. No usa la fecha editable ni equipos o partidos archivados. La elección es un valor inicial: no sobrescribe cambios del usuario ni elige rival. Se obtiene de los partidos persistidos, sin una preferencia adicional que pueda quedar obsoleta.
+
+Validación: orden de creación frente a fecha y exclusión de datos archivados; recorrido de importación, selección y recarga en móvil/escritorio.
