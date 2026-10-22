@@ -32,9 +32,7 @@ export function VoiceCapture({
       <button
         className={`hold-to-talk ${phase === 'recording' ? 'recording' : ''}`}
         aria-label={
-          phase === 'recording'
-            ? tr('Grabando · {seconds} s', { seconds })
-            : tr('Mantén pulsado para hablar')
+          phase === 'recording' ? tr('Grabando · {seconds} s', { seconds }) : tr('Voz (mantener)')
         }
         disabled={
           !ready || Boolean(problem) || ['transcribing', 'interpreting', 'review'].includes(phase)
@@ -70,7 +68,7 @@ export function VoiceCapture({
           ? tr('Grabando · {seconds} s', { seconds })
           : phase === 'permission'
             ? tr('Solicitando permiso…')
-            : tr('Voz')}
+            : tr('Voz (mantener)')}
       </button>
       {setup.phase === 'loading' && (
         <p className="capture-status" role="status">

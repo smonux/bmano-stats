@@ -1,5 +1,13 @@
 /** Small interface improvements requested in Mejoras 1. Language order matches messages.ts. */
 export const improvementMessages: Record<string, readonly string[]> = {
+  'Voz (mantener)': [
+    'Push to talk',
+    'Sprechen (halten)',
+    'Parler (maintenir)',
+    'Parla (tieni premuto)',
+    'Praten (ingedrukt houden)',
+    'Mów (przytrzymaj)',
+  ],
   'Cargar reconocimiento de voz': [
     'Load speech recognition',
     'Spracherkennung laden',

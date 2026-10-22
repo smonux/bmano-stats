@@ -50,7 +50,7 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
   await prepareMatchVoice(page);
   expect(modelRequests).toBe(1);
   await page.getByRole('button', { name: 'Iniciar partido' }).click();
-  const talk = page.getByRole('button', { name: 'Mantén pulsado para hablar' });
+  const talk = page.getByRole('button', { name: 'Voz (mantener)' });
   await expect(talk).toBeEnabled({ timeout: 30000 });
   await expect(page.getByRole('button', { name: 'Grabar con un toque' })).toHaveCount(0);
   await talk.scrollIntoViewIfNeeded();
@@ -126,10 +126,10 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
   const downloads = modelRequests;
   await context.setOffline(true);
   await page.reload();
-  await expect(page.getByRole('button', { name: 'Mantén pulsado para hablar' })).toBeEnabled({
+  await expect(page.getByRole('button', { name: 'Voz (mantener)' })).toBeEnabled({
     timeout: 30000,
   });
-  const hold = page.getByRole('button', { name: 'Mantén pulsado para hablar' });
+  const hold = page.getByRole('button', { name: 'Voz (mantener)' });
   await hold.hover();
   await page.mouse.down();
   await expect(page.getByRole('button', { name: /Grabando ·/ })).toBeVisible();

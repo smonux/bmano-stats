@@ -17,3 +17,7 @@ El botón se llama «Cargar reconocimiento de voz». Estados y errores de prepar
 Nuevo partido preselecciona el equipo 1 del último partido creado que siga disponible. No usa la fecha editable ni equipos o partidos archivados. La elección es un valor inicial: no sobrescribe cambios del usuario ni elige rival. Se obtiene de los partidos persistidos, sin una preferencia adicional que pueda quedar obsoleta.
 
 Validación: orden de creación frente a fecha y exclusión de datos archivados; recorrido de importación, selección y recarga en móvil/escritorio.
+
+## 4. Botón de pulsación mantenida
+
+El texto visible y el nombre accesible dicen «Voz (mantener)», «Push to talk» y sus equivalentes en los otros cinco idiomas. No cambia la grabación directa con puntero, Espacio o Intro ni añade un menú previo.

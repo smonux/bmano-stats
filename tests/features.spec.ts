@@ -188,7 +188,7 @@ test('three independent suspension timers persist, pause with match clock and si
   await expect(slots.nth(0).getByRole('button', { name: 'Activar' })).toBeVisible();
   await expect(page.getByLabel('Marcador 0 a 0')).toBeVisible();
   await expect(page.locator('.event-card')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Mantén pulsado para hablar' })).toBeEnabled({
+  await expect(page.getByRole('button', { name: 'Voz (mantener)' })).toBeEnabled({
     timeout: 30000,
   });
   await expect(page.getByRole('button', { name: 'Grabar con un toque' })).toHaveCount(0);
@@ -203,5 +203,5 @@ test('three independent suspension timers persist, pause with match clock and si
   await expect(
     page.getByRole('alert').filter({ hasText: 'El reconocimiento de voz no está preparado' }),
   ).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Mantén pulsado para hablar' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Voz (mantener)' })).toBeDisabled();
 });
