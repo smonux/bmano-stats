@@ -103,7 +103,7 @@ export function catalogRepository(database: HandballDatabase) {
         });
       });
     },
-    async savePlayer(teamId: string, shirtNumber: string, name: string) {
+    async savePlayer(teamId: string, shirtNumber: string, name: string, isGoalkeeper?: boolean) {
       return database.transaction('rw', database.players, database.teams, async () => {
         const playerId = await resolvePlayerInTransaction(database, teamId, shirtNumber);
         if (!playerId) {
@@ -112,7 +112,11 @@ export function catalogRepository(database: HandballDatabase) {
         if (name.length > 100) {
           throw new Error('El nombre no puede superar 100 caracteres.');
         }
-        await database.players.update(playerId, { name: name.trim(), updatedAt: Date.now() });
+        await database.players.update(playerId, {
+          name: name.trim(),
+          updatedAt: Date.now(),
+          ...(isGoalkeeper === undefined ? {} : { isGoalkeeper }),
+        });
       });
     },
   };

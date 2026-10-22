@@ -6,6 +6,7 @@ import { relatedTeam } from '../domain/events';
 import type { EventDraft } from '../data/database';
 import type { CaptureContext } from './capture-context';
 import { resolveTeam, resolveDorsal } from './resolve-references';
+import { lastGoalkeeper } from '../domain/goalkeepers';
 
 // Public adapter API retained for callers and historical experiments.
 export { captureContext, type CaptureContext } from './capture-context';
@@ -15,7 +16,7 @@ export function toVoiceDraft(
   rawText: string,
   proposal: unknown,
   context: CaptureContext,
-): { draft: EventDraft; warnings: string[] } {
+): { draft: EventDraft; warnings: string[]; goalkeeperDefaultApplied?: boolean } {
   const draft: EventDraft = {
     matchId: context.match.id,
     type: null,
@@ -29,6 +30,7 @@ export function toVoiceDraft(
     rawText,
   };
   const warnings: string[] = [];
+  let goalkeeperDefaultApplied = false;
   const parsed = proposalSchema.safeParse(proposal);
   if (!parsed.success) {
     return {
@@ -56,6 +58,13 @@ export function toVoiceDraft(
   }
   if (draft.type && draft.type !== 'passive') {
     draft.primaryDorsal = resolveDorsal(primaryReference, draft.teamId, context.data);
+    if (draft.type === 'save' && draft.primaryDorsal === '') {
+      const keeper = lastGoalkeeper(context.match, context.data.players, draft.teamId);
+      if (keeper) {
+        draft.primaryDorsal = String(keeper.dorsal);
+        goalkeeperDefaultApplied = true;
+      }
+    }
     if (primaryReference && !draft.primaryDorsal) {
       warnings.push(
         tr('«{player}» no identifica un jugador único: se atribuirá a Desconocido.', {
@@ -85,5 +94,5 @@ export function toVoiceDraft(
       draft.metadata.infraction = parsedProposal.infraccion;
     }
   }
-  return { draft, warnings };
+  return { draft, warnings, ...(goalkeeperDefaultApplied ? { goalkeeperDefaultApplied } : {}) };
 }

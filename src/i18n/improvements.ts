@@ -1,5 +1,21 @@
 /** Small interface improvements requested in Mejoras 1. Language order matches messages.ts. */
 export const improvementMessages: Record<string, readonly string[]> = {
+  'Último portero utilizado': [
+    'Last goalkeeper used',
+    'Zuletzt gewählter Torwart',
+    'Dernier gardien utilisé',
+    'Ultimo portiere utilizzato',
+    'Laatst gebruikte keeper',
+    'Ostatnio użyty bramkarz',
+  ],
+  'Portero recordado inválido en la copia.': [
+    'Invalid remembered goalkeeper in backup.',
+    'Ungültiger gemerkter Torwart in der Sicherung.',
+    'Gardien mémorisé invalide dans la sauvegarde.',
+    'Portiere memorizzato non valido nel backup.',
+    'Ongeldige onthouden keeper in de back-up.',
+    'Nieprawidłowy zapamiętany bramkarz w kopii.',
+  ],
   Sí: ['Yes', 'Ja', 'Oui', 'Sì', 'Ja', 'Tak'],
   No: ['No', 'Nein', 'Non', 'No', 'Nee', 'Nie'],
   'Selecciona un evento': [

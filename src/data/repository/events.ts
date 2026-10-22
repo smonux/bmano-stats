@@ -79,6 +79,27 @@ export function eventsRepository(database: HandballDatabase) {
           );
           // Correcting minute changes chronological position; insertion order breaks ties.
           await database.events.put(event);
+          const keeperSelected =
+            event.type === 'save' &&
+            event.teamId &&
+            event.primaryPlayerId &&
+            (!existingEvent ||
+              existingEvent.type !== 'save' ||
+              existingEvent.primaryPlayerId !== event.primaryPlayerId ||
+              existingEvent.teamId !== event.teamId);
+          if (keeperSelected && event.teamId && event.primaryPlayerId) {
+            const keeper = await database.players.get(event.primaryPlayerId);
+            if (keeper && !keeper.isUnknown) {
+              await database.players.update(keeper.id, {
+                isGoalkeeper: true,
+                updatedAt: Date.now(),
+              });
+              await database.matches.update(match.id, {
+                lastGoalkeepers: { ...match.lastGoalkeepers, [event.teamId]: keeper.id },
+                updatedAt: Date.now(),
+              });
+            }
+          }
           return event;
         },
       );

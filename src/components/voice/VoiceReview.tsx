@@ -99,7 +99,12 @@ export function VoiceReview({
           {definition && draft.type !== 'passive' && (
             <>
               <dt>{tr(definition.principal)}</dt>
-              <dd>{player(draft.teamId, draft.primaryDorsal)}</dd>
+              <dd>
+                {player(draft.teamId, draft.primaryDorsal)}
+                {result.goalkeeperDefaultApplied && (
+                  <small> · {tr('Último portero utilizado')}</small>
+                )}
+              </dd>
             </>
           )}
           {definition?.related && draft.type && (

@@ -2,13 +2,13 @@
 
 ## Preparación y uso
 
-Antes del partido, elige **Idioma de voz** y pulsa **Cargar reconocimiento de voz** en Nuevo partido o Ajustes. Se descarga y carga únicamente Whistle. Se mantiene el modelo, revisión, parámetros de transcripción y audio de Whistle; los siete idiomas son español, inglés, alemán, francés, italiano, neerlandés y polaco. No se usa Needle para preparar ni interpretar y las preferencias antiguas de capas/equipo por defecto no se aplican.
+La primera vez, elige **Idioma de voz** y pulsa **Cargar reconocimiento de voz** en Nuevo partido o Ajustes. Después, el formulario solo aparece en Ajustes y la aplicación restaura la sesión desde archivos locales verificados. Se descarga y carga únicamente Whistle. Se mantiene el modelo, revisión, parámetros de transcripción y audio de Whistle; los siete idiomas son español, inglés, alemán, francés, italiano, neerlandés y polaco. No se usa Needle para preparar ni interpretar y las preferencias antiguas de capas/equipo por defecto no se aplican.
 
 La preparación comprueba la entrada real de Whistle y su tamaño en CacheStorage; el SDK verifica SHA-256 al cargar. Una caché ausente o truncada no permite preparar la voz. Cambiar idioma reutiliza el mismo archivo. En un partido en curso solo se permite cargar el archivo local, sin descargar modelos. El requisito de preparar voz antes de iniciar se conserva.
 
 Whistle recibe palabras completas de balonmano, colores de tarjeta, equipos, nombres conocidos y dorsales reales de ambas plantillas en cifras y palabras. No se pasan raíces ni expresiones regulares como pistas y no se añaden los cien dorsales si no están en la plantilla. Estas pistas no garantizan la transcripción. El SDK 0.3.0 expone texto y opcionalmente palabras con probabilidad; no ofrece una lista de palabras alternativas para corregir cada posición. No se inventan esas alternativas ni se cambia la configuración de Whistle para obtenerlas.
 
-**Comprobar micrófono** solicita permiso y cierra las pistas. **Voz** sigue siendo push to talk directo: mantener pulsado y soltar, también con Espacio o Intro. El límite es veinte segundos y el tiempo/minuto del evento se fija al comenzar. Mientras transcribe aparece el indicador animado y la entrada manual permanece disponible. El audio no se conserva ni se envía a un servicio externo.
+**Comprobar micrófono** solicita permiso y cierra las pistas. **Voz (mantener)** sigue siendo push to talk directo: mantener pulsado y soltar, también con Espacio o Intro. El límite es veinte segundos y el tiempo/minuto del evento se fija al comenzar. Mientras transcribe aparece el indicador animado y la entrada manual permanece disponible. El audio no se conserva ni se envía a un servicio externo.
 
 ## Forma obligatoria del comando
 
@@ -44,7 +44,9 @@ No se admite invertir Sale/Entra ni anteponer una asistencia al gol. Nombres com
 
 ## Revisión y código
 
-Nunca se guarda al reconocer. El editor conserva la transcripción original y muestra **Whistle en segundos** y **Reglas en milisegundos**. La revisión permite corregir datos; sin evento o con infracción incompleta se guarda pendiente conforme a las reglas existentes. Un fallo conserva la transcripción y el equipo 1 para completar manualmente.
+Después del reconocimiento aparece un resumen compacto con transcripción, datos interpretados y posición capturada. **Continuar (5 s)** guarda al terminar la cuenta o al pulsarlo; **Editar** abre el formulario completo. Interactuar u ocultar la pestaña detiene la cuenta. X, Escape y Descartar cancelan. Si falta un dato obligatorio, se indica y se guarda pendiente, sin cómputo. El editor conserva la transcripción y muestra los tiempos de Whistle/reglas al final, en pequeño, sin avisos técnicos de interpretación. Un fallo de guardado mantiene abierto el formulario con el error.
+
+Guardar una parada con portero identificado lo marca en la plantilla y lo recuerda por equipo/partido. Cuando la voz no resuelve al portero se propone ese último jugador disponible y se identifica en el resumen; un dorsal reconocido siempre prevalece. El editor manual propone el mismo valor al elegir Parada y equipo. La plantilla permite editar la marca y tener varios porteros. Cancelar no modifica la selección persistida y las copias antiguas siguen siendo válidas.
 
 El recorrido activo es `engine.ts` → `commands/index.ts`: `events.ts` consume el evento inicial; `vocabulary.ts` define raíces por idioma; `players.ts` asigna participantes por posición; `distance.ts` contiene Levenshtein. Se reutilizan tokenización, referencias explícitas de equipo, números y contrato del editor. `deterministic.ts`, `event-routing.ts`, `play-schema.ts` e `hybrid.ts` se conservan como experimentos históricos y para comparar regresiones; no procesan la captura activa. Los artefactos antiguos de Needle y sus scripts experimentales se conservan, pero el cliente no los descarga ni carga.
 

@@ -1,4 +1,15 @@
 /* Responsive rules retain their cascade order; superseded declarations have been removed. */
+.goalkeeper-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-block: 12px;
+}
+.goalkeeper-option input {
+  width: auto;
+  margin: 0;
+}
 
 .team-picker {
   border: 0;

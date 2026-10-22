@@ -19,7 +19,7 @@ export function validateBackup(input: unknown): Backup {
   validateTeams(data.teams, playersById);
   validatePlayers(data.players, teamsById);
   for (const match of data.matches) {
-    validateMatch(match, teamsById);
+    validateMatch(match, teamsById, playersById);
   }
   for (const event of data.events) {
     validateEvent(event, matchesById, playersById);
@@ -61,7 +61,11 @@ function validatePlayers(players: Player[], teamsById: ReadonlyMap<string, Team>
     const invalidNumber = player.isUnknown
       ? player.id !== unknownId(player.teamId) || player.dorsal !== null
       : player.dorsal === null;
-    if (!teamsById.has(player.teamId) || invalidNumber) {
+    if (
+      !teamsById.has(player.teamId) ||
+      invalidNumber ||
+      (player.isUnknown && player.isGoalkeeper)
+    ) {
       throw new Error('Jugador o equipo inválido en la copia.');
     }
     const teamAndNumber = `${player.teamId}:${player.dorsal}`;
@@ -72,7 +76,22 @@ function validatePlayers(players: Player[], teamsById: ReadonlyMap<string, Team>
   }
 }
 
-function validateMatch(match: Match, teamsById: ReadonlyMap<string, Team>) {
+function validateMatch(
+  match: Match,
+  teamsById: ReadonlyMap<string, Team>,
+  playersById: ReadonlyMap<string, Player>,
+) {
+  for (const [teamId, playerId] of Object.entries(match.lastGoalkeepers ?? {})) {
+    const player = playersById.get(playerId);
+    if (
+      ![match.localTeamId, match.visitorTeamId].includes(teamId) ||
+      !player ||
+      player.teamId !== teamId ||
+      player.isUnknown
+    ) {
+      throw new Error('Portero recordado inválido en la copia.');
+    }
+  }
   for (const timer of match.exclusions ?? []) {
     if (
       timer &&

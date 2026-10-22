@@ -39,11 +39,12 @@ export function WheelPicker<Value extends string>({
   latest.current = { options, change, value, disabled };
 
   useLayoutEffect(() => {
+    clearTimeout(scrollTimer.current);
     const element = wheel.current!;
     if (Math.abs(element.scrollTop - selectedIndex * ROW_HEIGHT) > 1) {
       element.scrollTop = selectedIndex * ROW_HEIGHT;
     }
-  }, [selectedIndex]);
+  }, [selectedIndex, value, disabled]);
 
   useEffect(() => {
     // Dialog layout effects run before showModal makes its contents measurable.
@@ -51,7 +52,7 @@ export function WheelPicker<Value extends string>({
       wheel.current?.scrollTo({ top: selectedIndex * ROW_HEIGHT });
     });
     return () => cancelAnimationFrame(frame);
-  }, [selectedIndex]);
+  }, [selectedIndex, value]);
 
   useEffect(() => () => clearTimeout(scrollTimer.current), []);
 

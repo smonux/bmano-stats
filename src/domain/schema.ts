@@ -16,6 +16,7 @@ export const playerSchema = z.object({
   dorsal: z.number().int().min(0).max(99).nullable(),
   name: z.string().max(100),
   isUnknown: z.boolean(),
+  isGoalkeeper: z.boolean().optional(),
 });
 export const clockSchema = z.object({
   period: z.number().int().min(1),
@@ -38,6 +39,7 @@ export const matchSchema = z.object({
   status: z.enum(['active', 'done']),
   clock: clockSchema,
   exclusions: z.array(exclusionSchema.nullable()).length(EXCLUSION_SLOT_COUNT).optional(),
+  lastGoalkeepers: z.record(id, id).optional(),
 });
 export const metadataSchema = z.object({
   penalty: z.boolean().optional(),

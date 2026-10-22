@@ -246,6 +246,8 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   scroll-snap-type: y mandatory;
+  /* The selected value controls position when a new shirt is inserted before the old one. */
+  overflow-anchor: none;
   scrollbar-width: none;
   padding: 40px 0;
   position: relative;

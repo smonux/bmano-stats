@@ -1,5 +1,6 @@
 import { createEditorDraft } from './event-editor/draft';
 import { eventDraftIssues } from '../presentation/event-draft';
+import { lastGoalkeeper } from '../domain/goalkeepers';
 import { WheelPicker } from './WheelPicker';
 import { ParticipantPicker } from './event-editor/ParticipantPicker';
 import { EventMetadata } from './event-editor/EventMetadata';
@@ -47,7 +48,14 @@ export function EventEditor({
       type,
       metadata: {},
       relatedDorsal: '',
-      primaryDorsal: type === 'passive' ? '' : previousDraft.primaryDorsal,
+      primaryDorsal:
+        type === 'passive'
+          ? ''
+          : previousDraft.primaryDorsal ||
+            (type === 'save'
+              ? (lastGoalkeeper(match, data.players, previousDraft.teamId)?.dorsal?.toString() ??
+                '')
+              : ''),
     }));
   const relatedTeamId =
     draft.type && draft.teamId ? relatedTeam(match, draft.type, draft.teamId) : draft.teamId;
@@ -115,7 +123,10 @@ export function EventEditor({
                 setDraft((previousDraft) => ({
                   ...previousDraft,
                   teamId: teamId || null,
-                  primaryDorsal: '',
+                  primaryDorsal:
+                    draft.type === 'save'
+                      ? (lastGoalkeeper(match, data.players, teamId)?.dorsal?.toString() ?? '')
+                      : '',
                   relatedDorsal: '',
                 }))
               }

@@ -37,3 +37,15 @@ Los tiempos de procesamiento pasan al último elemento del contenido desplazable
 ## 7. Editor sin avisos técnicos
 
 Se retiran la lista técnica del reconocimiento y los avisos genéricos de revisión o datos pendientes. La confirmación compacta explica el resultado y lo que falta; en el editor, «Guardar pendiente» sigue diferenciando un evento incompleto. El botón reutiliza la validación del dominio y los errores reales de persistencia conservan su explicación junto a Guardar. Nota y transcripción original permanecen disponibles.
+
+## 8. Porteros
+
+La plantilla permite marcar y desmarcar Portero; admite varios y cancelar no modifica el jugador. Guardar una parada con participante identificado marca al realizador como portero y recuerda su selección por equipo/partido, en la misma transacción. El lanzador relacionado no se marca. Corregir solo la nota de una parada antigua no cambia la última elección.
+
+Si la voz no identifica al portero, se usa el último confirmado de ese equipo en ese partido y se indica en el resumen. Un participante reconocido prevalece, incluso el dorsal cero. El editor manual propone el mismo valor al elegir Parada/equipo. Los jugadores archivados, virtuales o desmarcados no se proponen. La marca en plantilla no inventa una selección inicial entre varios porteros.
+
+Campos opcionales preservan las copias antiguas. ZIP/JSON conservan rol y selección y validan equipo/jugador de las referencias. No cambia el cómputo de las estadísticas.
+
+El recorrido detectó que insertar un dorsal nuevo antes del seleccionado podía activar el anclaje de desplazamiento del navegador y cambiarlo. La rueda desactiva ese anclaje, cancela desplazamientos pendientes al recibir un valor y se recoloca también cuando cambia el valor sin cambiar su índice.
+
+Validación: 125 pruebas de código aprobadas y seis recorridos de porteros/ruedas en móvil/escritorio; cancelación de alta de rol, varios porteros, dorsal cero, recarga y restauración ZIP, referencias inválidas y copias antiguas. Las pruebas del adaptador cubren prioridad del reconocimiento explícito y aislamiento por equipo/partido.

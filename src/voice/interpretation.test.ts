@@ -6,7 +6,7 @@ import {
   toVoiceDraft,
   type CaptureContext,
 } from './interpretation';
-import type { Snapshot, Match } from '../domain/model';
+import type { Snapshot, Match, Player } from '../domain/model';
 import { interpretCommand } from './commands';
 const base = { createdAt: 1, updatedAt: 1, deletedAt: null };
 const match: Match = {
@@ -31,6 +31,37 @@ const data: Snapshot = {
   ],
 };
 const context: CaptureContext = captureContext(match, data);
+test('a missing goalkeeper uses only this match/team memory, never overriding an explicit player', () => {
+  const keeper: Player = {
+    ...base,
+    id: 'keeper-zero',
+    teamId: 'a',
+    name: 'Portera',
+    dorsal: 0,
+    isUnknown: false,
+    isGoalkeeper: true,
+  };
+  const saved: CaptureContext = {
+    ...context,
+    match: { ...match, lastGoalkeepers: { a: keeper.id } },
+    data: { ...data, players: [...data.players, keeper] },
+  };
+  const save = { evento: 'parada', equipo: 'equipo1' };
+  const result = toVoiceDraft('parada nuestra', save, saved);
+  expect(result.draft.primaryDorsal).toBe('0');
+  expect(result.goalkeeperDefaultApplied).toBe(true);
+  expect(
+    toVoiceDraft('parada nuestra nueve', { ...save, dorsal: 9 }, saved).draft.primaryDorsal,
+  ).toBe('9');
+  expect(
+    toVoiceDraft('parada rival', { ...save, equipo: 'equipo2' }, saved).draft.primaryDorsal,
+  ).toBe('');
+  expect(
+    toVoiceDraft('gol nuestro', { evento: 'gol', equipo: 'equipo1' }, saved).draft.primaryDorsal,
+  ).toBe('');
+  keeper.deletedAt = 1;
+  expect(toVoiceDraft('parada nuestra', save, saved).draft.primaryDorsal).toBe('');
+});
 const proposal = {
   evento: 'gol',
   equipo: 'nuestro',

@@ -13,6 +13,7 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
     id?: string;
     dorsal: string;
     name: string;
+    isGoalkeeper: boolean;
   } | null>(null);
   const action = useAction();
   const team = data.teams.find((team) => team.id === id);
@@ -48,6 +49,7 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
               ? setEditing({
                   dorsal: '',
                   name: '',
+                  isGoalkeeper: false,
                 })
               : setAdd(true)
           }
@@ -76,13 +78,17 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
                     id: player.id,
                     dorsal: String(player.dorsal),
                     name: player.name,
+                    isGoalkeeper: Boolean(player.isGoalkeeper),
                   })
                 }
               >
                 <b className="jersey">{player.dorsal}</b>
                 <span>
                   <strong>{player.name || tr('Nombre pendiente')}</strong>
-                  <small>{tr('Dorsal fijo · toca para editar el nombre')}</small>
+                  <small>
+                    {player.isGoalkeeper && <>{tr('Portero')} · </>}
+                    {tr('Dorsal fijo · toca para editar el nombre')}
+                  </small>
                 </span>
                 <ChevronRight size={18} />
               </button>
@@ -204,7 +210,7 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
             onSubmit={(inputEvent) => {
               inputEvent.preventDefault();
               action.run(async () => {
-                await repo.savePlayer(team.id, editing.dorsal, editing.name);
+                await repo.savePlayer(team.id, editing.dorsal, editing.name, editing.isGoalkeeper);
                 setEditing(null);
               });
             }}
@@ -230,6 +236,14 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
                 />
               </label>
             </div>
+            <label className="goalkeeper-option">
+              <input
+                type="checkbox"
+                checked={editing.isGoalkeeper}
+                onChange={(event) => setEditing({ ...editing, isGoalkeeper: event.target.checked })}
+              />
+              {tr('Portero')}
+            </label>
             <p className="caption">
               {tr('Un dorsal identifica siempre al mismo jugador dentro de su equipo.')}
             </p>
