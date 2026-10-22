@@ -86,6 +86,7 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
       .evaluate((el) => parseFloat(getComputedStyle(el).fontSize)),
   ).toBeLessThanOrEqual(11);
   await expect(editor.getByText(/Needle:/)).toHaveCount(0);
+  await expect(editor.locator('.voice-warnings, .pending-hint')).toHaveCount(0);
   await expect(
     editor
       .getByRole('listbox', { name: 'Equipo', exact: true })

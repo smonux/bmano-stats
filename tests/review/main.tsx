@@ -63,7 +63,6 @@ function Fixture() {
             match={match}
             initialDraft={result.draft}
             voiceTimings={result.timings}
-            voiceWarnings={result.warnings}
             close={close}
           />
         ) : (

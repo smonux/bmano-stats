@@ -116,7 +116,6 @@ export function VoiceCapture({
               data={data}
               match={match}
               initialDraft={result.draft}
-              voiceWarnings={result.warnings}
               voiceTimings={result.timings}
               close={closeReview}
             />

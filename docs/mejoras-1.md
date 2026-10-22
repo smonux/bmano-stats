@@ -33,3 +33,7 @@ Validación con pruebas de temporizador y de adaptación al dominio; diez recorr
 ## 6. Tiempos al final
 
 Los tiempos de procesamiento pasan al último elemento del contenido desplazable del editor, después de nota, transcripción y demás campos. Se muestran a 11 px y no ocupan la entrada del formulario. La prueba de voz comprueba su posición y tamaño.
+
+## 7. Editor sin avisos técnicos
+
+Se retiran la lista técnica del reconocimiento y los avisos genéricos de revisión o datos pendientes. La confirmación compacta explica el resultado y lo que falta; en el editor, «Guardar pendiente» sigue diferenciando un evento incompleto. El botón reutiliza la validación del dominio y los errores reales de persistencia conservan su explicación junto a Guardar. Nota y transcripción original permanecen disponibles.

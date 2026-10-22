@@ -1,4 +1,5 @@
 import { createEditorDraft } from './event-editor/draft';
+import { eventDraftIssues } from '../presentation/event-draft';
 import { WheelPicker } from './WheelPicker';
 import { ParticipantPicker } from './event-editor/ParticipantPicker';
 import { EventMetadata } from './event-editor/EventMetadata';
@@ -20,7 +21,6 @@ export function EventEditor({
   match,
   event,
   initialDraft,
-  voiceWarnings,
   voiceTimings,
   close,
 }: {
@@ -28,7 +28,6 @@ export function EventEditor({
   match: Match;
   event?: GameEvent;
   initialDraft?: EventDraft;
-  voiceWarnings?: string[];
   voiceTimings?: {
     whistleMs: number;
     rulesMs: number;
@@ -52,16 +51,7 @@ export function EventEditor({
     }));
   const relatedTeamId =
     draft.type && draft.teamId ? relatedTeam(match, draft.type, draft.teamId) : draft.teamId;
-  const duplicate =
-    draft.type === 'substitution' &&
-    draft.primaryDorsal !== '' &&
-    draft.relatedDorsal !== '' &&
-    Number(draft.primaryDorsal) === Number(draft.relatedDorsal);
-  const missing =
-    duplicate ||
-    !draft.type ||
-    !draft.teamId ||
-    (draft.type === 'infraction' && !draft.metadata.infraction);
+  const missing = eventDraftIssues(draft, match, data.players).length > 0;
   return (
     <Modal
       className="event-editor"
@@ -78,13 +68,6 @@ export function EventEditor({
         }}
       >
         <div className="event-editor-fields">
-          {voiceWarnings && (
-            <ul className="voice-warnings">
-              {voiceWarnings.map((warning) => (
-                <li key={warning}>{tr(warning)}</li>
-              ))}
-            </ul>
-          )}
           <div className="event-top">
             <WheelPicker<EventType | ''>
               label={tr('Evento')}
@@ -221,18 +204,6 @@ export function EventEditor({
               </p>
             )}
           </section>
-          {duplicate && (
-            <p className="pending-hint">
-              {tr('El jugador que sale y el que entra deben ser distintos.')}
-            </p>
-          )}
-          {missing && (
-            <p className="pending-hint">
-              {tr(
-                'Faltan datos obligatorios. Puedes guardar el evento pendiente; no contará en las estadísticas.',
-              )}
-            </p>
-          )}
           {event && (
             <p className="caption">
               {tr('Cambiar minuto o tiempo recoloca el evento en orden cronológico.')}

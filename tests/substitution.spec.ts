@@ -40,8 +40,8 @@ test('substitution editor preserves two teammates, statistics, PDF and ZIP resto
   await selectShirtNumber(dialog, 'Dorsal principal', '6');
   await selectShirtNumber(dialog, 'Dorsal relacionado', '6');
   await expect(
-    dialog.getByText('El jugador que sale y el que entra deben ser distintos.'),
-  ).toBeVisible();
+    dialog.getByRole('button', { name: 'Guardar pendiente', exact: true }),
+  ).toBeEnabled();
   await expect(
     dialog.getByRole('button', { name: 'Guardar pendiente', exact: true }),
   ).toBeVisible();
