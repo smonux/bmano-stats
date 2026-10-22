@@ -106,7 +106,10 @@ export function prepareVoice(download: boolean): Promise<boolean> {
   const language = state.languageChosen ? state.language : getLanguage();
   pendingPreparation = (async () => {
     if (!state.languageChosen) {
-      update({ phase: 'error', error: 'Elige el idioma de voz antes de cargar Cactus.' });
+      update({
+        phase: 'error',
+        error: 'Elige el idioma antes de cargar el reconocimiento de voz.',
+      });
       return false;
     }
     const session = new VoiceEngine(language);
@@ -142,7 +145,7 @@ export function prepareVoice(download: boolean): Promise<boolean> {
 }
 export function preparedEngine() {
   if (!engine?.ready) {
-    throw new Error('Prepara los modelos antes de grabar.');
+    throw new Error('Prepara el reconocimiento de voz antes de grabar.');
   }
   return engine;
 }

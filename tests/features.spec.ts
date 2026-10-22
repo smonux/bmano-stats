@@ -200,6 +200,8 @@ test('three independent suspension timers persist, pause with match clock and si
     }
   });
   await page.reload();
-  await expect(page.getByRole('alert').filter({ hasText: 'Cactus no está cargado' })).toBeVisible();
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'El reconocimiento de voz no está preparado' }),
+  ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Mantén pulsado para hablar' })).toBeDisabled();
 });

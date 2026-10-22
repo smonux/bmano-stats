@@ -2,7 +2,7 @@
 
 ## Preparación y uso
 
-Antes del partido, elige **Idioma de voz** y pulsa **Cargar Cactus** en Nuevo partido o Ajustes. Se descarga y carga únicamente Whistle. Se mantiene el modelo, revisión, parámetros de transcripción y audio de Whistle; los siete idiomas son español, inglés, alemán, francés, italiano, neerlandés y polaco. No se usa Needle para preparar ni interpretar y las preferencias antiguas de capas/equipo por defecto no se aplican.
+Antes del partido, elige **Idioma de voz** y pulsa **Cargar reconocimiento de voz** en Nuevo partido o Ajustes. Se descarga y carga únicamente Whistle. Se mantiene el modelo, revisión, parámetros de transcripción y audio de Whistle; los siete idiomas son español, inglés, alemán, francés, italiano, neerlandés y polaco. No se usa Needle para preparar ni interpretar y las preferencias antiguas de capas/equipo por defecto no se aplican.
 
 La preparación comprueba la entrada real de Whistle y su tamaño en CacheStorage; el SDK verifica SHA-256 al cargar. Una caché ausente o truncada no permite preparar la voz. Cambiar idioma reutiliza el mismo archivo. En un partido en curso solo se permite cargar el archivo local, sin descargar modelos. El requisito de preparar voz antes de iniciar se conserva.
 

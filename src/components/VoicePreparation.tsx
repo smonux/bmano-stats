@@ -26,19 +26,21 @@ export function VoicePreparation({ live = false }: { live?: boolean }) {
         <h2>{tr('Prepara la voz antes del partido')}</h2>
         {setup.phase === 'ready' && (
           <span className="badge live">
-            <Check size={12} /> {tr('Cactus listo')}
+            <Check size={12} /> {tr('Reconocimiento listo')}
           </span>
         )}
       </div>
       {missing && (
         <p role="alert" className="preparation-alert">
           {tr(
-            'Cactus no está cargado en este navegador. Elige el idioma y carga los modelos antes de iniciar el partido.',
+            'El reconocimiento de voz no está preparado. Elige el idioma y cárgalo antes de iniciar el partido.',
           )}
         </p>
       )}
       {setup.phase === 'cached' && (
-        <p className="caption">{tr('Los modelos están en local. Cárgalos antes del partido.')}</p>
+        <p className="caption">
+          {tr('Los archivos están en este dispositivo. Carga el reconocimiento antes del partido.')}
+        </p>
       )}
       <WheelPicker<Language | ''>
         label={tr('Idioma de voz')}
@@ -64,7 +66,7 @@ export function VoicePreparation({ live = false }: { live?: boolean }) {
       </p>
       {setup.phase === 'loading' ? (
         <p role="status">
-          {tr('Cargando modelos…')} {setup.progress}
+          {tr('Preparando reconocimiento…')} {setup.progress}
         </p>
       ) : (
         setup.phase !== 'ready' && (
@@ -77,7 +79,7 @@ export function VoicePreparation({ live = false }: { live?: boolean }) {
             onClick={() => void prepareVoice(true)}
           >
             <Download size={16} />
-            {tr('Cargar Cactus')}
+            {tr('Cargar reconocimiento de voz')}
           </button>
         )
       )}

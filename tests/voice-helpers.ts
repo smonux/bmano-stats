@@ -25,7 +25,9 @@ export async function serveModels(context: BrowserContext, request?: () => void)
 }
 export async function prepareMatchVoice(page: Page) {
   const preparation = page.getByRole('region', { name: 'Preparación de voz' });
-  await expect(preparation.getByRole('alert').first()).toContainText('Cactus no está cargado');
+  await expect(preparation.getByRole('alert').first()).toContainText(
+    'El reconocimiento de voz no está preparado',
+  );
   await selectWheelOption(
     preparation.getByRole('listbox', { name: 'Idioma de voz', exact: true }),
     'Español',
@@ -36,7 +38,9 @@ export async function prepareMatchVoice(page: Page) {
   await expect(
     preparation.getByRole('listbox', { name: 'Equipo por defecto', exact: true }),
   ).toHaveCount(0);
-  await preparation.getByRole('button', { name: 'Cargar Cactus', exact: true }).click();
+  await preparation
+    .getByRole('button', { name: 'Cargar reconocimiento de voz', exact: true })
+    .click();
   await expect(preparation).toHaveCount(0, {
     timeout: 60000,
   });

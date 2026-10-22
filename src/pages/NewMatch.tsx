@@ -127,7 +127,9 @@ function NewMatch({ data }: { data: Snapshot }) {
           inputEvent.preventDefault();
           action.run(async () => {
             if (setup.phase !== 'ready' || !setup.languageChosen) {
-              throw new Error(tr('Carga Cactus y elige el idioma antes de iniciar el partido.'));
+              throw new Error(
+                tr('Carga el reconocimiento de voz y elige el idioma antes de iniciar el partido.'),
+              );
             }
             const match = await repo.createMatch(local, visitor, date);
             navigate(`/partidos/${match.id}`);

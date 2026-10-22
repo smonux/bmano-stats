@@ -74,13 +74,13 @@ export function VoiceCapture({
       </button>
       {setup.phase === 'loading' && (
         <p className="capture-status" role="status">
-          {tr('Cargando modelos…')} {setup.progress}
+          {tr('Preparando reconocimiento…')} {setup.progress}
         </p>
       )}
       {!ready && setup.phase !== 'loading' && (
         <div className="capture-status" role="alert">
           {tr(
-            'Cactus no está cargado en este navegador. Elige el idioma y carga los modelos antes de iniciar el partido.',
+            'El reconocimiento de voz no está preparado. Elige el idioma y cárgalo antes de iniciar el partido.',
           )}{' '}
           <a href="#/ajustes">{tr('Preparar voz')}</a>
         </div>

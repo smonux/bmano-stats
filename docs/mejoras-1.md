@@ -7,3 +7,7 @@ Cambios solicitados en el HTML y las tres capturas de `Mejoras 1.zip`, aplicados
 Nuevo partido muestra el formulario completo solo hasta completar la preparación. Las siguientes visitas restauran la sesión desde archivos locales verificados, sin descargar ni solicitar micrófono. Ajustes conserva el formulario. Un archivo ausente o una carga fallida muestra un estado compacto con acceso a Ajustes y sigue impidiendo iniciar sin voz preparada. La marca de configuración no sustituye comprobar la caché.
 
 Validación: ocho pruebas de preparación; recorridos de móvil/escritorio de preparación, reutilización offline, ocultación en Nuevo partido, creación de partido y copias ZIP/JSON.
+
+## 2. Textos de reconocimiento
+
+El botón se llama «Cargar reconocimiento de voz». Estados y errores de preparación usan el mismo concepto, con traducción en los siete idiomas. Los modelos y parámetros de Whistle no cambian.

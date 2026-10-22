@@ -27,7 +27,7 @@ export class VoiceEngine {
     try {
       progress(tr('Cargando Whistle…'));
       this.whistle = await createWhistle(options('Whistle'));
-      progress(tr('Modelos listos en este dispositivo.'));
+      progress(tr('Reconocimiento listo en este dispositivo.'));
     } catch (error) {
       await this.close();
       throw error;
@@ -35,7 +35,7 @@ export class VoiceEngine {
   }
   async transcribe(samples: Float32Array, sampleRate: number, keywords: string[]) {
     if (!this.whistle) {
-      throw new Error('Prepara los modelos antes de grabar.');
+      throw new Error('Prepara el reconocimiento de voz antes de grabar.');
     }
     return this.whistle.transcribe(
       { samples, sampleRate },

@@ -36,8 +36,10 @@ test('prepares only Whistle across languages and reuses its verified cache offli
       preparation.getByRole('listbox', { name: 'Idioma de voz', exact: true }),
       language,
     );
-    await preparation.getByRole('button', { name: 'Cargar Cactus', exact: true }).click();
-    await expect(preparation.getByText('Cactus listo', { exact: true })).toBeVisible({
+    await preparation
+      .getByRole('button', { name: 'Cargar reconocimiento de voz', exact: true })
+      .click();
+    await expect(preparation.getByText('Reconocimiento listo', { exact: true })).toBeVisible({
       timeout: 30000,
     });
   }
@@ -49,7 +51,7 @@ test('prepares only Whistle across languages and reuses its verified cache offli
   await page.waitForFunction(() => !!navigator.serviceWorker.controller);
   await context.setOffline(true);
   await page.reload();
-  await expect(preparation.getByText('Cactus listo', { exact: true })).toBeVisible({
+  await expect(preparation.getByText('Reconocimiento listo', { exact: true })).toBeVisible({
     timeout: 30000,
   });
   expect(requests).toEqual([DEFAULT_SPEECH_MODEL.url]);
