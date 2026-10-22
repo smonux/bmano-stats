@@ -31,6 +31,29 @@ const data: Snapshot = {
   ],
 };
 const context: CaptureContext = captureContext(match, data);
+test('a note retains its body, original transcription and captured position without participants', () => {
+  const text = 'Comentario: Buen movimiento de balón.\nSara siete, gol rival, dos minutos.';
+  const result = toVoiceDraft(
+    text,
+    interpretCommand(text, 'es', ['Águilas', 'Leones']).proposal,
+    context,
+  );
+  expect(result).toEqual({
+    draft: {
+      matchId: 'm',
+      type: 'note',
+      teamId: null,
+      primaryDorsal: '',
+      relatedDorsal: '',
+      period: 2,
+      minute: 3,
+      metadata: {},
+      note: text.slice(12),
+      rawText: text,
+    },
+    warnings: [],
+  });
+});
 test('a missing goalkeeper uses only this match/team memory, never overriding an explicit player', () => {
   const keeper: Player = {
     ...base,

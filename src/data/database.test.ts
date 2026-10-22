@@ -39,6 +39,48 @@ const stats = async () => {
   const snapshot = await db.snapshot();
   return calculate(snapshot.matches, snapshot.events, snapshot.players);
 };
+test('notes have no attribution or statistical effects and survive backup and reload', async () => {
+  await repo.saveEvent(draft('goal', { primaryDorsal: '7' }));
+  const before = await db.snapshot();
+  const beforeStats = await stats();
+  const note = 'El árbitro advierte de posible exclusión.\nRecordar a Sara que no se dirija a él.';
+  const rawText = `Nota: ${note}`;
+  const saved = await repo.saveEvent(
+    draft('note', {
+      // Stale editor fields must neither create players nor survive on a note.
+      primaryDorsal: '33',
+      relatedDorsal: '44',
+      metadata: { penalty: true, blue: true },
+      note,
+      rawText,
+    }),
+  );
+  expect(saved).toMatchObject({
+    type: 'note',
+    teamId: null,
+    primaryPlayerId: null,
+    relatedPlayerId: null,
+    metadata: {},
+    note,
+    rawText,
+  });
+  expect(eventState(saved, match, before.players)).toBe('valid');
+  expect((await db.snapshot()).players).toEqual(before.players);
+  expect((await db.snapshot()).matches).toEqual(before.matches);
+  expect(await stats()).toEqual(beforeStats);
+  const backup = await repo.exportBackup();
+  await repo.importBackup(JSON.parse(JSON.stringify(backup)));
+  db.close();
+  await db.open();
+  expect(await db.events.get(saved.id)).toEqual(saved);
+  expect(await stats()).toEqual(beforeStats);
+  const invalid = structuredClone(backup);
+  invalid.events.find((event) => event.id === saved.id)!.teamId = match.localTeamId;
+  await expect(repo.importBackup(invalid)).rejects.toThrow('campos incompatibles');
+  const empty = await repo.saveEvent(draft('note', { teamId: null, note: '  ' }));
+  expect(eventState(empty, match, before.players)).toBe('pending');
+  expect(await stats()).toEqual(beforeStats);
+});
 test('unknown goal counts once; correction moves attribution; deletion removes consequences', async () => {
   const savedEvent = await repo.saveEvent(draft('goal'));
   expect((await stats()).players[unknownId(match.localTeamId)].goals).toBe(1);

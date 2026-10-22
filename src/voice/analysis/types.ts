@@ -7,7 +7,7 @@ export type RulePlayer = { name: string; team: TeamPerspective; dorsal?: number 
 
 /** Public proposal keys are Spanish to preserve the dataset and editor contract. */
 export type RuleProposal = {
-  evento: SpokenEvent | 'desconocido';
+  evento: SpokenEvent | 'nota' | 'desconocido';
   equipo: TeamPerspective | 'desconocido';
   dorsal?: number;
   nombre?: string;
@@ -16,6 +16,7 @@ export type RuleProposal = {
   penalti?: boolean;
   azul?: boolean;
   infraccion?: 'Pasos' | 'Dobles' | 'Pisando';
+  nota?: string;
 };
 
 /** Half-open token interval: `from` is included and `to` is excluded. */

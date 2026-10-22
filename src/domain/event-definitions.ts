@@ -11,6 +11,7 @@ export const eventTypes = [
   'passive',
   'infraction',
   'substitution',
+  'note',
 ] as const;
 export type EventType = (typeof eventTypes)[number];
 export type EventDefinition = {
@@ -23,6 +24,7 @@ export type EventDefinition = {
 };
 
 export const definitions: Record<EventType, EventDefinition> = {
+  note: { label: 'Nota', icon: '✎', principal: 'No aplica' },
   goal: {
     label: 'Gol',
     icon: '●',

@@ -25,14 +25,19 @@ export function cleanEvent(event: GameEvent): GameEvent {
   }
   return {
     ...event,
+    teamId: event.type === 'note' ? null : event.teamId,
     metadata,
     primaryPlayerId:
-      event.type === 'passive' || !eventDefinition || !event.teamId ? null : event.primaryPlayerId,
+      event.type === 'note' || event.type === 'passive' || !eventDefinition || !event.teamId
+        ? null
+        : event.primaryPlayerId,
     relatedPlayerId: eventDefinition?.related && event.teamId ? event.relatedPlayerId : null,
   };
 }
 
 export function eventIssues(event: GameEvent, match: Match, players: Player[]): string[] {
+  // Notes belong to the match, never to a team or player.
+  if (event.type === 'note') return event.note.trim() ? [] : ['Escribe el texto de la nota'];
   const issues: string[] = [];
   const { type, teamId, primaryPlayerId, relatedPlayerId } = event;
   if (!event.type) {
@@ -82,6 +87,7 @@ export function eventState(event: GameEvent, match: Match, players: Player[]): E
   }
   if (
     event.type !== 'passive' &&
+    event.type !== 'note' &&
     (!event.primaryPlayerId ||
       players.find((player) => player.id === event.primaryPlayerId)?.isUnknown)
   ) {

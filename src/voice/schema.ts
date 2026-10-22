@@ -5,7 +5,8 @@ import { spokenTypes } from './event-types';
 export const perspectiveRule =
   'Recorder perspective: own team=equipo1, opponents=equipo2, NEVER home/away. If team is not mentioned use desconocido.';
 export const proposalSchema = z.object({
-  evento: z.enum(['desconocido', ...Object.keys(spokenTypes)]),
+  evento: z.enum(['desconocido', 'nota', ...Object.keys(spokenTypes)]),
+  nota: z.string().max(10000).default(''),
   equipo: z.string().max(100).default(''),
   dorsal: z.number().int().min(0).max(99).optional(),
   nombre: z.string().max(100).default(''),

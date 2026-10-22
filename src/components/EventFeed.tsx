@@ -122,10 +122,14 @@ function EventCard({
               </span>
             )}
             <b className="event-team-name">
-              {event.teamId ? teamName(data, event.teamId) : tr('Equipo pendiente')}
+              {event.type === 'note'
+                ? tr('Nota del partido')
+                : event.teamId
+                  ? teamName(data, event.teamId)
+                  : tr('Equipo pendiente')}
             </b>
           </span>
-          {event.type !== 'passive' && (
+          {event.type !== 'passive' && event.type !== 'note' && (
             <>
               {' '}
               · {event.type === 'substitution' && `${tr('Sale')} `}
@@ -139,6 +143,7 @@ function EventCard({
             </>
           )}
         </p>
+        {event.type === 'note' && <p className="event-note">{event.note}</p>}
         <div className="event-bottom">
           <span className="caption">
             {statusLabel}

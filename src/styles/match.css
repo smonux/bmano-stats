@@ -124,6 +124,10 @@
   flex-shrink: 0;
   color: #444444;
 }
+.event-note {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .event-copy {
   flex: 1;
   min-width: 0;

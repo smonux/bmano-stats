@@ -33,7 +33,7 @@ async function editableEvent(database: HandballDatabase, draft: EventDraft, matc
 async function resolveParticipants(database: HandballDatabase, draft: EventDraft, match: Match) {
   const { type, teamId } = draft;
   const primaryPlayerId =
-    type && type !== 'passive' && teamId
+    type && type !== 'passive' && type !== 'note' && teamId
       ? await resolvePlayerInTransaction(database, teamId, draft.primaryDorsal)
       : null;
   const relatedPlayerId =

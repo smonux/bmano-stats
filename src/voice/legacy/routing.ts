@@ -4,7 +4,8 @@ import { definitions, eventTypes, type EventType } from '../../domain/model';
 import { normalize } from '../interpretation';
 import { voiceKeywords } from '../../i18n/voice';
 import { normalizeShirtNumbers } from './numbers';
-const canonical: Record<EventType, string> = {
+// This historical experiment only routes statistical plays.
+const canonical: Record<Exclude<EventType, 'note'>, string> = {
   goal: 'gol',
   save: 'parada',
   miss: 'fallo',
@@ -23,15 +24,20 @@ export function captureFacts(language: Language) {
   const words = voiceKeywords[language];
   return `locale:${language}; sport:handball; equipo1=${words[2]}/${words[3]}; equipo2=${words[4]}/${words[5]}; NEVER home/away`;
 }
-export function routeSpokenEvent(text: string, language: Language): EventType | null {
+export function routeSpokenEvent(
+  text: string,
+  language: Language,
+): Exclude<EventType, 'note'> | null {
   const value = normalize(text);
   if (/\b(no|not|nicht|kein|keine|pas|non|geen|nie|anulado|annulled)\b/u.test(value)) {
     return null;
   }
-  const options = eventTypes.map((type) => ({
-    type,
-    phrase: normalize(tr(definitions[type].label, {}, language)),
-  }));
+  const options = eventTypes
+    .filter((type) => type !== 'note')
+    .map((type) => ({
+      type,
+      phrase: normalize(tr(definitions[type].label, {}, language)),
+    }));
   const first = options.find(({ phrase }) => value === phrase || value.startsWith(phrase + ' '));
   if (!first) {
     return null;

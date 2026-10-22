@@ -19,6 +19,7 @@ function canCount(event: GameEvent, match: Match, players: Player[]): event is C
   return (
     !['pending', 'deleted'].includes(eventState(event, match, players)) &&
     !!event.type &&
+    event.type !== 'note' &&
     !!event.teamId
   );
 }

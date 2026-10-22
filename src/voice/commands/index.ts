@@ -13,6 +13,7 @@ import { NO_EVENT, REVIEW_WARNING, rejectInterpretation } from '../analysis/resu
 import { commandEvent } from './events';
 import { commandPlayers } from './players';
 import { commandVocabulary } from './vocabulary';
+import { spokenNote } from './note';
 
 /** Protocol: event, team, primary, related, metadata. No placeholders or role reordering. */
 export function interpretCommand(
@@ -22,6 +23,8 @@ export function interpretCommand(
   players: RulePlayer[] = [],
 ): InterpretationResult {
   if (!text.trim() || text.length > 10_000) return rejectInterpretation(NO_EVENT);
+  const note = spokenNote(text, language);
+  if (note) return note;
   const context = createAnalysisContext(text, language, teams, players);
   const event = commandEvent(context);
   if (!event) return rejectInterpretation(NO_EVENT);

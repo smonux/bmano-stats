@@ -8,6 +8,48 @@ async function open(page: Page, query = '') {
   await expect(dialog(page)).toBeVisible();
   await expect(dialog(page).getByRole('button', { name: 'Continuar' })).toBeFocused();
 }
+test('dictated note is editable, auto-saves without a team and never changes the score', async ({
+  page,
+}, info) => {
+  await page.setViewportSize({ width: info.project.name === 'mobile' ? 390 : 1000, height: 664 });
+  const text =
+    'Nota: El árbitro está advirtiendo a Sara de posible exclusión, tengo que recordarle que no se dirija a él';
+  await open(page, `?text=${encodeURIComponent(text)}`);
+  await dialog(page).getByText('Transcripción original', { exact: true }).click();
+  await expect(dialog(page)).toContainText('Nota del partido');
+  await expect(dialog(page)).not.toContainText('Equipo pendiente');
+  await expect(dialog(page)).not.toContainText('Se guardará pendiente');
+  await dialog(page).getByRole('button', { name: 'Editar', exact: true }).click();
+  const editor = page.getByRole('dialog', { name: 'Nuevo evento', exact: true });
+  await expect(editor.getByRole('listbox', { name: 'Equipo', exact: true })).toHaveCount(0);
+  await expect(editor.getByLabel('Nota', { exact: true })).toHaveValue(text.slice(6));
+  await editor
+    .getByLabel('Nota', { exact: true })
+    .fill(`${text.slice(6)}\nRecordarlo al descanso.`);
+  await page.screenshot({ path: info.outputPath('note-editor.png'), fullPage: true });
+  await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
+  await expect(editor).toHaveCount(0);
+  await expect(page.getByTestId('events')).toContainText('Recordarlo al descanso.');
+  await page.reload();
+  await expect(page.getByTestId('score')).toHaveText('0:0');
+  const events = JSON.parse((await page.getByTestId('events').textContent())!);
+  expect(events).toHaveLength(1);
+  expect(events[0]).toMatchObject({
+    type: 'note',
+    teamId: null,
+    primaryPlayerId: null,
+    relatedPlayerId: null,
+    rawText: text,
+    period: 2,
+    minute: 9,
+  });
+  await page.getByRole('button', { name: 'Mostrar propuesta', exact: true }).click();
+  await expect(dialog(page)).toBeVisible();
+  await page.clock.fastForward(5100);
+  await expect(dialog(page)).toHaveCount(0);
+  await expect(page.getByTestId('score')).toHaveText('0:0');
+  expect(JSON.parse((await page.getByTestId('events').textContent())!)).toHaveLength(2);
+});
 test('the five-second default saves once, preserves the captured position and persists', async ({
   page,
 }) => {

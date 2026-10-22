@@ -15,6 +15,32 @@ const roster: RulePlayer[] = [
 ];
 const command = (text: string) => parse(text, 'es', teams, roster).proposal;
 
+test('Spanish notes short-circuit play, team, player and metadata recognition', () => {
+  const text =
+    'Nota: El árbitro está advirtiendo a Sara de posible exclusión, tengo que recordarle que no se dirija a él';
+  expect(parse(text, 'es', teams, roster)).toMatchObject({
+    proposal: { evento: 'nota', equipo: 'desconocido', nota: text.slice(6) },
+    warnings: [],
+    defaultTeamApplied: false,
+  });
+  for (const keyword of ['Not', 'NOTA', 'Notas', 'Coment', 'Comentario', 'Comentarios']) {
+    expect(command(`«${keyword}: gol rival 7 9 penalti\nTarjeta roja nuestra Sara»`)).toEqual({
+      evento: 'nota',
+      equipo: 'desconocido',
+      nota: 'gol rival 7 9 penalti\nTarjeta roja nuestra Sara»',
+    });
+  }
+  expect(command('Comentario: buen movimiento de balón')).toEqual({
+    evento: 'nota',
+    equipo: 'desconocido',
+    nota: 'buen movimiento de balón',
+  });
+  expect(command('Nota:')).toMatchObject({ evento: 'nota', nota: '' });
+  expect(command('gol nuestro 7 nota exclusión')).toMatchObject({ evento: 'gol', dorsal: 7 });
+  expect(command('7 Nota: gol rival')).not.toMatchObject({ evento: 'nota' });
+  expect(parse('Nota: gol rival 7', 'en', teams).proposal).not.toMatchObject({ evento: 'nota' });
+});
+
 test('players retain appearance order across known/unknown numbers and names; extras are ignored', () => {
   expect(command('gol nuestro veintitrés siete')).toMatchObject({
     dorsal: 23,

@@ -47,7 +47,7 @@ export function drawEvents(context: PdfContext) {
           .filter(Boolean)
           .join(' · ');
         const participants =
-          event.type === 'passive'
+          event.type === 'passive' || event.type === 'note'
             ? ''
             : (event.type === 'substitution' ? `${t('Sale')}: ` : '') +
               player(event.primaryPlayerId) +

@@ -89,14 +89,23 @@ export function VoiceReview({
           <dd>
             <strong>{tr(definition?.label ?? 'Evento sin indicar')}</strong>
           </dd>
-          <dt>{tr('Equipo')}</dt>
-          <dd>
-            {draft.teamId
-              ? `${teamNumber} · ${teamName(data, draft.teamId)}`
-              : tr('Equipo pendiente')}
-            {result.defaultTeamApplied && <small> · {tr('Equipo por defecto')}</small>}
-          </dd>
-          {definition && draft.type !== 'passive' && (
+          {draft.type === 'note' ? (
+            <>
+              <dt>{tr('Nota del partido')}</dt>
+              <dd className="event-note">{draft.note || tr('Escribe el texto de la nota')}</dd>
+            </>
+          ) : (
+            <>
+              <dt>{tr('Equipo')}</dt>
+              <dd>
+                {draft.teamId
+                  ? `${teamNumber} · ${teamName(data, draft.teamId)}`
+                  : tr('Equipo pendiente')}
+                {result.defaultTeamApplied && <small> · {tr('Equipo por defecto')}</small>}
+              </dd>
+            </>
+          )}
+          {definition && draft.type !== 'passive' && draft.type !== 'note' && (
             <>
               <dt>{tr(definition.principal)}</dt>
               <dd>

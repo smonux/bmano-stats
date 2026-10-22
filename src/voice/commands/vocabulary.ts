@@ -12,7 +12,17 @@ type Vocabulary = {
 };
 /** Complete spoken words for Whistle; never send regexes or truncated roots as hints. */
 export const commandHints: Record<Language, readonly string[]> = {
-  es: ['detención', 'expulsión', 'tarjeta', 'amarilla', 'roja', 'azul', 'violación'],
+  es: [
+    'detención',
+    'expulsión',
+    'tarjeta',
+    'amarilla',
+    'roja',
+    'azul',
+    'violación',
+    'nota',
+    'comentario',
+  ],
   en: ['card', 'yellow', 'red', 'blue', 'substitution', 'violation'],
   de: ['Karte', 'gelbe', 'rote', 'blaue', 'Wechsel'],
   fr: ['carton', 'jaune', 'rouge', 'bleu', 'changement'],

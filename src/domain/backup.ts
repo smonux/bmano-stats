@@ -145,6 +145,7 @@ function validateEvent(
   const compatibleEvent = cleanEvent(event);
   if (
     JSON.stringify(compatibleEvent.metadata) !== JSON.stringify(event.metadata) ||
+    compatibleEvent.teamId !== event.teamId ||
     compatibleEvent.primaryPlayerId !== event.primaryPlayerId ||
     compatibleEvent.relatedPlayerId !== event.relatedPlayerId
   ) {

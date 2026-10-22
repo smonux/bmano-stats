@@ -41,6 +41,11 @@ export function toVoiceDraft(
     };
   }
   const parsedProposal = parsed.data;
+  if (parsedProposal.evento === 'nota') {
+    draft.type = 'note';
+    draft.note = parsedProposal.nota;
+    return { draft, warnings };
+  }
   const primaryReference =
     parsedProposal.dorsal !== undefined ? String(parsedProposal.dorsal) : parsedProposal.nombre;
   const relatedReference =
