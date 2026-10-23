@@ -55,7 +55,9 @@ function Fixture() {
     <main className="app-main">
       <button onClick={() => void show()}>Mostrar propuesta</button>
       <p data-testid="score">{matchScore(data, match).join(':')}</p>
-      <pre data-testid="events">{JSON.stringify(data.events)}</pre>
+      <pre data-testid="events" style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>
+        {JSON.stringify(data.events)}
+      </pre>
       {result &&
         (editing ? (
           <EventEditor

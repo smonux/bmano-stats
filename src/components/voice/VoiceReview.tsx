@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import type { Match, Snapshot } from '../../domain/schema';
 import { definitions } from '../../domain/event-definitions';
 import { relatedTeam } from '../../domain/events';
@@ -8,7 +8,6 @@ import { teamName } from '../../presentation/matches';
 import { tr } from '../../i18n';
 import type { RecognizedEvent } from '../../voice/recognition';
 import { Modal, ErrorMessage, useAction } from '../ui';
-import { startReviewCountdown } from './review-countdown';
 
 export function VoiceReview({
   result,
@@ -25,41 +24,13 @@ export function VoiceReview({
 }) {
   const { draft } = result;
   const action = useAction();
-  const continueButton = useRef<HTMLButtonElement>(null);
-  const [seconds, setSeconds] = useState<number | null>(5);
-  const cancelCountdown = useRef(() => {});
-  const stop = () => {
-    cancelCountdown.current();
-    setSeconds(null);
-  };
-  const continueReview = () => {
-    stop();
+  const saveButton = useRef<HTMLButtonElement>(null);
+  const saveReview = () => {
     void action.run(async () => {
       await repo.saveEvent(draft);
       close();
     });
   };
-  const continueRef = useRef(continueReview);
-  continueRef.current = continueReview;
-  useEffect(() => {
-    if (document.hidden) {
-      setSeconds(null);
-      return;
-    }
-    const cancel = startReviewCountdown(setSeconds, () => continueRef.current());
-    cancelCountdown.current = cancel;
-    const hide = () => {
-      if (document.hidden) {
-        cancel();
-        setSeconds(null);
-      }
-    };
-    document.addEventListener('visibilitychange', hide);
-    return () => {
-      cancel();
-      document.removeEventListener('visibilitychange', hide);
-    };
-  }, []);
 
   const definition = draft.type ? definitions[draft.type] : undefined;
   const player = (teamId: string | null, dorsal: string) => {
@@ -76,8 +47,7 @@ export function VoiceReview({
       title={tr('Confirmar jugada')}
       className="voice-review"
       close={() => !action.busy && close()}
-      onInteraction={stop}
-      initialFocus={continueButton}
+      initialFocus={saveButton}
     >
       <div className="voice-review-copy">
         <p className="voice-transcript">
@@ -160,39 +130,20 @@ export function VoiceReview({
         )}
       </div>
       <footer className="voice-review-footer">
-        <p className="caption" role="status">
-          {tr(
-            seconds === null
-              ? 'Guardado automático detenido.'
-              : 'Se guardará en cinco segundos. Toca o usa el teclado para detener la cuenta.',
-          )}
-        </p>
         <ErrorMessage text={action.error} />
         <div className="actions">
           <button
-            ref={continueButton}
+            ref={saveButton}
             className="primary"
             type="button"
             disabled={action.busy}
-            onClick={continueReview}
+            onClick={saveReview}
           >
-            {action.busy ? (
-              tr('Guardando…')
-            ) : (
-              <>
-                {tr('Continuar')}
-                <span aria-hidden="true">{seconds === null ? '' : ` (${seconds} s)`}</span>
-              </>
+            {tr(
+              action.busy ? 'Guardando…' : issues.length ? 'Guardar pendiente' : 'Guardar evento',
             )}
           </button>
-          <button
-            type="button"
-            disabled={action.busy}
-            onClick={() => {
-              stop();
-              edit();
-            }}
-          >
+          <button type="button" disabled={action.busy} onClick={edit}>
             {tr('Editar')}
           </button>
         </div>

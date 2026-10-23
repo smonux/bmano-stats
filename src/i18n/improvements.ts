@@ -98,22 +98,6 @@ export const improvementMessages: Record<string, readonly string[]> = {
     'Actie bevestigen',
     'Potwierdź akcję',
   ],
-  'Se guardará en cinco segundos. Toca o usa el teclado para detener la cuenta.': [
-    'Saves in five seconds. Touch or use the keyboard to stop the countdown.',
-    'Wird in fünf Sekunden gespeichert. Berühren oder Tastatur verwenden, um den Countdown zu stoppen.',
-    'Enregistrement dans cinq secondes. Touchez ou utilisez le clavier pour arrêter le compte à rebours.',
-    'Salvataggio tra cinque secondi. Tocca o usa la tastiera per fermare il conto alla rovescia.',
-    'Wordt over vijf seconden opgeslagen. Raak aan of gebruik het toetsenbord om af te tellen te stoppen.',
-    'Zapis za pięć sekund. Dotknij lub użyj klawiatury, aby zatrzymać odliczanie.',
-  ],
-  'Guardado automático detenido.': [
-    'Automatic saving stopped.',
-    'Automatisches Speichern gestoppt.',
-    'Enregistrement automatique arrêté.',
-    'Salvataggio automatico fermato.',
-    'Automatisch opslaan gestopt.',
-    'Automatyczny zapis zatrzymany.',
-  ],
   'Se guardará pendiente; no contará en las estadísticas.': [
     'Will be saved as pending; it will not count in statistics.',
     'Wird als unvollständig gespeichert und zählt nicht in der Statistik.',
@@ -122,7 +106,6 @@ export const improvementMessages: Record<string, readonly string[]> = {
     'Wordt als onvolledig opgeslagen en telt niet mee in de statistieken.',
     'Zostanie zapisana jako niekompletna i nie będzie liczona w statystykach.',
   ],
-  Continuar: ['Continue', 'Weiter', 'Continuer', 'Continua', 'Doorgaan', 'Kontynuuj'],
   Descartar: ['Discard', 'Verwerfen', 'Abandonner', 'Scarta', 'Verwerpen', 'Odrzuć'],
   'Sin indicar': [
     'Not specified',

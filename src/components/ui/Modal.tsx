@@ -7,14 +7,12 @@ export function Modal({
   children,
   close,
   className = '',
-  onInteraction,
   initialFocus,
 }: {
   title: string;
   children: ReactNode;
   close: () => void;
   className?: string;
-  onInteraction?: () => void;
   initialFocus?: RefObject<HTMLElement | null>;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -36,9 +34,6 @@ export function Modal({
         close();
       }}
       aria-label={title}
-      onPointerDownCapture={onInteraction}
-      onKeyDownCapture={onInteraction}
-      onWheelCapture={onInteraction}
     >
       <div className="modal-handle" />
       <div className="section-heading">

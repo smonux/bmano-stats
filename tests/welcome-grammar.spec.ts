@@ -13,6 +13,8 @@ test('welcome explains ordered voice grammar and Spanish notes with reachable co
     .getByRole('button', { name: 'Pulsa, habla, revisa y guarda', exact: true })
     .press('Enter');
   await expect(guide).toContainText('Evento → equipo → jugador 1 → jugador 2 → metadatos');
+  await expect(guide).toContainText('pulsa Guardar evento para registrarla');
+  await expect(guide).not.toContainText('cinco segundos');
   await expect(guide).toContainText('Gol nuestro siete uno penalti');
   await expect(guide).toContainText('Sale el #7 y entra el #9 del equipo 1.');
   await guide.locator('.welcome-grammar').scrollIntoViewIfNeeded();

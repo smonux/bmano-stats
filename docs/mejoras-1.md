@@ -24,11 +24,11 @@ El texto visible y el nombre accesible dicen «Voz (mantener)», «Push to talk�
 
 ## 5. Confirmación compacta
 
-Tras transcribir se muestra una propuesta compacta: texto original, evento, equipo (con valor por defecto identificado), participantes y funciones, metadatos pertinentes, tiempo y minuto capturados. Continuar es el control inicial de teclado y guarda una vez a los cinco segundos si no se interactúa. Puntero, teclado, desplazamiento u ocultar la pestaña detienen la cuenta; no se reinicia sola. Editar conserva el borrador. X, Escape y Descartar no guardan. Un error de persistencia mantiene la propuesta abierta con su explicación.
+Tras transcribir se muestra una propuesta compacta: texto original, evento, equipo (con valor por defecto identificado), participantes y funciones, metadatos pertinentes, tiempo y minuto capturados. Por indicación posterior del usuario, se retira la cuenta atrás: Guardar evento (o Guardar pendiente si faltan datos) es el control inicial de teclado y solo guarda al pulsarlo. Editar conserva el borrador. Esperar o cambiar de pestaña no guarda; X, Escape y Descartar cancelan. Un error de persistencia mantiene la propuesta abierta con su explicación.
 
-El resumen reutiliza `eventIssues` sin crear jugadores ni escribir datos. Una propuesta incompleta se identifica y se guarda pendiente, sin cómputo. La cuenta no empieza hasta que termina una edición manual concurrente. Se conserva el push to talk directo y se devuelve el foco al botón de voz al cerrar.
+El resumen reutiliza `eventIssues` sin crear jugadores ni escribir datos. Una propuesta incompleta se identifica y se guarda pendiente al confirmarla, sin cómputo. Si hay una edición manual concurrente, se espera a que termine antes de mostrar la propuesta. Se conserva el push to talk directo y se devuelve el foco al botón de voz al cerrar.
 
-Validación con pruebas de temporizador y de adaptación al dominio; diez recorridos de componente con IndexedDB real y reloj controlado en móvil/escritorio, separados de la precisión de ASR. El fixture de pruebas vive fuera de la distribución de la aplicación. También se comprueba el recorrido de audio con Whistle real.
+Validación inicial con pruebas de temporizador y de adaptación al dominio; diez recorridos de componente con IndexedDB real y reloj controlado en móvil/escritorio, separados de la precisión de ASR. Tras retirar la cuenta atrás se elimina su prueba y los recorridos comprueban que esperar un minuto no guarda, tanto en jugadas completas como pendientes y notas. El fixture de pruebas vive fuera de la distribución de la aplicación. También se comprueba el recorrido de audio con Whistle real.
 
 ## 6. Tiempos al final
 

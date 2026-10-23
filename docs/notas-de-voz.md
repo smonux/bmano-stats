@@ -24,7 +24,7 @@ transcripción. Las copias anteriores sin notas siguen siendo compatibles.
 - Repositorio: no crea jugadores ni modifica partido/estadísticas; limpia datos
   residuales; texto vacío pendiente; restauración y reapertura de IndexedDB.
 - PDF: filas reales de notas incluyen cuerpo/transcripción sin jugador ficticio.
-- Navegador móvil/escritorio: revisión de voz, edición, guardado automático y manual,
+- Navegador móvil/escritorio: revisión de voz, edición, guardado por confirmación,
   lectura de texto largo, recarga y restauración ZIP. Se detectó y corrigió una
   etiqueta implícita de textarea cuyo nombre incluía el texto al reabrir el editor.
 
@@ -35,7 +35,7 @@ real; no miden la precisión acústica de Whistle. No cambia su modelo ni config
 
 La guía explica el orden evento → equipo → jugador 1 → jugador 2 → metadatos,
 incluye ejemplos de gol y sustitución, los valores por defecto de equipo, el orden
-de participantes y la pausa del guardado automático de cinco segundos. Una página
+de participantes y la confirmación explícita del guardado. Una página
 propia recoge los dos ejemplos de Nota/Comentario. Sus explicaciones se traducen a
 los siete idiomas; los ejemplos de notas se marcan como español porque este atajo
 no se ha extendido a otros idiomas. Los ejemplos deportivos traducidos se ejecutan

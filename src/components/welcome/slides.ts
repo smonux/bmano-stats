@@ -25,7 +25,7 @@ export const slides: WelcomeSlide[] = [
   },
   {
     title: 'Pulsa, habla, revisa y guarda',
-    body: 'Mantén pulsado para hablar y suelta para terminar. Di una jugada en este orden, sin dejar huecos. Usa dorsales del 0 al 99 o nombres de la plantilla; di solo los jugadores que correspondan. La propuesta se guarda en cinco segundos; tócala o usa el teclado para detener la cuenta y editar.',
+    body: 'Mantén pulsado para hablar y suelta para terminar. Di una jugada en este orden, sin dejar huecos. Usa dorsales del 0 al 99 o nombres de la plantilla; di solo los jugadores que correspondan. Revisa la propuesta: pulsa Guardar evento para registrarla o Editar para corregirla.',
     grammar: 'Evento → equipo → jugador 1 → jugador 2 → metadatos',
     examples: [
       {
