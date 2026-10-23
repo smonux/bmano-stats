@@ -15,6 +15,72 @@ const roster: RulePlayer[] = [
 ];
 const command = (text: string) => parse(text, 'es', teams, roster).proposal;
 
+test('gol/goal prefixes recover joined ASR words only at the start of the command', () => {
+  for (const opening of ['golden', 'goal', 'goalden', 'goles', 'GÓLDEN']) {
+    const result = parse(` «${opening}: nuestro siete nueve penalti»`, 'es', teams, roster);
+    expect(result.proposal).toEqual({
+      evento: 'gol',
+      equipo: 'equipo1',
+      dorsal: 7,
+      dorsal_relacionado: 9,
+      penalti: true,
+    });
+    expect(result.eventKeyword).toBe(opening);
+    expect(result.eventMatch).toBe('literal');
+  }
+  expect(command('golden rival Ana')).toEqual({ evento: 'gol', equipo: 'equipo2', dorsal: 3 });
+  expect(parse('golden siete', 'es', teams).defaultTeamApplied).toBe(true);
+  for (const text of [
+    'nuestro golden siete',
+    'no golden nuestro siete',
+    'en el minuto seis golden siete',
+    '7 golden siete',
+    'go siete',
+  ]) {
+    expect(command(text), text).toBeNull();
+  }
+  expect(command('fallo nuestro 7 golden')).toMatchObject({ evento: 'fallo', dorsal: 7 });
+  expect(command('Comentario: golden rival Sara exclusión')).toEqual({
+    evento: 'nota',
+    equipo: 'desconocido',
+    nota: 'golden rival Sara exclusión',
+  });
+});
+
+test('gol/goal prefixes apply to languages with those goal keywords and preserve other literal events', () => {
+  const perspectives = { es: 'nuestro', en: 'our', it: 'nostro', nl: 'ons', pl: 'nasz' } as const;
+  for (const language of Object.keys(perspectives) as (keyof typeof perspectives)[]) {
+    for (const opening of ['golden', 'goalden']) {
+      expect(
+        parse(`${opening} ${perspectives[language]} 7 9`, language, teams).proposal,
+        language,
+      ).toEqual({
+        evento: 'gol',
+        equipo: 'equipo1',
+        dorsal: 7,
+        dorsal_relacionado: 9,
+      });
+    }
+  }
+  expect(parse('goal area violation our 7', 'en', teams).proposal).toMatchObject({
+    evento: 'infraccion',
+    dorsal: 7,
+  });
+  for (const language of ['de', 'fr'] as const) {
+    expect(parse('golden 7', language, teams).proposal).toBeNull();
+    expect(parse('goalden 7', language, teams).proposal).toBeNull();
+  }
+  for (const [language, text] of [
+    ['de', 'Tor unser 7'],
+    ['fr', 'But notre 7'],
+    ['it', 'Rete nostro 7'],
+    ['nl', 'Doelpunt ons 7'],
+    ['pl', 'Bramka nasza 7'],
+  ] as const) {
+    expect(parse(text, language, teams).proposal).toMatchObject({ evento: 'gol', dorsal: 7 });
+  }
+});
+
 test('Spanish notes short-circuit play, team, player and metadata recognition', () => {
   const text =
     'Nota: El árbitro está advirtiendo a Sara de posible exclusión, tengo que recordarle que no se dirija a él';

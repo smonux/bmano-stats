@@ -31,12 +31,14 @@ export const commandHints: Record<Language, readonly string[]> = {
   pl: ['kartka', 'żółta', 'czerwona', 'niebieska', 'zmiana'],
 };
 const roots = (...values: string[]) => `(?:${values.join('|')})\\p{L}*`;
+// Optional "a": accept ASR joins such as "gol de" → "golden" at the event position.
+const goalRoot = 'goa?l';
 
 /** Command words, not free-form commentary. Each language has its own roots and phrases. */
 export const commandVocabulary: Record<Language, Vocabulary> = {
   es: {
     events: {
-      gol: 'gol(?:es)?',
+      gol: roots(goalRoot),
       parada: roots('parad', 'deten', 'detuv'),
       fallo: `${roots('fall')}|(?:tiro|lanzamiento) ${roots('fall')}`,
       perdida: roots('perd', 'pierd'),
@@ -58,7 +60,7 @@ export const commandVocabulary: Record<Language, Vocabulary> = {
   },
   en: {
     events: {
-      gol: 'goals?',
+      gol: roots(goalRoot),
       parada: roots('sav', 'stop'),
       fallo: roots('miss'),
       perdida: 'turnovers?|lost(?: ball)?',
@@ -124,7 +126,7 @@ export const commandVocabulary: Record<Language, Vocabulary> = {
   },
   it: {
     events: {
-      gol: 'gol|reti|rete',
+      gol: `${roots(goalRoot)}|reti|rete`,
       parada: roots('parat'),
       fallo: `${roots('sbagli', 'error')}|tiro ${roots('sbagli')}`,
       perdida: 'palla persa|persa|perso|perde',
@@ -146,7 +148,7 @@ export const commandVocabulary: Record<Language, Vocabulary> = {
   },
   nl: {
     events: {
-      gol: roots('doelpunt', 'goal'),
+      gol: roots('doelpunt', goalRoot),
       parada: roots('redd', 'stop'),
       fallo: roots('miss', 'gemist'),
       perdida: roots('balverlies', 'verlor', 'verlies'),
@@ -168,7 +170,7 @@ export const commandVocabulary: Record<Language, Vocabulary> = {
   },
   pl: {
     events: {
-      gol: roots('bramk', 'gol'),
+      gol: roots('bramk', goalRoot),
       parada: roots('obron', 'parad'),
       fallo: `${roots('pudl')}|niecelny rzut`,
       perdida: roots('strat', 'strac', 'utrac'),

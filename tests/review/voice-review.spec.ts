@@ -8,6 +8,32 @@ async function open(page: Page, query = '') {
   await expect(dialog(page)).toBeVisible();
   await expect(dialog(page).getByRole('button', { name: 'Continuar' })).toBeFocused();
 }
+test('golden saves one goal with both players, penalty and original transcription', async ({
+  page,
+}) => {
+  const text = 'Golden nuestro 7 1 penalti';
+  await open(page, `?text=${encodeURIComponent(text)}`);
+  await expect(dialog(page)).toContainText('#7 · Ana Łukasz');
+  await expect(dialog(page)).toContainText('#1 · Íker');
+  await expect(dialog(page).locator('.voice-transcript')).toContainText(text);
+  await expect(dialog(page)).not.toContainText('Se guardará pendiente');
+  await dialog(page).getByRole('button', { name: 'Continuar' }).press('Enter');
+  await expect(dialog(page)).toHaveCount(0);
+  await expect(page.getByTestId('score')).toHaveText('1:0');
+  const events = JSON.parse((await page.getByTestId('events').textContent())!);
+  expect(events).toHaveLength(1);
+  expect(events[0]).toMatchObject({
+    type: 'goal',
+    teamId: 'a',
+    primaryPlayerId: 'a7',
+    relatedPlayerId: 'a1',
+    metadata: { penalty: true },
+    rawText: text,
+  });
+  await page.reload();
+  await expect(page.getByTestId('score')).toHaveText('1:0');
+  expect(JSON.parse((await page.getByTestId('events').textContent())!)).toHaveLength(1);
+});
 test('dictated note is editable, auto-saves without a team and never changes the score', async ({
   page,
 }, info) => {
