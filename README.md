@@ -94,3 +94,9 @@ La generación ocurre en un worker para mantener libre la interfaz. Cuando el na
 La [auditoría integral](docs/refactorizacion-integral.md) registra el alcance y las comprobaciones de equivalencia. Las [indicaciones de interfaz posteriores](docs/tareas-pendientes.md) se completaron después de cerrar esa refactorización.
 
 La navegación se abre con el botón de tres rayas de la izquierda. Los dorsales se introducen con dos ruedas. El editor mantiene Guardar y Cancelar sobre el teclado; los tres contadores ocupan una franja compacta. El menú ofrece «Fijar vertical» cuando se necesita pantalla completa; el navegador puede rechazar el bloqueo ([condiciones de la API](https://www.w3.org/TR/screen-orientation/#dom-screenorientation-lock)). Al girar se conserva la edición y se procesa el audio capturado si se cancela el contacto táctil.
+
+## Licencia
+
+El código del proyecto se distribuye bajo la [licencia MIT](LICENSE). Copyright (c) 2026 Samuel.
+
+Las dependencias, fuentes y modelos conservan sus respectivas licencias. Los avisos de los componentes incluidos se encuentran en [public/third-party](public/third-party).
