@@ -97,6 +97,6 @@ La navegación se abre con el botón de tres rayas de la izquierda. Los dorsales
 
 ## Licencia
 
-El código del proyecto se distribuye bajo la [licencia MIT](LICENSE). Copyright (c) 2026 Samuel.
+El código del proyecto se distribuye bajo la [licencia MIT](LICENSE). Copyright (c) 2026 smonux.
 
 Las dependencias, fuentes y modelos conservan sus respectivas licencias. Los avisos de los componentes incluidos se encuentran en [public/third-party](public/third-party).
