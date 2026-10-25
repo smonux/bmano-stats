@@ -1,4 +1,5 @@
 import { hmiAccessibilityMessages } from './hmi-accessibility';
+import { hmiStatisticsMessages } from './hmi-statistics';
 import { hmiFeedMessages } from './hmi-feed';
 import { hmiCounterMessages } from './hmi-counters';
 import { hmiMessages } from './hmi';
@@ -13,6 +14,7 @@ export const translationLanguages = ['en', 'de', 'fr', 'it', 'nl', 'pl'] as cons
 export const catalog: Record<string, readonly string[]> = {
   ...hmiMessages,
   ...hmiAccessibilityMessages,
+  ...hmiStatisticsMessages,
   ...hmiFeedMessages,
   ...hmiCounterMessages,
   ...voiceCommandMessages,

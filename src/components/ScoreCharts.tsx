@@ -1,3 +1,4 @@
+import { TimelineData } from './statistics/TimelineData';
 import { tr } from '../i18n';
 import type { Match, Snapshot } from '../domain/model';
 import { scoreTimelines } from '../domain/report';
@@ -101,6 +102,7 @@ export function ScoreCharts({ data, match }: { data: Snapshot; match: Match }) {
                   );
                 })}
               </svg>
+              <TimelineData period={period} teams={[names[0], names[1]]} />
             </figure>
           );
         })}

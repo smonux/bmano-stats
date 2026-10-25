@@ -9,6 +9,7 @@ import { Empty } from './ui';
 import { ScoreCharts } from './ScoreCharts';
 import { ShareMatchPdf } from './ShareMatchPdf';
 import { WheelPicker } from './WheelPicker';
+import { ChoiceGroup } from './event-editor/ChoiceGroup';
 export function Statistics({ data, matchId }: { data: Snapshot; matchId?: string }) {
   const tabsId = useId();
   const matches = data.matches.filter(
@@ -41,6 +42,11 @@ export function Statistics({ data, matchId }: { data: Snapshot; matchId?: string
     .filter((player) => player.teamId === teamId && (!player.deletedAt || stats.players[player.id]))
     .sort((a, b) => Number(a.isUnknown) - Number(b.isUnknown) || (a.dorsal ?? 0) - (b.dorsal ?? 0));
   const teamName = (id: string) => data.teams.find((team) => team.id === id)?.name ?? tr('Equipo');
+  const selectTeam = (teamId: string) => {
+    setSelection({ matchId, teamId });
+    setMatch('all');
+    setPlayer(null);
+  };
   if (!teams.length) {
     return (
       <Empty title={tr('Todo empieza con un equipo')}>
@@ -51,19 +57,36 @@ export function Statistics({ data, matchId }: { data: Snapshot; matchId?: string
   return (
     <div className="statistics">
       <div className="filter-row">
-        <WheelPicker
-          label={tr('Equipo')}
-          value={teamId}
-          options={teams.map((team) => ({
-            value: team.id,
-            label: team.name,
-          }))}
-          change={(teamId) => {
-            setSelection({ matchId, teamId });
-            setMatch('all');
-            setPlayer(null);
-          }}
-        />
+        {matchId ? (
+          <ChoiceGroup
+            label={tr('Equipo')}
+            value={teamId}
+            options={[matches[0].localTeamId, matches[0].visitorTeamId].map((id, index) => ({
+              value: id,
+              label: teamName(id),
+              content: (
+                <>
+                  <small>
+                    {tr('Equipo')} {index + 1}
+                  </small>
+                  <strong>{teamName(id)}</strong>
+                </>
+              ),
+              accessibleLabel: teamName(id),
+            }))}
+            change={selectTeam}
+          />
+        ) : (
+          <WheelPicker
+            label={tr('Equipo')}
+            value={teamId}
+            options={teams.map((team) => ({
+              value: team.id,
+              label: team.name,
+            }))}
+            change={selectTeam}
+          />
+        )}
         {!matchId && (
           <WheelPicker
             label={tr('Partido')}

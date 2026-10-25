@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { nameKey } from '../src/domain/identity';
 import { reportFixture } from './fixtures/report';
-import { selectWheelOption } from './wheel-helpers';
 
 test('short screens allow team selection by pointer with long names between the header and capture bar', async ({
   page,
@@ -30,15 +29,21 @@ test('short screens allow team selection by pointer with long names between the 
   await page.getByRole('tab', { name: 'Estadísticas', exact: true }).click();
   if (info.project.name === 'mobile') await page.setViewportSize({ width: 320, height: 568 });
   const statistics = page.locator('.statistics');
-  const picker = statistics.getByRole('listbox', { name: 'Equipo', exact: true });
-  await expect(picker.getByRole('option', { selected: true })).toHaveText(ownName);
+  const picker = statistics.getByRole('group', { name: 'Equipo', exact: true });
+  await expect(picker.getByRole('button', { name: ownName, exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   await picker.scrollIntoViewIfNeeded();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: info.outputPath('statistics-long-names.png'), fullPage: true });
 
   // Ordinary pointer activation must succeed; a forced click would hide the overlap bug.
-  await selectWheelOption(picker, rivalName);
-  await expect(picker.getByRole('option', { selected: true })).toHaveText(rivalName);
+  await picker.getByRole('button', { name: rivalName, exact: true }).click();
+  await expect(picker.getByRole('button', { name: rivalName, exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   await expect(
     statistics
       .locator('.metrics > div')

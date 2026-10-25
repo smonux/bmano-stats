@@ -23,6 +23,11 @@ export function Metrics({ stats, player = false }: { stats: Stats; player?: bool
         <div>
           <span>{tr('Eficacia de tiro')}</span>
           <strong>{efficacy(stats)}</strong>
+          <span className="metric-denominator">
+            {stats.shots
+              ? `${stats.goals} / ${stats.shots} · ${tr('goles / lanzamientos')}`
+              : tr('Sin lanzamientos registrados')}
+          </span>
         </div>
         <div>
           <span>{tr('Paradas')}</span>
