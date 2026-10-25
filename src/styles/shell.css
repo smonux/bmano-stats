@@ -101,8 +101,13 @@
   color: var(--accent);
 }
 .brand-mark {
-  background: var(--accent);
-  color: var(--ink);
+  background: #000;
+  overflow: hidden;
+}
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .local-status {
   color: #d6d6d6;

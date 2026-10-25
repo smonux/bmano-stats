@@ -35,4 +35,18 @@ La matriz de tamaños cortos, nombres largos, texto ampliado y WebKit se ampliar
 
 ## Entrega 1: base visual e identidad
 
-Primera parte en curso: iconos de eventos/aplicación y contexto inicial de estadísticas. La escala tipográfica, contraste y tamaños táctiles se trabajarán junto a los ajustes de distribución necesarios, en el siguiente bloque de esta entrega.
+Primera parte: iconos de eventos/aplicación y contexto inicial de estadísticas. La escala tipográfica, contraste y tamaños táctiles se trabajarán junto a los ajustes de distribución necesarios, en el siguiente bloque de esta entrega. La entrega 1 completa sigue pendiente hasta cerrar esos ajustes.
+
+### Iconos
+
+- Los 13 dibujos SVG proporcionados se incorporan como `EventIcon`, independiente del dominio. Conservan sus trazos y heredan el color de cada tarjeta. Las etiquetas de texto siguen dando nombre al evento; los SVG son decorativos para lectores de pantalla.
+- El icono elegido sustituye al anterior en cabecera y favicon. Se añaden PNG de 192/512 px para el manifiesto y 180 px para acceso en iOS. El recurso de 512 px también declara propósito maskable.
+- Los recursos PNG se incluyen en el precache existente. Comprobada su lectura con red cortada y peticiones externas abortadas, después de instalar el service worker y recargar. No se ha probado la instalación en dispositivos físicos.
+- Capturas comparables del mismo partido y viewport en [evidencias/01-identidad](evidencias/01-identidad), frente a `00-base`.
+- `hmi-identity.spec.ts`: cuatro pruebas correctas entre móvil y escritorio. Todos los tipos, etiquetas y perspectiva conservados; pendientes y marcador coherentes. Comprobado también reflow a 320 × 568, 390 × 664, 430 × 932 y 844 × 390.
+
+Regeneración de los iconos de instalación a partir del vector original:
+
+```sh
+CHROMIUM_PATH=/ruta/a/chrome-headless-shell node scripts/export-app-icons.mjs
+```

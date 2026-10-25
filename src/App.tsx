@@ -6,7 +6,7 @@ import { Welcome, hasSeenWelcome } from './components/Welcome';
 import { tr, useLanguage } from './i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Activity, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { db } from './data/database';
 import { navigate, useRoute } from './components/ui';
 export default function App() {
@@ -50,7 +50,7 @@ export default function App() {
           </button>
           <button className="brand" onClick={() => navigate('/')}>
             <span className="brand-mark">
-              <Activity size={21} />
+              <img src="/icon.svg" alt="" width="37" height="37" />
             </span>
             <span>
               handball<span className="brand-light">stats</span>

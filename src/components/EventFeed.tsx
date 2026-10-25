@@ -10,6 +10,7 @@ import {
 } from '../domain/model';
 import { teamName } from '../presentation/matches';
 import { Empty } from './ui';
+import { EventIcon } from './EventIcon';
 
 type EventActions = { onEdit: (event: GameEvent) => void; onDelete: (event: GameEvent) => void };
 type EventFeedProps = EventActions & {
@@ -99,7 +100,9 @@ function EventCard({
   }
   return (
     <article className={`event-card ${side} ${state}`}>
-      <div className="event-icon">{definition?.icon ?? '?'}</div>
+      <div className="event-icon" aria-hidden="true">
+        {event.type ? <EventIcon type={event.type} /> : '?'}
+      </div>
       <div className="event-copy">
         <div className="event-heading">
           <strong className="event-title">
