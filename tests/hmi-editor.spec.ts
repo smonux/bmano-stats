@@ -160,6 +160,9 @@ test('captured minute survives the running clock and rapid repeated submit creat
 }) => {
   await page.clock.install();
   await open(page);
+  const clockStart = new Date(await page.evaluate(() => Date.now()));
+  // Freeze Date, while keeping timers available for IndexedDB/live-query delivery.
+  await page.clock.setFixedTime(clockStart);
   await page
     .locator('.clock-actions')
     .getByRole('button', { name: 'Reanudar', exact: true })
@@ -171,7 +174,8 @@ test('captured minute survives the running clock and rapid repeated submit creat
   const editor = page.getByRole('dialog');
   await choose(editor, 'Equipo', 'La Jota');
   await choose(editor, 'Evento', 'Gol');
-  await page.clock.runFor(70000);
+  await page.clock.setFixedTime(new Date(clockStart.getTime() + 70000));
+  await page.clock.runFor(1000);
   await expect(editor.locator('.event-context > button')).toContainText('9′');
   await editor.getByRole('button', { name: 'Guardar evento', exact: true }).evaluate((button) => {
     (button as HTMLButtonElement).click();

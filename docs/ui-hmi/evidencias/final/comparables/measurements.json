@@ -1,0 +1,287 @@
+[
+  {
+    "label": "390x664-short",
+    "viewport": {
+      "width": 390,
+      "height": 664
+    },
+    "header": {
+      "width": 366,
+      "height": 154,
+      "position": "sticky"
+    },
+    "capture": {
+      "width": 366,
+      "height": 136,
+      "position": "sticky"
+    },
+    "usableHeightWhileScrolling": 374,
+    "documentWidth": 390,
+    "fonts": {
+      "perspective": "14px",
+      "team": "16px",
+      "score": "36px",
+      "clock": "24px",
+      "event": "18px",
+      "eventBody": "16px",
+      "status": "14px",
+      "exclusion": "24px"
+    },
+    "targets": {
+      "clock": {
+        "width": 127.796875,
+        "height": 48,
+        "position": "static"
+      },
+      "edit": {
+        "width": 103.125,
+        "height": 48,
+        "position": "static"
+      },
+      "delete": null,
+      "more": {
+        "width": 73.171875,
+        "height": 50,
+        "position": "static"
+      },
+      "clearTimer": {
+        "width": 48,
+        "height": 48,
+        "position": "static"
+      },
+      "capture": {
+        "width": 170,
+        "height": 56,
+        "position": "static"
+      }
+    }
+  },
+  {
+    "label": "390x664-long",
+    "viewport": {
+      "width": 390,
+      "height": 664
+    },
+    "header": {
+      "width": 366,
+      "height": 169.59375,
+      "position": "sticky"
+    },
+    "capture": {
+      "width": 366,
+      "height": 136,
+      "position": "sticky"
+    },
+    "usableHeightWhileScrolling": 358.40625,
+    "documentWidth": 390,
+    "fonts": {
+      "perspective": "14px",
+      "team": "16px",
+      "score": "36px",
+      "clock": "24px",
+      "event": "18px",
+      "eventBody": "16px",
+      "status": "14px",
+      "exclusion": "24px"
+    },
+    "targets": {
+      "clock": {
+        "width": 127.796875,
+        "height": 48,
+        "position": "static"
+      },
+      "edit": {
+        "width": 103.125,
+        "height": 48,
+        "position": "static"
+      },
+      "delete": null,
+      "more": {
+        "width": 73.171875,
+        "height": 50,
+        "position": "static"
+      },
+      "clearTimer": {
+        "width": 48,
+        "height": 48,
+        "position": "static"
+      },
+      "capture": {
+        "width": 170,
+        "height": 56,
+        "position": "static"
+      }
+    }
+  },
+  {
+    "label": "320x568-long",
+    "viewport": {
+      "width": 320,
+      "height": 568
+    },
+    "header": {
+      "width": 296,
+      "height": 253.59375,
+      "position": "static"
+    },
+    "capture": {
+      "width": 296,
+      "height": 146,
+      "position": "sticky"
+    },
+    "usableHeightWhileScrolling": 422,
+    "documentWidth": 320,
+    "fonts": {
+      "perspective": "14px",
+      "team": "16px",
+      "score": "36px",
+      "clock": "24px",
+      "event": "18px",
+      "eventBody": "16px",
+      "status": "14px",
+      "exclusion": "24px"
+    },
+    "targets": {
+      "clock": {
+        "width": 127.796875,
+        "height": 48,
+        "position": "static"
+      },
+      "edit": {
+        "width": 103.125,
+        "height": 48,
+        "position": "static"
+      },
+      "delete": null,
+      "more": {
+        "width": 73.171875,
+        "height": 50,
+        "position": "static"
+      },
+      "clearTimer": {
+        "width": 48,
+        "height": 48,
+        "position": "static"
+      },
+      "capture": {
+        "width": 135,
+        "height": 66,
+        "position": "static"
+      }
+    }
+  },
+  {
+    "label": "844x390-long",
+    "viewport": {
+      "width": 844,
+      "height": 390
+    },
+    "header": {
+      "width": 780,
+      "height": 169.59375,
+      "position": "static"
+    },
+    "capture": {
+      "width": 780,
+      "height": 136,
+      "position": "sticky"
+    },
+    "usableHeightWhileScrolling": 254,
+    "documentWidth": 844,
+    "fonts": {
+      "perspective": "14px",
+      "team": "16px",
+      "score": "36px",
+      "clock": "24px",
+      "event": "18px",
+      "eventBody": "16px",
+      "status": "14px",
+      "exclusion": "24px"
+    },
+    "targets": {
+      "clock": {
+        "width": 127.796875,
+        "height": 48,
+        "position": "static"
+      },
+      "edit": {
+        "width": 103.125,
+        "height": 48,
+        "position": "static"
+      },
+      "delete": null,
+      "more": {
+        "width": 73.171875,
+        "height": 50,
+        "position": "static"
+      },
+      "clearTimer": {
+        "width": 48,
+        "height": 48,
+        "position": "static"
+      },
+      "capture": {
+        "width": 377,
+        "height": 56,
+        "position": "static"
+      }
+    }
+  },
+  {
+    "label": "1440x1000-short",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "header": {
+      "width": 936,
+      "height": 154,
+      "position": "sticky"
+    },
+    "capture": {
+      "width": 936,
+      "height": 136,
+      "position": "sticky"
+    },
+    "usableHeightWhileScrolling": 710,
+    "documentWidth": 1440,
+    "fonts": {
+      "perspective": "14px",
+      "team": "16px",
+      "score": "36px",
+      "clock": "24px",
+      "event": "18px",
+      "eventBody": "16px",
+      "status": "14px",
+      "exclusion": "24px"
+    },
+    "targets": {
+      "clock": {
+        "width": 127.796875,
+        "height": 48,
+        "position": "static"
+      },
+      "edit": {
+        "width": 103.125,
+        "height": 48,
+        "position": "static"
+      },
+      "delete": null,
+      "more": {
+        "width": 73.171875,
+        "height": 50,
+        "position": "static"
+      },
+      "clearTimer": {
+        "width": 48,
+        "height": 48,
+        "position": "static"
+      },
+      "capture": {
+        "width": 455,
+        "height": 56,
+        "position": "static"
+      }
+    }
+  }
+]

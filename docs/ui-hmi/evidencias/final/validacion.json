@@ -1,0 +1,49 @@
+{
+  "branch": "cambios-hmi",
+  "baseline": "138fbf17e85668c890b36ecbe250fc91297d7650",
+  "unit": {
+    "files": 29,
+    "passed": 146
+  },
+  "functional": {
+    "casesValidated": 167,
+    "mobile": {
+      "fullRunPassed": 82,
+      "fullRunSkipped": 1,
+      "fullRunFailed": 1,
+      "correctedCase": "captured minute survives the running clock and rapid repeated submit creates one event",
+      "correctedRun": "test-results/hmi-audit-clock-fixed",
+      "correctedRunPassed": 2,
+      "validatedMobileCases": 83
+    },
+    "desktop": {
+      "passed": 84,
+      "output": "test-results/hmi-final-desktop"
+    }
+  },
+  "review": {
+    "passed": 22,
+    "output": "test-results/hmi-audit-review"
+  },
+  "checks": [
+    "format:check",
+    "check",
+    "test",
+    "build"
+  ],
+  "assets": [
+    {
+      "path": "/assets/index-Cd2gpMLj.js",
+      "sha256": "98865d17523b7cb1fed5fc9eaa3565ee624479ba3d4e246941cc18a10a63b68b"
+    },
+    {
+      "path": "/assets/index-CHbsQnFz.css",
+      "sha256": "d937ef383dd120bc4345d6568e3b61793d47edd248d0c3c3c0e97238d0791971"
+    }
+  ],
+  "limits": [
+    "WebKit executable unavailable",
+    "No physical Safari/iPhone/Android testing",
+    "No physical screen-reader or courtside-noise testing"
+  ]
+}

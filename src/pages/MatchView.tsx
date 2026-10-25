@@ -307,7 +307,12 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
       </TabPanel>
       <div className="capture-bar">
         {(notice || undo || offer) && (
-          <div className="capture-feedback">
+          <div
+            className="capture-feedback"
+            role="region"
+            aria-label={tr('Acciones de la última jugada')}
+            tabIndex={0}
+          >
             <p role="status">{notice || undo?.label}</p>
             {undo && (
               <button

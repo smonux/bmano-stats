@@ -1,0 +1,90 @@
+[
+  {
+    "width": 320,
+    "height": 568,
+    "documentWidth": 320,
+    "header": 253.59375,
+    "headerPosition": "static",
+    "capture": 169.59375,
+    "language": "de",
+    "roster": 0,
+    "events": 200
+  },
+  {
+    "width": 360,
+    "height": 640,
+    "documentWidth": 360,
+    "header": 253.59375,
+    "headerPosition": "static",
+    "capture": 169.59375,
+    "language": "fr",
+    "roster": 7,
+    "events": 200
+  },
+  {
+    "width": 390,
+    "height": 664,
+    "documentWidth": 390,
+    "header": 193.59375,
+    "headerPosition": "sticky",
+    "capture": 136,
+    "language": "es",
+    "roster": 30,
+    "events": 200
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "documentWidth": 390,
+    "header": 193.59375,
+    "headerPosition": "sticky",
+    "capture": 169.59375,
+    "language": "pl",
+    "roster": 7,
+    "events": 200
+  },
+  {
+    "width": 430,
+    "height": 932,
+    "documentWidth": 430,
+    "header": 193.59375,
+    "headerPosition": "sticky",
+    "capture": 146,
+    "language": "nl",
+    "roster": 30,
+    "events": 200
+  },
+  {
+    "width": 768,
+    "height": 1024,
+    "documentWidth": 768,
+    "header": 169.59375,
+    "headerPosition": "sticky",
+    "capture": 136,
+    "language": "en",
+    "roster": 30,
+    "events": 200
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "documentWidth": 844,
+    "header": 169.59375,
+    "headerPosition": "static",
+    "capture": 136,
+    "language": "it",
+    "roster": 0,
+    "events": 200
+  },
+  {
+    "width": 1440,
+    "height": 1000,
+    "documentWidth": 1440,
+    "header": 169.59375,
+    "headerPosition": "sticky",
+    "capture": 136,
+    "language": "es",
+    "roster": 7,
+    "events": 200
+  }
+]

@@ -2,7 +2,7 @@
 
 Rama: `cambios-hmi`, creada desde `main` en `138fbf1`. Trabajo por entregas; sin merge ni publicación.
 
-Estado vigente: entregas 1–7, inicio manual, Deshacer y Contador tras exclusión completados. Resta la auditoría final; la tabla del objetivo ampliado resume el estado.
+Estado vigente: objetivo ampliado completado: entregas 1–7, inicio manual, Deshacer, Contador tras exclusión y auditoría final. Cada bloque tiene commit y etiqueta. Los puntos «Siguiente» de cierres anteriores documentan el orden histórico; el estado actual lo fijan esta cabecera y la tabla. Ver [auditoría final](auditoria-final.md).
 
 ## Decisiones aprobadas
 
@@ -140,7 +140,7 @@ Samuel pide completar todos los bloques pendientes, con commit y etiqueta por bl
 | Manual                  | Inicio explícito solo con entrada manual, conservando preparación para usar voz                      | Completado · `hmi-manual`             |
 | Deshacer                | Reversión de una creación, incluido efecto sobre último portero; sin prometer reversión de ediciones | Completado · `hmi-deshacer`           |
 | Contador tras exclusión | Acción explícita precargada; evento y contador siguen independientes                                 | Completado · `hmi-contador-desde-evento` |
-| Auditoría final         | Matriz transversal, regresión de voz/PDF/ZIP/JSON, build, evidencia y límites físicos                | Pendiente                             |
+| Auditoría final         | Matriz transversal, regresión de voz/PDF/ZIP/JSON, build, evidencia y límites físicos                | Completado · `hmi-auditoria-final`    |
 
 Las decisiones aprobadas prevalecen sobre alternativas del informe: se conserva menú lateral, push to talk, lado de cada equipo y entrada manual neutral. No se cambiarán modelos ni interpretación de voz para resolver presentación.
 
@@ -226,3 +226,13 @@ Validación: 146 unitarias, 34 recorridos de navegador y 16 de revisión de voz 
 Acción explícita después del guardado, con equipo y dorsal enviados por el formulario/revisión (incluidos vacío/cero/nuevo). Abre la activación actual en el siguiente hueco libre; no inicia ni registra nada al abrir. Con tres ocupados lleva al bloque de contadores. Cancelar devuelve foco; Activar lo lleva al bloque existente. Oferta invalidada al cambiar la versión de la jugada. Se explica que editar/borrar/deshacer y liberar contador son independientes.
 
 Validación: 18 recorridos correctos de contadores y acceso tras evento; dos adicionales de borrado/ZIP restaurado. Incluye ambos equipos, nombres largos, 0/99/vacío, doble toque sin duplicar, límite de tres, edición, Deshacer, recarga y copia. 146 unitarias, formato, TypeScript y build correctos. [Capturas, decisiones y límites](evidencias/contador-desde-evento/README.md). Etiqueta: `hmi-contador-desde-evento`. Solo resta auditoría final transversal.
+
+## Auditoría final completada
+
+Trazabilidad de los 32 HMI y decisiones aprobadas en [auditoria-final.md](auditoria-final.md). Ocho tamaños, siete idiomas, equipos de 100 caracteres, plantillas 0/7/30, registro de 200 jugadas, texto al 200 %, foco, teclado y controles compartidos. Se corrige el recorte real del acuse al ampliar texto mediante una región desplazable con espacio de foco, conservando Manual/Voz visibles. Un fallo real de escritura comprueba rollback y reintento sin perder la propuesta. La prueba de minuto capturado usa Date fijo sin congelar IndexedDB.
+
+Validación final: 146 unitarias en 29 archivos; formato, TypeScript y build correctos. Escritorio: 84/84; móvil: 82 en tanda completa más el caso de reloj corregido y verificado aparte, una omisión prevista del PDF largo. Los 167 casos funcionales quedan validados. Revisión/carga: 22/22. La ejecución larga interrumpida por SIGTERM y los fallos previos se documentan, sin dar por verdes procesos incompletos. Whistle real/offline, PDF, ZIP y JSON incluidos. [Capturas y medidas](evidencias/final/README.md).
+
+Sin cambios de modelos/configuración/reglas de voz, cálculo de estadísticas, PDF o formato de copia. La investigación de caché permanece aparcada. WebKit no está instalado; Safari/iPhone, Android físicos, ruido y lectores de pantalla quedan como límites de validación, sin atribuirles resultados de Chromium emulado.
+
+Objetivo de software completado, etiqueta `hmi-auditoria-final`. Todo en `cambios-hmi`; `main` conserva `138fbf17e85668c890b36ecbe250fc91297d7650`. Sin merge, push ni publicación. `dist` regenerado y corresponde al código verificado.

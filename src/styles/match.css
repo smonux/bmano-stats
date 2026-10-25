@@ -541,6 +541,11 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 8px;
+  max-height: min(38dvh, 14rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px;
+  scroll-padding-block: 6px;
   flex: 0 0 100%;
   margin: 0;
   font-size: var(--text-caption);

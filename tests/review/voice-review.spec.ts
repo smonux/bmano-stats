@@ -230,3 +230,53 @@ test('review starts with interpretation, keeps transcript collapsed and Enter do
   await page.screenshot({ path: info.outputPath('interpretation-first.png') });
   await review.getByRole('button', { name: 'Descartar', exact: true }).click();
 });
+
+test('an actual storage failure rolls back players and keeps the review available for retry', async ({
+  page,
+}) => {
+  await open(page, '?text=' + encodeURIComponent('gol nuestro 99'));
+  await page.evaluate(async () => {
+    const modulePath = '/src/data/database.ts';
+    const { db } = (await import(
+      /* @vite-ignore */ modulePath
+    )) as typeof import('../../src/data/database');
+    const fail = () => {
+      throw new Error('Fallo de almacenamiento de prueba');
+    };
+    db.events.hook('creating', fail);
+    Object.assign(window, { restoreWrites: () => db.events.hook('creating').unsubscribe(fail) });
+  });
+  await saveButton(page).click();
+  await expect(dialog(page).getByRole('alert')).toContainText('Fallo de almacenamiento de prueba');
+  await expect(dialog(page)).toBeVisible();
+  await expect(page.getByTestId('events')).toHaveText('[]');
+  expect(
+    await page.evaluate(async () => {
+      const modulePath = '/src/data/database.ts';
+      const { db } = (await import(
+        /* @vite-ignore */ modulePath
+      )) as typeof import('../../src/data/database');
+      return await db.players.where('[teamId+dorsal]').equals(['a', 99]).count();
+    }),
+  ).toBe(0);
+  await page.evaluate(() => (window as unknown as { restoreWrites: () => void }).restoreWrites());
+  await saveButton(page).click();
+  await expect(dialog(page)).toHaveCount(0);
+  await expect(page.getByTestId('score')).toHaveText('1:0');
+  expect(JSON.parse((await page.getByTestId('events').textContent())!)).toHaveLength(1);
+});
+
+test('a voice suspension preserves the opponent and a newly dictated shirt', async ({ page }) => {
+  const text = 'exclusión rival 99';
+  await open(page, '?text=' + encodeURIComponent(text));
+  await expect(dialog(page)).toContainText('Exclusión');
+  await expect(dialog(page)).toContainText('2 · Rival');
+  await expect(dialog(page)).toContainText('#99');
+  await expect(page.getByTestId('events')).toHaveText('[]');
+  await saveButton(page).click();
+  await expect(dialog(page)).toHaveCount(0);
+  const events = JSON.parse((await page.getByTestId('events').textContent())!);
+  expect(events).toHaveLength(1);
+  expect(events[0]).toMatchObject({ type: 'exclusion', teamId: 'b', rawText: text });
+  await expect(page.getByTestId('score')).toHaveText('0:0');
+});
