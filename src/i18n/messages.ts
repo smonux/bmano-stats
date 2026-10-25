@@ -1,3 +1,4 @@
+import { hmiCounterMessages } from './hmi-counters';
 import { hmiMessages } from './hmi';
 // Each row follows this language order; the Spanish phrase is its stable key.
 import { voiceCommandMessages } from './voice-commands';
@@ -9,6 +10,7 @@ export const translationLanguages = ['en', 'de', 'fr', 'it', 'nl', 'pl'] as cons
 // Order: English, German, French, Italian, Dutch, Polish. Spanish keys are the source text.
 export const catalog: Record<string, readonly string[]> = {
   ...hmiMessages,
+  ...hmiCounterMessages,
   ...voiceCommandMessages,
   ...improvementMessages,
   ...voiceNoteMessages,

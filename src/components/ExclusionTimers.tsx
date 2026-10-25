@@ -1,6 +1,6 @@
 import { ShirtNumberPicker } from './ShirtNumberPicker';
 import { useEffect, useRef, useState } from 'react';
-import { Volume2 } from 'lucide-react';
+import { Plus, Volume2 } from 'lucide-react';
 import type { Match, Snapshot } from '../domain/model';
 import { exclusionRemaining } from '../domain/exclusions';
 import { repo } from '../data/database';
@@ -28,6 +28,13 @@ export function ExclusionTimers({
   const sound = useExclusionSound();
   const announced = useRef(new Set<string>());
   const action = useAction();
+  const freeSlot = timers.findIndex((timer) => timer === null);
+  const activeCount = timers.filter(Boolean).length;
+  function startCounter(slot: number) {
+    setEditing(slot);
+    setDorsal('');
+    setTeam(match.localTeamId);
+  }
   useEffect(() => {
     onDialogChange(editing !== null || clearing !== null);
     return () => onDialogChange(false);
@@ -42,46 +49,65 @@ export function ExclusionTimers({
     }
   }, [timers, now, sound.notify]);
   return (
-    <section className="exclusions" aria-label={tr('Cuenta atrás de exclusiones')}>
+    <section
+      className="exclusions"
+      id={`match-exclusions-${match.id}`}
+      tabIndex={-1}
+      aria-label={tr('Cuenta atrás de exclusiones')}
+    >
       <div className="exclusion-heading">
-        <h2>{tr('Exclusiones (2 min)')}</h2>
+        <h2>
+          {tr('Exclusiones (2 min)')} <span className="caption">{activeCount}/3</span>
+        </h2>
         <button className="text-button" aria-pressed={sound.enabled} onClick={sound.toggle}>
           <Volume2 size={16} />
           {tr(sound.enabled ? 'Sonido activado' : 'Aviso sonoro')}
         </button>
       </div>
       <div className="exclusion-grid">
-        {timers.map((timer, slot) => (
-          <ExclusionCounter
-            key={slot}
-            timer={timer}
-            slot={slot}
-            match={match}
-            data={data}
-            now={now}
-            busy={action.busy}
-            clear={() => setClearing(slot)}
-            toggle={() => {
-              if (!timer) {
-                setEditing(slot);
-                setDorsal('');
-                setTeam(match.localTeamId);
-              } else if (exclusionRemaining(timer, now) === 0) {
-                action.run(() => repo.exclusion(match.id, slot, 'clear'));
-              } else {
-                action.run(() =>
-                  repo.exclusion(match.id, slot, timer.running ? 'pause' : 'resume'),
-                );
-              }
-            }}
-          />
-        ))}
-      </div>
-      <p className="sr-only">
-        {tr(
-          'Sigue el reloj del partido. Mantén la aplicación abierta para recibir avisos. Registra la exclusión como evento aparte.',
+        {timers.map(
+          (timer, slot) =>
+            timer && (
+              <ExclusionCounter
+                key={slot}
+                timer={timer}
+                slot={slot}
+                match={match}
+                data={data}
+                now={now}
+                busy={action.busy}
+                clear={() => setClearing(slot)}
+                toggle={() => {
+                  if (exclusionRemaining(timer, now) === 0) {
+                    action.run(() => repo.exclusion(match.id, slot, 'clear'));
+                  } else {
+                    action.run(() =>
+                      repo.exclusion(match.id, slot, timer.running ? 'pause' : 'resume'),
+                    );
+                  }
+                }}
+              />
+            ),
         )}
-      </p>
+      </div>
+      {freeSlot !== -1 && (
+        <button
+          className="start-exclusion"
+          disabled={match.status === 'done' || action.busy}
+          onClick={() => startCounter(freeSlot)}
+        >
+          <Plus size={20} />
+          {tr('Iniciar contador')}
+        </button>
+      )}
+      <details className="counter-help" aria-label={tr('Cómo funcionan los contadores')}>
+        <summary>{tr('El contador no añade una exclusión al registro.')}</summary>
+        <p className="caption">
+          {tr(
+            'Sigue el reloj del partido. Mantén la aplicación abierta para recibir avisos. Registra la exclusión como evento aparte.',
+          )}
+        </p>
+      </details>
       <ErrorMessage text={action.error || sound.error} />
       {editing !== null && (
         <Modal

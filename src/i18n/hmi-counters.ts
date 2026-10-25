@@ -1,0 +1,51 @@
+/** Counter UI: English, German, French, Italian, Dutch, Polish. */
+export const hmiCounterMessages: Record<string, readonly string[]> = {
+  'Ver contador de exclusión': [
+    'View suspension timer',
+    'Zeitstrafen-Timer anzeigen',
+    'Voir le compteur d’exclusion',
+    'Vedi timer di esclusione',
+    'Uitsluitingstimer bekijken',
+    'Zobacz licznik wykluczenia',
+  ],
+  'Iniciar contador': [
+    'Start timer',
+    'Timer starten',
+    'Démarrer un compteur',
+    'Avvia timer',
+    'Timer starten',
+    'Uruchom licznik',
+  ],
+  'El contador no añade una exclusión al registro.': [
+    'The timer does not add a suspension to the event log.',
+    'Der Timer trägt keine Zeitstrafe ins Protokoll ein.',
+    'Le compteur n’ajoute pas d’exclusion au journal.',
+    'Il timer non aggiunge un’esclusione al registro.',
+    'De timer voegt geen uitsluiting toe aan het logboek.',
+    'Licznik nie dodaje wykluczenia do rejestru.',
+  ],
+  'Cómo funcionan los contadores': [
+    'How timers work',
+    'So funktionieren die Timer',
+    'Fonctionnement des compteurs',
+    'Come funzionano i timer',
+    'Hoe timers werken',
+    'Jak działają liczniki',
+  ],
+  'Ver {count} contadores de exclusión': [
+    'View {count} suspension timers',
+    '{count} Zeitstrafen-Timer anzeigen',
+    'Voir {count} compteurs d’exclusion',
+    'Vedi {count} timer di esclusione',
+    '{count} uitsluitingstimers bekijken',
+    'Zobacz liczniki wykluczeń: {count}',
+  ],
+  '{count} pueden volver': [
+    '{count} may return',
+    '{count} dürfen zurückkehren',
+    '{count} peuvent revenir',
+    '{count} possono rientrare',
+    '{count} mogen terugkeren',
+    'Mogą wrócić: {count}',
+  ],
+};

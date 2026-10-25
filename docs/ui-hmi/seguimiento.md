@@ -130,7 +130,7 @@ Samuel pide completar todos los bloques pendientes, con commit y etiqueta por bl
 | Bloque                  | Alcance restante                                                                                     | Estado                               |
 | ----------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------ |
 | 2                       | Editor directo, participantes y pendientes explicados                                                | Completado · `hmi-02-editor-directo` |
-| 3                       | Prioridad de contadores activos, acceso desde reloj y ayuda sobre independencia                      | Pendiente                            |
+| 3                       | Prioridad de contadores activos, acceso desde reloj y ayuda sobre independencia                      | Completado · `hmi-03-contadores`     |
 | 4                       | Motivos/Completar en registro, lectura de detalles, confirmaciones, acuse y protección de borrador   | Pendiente                            |
 | 5                       | Revisión de voz, PTT, pestañas y formularios/modales compartidos                                     | Pendiente                            |
 | 6                       | Equipos comparables, denominadores y tabla del gráfico                                               | Pendiente                            |
@@ -157,3 +157,13 @@ Validación: 135 unitarias, TypeScript, formato y build correctos. La suite gene
 Los fixtures de 0/7/30 jugadores y nombres de hasta 100 caracteres validan la copia antes de importarla. Se prueban cero, 7, 10 y 99, los 13 iconos/tipos, teclado, sustitución, cambio de equipo, cuatro activaciones sin scroll a 390 × 844, texto al 200 %, captura del minuto y doble envío sin duplicados. Las primeras ejecuciones permitieron corregir recortes reales, además de actualizar expectativas de las ruedas retiradas. [Capturas y límites](evidencias/02-editor/README.md).
 
 Cierre adicional del dorsal 10: los 12 casos de `hmi-editor.spec.ts` se repitieron correctamente. Etiqueta del bloque: `hmi-02-editor-directo`.
+
+## Entrega 3: partido y contadores activos
+
+- Cabecera compacta de la entrega 1b conservada. El nuevo acceso junto al reloj muestra el número de contadores ocupados y cambia de icono al vencer alguno; su etiqueta accesible informa de cuántos pueden volver. Cada contador describe equipo, dorsal, estado y tiempo. Lleva al bloque sin esconderlo bajo la cabecera y enfoca una región existente. Sin observadores ni colapsos automáticos.
+- Solo se renderizan contadores ocupados; una única acción Iniciar contador usa el siguiente hueco libre, hasta los tres existentes. Se conservan ordinales, equipo, dorsal opcional, pausa común/individual, liberación y sonido.
+- La ayuda visible aclara que el contador no añade una exclusión estadística, y permite ampliar la explicación. No cambian persistencia ni estadísticas. El acceso después de guardar un evento de exclusión se implementará por separado.
+- Se retiran las ramas y estilos de tarjetas vacías. El icono de pausa/reanudación de cada contador corresponde a su acción individual, también mientras el reloj común está detenido.
+- Nuevos textos traducidos a los seis idiomas adicionales. La medición del reloj en el script de capturas sigue señalando el botón de pausa, no el nuevo acceso.
+
+Validación: 42 recorridos de `hmi-counters`, `courtside`, `features`, `wheels`, `hmi-readability` y `hmi-short-viewport` correctos; formato, TypeScript y build correctos. Contadores de 0/1/3, teclado, nombres largos, cuatro tamaños, recarga, pausa común/individual y din-don de cinco segundos. A 390 × 664 el presupuesto del registro conserva 374/358,4 px con nombres cortos/largos. [Evidencia comparable y límites](evidencias/03-contadores/README.md). Etiqueta: `hmi-03-contadores`.

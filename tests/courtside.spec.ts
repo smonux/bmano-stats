@@ -68,10 +68,7 @@ test('readable exclusion controls and digit wheels preserve optional zero and ro
     expect(box.height).toBeGreaterThanOrEqual(48);
     expect(box.width).toBeGreaterThanOrEqual(48);
   }
-  await page
-    .getByRole('group', { name: 'Exclusión 2', exact: true })
-    .getByRole('button', { name: 'Activar', exact: true })
-    .click();
+  await page.getByRole('button', { name: 'Iniciar contador', exact: true }).click();
   await selectShirtNumber(page.getByRole('dialog'), 'Dorsal (opcional)', '0');
   await page
     .getByRole('dialog')

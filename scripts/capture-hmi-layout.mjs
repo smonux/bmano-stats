@@ -93,7 +93,7 @@ try {
           exclusion: font('.timer-digits'),
         },
         targets: {
-          clock: box('.clock-actions button'),
+          clock: box('.clock-actions button:last-child'),
           edit: box('.event-bottom .text-button'),
           delete: box('.delete-event'),
           clearTimer: box('.timer-clear'),

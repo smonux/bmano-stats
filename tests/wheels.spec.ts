@@ -106,10 +106,7 @@ test('catalogue, statistics and exclusion team choices use wheels; original tran
   await page.screenshot({ path: info.outputPath('additional-transcript.png'), fullPage: true });
   await editor.getByRole('button', { name: 'Cancelar', exact: true }).click();
 
-  await page
-    .getByRole('group', { name: 'Exclusión 2', exact: true })
-    .getByRole('button', { name: 'Activar', exact: true })
-    .click();
+  await page.getByRole('button', { name: 'Iniciar contador', exact: true }).click();
   const exclusion = page.getByRole('dialog', { name: 'Exclusión 2' });
   await selectWheelOption(exclusion.getByRole('listbox', { name: 'Equipo', exact: true }), 'Rival');
   await exclusion.getByRole('button', { name: 'Activar · 02:00', exact: true }).click();

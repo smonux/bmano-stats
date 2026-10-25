@@ -113,10 +113,7 @@ test('three independent suspension timers persist, pause with match clock and si
     'true',
   );
   for (let i = 1; i <= 3; i++) {
-    await page
-      .getByRole('group', { name: `Exclusión ${i}`, exact: true })
-      .getByRole('button', { name: 'Activar', exact: true })
-      .click();
+    await page.getByRole('button', { name: 'Iniciar contador', exact: true }).click();
     const dialog = page.getByRole('dialog');
     if (i < 3) {
       await selectShirtNumber(dialog, 'Dorsal (opcional)', String(i + 6));
@@ -185,7 +182,8 @@ test('three independent suspension timers persist, pause with match clock and si
   await page.screenshot({ path: info.outputPath('exclusions.png'), fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await slots.nth(0).getByRole('button', { name: 'Liberar' }).click();
-  await expect(slots.nth(0).getByRole('button', { name: 'Activar' })).toBeVisible();
+  await expect(page.getByRole('group', { name: 'Exclusión 1', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Iniciar contador', exact: true })).toBeVisible();
   await expect(page.getByLabel('Marcador 0 a 0')).toBeVisible();
   await expect(page.locator('.event-card')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Voz (mantener)' })).toBeEnabled({

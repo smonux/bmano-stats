@@ -5,10 +5,11 @@ import {
 import { EventFeed } from '../components/EventFeed';
 import { ExclusionTimers } from '../components/ExclusionTimers';
 import { tr } from '../i18n';
-import { useEffect, useState } from 'react';
-import { Pause, Play, Plus, Trash2, Flag } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Pause, Play, Plus, Trash2, Flag, Timer, BellRing } from 'lucide-react';
 import { repo } from '../data/database';
 import { chronological, elapsed, type GameEvent, type Match, type Snapshot } from '../domain/model';
+import { exclusionRemaining } from '../domain/exclusions';
 import { ErrorMessage, PageTitle, useAction } from '../components/ui';
 import { VoiceCapture } from '../components/VoiceCapture';
 import { EventEditor } from '../components/EventEditor';
@@ -31,6 +32,21 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
     .sort(chronological)
     .reverse();
   const scores = matchScore(data, match);
+  const header = useRef<HTMLElement>(null);
+  const counters = (match.exclusions ?? []).filter((timer) => timer !== null);
+  const expiredCount = counters.filter((timer) => exclusionRemaining(timer, now) === 0).length;
+  function showCounters() {
+    const section = document.getElementById('match-exclusions-' + match.id);
+    if (!section) return;
+    const stickyHeight =
+      header.current && getComputedStyle(header.current).position === 'sticky'
+        ? header.current.getBoundingClientRect().height
+        : 0;
+    window.scrollTo({
+      top: Math.max(0, window.scrollY + section.getBoundingClientRect().top - stickyHeight - 12),
+    });
+    section.focus({ preventScroll: true });
+  }
   return (
     <>
       <div className="match-page-title">
@@ -44,7 +60,7 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
           </span>
         </PageTitle>
       </div>
-      <section className="match-header panel">
+      <section ref={header} className="match-header panel">
         <div className="scoreboard">
           <div>
             <span className="eyebrow">{tr('Equipo 1 (nuestro)')}</span>
@@ -82,6 +98,32 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
           </div>
           {match.status === 'active' && (
             <div className="clock-actions">
+              {counters.length > 0 && (
+                <button
+                  className={expiredCount ? 'exclusion-access needs-attention' : 'exclusion-access'}
+                  aria-label={tr(
+                    counters.length === 1
+                      ? 'Ver contador de exclusión'
+                      : 'Ver {count} contadores de exclusión',
+                    { count: counters.length },
+                  )}
+                  aria-description={
+                    expiredCount
+                      ? tr(expiredCount === 1 ? 'Puede volver' : '{count} pueden volver', {
+                          count: expiredCount,
+                        })
+                      : undefined
+                  }
+                  onClick={showCounters}
+                >
+                  {expiredCount ? (
+                    <BellRing size={20} aria-hidden="true" />
+                  ) : (
+                    <Timer size={20} aria-hidden="true" />
+                  )}
+                  <b>{counters.length}</b>
+                </button>
+              )}
               <button
                 aria-label={match.clock.startedAt === null ? tr('Reanudar') : tr('Parar')}
                 title={match.clock.startedAt === null ? tr('Reanudar') : tr('Parar')}
