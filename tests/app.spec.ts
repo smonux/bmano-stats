@@ -1,5 +1,6 @@
+import { editContext } from './editor-helpers';
+import { choose } from './editor-helpers';
 import { selectShirtNumber } from './wheel-helpers';
-import { selectWheelOption } from './wheel-helpers';
 import { serveModels, prepareMatchVoice, selectEvent } from './voice-helpers';
 import { test, expect } from '@playwright/test';
 test.beforeEach(async ({ page }) => {
@@ -30,20 +31,18 @@ test('manual match lifecycle persists and works offline', async ({ page, context
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   let dialog = page.getByRole('dialog');
   await expect(dialog.getByRole('combobox', { name: 'Evento', exact: true })).toHaveCount(0);
-  const wheel = dialog.getByRole('listbox', { name: 'Evento', exact: true });
-  await wheel.focus();
-  await wheel.press('ArrowDown');
-  await expect(wheel.getByRole('option', { name: 'Gol', exact: true })).toHaveAttribute(
-    'aria-selected',
-    'true',
-  );
-  await wheel.press('ArrowDown');
-  await expect(wheel.getByRole('option', { name: 'Parada', exact: true })).toHaveAttribute(
-    'aria-selected',
+  const goal = dialog.getByRole('button', { name: 'Gol', exact: true });
+  await expect(goal).toHaveAttribute('aria-pressed', 'false');
+  await goal.focus();
+  await goal.press('Enter');
+  await expect(goal).toHaveAttribute('aria-pressed', 'true');
+  await dialog.getByRole('button', { name: 'Parada', exact: true }).press('Enter');
+  await expect(dialog.getByRole('button', { name: 'Parada', exact: true })).toHaveAttribute(
+    'aria-pressed',
     'true',
   );
   await selectEvent(page, 'Gol');
-  await selectWheelOption(dialog.getByRole('listbox', { name: 'Equipo', exact: true }), 'Águilas');
+  await choose(dialog, 'Equipo', 'Águilas');
   await dialog.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(page.getByLabel('Marcador 1 a 0')).toBeVisible();
   await expect(page.getByText('Registrado · sin identificar', { exact: false })).toBeVisible();
@@ -69,6 +68,7 @@ test('manual match lifecycle persists and works offline', async ({ page, context
     .filter({ hasText: 'Águilas · #7' })
     .getByRole('button', { name: 'Editar', exact: true })
     .click();
+  await editContext(page.getByRole('dialog'));
   await page.getByRole('dialog').getByLabel('Minuto', { exact: true }).fill('5');
   await page
     .getByRole('dialog')

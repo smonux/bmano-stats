@@ -426,3 +426,135 @@
 .number-wheel button {
   min-height: var(--target-min);
 }
+
+/* Direct courtside entry: context stays compact, choices stay explicit. */
+.choice-group {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  margin: 12px 0;
+}
+.choice-group legend {
+  font-size: var(--text-caption);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.choice-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.choice-options button {
+  min-height: var(--target-live);
+  gap: 8px;
+  padding: 8px;
+}
+.choice-options button[aria-pressed='true'] {
+  background: #fff4b8;
+  border: 2px solid var(--selection-line);
+  box-shadow: inset 0 -3px var(--ink);
+}
+.team-choices button {
+  flex-direction: column;
+  align-items: stretch;
+  text-align: start;
+}
+.team-choices button > span {
+  font-size: var(--text-caption);
+}
+.team-choices strong {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.event-context > button,
+.more-actions {
+  width: 100%;
+  justify-content: flex-start;
+  text-align: start;
+}
+.event-context .filter-row {
+  align-items: center;
+}
+.player-choices .choice-options {
+  grid-template-columns: repeat(auto-fit, minmax(4.4rem, 1fr));
+}
+.player-choices button {
+  min-width: 0;
+  flex-direction: column;
+  min-height: 84px;
+}
+.player-dorsal {
+  font-size: 1.875rem;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.player-short-name {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.8125rem;
+}
+.event-editor .participant-selection {
+  font-size: var(--text-caption);
+  overflow-wrap: anywhere;
+  margin: 8px 0 0;
+}
+.related-participant > summary,
+.event-additional > summary {
+  min-height: var(--target-live);
+  padding-block: 10px;
+  cursor: pointer;
+  font-size: var(--text-caption);
+  font-weight: 700;
+}
+.event-editor-footer .draft-summary {
+  font-size: var(--text-caption);
+  margin: 0 0 6px;
+  overflow-wrap: anywhere;
+}
+.event-editor-footer .draft-issues {
+  font-size: var(--text-caption);
+  margin: 0 0 8px;
+  max-height: 3em;
+  overflow-y: auto;
+  color: #704016;
+}
+
+.event-editor-footer .draft-feedback p {
+  max-height: none;
+  overflow: visible;
+}
+
+.choice-group .choice-hint {
+  font-size: var(--text-caption);
+  margin: 4px 0 0;
+}
+.event-action-choices .choice-options {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+}
+
+.event-editor-footer .draft-feedback {
+  font-size: var(--text-caption);
+  max-height: 6em;
+  overflow-y: auto;
+  margin-bottom: 6px;
+}
+.event-editor[data-compact-viewport] .draft-feedback {
+  font-size: var(--text-caption);
+  max-height: 1.5em;
+  margin-bottom: 4px;
+}
+.event-editor[data-compact-viewport] .draft-feedback p {
+  margin-block: 0 4px;
+}
+
+@media (max-width: 360px) {
+  .event-editor-footer .draft-feedback {
+    max-height: 1.5em;
+  }
+}

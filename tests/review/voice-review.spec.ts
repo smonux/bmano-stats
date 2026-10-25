@@ -1,5 +1,5 @@
+import { choose } from '../editor-helpers';
 import { test, expect, type Page } from '@playwright/test';
-import { selectWheelOption } from '../wheel-helpers';
 const dialog = (page: Page) => page.getByRole('dialog', { name: 'Confirmar jugada', exact: true });
 const saveButton = (page: Page) =>
   dialog(page).getByRole('button', { name: /^Guardar (evento|pendiente)$/ });
@@ -128,10 +128,7 @@ test('pointer and keyboard do not save; editing preserves text and changes the i
   await dialog(page).getByRole('button', { name: 'Editar', exact: true }).click();
   const editor = page.getByRole('dialog', { name: 'Nuevo evento', exact: true });
   await expect(editor).toBeVisible();
-  await selectWheelOption(
-    editor.getByRole('listbox', { name: 'Evento', exact: true }),
-    'Tarjeta amarilla',
-  );
+  await choose(editor, 'Evento', 'Tarjeta amarilla');
   await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(editor).toHaveCount(0);
   await expect(page.getByTestId('events')).toContainText('gol nuestro 7 1 penalti');

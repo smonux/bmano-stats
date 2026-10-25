@@ -1,5 +1,5 @@
+import { choose } from './editor-helpers';
 import { selectShirtNumber, readShirtNumber } from './wheel-helpers';
-import { selectWheelOption } from './wheel-helpers';
 import { serveModels, prepareMatchVoice, selectEvent } from './voice-helpers';
 import { test, expect } from '@playwright/test';
 import { writeFile } from 'node:fs/promises';
@@ -93,28 +93,20 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
   await expect(editor.locator('.voice-warnings, .pending-hint')).toHaveCount(0);
   await expect(
     editor
-      .getByRole('listbox', { name: 'Equipo', exact: true })
-      .getByRole('option', { selected: true }),
+      .getByRole('group', { name: 'Equipo', exact: true })
+      .getByRole('button', { pressed: true }),
   ).not.toHaveText('—');
-  await expect
-    .poll(() =>
-      editor.getByRole('listbox', { name: 'Evento', exact: true }).evaluate((el) => {
-        const selected = el.querySelector('[aria-selected=true]')!;
-        const a = selected.getBoundingClientRect();
-        const b = el.getBoundingClientRect();
-        return Math.abs(a.top + a.height / 2 - b.top - b.height / 2);
-      }),
-    )
-    .toBeLessThan(2);
+  // ASR may leave the event unresolved. Read the proposal without inventing a selection.
+  const chosenTypes = await editor
+    .locator('.event-action-choices button[aria-pressed="true"]')
+    .allTextContents();
+  const moreLabel = await editor.locator('.more-actions').textContent();
   const actualProposal = {
     transcripcion: await page.locator('.voice-transcript').first().textContent(),
-    tipo: await editor
-      .getByRole('listbox', { name: 'Evento', exact: true })
-      .getByRole('option', { selected: true })
-      .textContent(),
+    tipo: chosenTypes[0] ?? moreLabel?.split(' · ')[1] ?? null,
     equipo: await editor
-      .getByRole('listbox', { name: 'Equipo', exact: true })
-      .getByRole('option', { selected: true })
+      .getByRole('group', { name: 'Equipo', exact: true })
+      .getByRole('button', { pressed: true })
       .textContent(),
     dorsal: await readShirtNumber(editor, 'Dorsal principal'),
     tiempos: await editor.getByText(/Whistle:.*Reglas:/).textContent(),
@@ -130,7 +122,7 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
   });
   // Recognition is a proposal: explicitly review/correct it before committing.
   await selectEvent(page, 'Gol');
-  await selectWheelOption(editor.getByRole('listbox', { name: 'Equipo', exact: true }), 'Águilas');
+  await choose(editor, 'Equipo', 'Águilas');
   await selectShirtNumber(editor, 'Dorsal principal', '7');
   await expect(page.getByLabel('Marcador 0 a 0')).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('voz-revision.png'), fullPage: true });

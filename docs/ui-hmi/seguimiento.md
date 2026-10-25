@@ -122,3 +122,38 @@ Validación: formato y build correctos, más 14 recorridos de navegador de `hmi-
 - Comprobaciones automatizadas en Chromium; texto al 200 % simulado por tamaño de fuente raíz. WebKit y dispositivos físicos no estaban disponibles en esta pasada. Continúa pendiente la validación física de teclado, voz con ruido y lectores de pantalla.
 
 Siguiente entrega: editor con selección directa de equipo, acción y jugador por dorsal/nombre, contexto compacto y campos aplicables. Los bloques de protección de borrador, deshacer, acceso/relación entre exclusión y contador, revisión de voz, tablas del gráfico e inicio manual explícito sin voz siguen en su orden previsto. Sin merge ni publicación; `main` permanece en `138fbf1`.
+
+## Objetivo ampliado: completar todas las entregas
+
+Samuel pide completar todos los bloques pendientes, con commit y etiqueta por bloque. Se mantiene `cambios-hmi`, sin merge ni publicación. La entrega 1 terminada está etiquetada como `hmi-01-base-visual` en `aa0f997`.
+
+| Bloque                  | Alcance restante                                                                                     | Estado                               |
+| ----------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| 2                       | Editor directo, participantes y pendientes explicados                                                | Completado · `hmi-02-editor-directo` |
+| 3                       | Prioridad de contadores activos, acceso desde reloj y ayuda sobre independencia                      | Pendiente                            |
+| 4                       | Motivos/Completar en registro, lectura de detalles, confirmaciones, acuse y protección de borrador   | Pendiente                            |
+| 5                       | Revisión de voz, PTT, pestañas y formularios/modales compartidos                                     | Pendiente                            |
+| 6                       | Equipos comparables, denominadores y tabla del gráfico                                               | Pendiente                            |
+| 7                       | Inicio, ajustes, bienvenida y reproducción de transición de carga                                    | Pendiente                            |
+| Manual                  | Inicio explícito solo con entrada manual, conservando preparación para usar voz                      | Pendiente                            |
+| Deshacer                | Reversión de una creación, incluido efecto sobre último portero; sin prometer reversión de ediciones | Pendiente                            |
+| Contador tras exclusión | Acción explícita precargada; evento y contador siguen independientes                                 | Pendiente                            |
+| Auditoría final         | Matriz transversal, regresión de voz/PDF/ZIP/JSON, build, evidencia y límites físicos                | Pendiente                            |
+
+Las decisiones aprobadas prevalecen sobre alternativas del informe: se conserva menú lateral, push to talk, lado de cada equipo y entrada manual neutral. No se cambiarán modelos ni interpretación de voz para resolver presentación.
+
+## Entrega 2: editor directo y contexto compacto
+
+- Dos equipos visibles y acción mediante botones nativos con estado pulsado. Gol, Parada, Pérdida y Lanzamiento fallado están a la vista; los nueve tipos restantes se eligen en Más acciones, que vuelve a plegarse sin perder el foco ni ocultar la acción elegida.
+- La entrada manual sigue sin equipo ni evento implícitos. Los motivos proceden de `eventDraftIssues`, junto a los campos y en el pie. Guardar pendiente explica que no computará. Un gol sin dorsal sigue siendo válido.
+- Jugadores ordenados por dorsal, con cifra de 30 px y nombre de al menos 13 px debajo. Nombre completo accesible y en la selección/resumen. Sin identificar y Otro dorsal explícitos; solo este último muestra las dos ruedas de dígitos. Cambio real de equipo limpia participantes; pulsar el equipo elegido no los borra.
+- Solo aparecen participantes y metadatos aplicables. El relacionado es opcional y plegable; sustitución presenta Sale/Entra y ambos en el resumen. Nota muestra directamente su texto.
+- Periodo/minuto se capturan al abrir, con edición compacta. El reloj puede avanzar durante el formulario sin cambiar ese contexto.
+- Pie estable, con resumen y motivos en una zona que admite foco/desplazamiento para nombres o texto ampliado. Las acciones conservan altura y etiquetas completas; las rejillas reducen columnas antes que tamaño de letra.
+- Traducciones de los nuevos textos en los seis idiomas adicionales. Sin cambios de reglas, modelos, persistencia, marcador ni formatos de copia.
+
+Validación: 135 unitarias, TypeScript, formato y build correctos. La suite general de 84 casos pasó 81, omitió el PDF largo móvil deliberadamente y detectó dos esperas incorrectas del diagnóstico de prueba al no existir evento reconocido. Tras adaptar esa lectura sin inventar selección, los 34 recorridos finales del editor/legibilidad/teclado/notas/voz real pasaron, incluida recarga offline. Los 14 de revisión de voz también pasaron. Estos resultados se solapan; no representan 129 casos distintos.
+
+Los fixtures de 0/7/30 jugadores y nombres de hasta 100 caracteres validan la copia antes de importarla. Se prueban cero, 7, 10 y 99, los 13 iconos/tipos, teclado, sustitución, cambio de equipo, cuatro activaciones sin scroll a 390 × 844, texto al 200 %, captura del minuto y doble envío sin duplicados. Las primeras ejecuciones permitieron corregir recortes reales, además de actualizar expectativas de las ruedas retiradas. [Capturas y límites](evidencias/02-editor/README.md).
+
+Cierre adicional del dorsal 10: los 12 casos de `hmi-editor.spec.ts` se repitieron correctamente. Etiqueta del bloque: `hmi-02-editor-directo`.

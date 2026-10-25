@@ -2,11 +2,13 @@ import { createEditorDraft } from './event-editor/draft';
 import { eventDraftIssues } from '../presentation/event-draft';
 import { lastGoalkeeper } from '../domain/goalkeepers';
 import { WheelPicker } from './WheelPicker';
+import { ChoiceGroup } from './event-editor/ChoiceGroup';
+import { draftSummary } from '../presentation/event-summary';
 import { EventIcon } from './EventIcon';
 import { ParticipantPicker } from './event-editor/ParticipantPicker';
 import { EventMetadata } from './event-editor/EventMetadata';
 import { tr } from '../i18n';
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import {
   definitions,
   eventTypes,
@@ -42,6 +44,9 @@ export function EventEditor({
   );
   const action = useAction();
   const noteId = useId();
+  const moreButton = useRef<HTMLButtonElement>(null);
+  const [contextOpen, setContextOpen] = useState(false);
+  const [moreActions, setMoreActions] = useState(false);
   const eventDefinition = draft.type ? definitions[draft.type] : null;
   const teamName = (id: string) => data.teams.find((team) => team.id === id)?.name ?? '';
   const setType = (type: EventType | null) =>
@@ -62,7 +67,30 @@ export function EventEditor({
     }));
   const relatedTeamId =
     draft.type && draft.teamId ? relatedTeam(match, draft.type, draft.teamId) : draft.teamId;
-  const missing = eventDraftIssues(draft, match, data.players).length > 0;
+  const issues = eventDraftIssues(draft, match, data.players);
+  const missing = issues.length > 0;
+  const frequent: EventType[] = ['goal', 'save', 'loss', 'miss'];
+  const actionChoices = (types: readonly EventType[]) =>
+    types.map((value) => ({
+      value,
+      label: tr(definitions[value].label),
+      content: (
+        <>
+          <EventIcon type={value} />
+          <span>{tr(definitions[value].label)}</span>
+        </>
+      ),
+    }));
+  const selectTeam = (teamId: string) =>
+    setDraft((previous) => ({
+      ...previous,
+      teamId,
+      primaryDorsal:
+        previous.type === 'save'
+          ? (lastGoalkeeper(match, data.players, teamId)?.dorsal?.toString() ?? '')
+          : '',
+      relatedDorsal: '',
+    }));
   return (
     <Modal
       className="event-editor"
@@ -79,137 +107,146 @@ export function EventEditor({
         }}
       >
         <div className="event-editor-fields">
-          <div className="event-top">
-            <WheelPicker<EventType | ''>
-              label={tr('Evento')}
-              value={draft.type ?? ''}
-              options={[
-                {
-                  value: '',
-                  label: tr('Seleccionar evento'),
-                },
-                ...eventTypes.map((value) => ({
-                  value,
-                  label: tr(definitions[value].label),
-                  icon: <EventIcon type={value} />,
-                })),
-              ]}
-              change={(value) => setType(value || null)}
-            />
-            <NumberWheel
-              label={tr('Minuto')}
-              value={draft.minute}
-              min={0}
-              max={999}
-              onChange={(minute) =>
-                setDraft((previousDraft) => ({
-                  ...previousDraft,
-                  minute,
-                }))
-              }
-            />
-          </div>
-          <div className="filter-row">
-            {draft.type !== 'note' && (
-              <WheelPicker
-                label={tr('Equipo')}
-                value={draft.teamId ?? ''}
-                options={[
-                  {
-                    value: '',
-                    label: tr('Seleccionar equipo'),
-                  },
-                  ...[match.localTeamId, match.visitorTeamId].map((value) => ({
-                    value,
-                    label: teamName(value),
-                  })),
-                ]}
-                change={(teamId) =>
-                  setDraft((previousDraft) => ({
-                    ...previousDraft,
-                    teamId: teamId || null,
-                    primaryDorsal:
-                      draft.type === 'save'
-                        ? (lastGoalkeeper(match, data.players, teamId)?.dorsal?.toString() ?? '')
-                        : '',
-                    relatedDorsal: '',
-                  }))
-                }
-              />
+          <div className="event-context">
+            <button
+              type="button"
+              aria-expanded={contextOpen}
+              aria-controls="event-context-fields"
+              onClick={() => setContextOpen(!contextOpen)}
+            >
+              {tr('Tiempo')} {draft.period} · {draft.minute}′ · {tr('Editar tiempo y minuto')}
+            </button>
+            {contextOpen && (
+              <div id="event-context-fields" className="filter-row">
+                <NumberWheel
+                  label={tr('Minuto')}
+                  value={draft.minute}
+                  min={0}
+                  max={999}
+                  onChange={(minute) => setDraft((previous) => ({ ...previous, minute }))}
+                />
+                <WheelPicker
+                  label={tr('Tiempo')}
+                  value={String(draft.period)}
+                  options={Array.from({ length: match.clock.period }, (_, index) => ({
+                    value: String(index + 1),
+                    label: tr('Tiempo') + ' ' + (index + 1),
+                  }))}
+                  change={(period) =>
+                    setDraft((previous) => ({ ...previous, period: Number(period) }))
+                  }
+                />
+              </div>
             )}
-            <WheelPicker
-              label={tr('Tiempo')}
-              value={String(draft.period)}
-              options={Array.from(
-                {
-                  length: match.clock.period,
-                },
-                (_, index) => ({
-                  value: String(index + 1),
-                  label: tr('Tiempo') + ' ' + (index + 1),
-                }),
-              )}
-              change={(period) =>
-                setDraft((previousDraft) => ({
-                  ...previousDraft,
-                  period: Number(period),
-                }))
-              }
-            />
           </div>
           {draft.type !== 'note' && (
+            <ChoiceGroup
+              label={tr('Equipo')}
+              value={draft.teamId ?? ''}
+              className="team-choices"
+              hint={
+                issues.includes('Selecciona un equipo') ? tr('Selecciona un equipo') : undefined
+              }
+              options={[match.localTeamId, match.visitorTeamId].map((value, index) => ({
+                value,
+                label: teamName(value),
+                accessibleLabel: teamName(value),
+                description: tr(index === 0 ? 'Equipo 1 (nuestro)' : 'Equipo 2 (rival)'),
+                content: (
+                  <>
+                    <span>{tr(index === 0 ? 'Equipo 1 (nuestro)' : 'Equipo 2 (rival)')}</span>
+                    <strong>{teamName(value)}</strong>
+                  </>
+                ),
+              }))}
+              change={selectTeam}
+            />
+          )}
+          <ChoiceGroup
+            label={tr('Evento')}
+            className="event-action-choices"
+            hint={issues.includes('Selecciona un evento') ? tr('Selecciona un evento') : undefined}
+            value={draft.type ?? ''}
+            options={actionChoices(frequent)}
+            change={(type) => setType(type as EventType)}
+          />
+          <button
+            type="button"
+            ref={moreButton}
+            className="more-actions"
+            aria-expanded={moreActions}
+            onClick={() => setMoreActions(!moreActions)}
+          >
+            {tr('Más acciones')}
+            {draft.type && !frequent.includes(draft.type)
+              ? ' · ' + tr(definitions[draft.type].label)
+              : ''}
+          </button>
+          {moreActions && (
+            <ChoiceGroup
+              label={tr('Más acciones')}
+              className="event-action-choices"
+              value={draft.type ?? ''}
+              options={actionChoices(eventTypes.filter((type) => !frequent.includes(type)))}
+              change={(type) => {
+                setType(type as EventType);
+                setMoreActions(false);
+                moreButton.current?.focus({ preventScroll: true });
+              }}
+            />
+          )}
+          {draft.teamId && eventDefinition && draft.type !== 'passive' && draft.type !== 'note' && (
             <>
               <ParticipantPicker
+                key={'primary:' + draft.teamId}
                 role="primary"
-                participantLabel={tr(eventDefinition?.principal ?? 'Jugador')}
+                participantLabel={tr(eventDefinition.principal)}
                 teamId={draft.teamId}
-                teamName={draft.teamId ? teamName(draft.teamId) : ''}
+                teamName={teamName(draft.teamId)}
                 players={data.players}
                 shirtNumber={draft.primaryDorsal}
-                disabled={!draft.teamId || !eventDefinition || draft.type === 'passive'}
-                change={(primaryDorsal) =>
-                  setDraft((previousDraft) => ({
-                    ...previousDraft,
-                    primaryDorsal,
-                  }))
-                }
+                change={(primaryDorsal) => setDraft((previous) => ({ ...previous, primaryDorsal }))}
               />
-              <ParticipantPicker
-                role="related"
-                participantLabel={tr(eventDefinition?.related ?? 'No aplica')}
-                teamId={relatedTeamId}
-                teamName={relatedTeamId ? teamName(relatedTeamId) : ''}
-                players={data.players}
-                shirtNumber={draft.relatedDorsal}
-                disabled={!draft.teamId || !eventDefinition?.related}
-                change={(relatedDorsal) =>
-                  setDraft((previousDraft) => ({
-                    ...previousDraft,
-                    relatedDorsal,
-                  }))
-                }
-              />
-              <EventMetadata
-                type={draft.type}
-                metadata={draft.metadata}
-                change={(metadata) =>
-                  setDraft((previousDraft) => ({
-                    ...previousDraft,
-                    metadata,
-                  }))
-                }
-              />
+              {eventDefinition.related && relatedTeamId && (
+                <details
+                  className="related-participant"
+                  open={draft.type === 'substitution' || draft.relatedDorsal !== '' || undefined}
+                >
+                  <summary>
+                    {tr(eventDefinition.related)}
+                    {draft.type === 'substitution' ? '' : ' · ' + tr('Opcional')}
+                  </summary>
+                  <ParticipantPicker
+                    key={'related:' + relatedTeamId}
+                    role="related"
+                    participantLabel={tr(eventDefinition.related)}
+                    teamId={relatedTeamId}
+                    teamName={teamName(relatedTeamId)}
+                    players={data.players}
+                    shirtNumber={draft.relatedDorsal}
+                    change={(relatedDorsal) =>
+                      setDraft((previous) => ({ ...previous, relatedDorsal }))
+                    }
+                  />
+                </details>
+              )}
             </>
           )}
-          <section
+          <EventMetadata
+            type={draft.type}
+            metadata={draft.metadata}
+            change={(metadata) => setDraft((previous) => ({ ...previous, metadata }))}
+          />
+          <details
+            open={draft.type === 'note' || !!draft.note || !!draft.rawText || undefined}
             className="event-additional"
             aria-label={tr(
               draft.type === 'note' ? 'Nota del partido' : 'Información adicional (opcional)',
             )}
           >
-            <h3>
+            <summary>
               {tr(draft.type === 'note' ? 'Nota del partido' : 'Información adicional (opcional)')}
-            </h3>
+            </summary>
             {draft.type === 'note' && (
               <p className="caption">
                 {tr('Se guarda en el registro, sin afectar al marcador ni a las estadísticas.')}
@@ -239,7 +276,7 @@ export function EventEditor({
                 <span>«{draft.rawText}»</span>
               </p>
             )}
-          </section>
+          </details>
           {event && (
             <p className="caption">
               {tr('Cambiar minuto o tiempo recoloca el evento en orden cronológico.')}
@@ -255,6 +292,20 @@ export function EventEditor({
           )}
         </div>
         <footer className="event-editor-footer">
+          <div
+            className="draft-feedback"
+            tabIndex={0}
+            role="region"
+            aria-label={tr('Resumen del evento')}
+          >
+            <p className="draft-summary">{draftSummary(draft, match, data)}</p>
+            {missing && (
+              <p className="draft-issues">
+                {tr('Se guardará pendiente; no contará en las estadísticas.')}{' '}
+                {issues.map((issue) => tr(issue)).join('. ')}
+              </p>
+            )}
+          </div>
           <ErrorMessage text={action.error} />
           <div className="actions">
             <button type="button" disabled={action.busy} onClick={close}>

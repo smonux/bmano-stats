@@ -1,9 +1,10 @@
+import { choose } from './editor-helpers';
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { unzipSync, strFromU8 } from 'fflate';
 import { reportFixture } from './fixtures/report';
 import { selectEvent } from './voice-helpers';
-import { readShirtNumber, selectShirtNumber, selectWheelOption } from './wheel-helpers';
+import { readShirtNumber, selectShirtNumber } from './wheel-helpers';
 test('goalkeeper roles are explicit in the roster and saves remember zero across reload and ZIP', async ({
   page,
 }, info) => {
@@ -39,10 +40,7 @@ test('goalkeeper roles are explicit in the roster and saves remember zero across
     await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
     await selectEvent(page, 'Parada');
     const editor = page.getByRole('dialog');
-    await selectWheelOption(
-      editor.getByRole('listbox', { name: 'Equipo', exact: true }),
-      'La Jota',
-    );
+    await choose(editor, 'Equipo', 'La Jota');
     await selectShirtNumber(editor, 'Dorsal principal', shirt);
     await expect.poll(() => readShirtNumber(editor, 'Dorsal principal')).toBe(shirt);
     await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
@@ -54,7 +52,7 @@ test('goalkeeper roles are explicit in the roster and saves remember zero across
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   await selectEvent(page, 'Parada');
   const editor = page.getByRole('dialog');
-  await selectWheelOption(editor.getByRole('listbox', { name: 'Equipo', exact: true }), 'La Jota');
+  await choose(editor, 'Equipo', 'La Jota');
   expect(await readShirtNumber(editor, 'Dorsal principal')).toBe('0');
   await page.screenshot({ path: info.outputPath('remembered-goalkeeper.png'), fullPage: true });
   await editor.getByRole('button', { name: 'Cancelar', exact: true }).click();

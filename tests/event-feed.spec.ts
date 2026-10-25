@@ -22,7 +22,7 @@ test('opponent events mirror their title and icon and both teams are explicitly 
   await expect(ours.getByRole('img', { name: 'Equipo 1 (nuestro)', exact: true })).toHaveText('1');
   await expect(rival.getByRole('img', { name: 'Equipo 2 (rival)', exact: true })).toHaveText('2');
   await expect(ours.locator('.event-team-name')).toHaveText('La Jota');
-  await expect(rival.locator('.event-team-name')).toHaveText('Rival');
+  await expect(rival.locator('.event-team-name')).toContainText('Rival');
 
   const ourIcon = (await ours.locator('.event-icon').boundingBox())!;
   const ourTitle = (await ours.locator('.event-title').boundingBox())!;
@@ -43,7 +43,7 @@ test('opponent events mirror their title and icon and both teams are explicitly 
   await expect(
     page
       .getByRole('dialog')
-      .getByRole('listbox', { name: 'Equipo', exact: true })
-      .getByRole('option', { selected: true }),
-  ).toHaveText('Rival');
+      .getByRole('group', { name: 'Equipo', exact: true })
+      .getByRole('button', { pressed: true }),
+  ).toContainText('Rival');
 });

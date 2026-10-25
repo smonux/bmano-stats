@@ -1,8 +1,8 @@
+import { choose } from './editor-helpers';
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { unzipSync, strFromU8 } from 'fflate';
 import { reportFixture } from './fixtures/report';
-import { selectWheelOption } from './wheel-helpers';
 
 test('manual match note is readable, editable and survives reload and ZIP restore', async ({
   page,
@@ -26,7 +26,7 @@ test('manual match note is readable, editable and survives reload and ZIP restor
   await page.goto('/#/partidos/report-match');
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   const editor = page.getByRole('dialog', { name: 'Nuevo evento', exact: true });
-  await selectWheelOption(editor.getByRole('listbox', { name: 'Evento', exact: true }), 'Nota');
+  await choose(editor, 'Evento', 'Nota');
   await expect(editor.getByRole('listbox', { name: 'Equipo', exact: true })).toHaveCount(0);
   await expect(
     editor.getByRole('button', { name: 'Guardar pendiente', exact: true }),

@@ -1,3 +1,4 @@
+import { editNote } from './editor-helpers';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { reportFixture } from './fixtures/report';
 
@@ -95,6 +96,7 @@ for (const mode of ['manual', 'voice event'] as const) {
       await otherWindow.goto('/#/partidos/report-match');
       await otherWindow.getByRole('button', { name: 'Editar', exact: true }).click();
       const otherEditor = otherWindow.getByRole('dialog');
+      await editNote(otherEditor);
       await otherEditor
         .getByRole('textbox', { name: 'Nota', exact: true })
         .fill('Actualizado en otra ventana');

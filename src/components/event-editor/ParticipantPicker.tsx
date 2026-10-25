@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { ShirtNumberPicker } from '../ShirtNumberPicker';
 import type { Player } from '../../domain/model';
 import { tr } from '../../i18n';
-import { WheelPicker, type WheelOption } from '../WheelPicker';
+import { ChoiceGroup } from './ChoiceGroup';
 
 export function ParticipantPicker({
   role,
@@ -10,78 +11,69 @@ export function ParticipantPicker({
   teamName,
   players,
   shirtNumber,
-  disabled,
   change,
 }: {
   role: 'primary' | 'related';
   participantLabel: string;
-  teamId: string | null;
+  teamId: string;
   teamName: string;
   players: readonly Player[];
   shirtNumber: string;
-  disabled: boolean;
   change: (shirtNumber: string) => void;
 }) {
   const knownPlayers = players
     .filter((player) => player.teamId === teamId && !player.isUnknown && !player.deletedAt)
-    .sort((first, second) => first.dorsal! - second.dorsal!);
-  const selectedPlayer = knownPlayers.find(
+    .sort((a, b) => a.dorsal! - b.dorsal!);
+  const selected = knownPlayers.find(
     (player) => shirtNumber !== '' && player.dorsal === Number(shirtNumber),
   );
-  const selectedNumber = shirtNumber === '' ? '' : String(Number(shirtNumber));
-  const numberedOptions: WheelOption[] = knownPlayers.map((player) => ({
-    value: String(player.dorsal),
-    label: `#${player.dorsal} ${player.name}`.trim(),
-  }));
-  // A new or voice-recognised number must stay selected even before it is in the roster.
-  if (shirtNumber !== '' && !selectedPlayer) {
-    numberedOptions.push({
-      value: selectedNumber,
-      label: `#${selectedNumber} · ${tr('Dorsal nuevo')}`,
-    });
-  }
-  const options = [
-    { value: '', label: tr('Desconocido') },
-    ...numberedOptions.sort((first, second) => Number(first.value) - Number(second.value)),
-  ];
-
-  let hint = tr('Sin dorsal: se atribuye a Desconocido cuando corresponda.');
-  if (disabled) {
-    hint = tr('No aplicable');
-  } else if (shirtNumber !== '') {
-    hint =
-      selectedPlayer?.name ||
-      tr('Dorsal {number} válido · nombre opcional', {
-        number: Number(shirtNumber),
-      });
-  }
-
+  const [other, setOther] = useState(shirtNumber !== '' && !selected);
+  const label = role === 'primary' ? tr('Jugador principal') : tr('Jugador relacionado');
   return (
-    <fieldset disabled={disabled} className="participant">
-      <legend>
-        {role === 'primary' ? tr('Principal') : tr('Relacionado')} · {participantLabel}
-      </legend>
-      <div className="participant-row">
-        <div className="participant-number">
-          <span className="participant-team">{teamName || tr('Sin equipo')}</span>
-          <ShirtNumberPicker
-            label={role === 'primary' ? tr('Dorsal principal') : tr('Dorsal relacionado')}
-            hideLabel
-            value={shirtNumber}
-            disabled={disabled}
-            change={change}
-          />
-        </div>
-        <WheelPicker
-          label={role === 'primary' ? tr('Jugador principal') : tr('Jugador relacionado')}
-          hideLabel
-          value={selectedNumber}
-          options={options}
-          disabled={disabled}
+    <section className="participant" aria-label={`${participantLabel} · ${teamName}`}>
+      <p className="participant-team">
+        <strong>{participantLabel}</strong> · {teamName}
+      </p>
+      <ChoiceGroup
+        label={label}
+        className="player-choices"
+        value={
+          other ? 'other' : selected ? String(selected.dorsal) : shirtNumber === '' ? '' : 'other'
+        }
+        options={[
+          ...knownPlayers.map((player) => ({
+            value: String(player.dorsal),
+            label: `#${player.dorsal} ${player.name || tr('Sin nombre')}`,
+            accessibleLabel: `#${player.dorsal} ${player.name || tr('Sin nombre')}`,
+            content: (
+              <>
+                <strong className="player-dorsal">{player.dorsal}</strong>
+                <span className="player-short-name" title={player.name}>
+                  {player.name || tr('Sin nombre')}
+                </span>
+              </>
+            ),
+          })),
+          { value: '', label: tr('Sin identificar') },
+          { value: 'other', label: tr('Otro dorsal') },
+        ]}
+        change={(value) => {
+          setOther(value === 'other');
+          if (value !== 'other') change(value);
+        }}
+      />
+      {other && (
+        <ShirtNumberPicker
+          label={role === 'primary' ? tr('Dorsal principal') : tr('Dorsal relacionado')}
+          value={shirtNumber}
           change={change}
         />
-      </div>
-      <small>{hint}</small>
-    </fieldset>
+      )}
+      <p className="caption participant-selection">
+        {shirtNumber === ''
+          ? tr('Sin identificar')
+          : `#${Number(shirtNumber)} · ${selected?.name || tr('Sin nombre')}`}
+      </p>
+    </section>
   );
 }

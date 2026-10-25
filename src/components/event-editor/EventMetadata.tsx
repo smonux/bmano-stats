@@ -1,10 +1,9 @@
 import { definitions, type EventType, type GameEvent } from '../../domain/model';
 import { tr } from '../../i18n';
-import { WheelPicker } from '../WheelPicker';
+import { ChoiceGroup } from './ChoiceGroup';
 
 type Metadata = GameEvent['metadata'];
-type Infraction = NonNullable<Metadata['infraction']>;
-const infractionTypes: readonly Infraction[] = ['Pasos', 'Dobles', 'Pisando'];
+const infractionTypes = ['Pasos', 'Dobles', 'Pisando'] as const;
 
 export function EventMetadata({
   type,
@@ -16,39 +15,42 @@ export function EventMetadata({
   change: (metadata: Metadata) => void;
 }) {
   const penaltyAllowed = type !== null && Boolean(definitions[type].penalty);
-  const blueAllowed = type === 'disqualification';
-
+  if (!penaltyAllowed && type !== 'disqualification' && type !== 'infraction') return null;
   return (
     <div className="metadata">
       <div className="metadata-flags">
-        <label className={!penaltyAllowed ? 'disabled' : ''}>
-          <span>{tr('Penalti (7 m)')}</span>
-          <input
-            type="checkbox"
-            disabled={!penaltyAllowed}
-            checked={!!metadata.penalty && penaltyAllowed}
-            onChange={(event) => change({ ...metadata, penalty: event.target.checked })}
-          />
-        </label>
-        <label className={!blueAllowed ? 'disabled' : ''}>
-          <span>{tr('Tarjeta azul')}</span>
-          <input
-            type="checkbox"
-            disabled={!blueAllowed}
-            checked={!!metadata.blue && blueAllowed}
-            onChange={(event) => change({ ...metadata, blue: event.target.checked })}
-          />
-        </label>
+        {penaltyAllowed && (
+          <label>
+            <span>{tr('Penalti (7 m)')}</span>
+            <input
+              type="checkbox"
+              checked={!!metadata.penalty}
+              onChange={(event) => change({ ...metadata, penalty: event.target.checked })}
+            />
+          </label>
+        )}
+        {type === 'disqualification' && (
+          <label>
+            <span>{tr('Tarjeta azul')}</span>
+            <input
+              type="checkbox"
+              checked={!!metadata.blue}
+              onChange={(event) => change({ ...metadata, blue: event.target.checked })}
+            />
+          </label>
+        )}
       </div>
       {type === 'infraction' && (
-        <WheelPicker<Infraction | ''>
+        <ChoiceGroup
           label={tr('Tipo de infracción')}
           value={metadata.infraction ?? ''}
           options={[
             { value: '', label: tr('Sin indicar') },
             ...infractionTypes.map((value) => ({ value, label: tr(value) })),
           ]}
-          change={(infraction) => change({ ...metadata, infraction: infraction || undefined })}
+          change={(value) =>
+            change({ ...metadata, infraction: (value as Metadata['infraction']) || undefined })
+          }
         />
       )}
     </div>

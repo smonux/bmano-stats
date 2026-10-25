@@ -1,3 +1,4 @@
+import { choose } from './editor-helpers';
 import { selectWheelOption } from './wheel-helpers';
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 import { resolve } from 'node:path';
@@ -46,9 +47,5 @@ export async function prepareMatchVoice(page: Page) {
   });
 }
 export async function selectEvent(page: Page, label: string) {
-  await page
-    .getByRole('dialog')
-    .getByRole('listbox', { name: 'Evento', exact: true })
-    .getByRole('option', { name: label, exact: true })
-    .click();
+  await choose(page.getByRole('dialog'), 'Evento', label);
 }

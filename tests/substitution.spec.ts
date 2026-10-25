@@ -1,5 +1,5 @@
+import { choose } from './editor-helpers';
 import { selectShirtNumber } from './wheel-helpers';
-import { selectWheelOption } from './wheel-helpers';
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { unzipSync, strFromU8 } from 'fflate';
@@ -30,13 +30,13 @@ test('substitution editor preserves two teammates, statistics, PDF and ZIP resto
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   await selectEvent(page, 'Sustitución');
   const dialog = page.getByRole('dialog');
-  await selectWheelOption(dialog.getByRole('listbox', { name: 'Equipo', exact: true }), 'La Jota');
-  await expect(dialog.getByRole('group', { name: 'Principal · Sale', exact: true })).toContainText(
+  await choose(dialog, 'Equipo', 'La Jota');
+  await expect(dialog.getByRole('region', { name: 'Sale · La Jota', exact: true })).toContainText(
     'La Jota',
   );
-  await expect(
-    dialog.getByRole('group', { name: 'Relacionado · Entra', exact: true }),
-  ).toContainText('La Jota');
+  await expect(dialog.getByRole('region', { name: 'Entra · La Jota', exact: true })).toContainText(
+    'La Jota',
+  );
   await selectShirtNumber(dialog, 'Dorsal principal', '6');
   await selectShirtNumber(dialog, 'Dorsal relacionado', '6');
   await expect(

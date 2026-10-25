@@ -1,6 +1,8 @@
+import { editNote } from './editor-helpers';
+import { choose } from './editor-helpers';
 import { test, expect, type Page } from '@playwright/test';
 import { reportFixture } from './fixtures/report';
-import { readShirtNumber, selectShirtNumber, selectWheelOption } from './wheel-helpers';
+import { readShirtNumber, selectShirtNumber } from './wheel-helpers';
 
 async function restoreMatch(page: Page) {
   await page.goto('/#/ajustes');
@@ -80,16 +82,14 @@ test('readable exclusion controls and digit wheels preserve optional zero and ro
   await page.screenshot({ path: info.outputPath('compact-counters.png') });
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   const editor = page.getByRole('dialog');
-  const wheel = (name: string) => editor.getByRole('listbox', { name, exact: true });
-  await selectWheelOption(wheel('Evento'), 'Gol');
-  await selectWheelOption(wheel('Equipo'), 'La Jota');
-  await selectWheelOption(wheel('Jugador principal'), '#7 Ana Łukasz');
+
+  await choose(editor, 'Evento', 'Gol');
+  await choose(editor, 'Equipo', 'La Jota');
+  await choose(editor, 'Jugador principal', '#7 Ana Łukasz');
   await expect.poll(() => readShirtNumber(editor, 'Dorsal principal')).toBe('7');
   for (const number of ['0', '99', '7']) {
     await selectShirtNumber(editor, 'Dorsal principal', number);
-    await expect(wheel('Jugador principal').getByRole('option', { selected: true })).toHaveText(
-      number === '7' ? '#7 Ana Łukasz' : `#${number} · Dorsal nuevo`,
-    );
+    expect(await readShirtNumber(editor, 'Dorsal principal')).toBe(number);
   }
   await page.screenshot({ path: info.outputPath('digits.png') });
   await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
@@ -142,11 +142,9 @@ for (const supported of [true, false]) {
     }
     await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
     const editor = page.getByRole('dialog');
-    await selectWheelOption(editor.getByRole('listbox', { name: 'Evento', exact: true }), 'Gol');
-    await selectWheelOption(
-      editor.getByRole('listbox', { name: 'Equipo', exact: true }),
-      'La Jota',
-    );
+    await choose(editor, 'Evento', 'Gol');
+    await choose(editor, 'Equipo', 'La Jota');
+    await editNote(editor);
     await editor.getByRole('textbox', { name: 'Nota', exact: true }).fill('Se conserva al girar');
     const viewport = page.viewportSize()!;
     await page.setViewportSize({ width: viewport.height, height: viewport.width });
@@ -156,9 +154,9 @@ for (const supported of [true, false]) {
     );
     await expect(
       editor
-        .getByRole('listbox', { name: 'Equipo', exact: true })
-        .getByRole('option', { selected: true }),
-    ).toHaveText('La Jota');
+        .getByRole('group', { name: 'Equipo', exact: true })
+        .getByRole('button', { pressed: true }),
+    ).toContainText('La Jota');
     await expect(
       editor.getByRole('button', { name: 'Guardar evento', exact: true }),
     ).toBeInViewport({ ratio: 1 });

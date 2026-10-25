@@ -1,3 +1,4 @@
+import { expand } from './editor-helpers';
 import { type Locator } from '@playwright/test';
 
 export async function selectWheelOption(wheel: Locator, label: string) {
@@ -6,6 +7,14 @@ export async function selectWheelOption(wheel: Locator, label: string) {
 }
 
 export async function selectShirtNumber(container: Locator, label: string, value: string) {
+  if (label === 'Dorsal principal' || label === 'Dorsal relacionado') {
+    if (label === 'Dorsal relacionado') await expand(container.locator('.related-participant'));
+    const participant = container
+      .locator(label === 'Dorsal principal' ? '.participant' : '.related-participant .participant')
+      .first();
+    const other = participant.getByRole('button', { name: 'Otro dorsal', exact: true });
+    if ((await other.getAttribute('aria-pressed')) !== 'true') await other.click();
+  }
   const number = container.getByRole('group', { name: label, exact: true });
   const tens = number.getByRole('listbox', { name: `${label} · Decenas`, exact: true });
   if (value === '') {
@@ -21,6 +30,16 @@ export async function selectShirtNumber(container: Locator, label: string, value
 }
 
 export async function readShirtNumber(container: Locator, label: string) {
+  if (label === 'Dorsal principal' || label === 'Dorsal relacionado') {
+    const participant = container.locator(
+      label === 'Dorsal principal'
+        ? '.event-editor-fields > .participant'
+        : '.related-participant .participant',
+    );
+    if (!(await participant.count())) return '';
+    const text = await participant.locator('.participant-selection').textContent();
+    return text?.match(/^#(\d+)/)?.[1] ?? '';
+  }
   const number = container.getByRole('group', { name: label, exact: true });
   const selected = await Promise.all(
     ['Decenas', 'Unidades'].map((digit) =>

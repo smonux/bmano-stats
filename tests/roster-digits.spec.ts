@@ -1,6 +1,7 @@
+import { choose } from './editor-helpers';
 import { test, expect } from '@playwright/test';
 import { reportFixture } from './fixtures/report';
-import { selectShirtNumber, readShirtNumber, selectWheelOption } from './wheel-helpers';
+import { selectShirtNumber, readShirtNumber } from './wheel-helpers';
 
 test('catalogue creates shirt zero with digit wheels and keeps existing shirt numbers fixed', async ({
   page,
@@ -39,12 +40,9 @@ test('catalogue creates shirt zero with digit wheels and keeps existing shirt nu
   await page.goto('/#/partidos/report-match');
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   dialog = page.getByRole('dialog');
-  await selectWheelOption(dialog.getByRole('listbox', { name: 'Evento', exact: true }), 'Gol');
-  await selectWheelOption(dialog.getByRole('listbox', { name: 'Equipo', exact: true }), 'La Jota');
-  await selectWheelOption(
-    dialog.getByRole('listbox', { name: 'Jugador principal', exact: true }),
-    '#0 Cero editado',
-  );
+  await choose(dialog, 'Evento', 'Gol');
+  await choose(dialog, 'Equipo', 'La Jota');
+  await choose(dialog, 'Jugador principal', '#0 Cero editado');
   await expect.poll(() => readShirtNumber(dialog, 'Dorsal principal')).toBe('0');
   await dialog.getByRole('button', { name: 'Cancelar', exact: true }).click();
 });

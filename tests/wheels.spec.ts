@@ -1,3 +1,4 @@
+import { choose, editContext, editNote } from './editor-helpers';
 import { selectShirtNumber, readShirtNumber } from './wheel-helpers';
 import { expect, test, type Page } from '@playwright/test';
 import { reportFixture } from './fixtures/report';
@@ -26,75 +27,56 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('event wheels keep team, period, players and infraction consistent and save stays visible', async ({
+test('direct event choices keep teams, players, period and infraction consistent', async ({
   page,
 }, info) => {
   await restoreMatch(page, false);
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   const editor = page.getByRole('dialog');
-  const wheel = (label: string) => editor.getByRole('listbox', { name: label, exact: true });
-  await expect(editor.getByRole('combobox')).toHaveCount(0);
-  await expect(wheel('Jugador principal')).toHaveAttribute('aria-disabled', 'true');
-  await selectWheelOption(wheel('Evento'), 'Gol');
-  await selectWheelOption(wheel('Equipo'), 'La Jota');
-  await selectWheelOption(wheel('Jugador principal'), '#7 Ana Łukasz');
-  await selectWheelOption(wheel('Jugador relacionado'), '#1 Íker');
-  await expect.poll(() => readShirtNumber(editor, 'Dorsal principal')).toBe('7');
-  await expect.poll(() => readShirtNumber(editor, 'Dorsal relacionado')).toBe('1');
-
-  // Selecting the current team again must not erase the chosen participants.
-  await selectWheelOption(wheel('Equipo'), 'La Jota');
-  await expect.poll(() => readShirtNumber(editor, 'Dorsal principal')).toBe('7');
-  await selectWheelOption(wheel('Equipo'), 'Rival');
-  await expect.poll(() => readShirtNumber(editor, 'Dorsal principal')).toBe('');
-  await expect.poll(() => readShirtNumber(editor, 'Dorsal relacionado')).toBe('');
-  await expect(
-    wheel('Jugador principal').getByRole('option', { name: '#7 Ana Łukasz' }),
-  ).toHaveCount(0);
+  await expect(editor.getByRole('group', { name: 'Jugador principal', exact: true })).toHaveCount(
+    0,
+  );
+  await choose(editor, 'Evento', 'Gol');
+  await choose(editor, 'Equipo', 'La Jota');
+  await choose(editor, 'Jugador principal', '#7 Ana Łukasz');
+  await choose(editor, 'Jugador relacionado', '#1 Íker');
+  await choose(editor, 'Equipo', 'La Jota');
+  expect(await readShirtNumber(editor, 'Dorsal principal')).toBe('7');
+  await choose(editor, 'Equipo', 'Rival');
+  expect(await readShirtNumber(editor, 'Dorsal principal')).toBe('');
+  expect(await readShirtNumber(editor, 'Dorsal relacionado')).toBe('');
+  await expect(editor.getByRole('button', { name: '#7 Ana Łukasz', exact: true })).toHaveCount(0);
   await selectShirtNumber(editor, 'Dorsal principal', '99');
-  await expect(wheel('Jugador principal').getByRole('option', { selected: true })).toHaveText(
-    '#99 · Dorsal nuevo',
-  );
-  await selectWheelOption(wheel('Jugador principal'), '#9 Zoë');
-
-  await wheel('Tiempo').focus();
-  await wheel('Tiempo').press('Home');
-  await expect(wheel('Tiempo').getByRole('option', { selected: true })).toHaveText('Tiempo 1');
-
-  // Native scroll/snap commits the centered option, just as a finger swipe does.
-  await wheel('Evento').evaluate((element) => {
-    const options = [...element.querySelectorAll('[role=option]')];
-    const index = options.findIndex((option) => option.textContent === 'Infracción');
-    element.scrollTo({ top: index * options[0].getBoundingClientRect().height });
-  });
-  await expect(wheel('Evento').getByRole('option', { selected: true })).toHaveText('Infracción');
-  await expect(wheel('Jugador relacionado')).toHaveAttribute('aria-disabled', 'true');
-  await wheel('Jugador relacionado').press('ArrowDown');
-  await expect.poll(() => readShirtNumber(editor, 'Dorsal relacionado')).toBe('');
-  await wheel('Tipo de infracción').focus();
-  await wheel('Tipo de infracción').press('End');
-  await expect(wheel('Tipo de infracción').getByRole('option', { selected: true })).toHaveText(
-    'Pisando',
-  );
-  await wheel('Tipo de infracción').press('ArrowUp');
-  await expect(wheel('Tipo de infracción').getByRole('option', { selected: true })).toHaveText(
-    'Dobles',
-  );
-
+  await expect(editor.locator('.participant-selection').first()).toContainText('#99');
+  await choose(editor, 'Jugador principal', '#9 Zoë');
+  await editContext(editor);
+  const period = editor.getByRole('listbox', { name: 'Tiempo', exact: true });
+  await period.focus();
+  await period.press('Home');
+  await expect(period.getByRole('option', { selected: true })).toHaveText('Tiempo 1');
+  await choose(editor, 'Evento', 'Infracción');
+  await expect(editor.locator('.related-participant')).toHaveCount(0);
+  await choose(editor, 'Tipo de infracción', 'Pisando');
+  const doubles = editor.getByRole('button', { name: 'Dobles', exact: true });
+  await doubles.focus();
+  await doubles.press('Enter');
+  await expect(doubles).toHaveAttribute('aria-pressed', 'true');
   const save = editor.getByRole('button', { name: 'Guardar evento', exact: true });
-  await editor.locator('.event-editor-fields').evaluate((element) => element.scrollTo(0, 0));
   await expect(save).toBeInViewport({ ratio: 1 });
-  await page.screenshot({ path: info.outputPath('event-wheels.png'), fullPage: true });
+  await page.screenshot({ path: info.outputPath('direct-choices.png') });
   await save.click();
+  await expect(editor).toHaveCount(0);
   const card = page.locator('.event-card');
   await expect(card).toContainText('Rival · #9 Zoë');
   await expect(card).toContainText('T1');
   await expect(card).toContainText('Dobles');
   await page.reload();
   await card.getByRole('button', { name: 'Editar', exact: true }).click();
-  await expect(wheel('Tiempo').getByRole('option', { selected: true })).toHaveText('Tiempo 1');
-  await expect(wheel('Tipo de infracción').getByRole('option', { selected: true })).toHaveText(
-    'Dobles',
+  await editContext(editor);
+  await expect(period.getByRole('option', { selected: true })).toHaveText('Tiempo 1');
+  await expect(editor.getByRole('button', { name: 'Dobles', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
   );
 });
 
@@ -105,7 +87,8 @@ test('catalogue, statistics and exclusion team choices use wheels; original tran
   const spokenGoal = page.locator('.event-card').filter({ hasText: 'T1 · 3′' });
   await spokenGoal.getByRole('button', { name: 'Editar', exact: true }).click();
   const editor = page.getByRole('dialog', { name: 'Editar evento' });
-  const additional = editor.getByRole('region', { name: 'Información adicional (opcional)' });
+  const additional = editor.locator('.event-additional');
+  await editNote(editor);
   await expect(additional.getByText('Transcripción original', { exact: true })).toHaveCount(1);
   await expect(additional).toContainText('«Gol nuestro dorsal siete»');
   await additional

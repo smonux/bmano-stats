@@ -1,7 +1,7 @@
+import { choose, editContext } from './editor-helpers';
 import { expect, test, type Page } from '@playwright/test';
 import { reportFixture } from './fixtures/report';
 import { nameKey } from '../src/domain/identity';
-import { selectWheelOption } from './wheel-helpers';
 
 async function restore(page: Page, longNames = false) {
   await page.addInitScript(() => {
@@ -140,11 +140,9 @@ for (const viewport of [
       await expect(button).toBeInViewport({ ratio: 1 });
       expect((await button.boundingBox())!.height).toBeGreaterThanOrEqual(56);
     }
-    const wheel = editor.getByRole('listbox', { name: 'Evento', exact: true });
     expect(
-      await wheel
-        .getByRole('option')
-        .first()
+      await editor
+        .getByRole('button', { name: 'Gol', exact: true })
         .evaluate((element) => parseFloat(getComputedStyle(element).fontSize)),
     ).toBeGreaterThanOrEqual(16);
     await noOverflow(page);
@@ -152,15 +150,15 @@ for (const viewport of [
   });
 }
 
-test('wheel selection remains aligned after text enlargement and native scrolling', async ({
+test('context wheel remains aligned after text enlargement and native scrolling', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await restore(page);
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   const editor = page.getByRole('dialog');
-  const wheel = editor.getByRole('listbox', { name: 'Evento', exact: true });
-  await selectWheelOption(wheel, 'Gol');
+  await editContext(editor);
+  const wheel = editor.getByRole('listbox', { name: 'Tiempo', exact: true });
   await page.evaluate(() => {
     document.documentElement.style.fontSize = '200%';
   });
@@ -178,22 +176,15 @@ test('wheel selection remains aligned after text enlargement and native scrollin
     )
     .toBeLessThan(2);
   await wheel.evaluate((element) => {
-    const options = [...element.querySelectorAll<HTMLElement>('[role="option"]')];
-    element.scrollTo({
-      top:
-        options.findIndex((option) => option.textContent === 'Infracción') *
-        options[0].getBoundingClientRect().height,
-    });
+    element.scrollTo({ top: 0 });
   });
-  await expect(wheel.getByRole('option', { selected: true })).toHaveText('Infracción');
-  await selectWheelOption(editor.getByRole('listbox', { name: 'Equipo', exact: true }), 'La Jota');
-  await selectWheelOption(
-    editor.getByRole('listbox', { name: 'Tipo de infracción', exact: true }),
-    'Pasos',
-  );
+  await expect(wheel.getByRole('option', { selected: true })).toHaveText('Tiempo 1');
+  await choose(editor, 'Evento', 'Infracción');
+  await choose(editor, 'Equipo', 'La Jota');
+  await choose(editor, 'Tipo de infracción', 'Pasos');
   await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(editor).toHaveCount(0);
-  await expect(page.locator('.event-card').filter({ hasText: 'T2 · 9′' })).toContainText('Pasos');
+  await expect(page.locator('.event-card').filter({ hasText: 'T1 · 9′' })).toContainText('Pasos');
   await noOverflow(page);
 });
 
@@ -212,37 +203,31 @@ test('200 percent text keeps manual actions accessible on a narrow screen', asyn
     await expect(editor.getByRole('button', { name, exact: true })).toBeInViewport({ ratio: 1 });
   }
   expect(await editor.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
-  const selected = editor
-    .getByRole('listbox', { name: 'Evento', exact: true })
-    .getByRole('option', { selected: true });
+  const selected = editor.getByRole('button', { name: 'Gol', exact: true });
   await selected.scrollIntoViewIfNeeded();
   await expect(selected).toBeInViewport({ ratio: 1 });
   await page.screenshot({ path: info.outputPath('text-200-percent.png') });
   await editor.getByRole('button', { name: 'Cancelar', exact: true }).click();
 });
 
-test('leaving a wheel commits the visible row before saving without a debounce wait', async ({
-  page,
-}) => {
+test('leaving a context wheel commits its visible row before immediate save', async ({ page }) => {
   await restore(page);
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   const editor = page.getByRole('dialog');
-  const wheel = editor.getByRole('listbox', { name: 'Evento', exact: true });
-  await selectWheelOption(wheel, 'Gol');
-  await selectWheelOption(editor.getByRole('listbox', { name: 'Equipo', exact: true }), 'La Jota');
+  await choose(editor, 'Evento', 'Lanzamiento fallado');
+  await choose(editor, 'Equipo', 'La Jota');
+  await editContext(editor);
+  const wheel = editor.getByRole('listbox', { name: 'Tiempo', exact: true });
   await wheel.focus();
   await wheel.evaluate((element) => {
-    const rows = [...element.querySelectorAll<HTMLElement>('[role="option"]')];
-    element.scrollTop =
-      rows.findIndex((row) => row.textContent === 'Lanzamiento fallado') *
-      rows[0].getBoundingClientRect().height;
+    element.scrollTop = 0;
     element.dispatchEvent(new Event('scroll'));
     element.blur();
   });
   await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(editor).toHaveCount(0);
   await expect(
-    page.locator('.event-card').filter({ hasText: 'T2 · 9′' }).locator('.event-title'),
+    page.locator('.event-card').filter({ hasText: 'T1 · 9′' }).locator('.event-title'),
   ).toHaveText('Lanzamiento fallado');
   await expect(page.getByLabel('Marcador 3 a 2', { exact: true })).toBeVisible();
 });
@@ -271,6 +256,7 @@ test('primary and focused controls have measurable contrast and chart labels rem
   expect(contrast(colors.outline, colors.background)).toBeGreaterThanOrEqual(3);
   expect(colors.outlineWidth).toBeGreaterThanOrEqual(2);
   expect(colors.outlineStyle).not.toBe('none');
+  await editContext(editor);
   const input = editor.getByLabel('Minuto', { exact: true });
   const border = await input.evaluate((element) => ({
     border: getComputedStyle(element).borderTopColor,
