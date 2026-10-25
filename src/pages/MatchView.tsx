@@ -47,7 +47,7 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
       <section className="match-header panel">
         <div className="scoreboard">
           <div>
-            <span className="eyebrow">{tr('EQUIPO 1 · NOSOTROS')}</span>
+            <span className="eyebrow">{tr('Equipo 1 (nuestro)')}</span>
             <h2>{teamName(data, match.localTeamId)}</h2>
           </div>
           <strong
@@ -62,21 +62,23 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
             {scores[1]}
           </strong>
           <div>
-            <span className="eyebrow">{tr('EQUIPO 2 · RIVAL')}</span>
+            <span className="eyebrow">{tr('Equipo 2 (rival)')}</span>
             <h2>{teamName(data, match.visitorTeamId)}</h2>
           </div>
         </div>
         <div className="clock-row">
-          <div>
-            <span className={match.clock.startedAt === null ? 'clock-dot paused' : 'clock-dot'} />
-            <strong>
-              {tr('Tiempo')} {match.clock.period}
-            </strong>
+          <div className="clock-reading">
+            <span className="clock-phase">
+              <span className={match.clock.startedAt === null ? 'clock-dot paused' : 'clock-dot'} />
+              <strong>
+                {tr('Tiempo')} {match.clock.period}
+              </strong>
+              <small>{tr(match.clock.startedAt === null ? 'Pausado' : 'En juego')}</small>
+            </span>
             <span className="minute" role="timer" aria-label={tr('Reloj del partido')}>
               {String(Math.floor(elapsed(match.clock, now) / 60000)).padStart(2, '0')}:
               {String(Math.floor(elapsed(match.clock, now) / 1000) % 60).padStart(2, '0')}
             </span>
-            {match.clock.startedAt === null && <small>{tr('Pausado')}</small>}
           </div>
           {match.status === 'active' && (
             <div className="clock-actions">
@@ -90,35 +92,50 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
                   )
                 }
               >
-                {match.clock.startedAt === null ? <Play size={15} /> : <Pause size={15} />}{' '}
+                {match.clock.startedAt === null ? <Play size={20} /> : <Pause size={20} />}{' '}
                 <span className="clock-action-label">
                   {match.clock.startedAt === null ? tr('Reanudar') : tr('Parar')}
                 </span>
               </button>
-              <button onClick={() => setConfirm('period')}>{tr('Nuevo tiempo')}</button>
             </div>
           )}
         </div>
-        <ExclusionTimers match={match} data={data} now={now} onDialogChange={setCounterDialog} />
-        <div className="tabs" role="tablist" aria-label={tr('Vista del partido')}>
-          <button
-            role="tab"
-            aria-selected={tab === 'events'}
-            className={tab === 'events' ? 'selected' : ''}
-            onClick={() => setTab('events')}
-          >
-            {tr('Eventos')} <span>{events.length}</span>
-          </button>
-          <button
-            role="tab"
-            aria-selected={tab === 'stats'}
-            className={tab === 'stats' ? 'selected' : ''}
-            onClick={() => setTab('stats')}
-          >
-            {tr('Estadísticas')}
-          </button>
-        </div>
       </section>
+      <section className="match-controls panel">
+        <div className="match-secondary-actions">
+          <details className="match-team-names">
+            <summary>{tr('Nombres de los equipos')}</summary>
+            <dl>
+              <dt>{tr('Equipo 1 (nuestro)')}</dt>
+              <dd>{teamName(data, match.localTeamId)}</dd>
+              <dt>{tr('Equipo 2 (rival)')}</dt>
+              <dd>{teamName(data, match.visitorTeamId)}</dd>
+            </dl>
+          </details>
+          {match.status === 'active' && (
+            <button onClick={() => setConfirm('period')}>{tr('Nuevo tiempo')}</button>
+          )}
+        </div>
+        <ExclusionTimers match={match} data={data} now={now} onDialogChange={setCounterDialog} />
+      </section>
+      <div className="tabs match-tabs" role="tablist" aria-label={tr('Vista del partido')}>
+        <button
+          role="tab"
+          aria-selected={tab === 'events'}
+          className={tab === 'events' ? 'selected' : ''}
+          onClick={() => setTab('events')}
+        >
+          {tr('Eventos')} <span>{events.length}</span>
+        </button>
+        <button
+          role="tab"
+          aria-selected={tab === 'stats'}
+          className={tab === 'stats' ? 'selected' : ''}
+          onClick={() => setTab('stats')}
+        >
+          {tr('Estadísticas')}
+        </button>
+      </div>
       <ErrorMessage text={action.error} />
       {tab === 'stats' ? (
         <section className="panel">

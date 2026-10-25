@@ -1,7 +1,18 @@
 import { useEffect, useId, useLayoutEffect, useRef, type ReactNode } from 'react';
 
-const ROW_HEIGHT = 40;
 const SCROLL_SETTLE_MS = 100;
+
+/** Read the rendered row so text enlargement and CSS geometry stay in sync. */
+function rowHeight(wheel: HTMLDivElement) {
+  return wheel.querySelector<HTMLElement>('[role="option"]')?.getBoundingClientRect().height ?? 0;
+}
+
+function alignSelection(wheel: HTMLDivElement, index: number) {
+  const height = rowHeight(wheel);
+  if (height > 0 && Math.abs(wheel.scrollTop - index * height) > 1) {
+    wheel.scrollTop = index * height;
+  }
+}
 
 export type WheelOption<Value extends string = string> = {
   value: Value;
@@ -42,20 +53,35 @@ export function WheelPicker<Value extends string>({
   useLayoutEffect(() => {
     clearTimeout(scrollTimer.current);
     const element = wheel.current!;
-    if (Math.abs(element.scrollTop - selectedIndex * ROW_HEIGHT) > 1) {
-      element.scrollTop = selectedIndex * ROW_HEIGHT;
-    }
+    alignSelection(element, selectedIndex);
   }, [selectedIndex, value, disabled]);
 
   useEffect(() => {
     // Dialog layout effects run before showModal makes its contents measurable.
     const frame = requestAnimationFrame(() => {
-      wheel.current?.scrollTo({ top: selectedIndex * ROW_HEIGHT });
+      if (wheel.current) alignSelection(wheel.current, selectedIndex);
     });
     return () => cancelAnimationFrame(frame);
   }, [selectedIndex, value]);
 
   useEffect(() => () => clearTimeout(scrollTimer.current), []);
+
+  useEffect(() => {
+    const element = wheel.current!;
+    const observer = new ResizeObserver(() => {
+      clearTimeout(scrollTimer.current);
+      const current = latest.current;
+      alignSelection(
+        element,
+        Math.max(
+          0,
+          current.options.findIndex((option) => option.value === current.value),
+        ),
+      );
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
 
   function selectOption(index: number | undefined) {
     if (index === undefined) {
@@ -66,7 +92,7 @@ export function WheelPicker<Value extends string>({
       return;
     }
     clearTimeout(scrollTimer.current);
-    wheel.current?.scrollTo({ top: index * ROW_HEIGHT });
+    if (wheel.current) alignSelection(wheel.current, index);
     if (option.value !== value) {
       change(option.value);
     }
@@ -77,14 +103,16 @@ export function WheelPicker<Value extends string>({
     if (current.disabled || !wheel.current) {
       return;
     }
+    const height = rowHeight(wheel.current);
+    if (height === 0) return;
     const centeredIndex = Math.max(
       0,
-      Math.min(current.options.length - 1, Math.round(wheel.current.scrollTop / ROW_HEIGHT)),
+      Math.min(current.options.length - 1, Math.round(wheel.current.scrollTop / height)),
     );
     const option = current.options[centeredIndex];
     if (option?.disabled) {
       const previousIndex = current.options.findIndex((option) => option.value === current.value);
-      wheel.current.scrollTo({ top: Math.max(0, previousIndex) * ROW_HEIGHT });
+      alignSelection(wheel.current, Math.max(0, previousIndex));
       return;
     }
     if (option && !option.disabled && option.value !== current.value) {
@@ -118,6 +146,13 @@ export function WheelPicker<Value extends string>({
           aria-disabled={disabled || undefined}
           aria-activedescendant={options.length ? `${optionId}-${selectedIndex}` : undefined}
           tabIndex={disabled ? -1 : 0}
+          onPointerDown={() => {
+            if (!disabled) wheel.current?.focus({ preventScroll: true });
+          }}
+          onBlur={() => {
+            clearTimeout(scrollTimer.current);
+            commitScroll();
+          }}
           onScroll={() => {
             clearTimeout(scrollTimer.current);
             scrollTimer.current = setTimeout(commitScroll, SCROLL_SETTLE_MS);

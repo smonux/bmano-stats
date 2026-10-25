@@ -26,10 +26,10 @@
 }
 .modal p {
   margin-bottom: 16px;
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .modal h2 {
-  font-size: 22px;
+  font-size: var(--text-section);
 }
 .modal .actions {
   display: flex;
@@ -70,12 +70,20 @@
 .event-editor .actions {
   flex-shrink: 0;
   margin-top: 0;
+  flex-wrap: wrap;
+}
+.event-editor .actions button,
+.voice-review-footer .actions button {
+  min-width: min(100%, 9rem);
+}
+.modal.event-editor h2 {
+  font-size: var(--text-emphasis);
 }
 .event-additional {
   margin: 16px 0;
 }
 .event-additional h3 {
-  font-size: 13px;
+  font-size: var(--text-caption);
   margin: 0 0 12px;
 }
 .event-additional .voice-transcript {
@@ -85,12 +93,13 @@
   flex: 1;
 }
 .event-top {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 14px;
   margin-bottom: 16px;
 }
 .number-wheel {
-  width: 137px;
+  width: min(10rem, 100%);
   flex-shrink: 0;
 }
 .number-wheel > div {
@@ -100,11 +109,12 @@
   margin-top: 8px;
 }
 .number-wheel input {
-  width: 50px;
+  min-width: 0;
+  width: 3.5rem;
   padding: 10px 4px;
   text-align: center;
   margin: 0;
-  font-size: 17px;
+  font-size: 1.375rem;
   font-weight: 700;
   appearance: textfield;
 }
@@ -113,7 +123,7 @@
 }
 .number-wheel button {
   padding: 5px;
-  width: 37px;
+  width: var(--target-min);
   flex-shrink: 0;
 }
 .participant {
@@ -124,7 +134,7 @@
   min-width: 0;
 }
 .participant legend {
-  font-size: 11px;
+  font-size: var(--text-caption);
   font-weight: 600;
   padding: 0 4px;
 }
@@ -138,7 +148,7 @@
   align-items: center;
 }
 .participant-team {
-  font-size: 11px;
+  font-size: var(--text-caption);
   display: block;
   overflow-wrap: anywhere;
 }
@@ -150,7 +160,7 @@
   margin-top: 0;
 }
 .participant small {
-  font-size: 10px;
+  font-size: var(--text-caption);
   display: block;
   margin-top: 8px;
 }
@@ -189,7 +199,7 @@
   padding: 12px;
   border-radius: 8px;
   color: #90602c;
-  font-size: 12px !important;
+  font-size: var(--text-caption) !important;
 }
 @media (max-width: 760px) {
   .modal {
@@ -214,19 +224,20 @@
     margin-bottom: 15px;
   }
   .modal h2 {
-    font-size: 20px;
+    font-size: var(--text-section);
   }
   .event-top {
-    gap: 8px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
   }
   .number-wheel {
-    width: 118px;
+    width: min(10rem, 100%);
   }
   .number-wheel input {
-    width: 42px;
+    width: 3.5rem;
   }
   .number-wheel button {
-    width: 32px;
+    width: var(--target-min);
   }
 }
 .wheel-field {
@@ -234,6 +245,7 @@
   flex: 1;
 }
 .wheel-shell {
+  --wheel-row-height: 3rem;
   position: relative;
   margin-top: 8px;
   background: #f5f5f2;
@@ -242,14 +254,14 @@
   overflow: hidden;
 }
 .scroll-wheel {
-  height: 120px;
+  height: calc(var(--wheel-row-height) * 3);
   overflow-y: auto;
   overscroll-behavior: contain;
   scroll-snap-type: y mandatory;
   /* The selected value controls position when a new shirt is inserted before the old one. */
   overflow-anchor: none;
   scrollbar-width: none;
-  padding: 40px 0;
+  padding: var(--wheel-row-height) 0;
   position: relative;
   z-index: 1;
   touch-action: pan-y;
@@ -258,8 +270,8 @@
   display: none;
 }
 .scroll-wheel [role='option'] {
-  height: 40px;
-  min-height: 40px;
+  height: var(--wheel-row-height);
+  min-height: var(--wheel-row-height);
   scroll-snap-align: center;
   text-align: center;
   display: flex;
@@ -267,7 +279,7 @@
   justify-content: center;
   gap: 8px;
   padding: 0 8px;
-  font-size: 13px;
+  font-size: var(--text-body);
   color: var(--muted);
   cursor: pointer;
   user-select: none;
@@ -313,13 +325,13 @@
 }
 .wheel-selection {
   position: absolute;
-  top: 40px;
-  height: 40px;
+  top: var(--wheel-row-height);
+  height: var(--wheel-row-height);
   left: 3px;
   right: 3px;
   background: #fff4b8;
-  border-top: 1px solid #dfce73;
-  border-bottom: 1px solid #dfce73;
+  border-top: 1px solid var(--selection-line);
+  border-bottom: 1px solid var(--selection-line);
   border-radius: 5px;
   pointer-events: none;
 }
@@ -328,7 +340,7 @@
 }
 @media (max-width: 760px) {
   .scroll-wheel [role='option'] {
-    font-size: 12px;
+    font-size: var(--text-body);
   }
   .event-top {
     align-items: center;
@@ -340,7 +352,7 @@
   }
   .event-editor input:not([type='checkbox']),
   .event-editor textarea {
-    font-size: 16px;
+    font-size: var(--text-body);
   }
 }
 .event-editor-footer {
@@ -359,7 +371,7 @@
   overflow-y: auto;
   margin: 0 !important;
   padding: 8px;
-  font-size: 12px !important;
+  font-size: var(--text-caption) !important;
   box-shadow: 0 2px 12px #0002;
 }
 .event-editor[data-compact-viewport] {
@@ -372,16 +384,16 @@
   margin-bottom: 8px;
 }
 .event-editor[data-compact-viewport] h2 {
-  font-size: 18px;
+  font-size: var(--text-emphasis);
 }
 .event-editor[data-compact-viewport] .section-heading .icon-button {
-  min-height: 32px;
-  height: 32px;
-  width: 32px;
+  min-height: var(--target-min);
+  height: var(--target-min);
+  width: var(--target-min);
   padding: 4px;
 }
 .event-editor[data-compact-viewport] .actions button {
-  font-size: 12px;
+  font-size: var(--text-body);
   padding-inline: 8px;
 }
 .event-editor[data-compact-viewport] .event-editor-footer {
@@ -404,6 +416,13 @@
 }
 .shirt-number-picker .scroll-wheel [role='option'] {
   padding-inline: 3px;
-  font-size: 17px;
+  font-size: 1.375rem;
   font-variant-numeric: tabular-nums;
+}
+
+.event-editor .actions button {
+  min-height: var(--target-primary);
+}
+.number-wheel button {
+  min-height: var(--target-min);
 }

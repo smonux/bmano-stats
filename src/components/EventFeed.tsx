@@ -38,7 +38,11 @@ export function EventFeed({
     <section className="event-feed">
       <div className="section-heading">
         <h2>{tr('Registro de eventos')}</h2>
-        <button className={`filter-chip ${pendingOnly ? 'active' : ''}`} onClick={togglePending}>
+        <button
+          className={`filter-chip ${pendingOnly ? 'active' : ''}`}
+          aria-pressed={pendingOnly}
+          onClick={togglePending}
+        >
           {pendingOnly
             ? tr('Ver todos')
             : tr('{count} pendientes', { count: pendingEvents.length })}
@@ -164,7 +168,7 @@ function EventCard({
             })}
             onClick={() => onDelete(event)}
           >
-            <Trash2 size={14} />
+            <Trash2 size={20} />
           </button>
         </div>
       </div>

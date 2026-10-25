@@ -91,10 +91,7 @@ export function VoiceCapture({
       )}
       {!ready && setup.phase !== 'loading' && (
         <div className="capture-status" role="alert">
-          {tr(
-            'El reconocimiento de voz no está preparado. Elige el idioma y cárgalo antes de iniciar el partido.',
-          )}{' '}
-          <a href="#/ajustes">{tr('Preparar voz')}</a>
+          {tr('Voz no preparada.')} <a href="#/ajustes">{tr('Preparar voz')}</a>
         </div>
       )}
       {(problem || error || setup.error) && (

@@ -1,5 +1,22 @@
 /** Small interface improvements requested in Mejoras 1. Language order matches messages.ts. */
 export const improvementMessages: Record<string, readonly string[]> = {
+  'Nombres de los equipos': [
+    'Team names',
+    'Mannschaftsnamen',
+    'Noms des équipes',
+    'Nomi delle squadre',
+    'Teamnamen',
+    'Nazwy drużyn',
+  ],
+  'En juego': ['Running', 'Läuft', 'En marche', 'In corso', 'Loopt', 'W grze'],
+  'Voz no preparada.': [
+    'Voice is not ready.',
+    'Spracheingabe ist nicht bereit.',
+    'La saisie vocale n’est pas prête.',
+    'Voce non pronta.',
+    'Spraakinvoer is niet gereed.',
+    'Wprowadzanie głosowe nie jest gotowe.',
+  ],
   'Enviar PDF a…': [
     'Send PDF to…',
     'PDF senden an…',

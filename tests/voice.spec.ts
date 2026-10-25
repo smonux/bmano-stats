@@ -80,11 +80,15 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
   expect(
     await editor.locator('.event-editor-fields > :last-child').getAttribute('class'),
   ).toContain('voice-diagnostics');
-  expect(
-    await editor
-      .locator('.voice-diagnostics')
-      .evaluate((el) => parseFloat(getComputedStyle(el).fontSize)),
-  ).toBeLessThanOrEqual(11);
+  const diagnosticsSize = await editor
+    .locator('.voice-diagnostics')
+    .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  const bodySize = await editor
+    .getByRole('textbox', { name: 'Nota', exact: true })
+    .evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  // Diagnostics stay secondary while respecting the readable caption scale.
+  expect(diagnosticsSize).toBeGreaterThanOrEqual(14);
+  expect(diagnosticsSize).toBeLessThanOrEqual(bodySize);
   await expect(editor.getByText(/Needle:/)).toHaveCount(0);
   await expect(editor.locator('.voice-warnings, .pending-hint')).toHaveCount(0);
   await expect(

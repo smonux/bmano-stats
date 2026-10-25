@@ -14,7 +14,7 @@
   overflow-wrap: anywhere;
 }
 .voice-diagnostics {
-  font-size: 11px !important;
+  font-size: var(--text-caption) !important;
   color: var(--muted);
   margin-top: 16px;
 }
@@ -47,12 +47,12 @@
   padding: 10px;
   background: #fff4b8;
   border-left: 3px solid var(--accent);
-  font-size: 13px;
+  font-size: var(--text-body);
   line-height: 1.45;
 }
 .capture-status {
   flex: 0 0 100%;
-  font-size: 11px;
+  font-size: var(--text-caption);
   line-height: 1.4;
   margin: 0;
   padding: 5px 3px;
@@ -62,8 +62,18 @@
   padding: 6px;
 }
 .capture-status a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  padding: 4px 8px;
   color: var(--ink);
   font-weight: 700;
+}
+.capture-status:has(> a) {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 .voice-review[open] {
   display: flex;
@@ -82,18 +92,18 @@
   margin-bottom: 10px;
 }
 .voice-review h2 {
-  font-size: 18px;
+  font-size: var(--text-emphasis);
 }
 .voice-review .voice-transcript {
   padding: 10px;
   margin: 0 0 10px;
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 .voice-review-summary {
   display: grid;
   grid-template-columns: minmax(85px, 1fr) minmax(0, 2fr);
   gap: 6px 10px;
-  font-size: 13px;
+  font-size: var(--text-body);
   margin: 0;
 }
 .voice-review-summary dt {
@@ -111,9 +121,14 @@
 }
 .voice-review-footer .actions {
   margin-top: 8px;
+  flex-wrap: wrap;
 }
 .voice-review-footer > .text-button {
   min-height: 44px;
   margin: 4px auto 0;
   display: block;
+}
+
+.voice-review-footer .actions button {
+  min-height: var(--target-primary);
 }

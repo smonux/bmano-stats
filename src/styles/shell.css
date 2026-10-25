@@ -32,7 +32,7 @@
   align-items: center;
 }
 .local-status {
-  font-size: 11px;
+  font-size: var(--text-caption);
   display: flex;
   align-items: center;
   gap: 7px;
@@ -83,7 +83,7 @@
     gap: 10px;
   }
   .local-status.is-offline {
-    font-size: 10px;
+    font-size: var(--text-caption);
     gap: 4px;
   }
 }
@@ -211,5 +211,29 @@
   background: #fff4b8;
   border-radius: 8px;
   margin-bottom: 12px;
-  font-size: 12px;
+  font-size: var(--text-caption);
+}
+
+.brand {
+  min-width: 0;
+  text-align: left;
+}
+.brand > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.brand-mark {
+  flex-shrink: 0;
+}
+@media (max-width: 760px) {
+  .app-header {
+    height: auto;
+    min-height: 64px;
+    flex-wrap: wrap;
+    padding-block: 8px;
+    row-gap: 4px;
+  }
+  .header-right:has(.is-offline) {
+    flex: 0 0 100%;
+  }
 }

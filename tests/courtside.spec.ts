@@ -55,13 +55,16 @@ test('left drawer contains all destinations, closes on navigation and restores f
   await expect(page.getByRole('heading', { name: 'Tus datos', exact: true })).toBeVisible();
 });
 
-test('compact exclusion strip and digit wheels preserve optional zero and roster selection', async ({
+test('readable exclusion controls and digit wheels preserve optional zero and roster selection', async ({
   page,
 }, info) => {
   await restoreMatch(page);
-  expect((await page.locator('.clock-row').boundingBox())!.height).toBeLessThanOrEqual(52);
-  for (const counter of await page.locator('.exclusion-timer').all()) {
-    expect((await counter.boundingBox())!.height).toBeLessThanOrEqual(48);
+  for (const control of await page
+    .locator('.clock-actions button, .exclusion-timer button')
+    .all()) {
+    const box = (await control.boundingBox())!;
+    expect(box.height).toBeGreaterThanOrEqual(48);
+    expect(box.width).toBeGreaterThanOrEqual(48);
   }
   await page
     .getByRole('group', { name: 'Exclusión 2', exact: true })

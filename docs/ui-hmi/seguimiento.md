@@ -35,7 +35,7 @@ La matriz de tamaños cortos, nombres largos, texto ampliado y WebKit se ampliar
 
 ## Entrega 1: base visual e identidad
 
-Primera parte: iconos de eventos/aplicación y contexto inicial de estadísticas. La escala tipográfica, contraste y tamaños táctiles se trabajarán junto a los ajustes de distribución necesarios, en el siguiente bloque de esta entrega. La entrega 1 completa sigue pendiente hasta cerrar esos ajustes.
+Entrega cerrada en dos partes: identidad y contexto de estadísticas, seguidas de tipografía, contraste y tamaños táctiles con los ajustes de distribución descritos en la entrega 1b al final de este documento.
 
 ### Iconos
 
@@ -86,7 +86,7 @@ CHROMIUM_PATH=/ruta/a/chrome-headless-shell npx playwright test \
   --workers=1 --output=test-results/hmi-01
 ```
 
-Siguiente bloque: completar entrega 1 con tipografía, contraste y objetivos táctiles, ajustando la distribución para que no se recorten textos o controles. Después, entrega 2 del editor. El inicio manual explícito sin voz queda aprobado y pendiente de su bloque separado. No se ha validado aún la matriz física de navegadores/tecnologías de asistencia.
+Tras esta primera parte se abordó la entrega 1b descrita más abajo. El inicio manual explícito sin voz queda aprobado y pendiente de su bloque separado. La matriz física de navegadores/tecnologías de asistencia sigue pendiente.
 
 ### Seguimiento: iconos en el selector manual
 
@@ -95,3 +95,30 @@ Ante el aviso de que no se veían iconos, se comprobó que Tailscale sirve este 
 En el selector del editor sí faltaba la integración: inicialmente solo se habían conectado al registro. Ahora cada opción de evento muestra su SVG decorativo junto a la etiqueta, conservando la apertura neutral, navegación por teclado y geometría de selección. El resto de ruedas mantiene sus opciones habituales.
 
 Validación: formato y build correctos, más 14 recorridos de navegador de `hmi-identity`, `wheels` y `editor-viewport`, en móvil y escritorio. Incluye selección con iconos, guardado, persistencia tras recarga y acciones visibles con teclado simulado. `dist` regenerado.
+
+## Entrega 1b: tipografía, contraste y controles táctiles
+
+- Escala común de texto: contenido 16 px, ayudas/estados 14 px, títulos de evento 18 px, marcador 36 px y reloj/contadores 24 px al tamaño predeterminado. Se eliminaron reducciones móviles que llegaban a 7–10 px.
+- Objetivos mínimos de 44 px; acciones habituales del partido de 48 px y captura/guardado de 56 px. Los mínimos táctiles se expresan en CSS px y el texto en rem: al ampliar texto, los controles crecen según su contenido sin duplicar innecesariamente el mínimo táctil. Los pies del editor y revisión permiten filas adicionales para etiquetas largas.
+- Cabecera fija limitada a marcador/reloj. Nuevo tiempo, nombres completos, exclusiones y pestañas participan en el desplazamiento normal. Es el ajuste de estructura necesario para ampliar fuentes; las mejoras restantes del bloque 3 se mantienen separadas.
+- Nombres del marcador en dos líneas, con acceso explícito a sus nombres completos mediante un `details` nativo. Abrirlo, cambiar el reloj o enfocar controles conserva su estado.
+- Contadores con dorsal/estado juntos cuando caben y tiempo debajo. El caso habitual sigue por debajo de 72 px de alto, conservando texto de 14/24 px y acciones separadas de 48 px. Los idiomas o tamaños ampliados pueden usar más líneas. Se conservan pausa común/individual, sonido de cinco segundos y dorsal opcional.
+- Registro con texto mayor y acciones Editar/Eliminar separadas al menos 8 px. El contenido rival mantiene su lado e icono; las acciones tienen posición consistente.
+- Ruedas: una única geometría CSS de 3 rem; la lógica mide la fila renderizada y realinea al cambiar tamaño. El valor se confirma al abandonar la rueda, evitando guardar el anterior mientras queda un debounce pendiente. Cubierto por regresión de scroll inmediato y guardado.
+- Bordes de campo y selección más contrastados, subrayado de pestaña activo oscuro, foco visible y estado Pausado/En juego mediante texto. Verificados contraste de texto y foco del primario y del borde del campo; esta comprobación no certifica todos los estados de la aplicación.
+- Estadísticas con etiquetas y filas legibles; gráfico con ejes ampliados y espacio suficiente para sus etiquetas. El tamaño visual de los textos SVG se comprueba tras aplicar su escala al ancho de 320 px. Se conserva el cálculo y los puntos de las series.
+- Aviso de voz ausente abreviado y enlace Preparar voz con objetivo de 44 px. Se conservan las reglas actuales de preparación. Se traducen los nuevos textos a los seis idiomas adicionales.
+
+### Evidencia y validación
+
+[Capturas, medidas y límites](evidencias/01-tipografia/README.md). A 390 × 664, el presupuesto de registro durante scroll pasa de 336 a 374 px con nombres cortos y de 261 a 358 px con nombres largos. La barra de captura aumenta en las vistas bajas para acomodar texto y objetivos táctiles; los JSON muestran esa diferencia.
+
+- `npm test`: 135 pruebas correctas en 28 archivos.
+- Formato, TypeScript y build correctos; `dist` regenerado.
+- Suite completa de navegador con Whistle local: 71 correctas y una omitida deliberadamente, porque el PDF largo se comprueba solo en escritorio.
+- Revisión de voz: 14 correctas. Se mantienen guardado explícito, transcripción, correcciones, nota, sustitución, errores de persistencia y viewport corto.
+- Regresión final de legibilidad/teclado: 18 correctas tras revisar las capturas al 200 %. Incluye selección visible, acciones completas, foco/contraste, guardado inmediato tras scroll y geometría al ampliar texto. Son recorridos parcialmente compartidos con la suite completa.
+- La primera suite detectó contadores demasiado altos: se compactó su estructura conservando la prueba de altura existente. La prueba antigua que exigía diagnóstico de voz de 11 px se actualizó a una leyenda legible y secundaria respecto al cuerpo.
+- Comprobaciones automatizadas en Chromium; texto al 200 % simulado por tamaño de fuente raíz. WebKit y dispositivos físicos no estaban disponibles en esta pasada. Continúa pendiente la validación física de teclado, voz con ruido y lectores de pantalla.
+
+Siguiente entrega: editor con selección directa de equipo, acción y jugador por dorsal/nombre, contexto compacto y campos aplicables. Los bloques de protección de borrador, deshacer, acceso/relación entre exclusión y contador, revisión de voz, tablas del gráfico e inicio manual explícito sin voz siguen en su orden previsto. Sin merge ni publicación; `main` permanece en `138fbf1`.

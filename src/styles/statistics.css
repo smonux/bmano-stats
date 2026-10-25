@@ -6,7 +6,7 @@
 }
 .metrics {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
   gap: 12px;
   margin: 20px 0;
 }
@@ -17,15 +17,15 @@
   padding: 17px;
 }
 .metrics span {
-  font-size: 11px;
+  font-size: var(--text-caption);
   color: #626262;
   display: block;
 }
 .metrics strong {
-  font-size: 29px;
+  font-size: 1.8125rem;
   letter-spacing: -1px;
   display: block;
-  margin-top: 14px;
+  margin-top: 8px;
   font-variant-numeric: tabular-nums;
 }
 .stat-list {
@@ -36,7 +36,7 @@
   justify-content: space-between;
   padding: 14px 0;
   border-bottom: 1px solid #ebebe6;
-  font-size: 13px;
+  font-size: var(--text-body);
 }
 .stat-list dd {
   margin: 0;
@@ -45,14 +45,15 @@
 .player-stat-head,
 .player-stat {
   display: grid;
-  grid-template-columns: minmax(120px, 1fr) 55px 55px 20px;
+  grid-template-columns: minmax(0, 1fr) 55px 55px 20px;
   gap: 14px;
   align-items: center;
   width: 100%;
   text-align: left;
 }
 .player-stat-head {
-  font-size: 10px;
+  font-size: var(--text-caption);
+  overflow-wrap: anywhere;
   color: #626262;
   padding: 12px;
 }
@@ -61,27 +62,22 @@
   border-bottom: 1px solid var(--line);
   border-radius: 0;
   padding: 13px 0;
-  font-size: 12px;
+  font-size: var(--text-body);
+  min-height: var(--target-live);
 }
 .player-stat > span {
-  display: flex;
-  gap: 10px;
-  align-items: center;
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .statistics .caption {
   margin-top: 20px;
 }
 @media (max-width: 760px) {
-  .metrics {
-    grid-template-columns: repeat(2, 1fr);
-  }
   .player-stat-head,
   .player-stat {
     gap: 6px;
-    grid-template-columns: minmax(105px, 1fr) 44px 44px 16px;
-  }
-  .player-stat {
-    font-size: 11px;
+    grid-template-columns: minmax(0, 1fr) 55px 55px 16px;
   }
 }
 
@@ -100,7 +96,7 @@
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
-  font-size: 11px;
+  font-size: var(--text-caption);
   margin: 10px 0;
 }
 .score-legend span {
@@ -134,7 +130,7 @@
   background: #fff;
 }
 .period-charts figcaption {
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   margin-bottom: 5px;
 }
@@ -145,7 +141,7 @@
   overflow: visible;
 }
 .period-charts text {
-  font-size: 9px;
+  font-size: 24px;
   fill: #626262;
   font-family: inherit;
 }

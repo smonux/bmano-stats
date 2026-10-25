@@ -18,7 +18,7 @@
   min-width: 0;
 }
 .team-picker legend {
-  font-size: 13px;
+  font-size: var(--text-caption);
   font-weight: 650;
   margin-bottom: 4px;
 }
@@ -55,7 +55,7 @@
 .versus span {
   border: 1px solid #deded7;
   border-radius: 50%;
-  font-size: 9px;
+  font-size: var(--text-caption);
   padding: 9px;
   margin: 0 15px;
   color: #626262;
@@ -94,7 +94,7 @@
   color: #444444;
 }
 .team-avatar {
-  font-size: 13px;
+  font-size: var(--text-caption);
 }
 .search-field {
   display: flex;
@@ -129,7 +129,7 @@
   align-items: center;
   justify-content: space-between;
   color: #626262;
-  font-size: 11px;
+  font-size: var(--text-caption);
 }
 .match-card-score {
   display: flex;
@@ -155,7 +155,7 @@
 .player-stat .jersey {
   width: 34px;
   height: 34px;
-  font-size: 12px;
+  font-size: var(--text-caption);
 }
 .settings-panel {
   max-width: 640px;
@@ -195,4 +195,10 @@
   .match-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.player-stat .jersey {
+  font-size: var(--text-body);
+  vertical-align: middle;
+  margin-inline-end: 8px;
 }

@@ -7,7 +7,7 @@
   color: #626262;
 }
 .home-heading h1 {
-  font-size: 44px;
+  font-size: 2rem;
   letter-spacing: -1.9px;
   margin: 10px 0 14px;
 }
@@ -56,7 +56,7 @@
   letter-spacing: -1px;
 }
 .card-copy > span:last-child {
-  font-size: 13px;
+  font-size: var(--text-caption);
   color: #444444;
   font-weight: 400;
 }
@@ -119,7 +119,7 @@
   letter-spacing: -0.6px;
 }
 .nav-card > span:not(.card-count) {
-  font-size: 13px;
+  font-size: var(--text-caption);
   color: var(--muted);
   font-weight: 400;
 }
@@ -131,7 +131,7 @@
   border-top: 1px solid #ebebe6;
   margin-top: 15px;
   padding-top: 17px;
-  font-size: 11px;
+  font-size: var(--text-caption);
   font-weight: 500;
   color: #626262;
 }
@@ -168,7 +168,7 @@
 .local-note p {
   display: flex;
   flex-direction: column;
-  font-size: 11px;
+  font-size: var(--text-caption);
 }
 .local-note strong {
   font-weight: 600;
@@ -189,7 +189,7 @@
 }
 @media (max-width: 760px) {
   .home-heading h1 {
-    font-size: 35px;
+    font-size: 2rem;
     letter-spacing: -1.3px;
   }
   .home-heading p {
@@ -211,12 +211,12 @@
     font-size: 26px;
   }
   .card-copy > span:last-child {
-    font-size: 11px;
+    font-size: var(--text-caption);
     max-width: 190px;
     line-height: 1.6;
   }
   .card-copy .eyebrow {
-    font-size: 8px;
+    font-size: var(--text-caption);
   }
   .card-arrow {
     display: none;
@@ -229,13 +229,13 @@
     min-height: 180px;
   }
   .nav-card > span:not(.card-count) {
-    font-size: 11px;
+    font-size: var(--text-caption);
   }
   .statistics-card {
     padding: 18px;
   }
   .local-note p {
-    font-size: 10px;
+    font-size: var(--text-caption);
   }
   .local-note {
     margin-top: 24px;

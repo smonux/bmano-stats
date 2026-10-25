@@ -22,15 +22,15 @@ export function ScoreCharts({ data, match }: { data: Snapshot; match: Match }) {
       <div className="period-charts">
         {scoreTimelines(data, match).map((period) => {
           const maxGoals = Math.max(5, Math.ceil(Math.max(...period.end) / 5) * 5);
-          const x = (minute: number) => 34 + (minute / period.maxMinute) * 286;
-          const y = (goals: number) => 142 - (goals / maxGoals) * 114;
+          const x = (minute: number) => 54 + (minute / period.maxMinute) * 346;
+          const y = (goals: number) => 180 - (goals / maxGoals) * 130;
           return (
             <figure key={period.period}>
               <figcaption>
                 {tr('Tiempo')} {period.period} · {period.start.join('-')} / {period.end.join('-')}
               </figcaption>
               <svg
-                viewBox="0 0 340 170"
+                viewBox="0 0 420 250"
                 role="img"
                 aria-label={tr('Marcador por minuto del tiempo {period}', {
                   period: period.period,
@@ -43,25 +43,29 @@ export function ScoreCharts({ data, match }: { data: Snapshot; match: Match }) {
                   (_, i) => (
                     <g key={i}>
                       <line
-                        x1="34"
-                        x2="320"
+                        x1="54"
+                        x2="400"
                         y1={y((maxGoals * i) / 5)}
                         y2={y((maxGoals * i) / 5)}
                         stroke="#deded7"
                       />
-                      <text x="29" y={y((maxGoals * i) / 5) + 3} textAnchor="end">
+                      <text x="46" y={y((maxGoals * i) / 5) + 7} textAnchor="end">
                         {(maxGoals * i) / 5}
                       </text>
-                      <text x={x((period.maxMinute * i) / 5)} y="157" textAnchor="middle">
-                        {(period.maxMinute * i) / 5}
+                      <text
+                        x={x(Math.round((period.maxMinute * i) / 5))}
+                        y="210"
+                        textAnchor="middle"
+                      >
+                        {Math.round((period.maxMinute * i) / 5)}
                       </text>
                     </g>
                   ),
                 )}
-                <text x="5" y="13">
+                <text x="5" y="24">
                   {tr('Goles')}
                 </text>
-                <text x="320" y="169" textAnchor="end">
+                <text x="400" y="242" textAnchor="end">
                   {tr('Minutos')}
                 </text>
                 {period.series.map((points, i) => {

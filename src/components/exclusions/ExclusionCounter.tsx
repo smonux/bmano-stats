@@ -31,7 +31,7 @@ export function ExclusionCounter({
   const finished = Boolean(timer && remaining === 0);
   return (
     <div
-      className={`exclusion-timer ${finished ? 'expired' : ''}`}
+      className={`exclusion-timer ${finished ? 'expired' : ''} ${!timer ? 'empty' : ''}`}
       role="group"
       aria-label={tr('Exclusión {number}', { number: slot + 1 })}
     >
@@ -44,36 +44,43 @@ export function ExclusionCounter({
         title={timer ? data.teams.find((t) => t.id === timer.teamId)?.name : tr('Activar')}
         onClick={toggle}
       >
-        <span className="timer-player">
-          {timer ? (
-            `${timer.teamId === match.localTeamId ? '1' : '2'} · ${timer.dorsal === null ? '—' : '#' + timer.dorsal}`
-          ) : (
-            <>
-              <Plus size={13} />
-              {tr('Libre')} {slot + 1}
-            </>
+        <span className="timer-meta">
+          <span className="timer-player">
+            {timer ? (
+              `${timer.teamId === match.localTeamId ? '1' : '2'} · ${timer.dorsal === null ? '—' : '#' + timer.dorsal}`
+            ) : (
+              <>
+                <Plus size={20} />
+                {tr('Libre')} {slot + 1}
+              </>
+            )}
+          </span>
+          {timer && (
+            <span className="timer-state" role="status">
+              {finished
+                ? tr('Puede volver')
+                : !timer.running || match.clock.startedAt === null
+                  ? tr('Pausado')
+                  : tr('En juego')}
+            </span>
           )}
         </span>
-        <span className="timer-time">
-          <strong className="timer-digits">
-            {String(Math.floor(seconds / 60)).padStart(2, '0')}:
-            {String(seconds % 60).padStart(2, '0')}
-          </strong>
-          {timer &&
-            !finished &&
-            (timer.running && match.clock.startedAt !== null ? (
-              <Pause size={10} />
-            ) : (
-              <Play size={10} />
-            ))}
-        </span>
-        <span className="timer-state" role="status">
-          {finished
-            ? tr('Puede volver')
-            : timer && (!timer.running || match.clock.startedAt === null)
-              ? tr('Pausado')
-              : '\u00a0'}
-        </span>
+        {timer && (
+          <>
+            <span className="timer-time">
+              <strong className="timer-digits">
+                {String(Math.floor(seconds / 60)).padStart(2, '0')}:
+                {String(seconds % 60).padStart(2, '0')}
+              </strong>
+              {!finished &&
+                (timer.running && match.clock.startedAt !== null ? (
+                  <Pause size={20} />
+                ) : (
+                  <Play size={20} />
+                ))}
+            </span>
+          </>
+        )}
       </button>
       {timer && !finished && (
         <button
@@ -82,7 +89,7 @@ export function ExclusionCounter({
           aria-label={tr('Liberar')}
           onClick={clear}
         >
-          <X size={13} />
+          <X size={20} />
         </button>
       )}
     </div>
