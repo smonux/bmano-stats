@@ -20,6 +20,7 @@ import {
   type Snapshot,
 } from '../domain/model';
 import { repo, type EventDraft } from '../data/database';
+import type { EventUndo } from '../data/repository/event-undo';
 import { Confirm, ErrorMessage, Modal, NumberWheel, useAction } from './ui';
 export function EventEditor({
   data,
@@ -40,7 +41,7 @@ export function EventEditor({
     needleMs: number;
   };
   close: () => void;
-  saved?: (event: GameEvent, pending: boolean) => void;
+  saved?: (event: GameEvent, pending: boolean, undo?: EventUndo) => void;
 }) {
   const [draft, setDraft] = useState<EventDraft>(
     () => initialDraft ?? createEditorDraft(data, match, event),
@@ -111,8 +112,10 @@ export function EventEditor({
           onSubmit={(inputEvent) => {
             inputEvent.preventDefault();
             action.run(async () => {
-              const event = await repo.saveEvent(draft);
-              saved?.(event, missing);
+              const { event, undo } = draft.id
+                ? { event: await repo.saveEvent(draft), undo: undefined }
+                : await repo.createEventWithUndo(draft);
+              saved?.(event, missing, undo);
               close();
             });
           }}

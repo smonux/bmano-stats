@@ -147,7 +147,11 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
   await page.keyboard.up('Space');
   await expect(review).toBeVisible({ timeout: 40000 });
   await expect(review.getByText(/Transcripción original/)).toBeVisible();
-  await review.getByRole('button', { name: 'Descartar', exact: true }).click();
+  await review.getByRole('button', { name: /^Guardar (evento|pendiente)$/ }).click();
+  await expect(review).toHaveCount(0);
+  await expect(page.locator('.event-card')).toHaveCount(2);
+  await page.getByRole('button', { name: 'Deshacer creación', exact: true }).click();
+  await expect(page.locator('.event-card')).toHaveCount(1);
   await expect(page.getByLabel('Marcador 1 a 0')).toBeVisible();
   expect(modelRequests).toBe(downloads);
   expect(

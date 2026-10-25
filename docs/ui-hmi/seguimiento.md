@@ -2,7 +2,7 @@
 
 Rama: `cambios-hmi`, creada desde `main` en `138fbf1`. Trabajo por entregas; sin merge ni publicación.
 
-Estado vigente: entregas 1–7 e inicio manual completados. La siguiente es Deshacer; la tabla del objetivo ampliado resume todos los bloques pendientes.
+Estado vigente: entregas 1–7, inicio manual y Deshacer completados. La siguiente es Contador tras exclusión; la tabla del objetivo ampliado resume todos los bloques pendientes.
 
 ## Decisiones aprobadas
 
@@ -138,7 +138,7 @@ Samuel pide completar todos los bloques pendientes, con commit y etiqueta por bl
 | 6                       | Equipos comparables, denominadores y tabla del gráfico                                               | Completado · `hmi-06-estadisticas`    |
 | 7                       | Inicio, ajustes, bienvenida y reproducción de transición de carga                                    | Completado · `hmi-07-inicio`          |
 | Manual                  | Inicio explícito solo con entrada manual, conservando preparación para usar voz                      | Completado · `hmi-manual`             |
-| Deshacer                | Reversión de una creación, incluido efecto sobre último portero; sin prometer reversión de ediciones | Pendiente                             |
+| Deshacer                | Reversión de una creación, incluido efecto sobre último portero; sin prometer reversión de ediciones | Completado · `hmi-deshacer`           |
 | Contador tras exclusión | Acción explícita precargada; evento y contador siguen independientes                                 | Pendiente                             |
 | Auditoría final         | Matriz transversal, regresión de voz/PDF/ZIP/JSON, build, evidencia y límites físicos                | Pendiente                             |
 
@@ -214,3 +214,9 @@ La regresión de interfaz detectó movimiento de fila al enfocar rueda con punte
 Acción separada «Iniciar solo con entrada manual» cuando la voz aún no está lista. El envío habitual sigue exigiendo voz preparada/idioma; Enter en un campo no activa el modo manual. Requisitos de equipos distintos y fecha junto a las acciones, con salto al control correspondiente. Se reutiliza `createMatch`, incluida su transacción y rechazo de nombres duplicados; PTT conserva sus comprobaciones reales. Los avisos hablan de preparar para usar voz, sin contradecir la nueva alternativa.
 
 Validación: cuatro recorridos manuales finales correctos en móvil/escritorio, más seis de ciclo normal/preferencias/manual previos (solapados). Incluye ausencia de idioma/modelo, offline, Enter, mismo equipo, fecha vacía, nombre duplicado corregible, nombres largos, editor neutral y recarga. Formato, TypeScript, build y 135 unitarias correctos. [Capturas y límites](evidencias/manual/README.md). Etiqueta: `hmi-manual`. Siguiente: Deshacer creación, con consecuencias sobre jugadores/último portero.
+
+## Deshacer creación
+
+Recibo transaccional temporal para la última creación manual o de voz. Deshacer retira la creación y sus jugadores nuevos, restaura los revividos/rol/último portero, conservando cambios ajenos. Comprueba versiones, referencias y portero antes de escribir; un conflicto rechaza toda la operación. El borrado habitual sigue siendo lógico. No se modifica el esquema ni la copia; tampoco se ofrece Deshacer de ediciones o tras recarga.
+
+Validación: 146 unitarias, 34 recorridos de navegador y 16 de revisión de voz correctos. Cuatro recorridos finales repiten Deshacer después de compactar el acuse. Incluye guardar voz y deshacer offline, dos ventanas, último portero, rollback, pendiente/nota, doble intento y copia restaurable. Formato, TypeScript y build correctos. [Decisiones, captura y límites](evidencias/deshacer/README.md). Etiqueta: `hmi-deshacer`. Siguiente: contador precargado mediante acción explícita tras exclusión.

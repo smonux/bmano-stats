@@ -6,6 +6,7 @@ import { ErrorMessage } from './ui';
 import { useVoiceCapture } from './voice/useVoiceCapture';
 import { useEffect, useRef, useState } from 'react';
 import { VoiceReview } from './voice/VoiceReview';
+import type { EventUndo } from '../data/repository/event-undo';
 
 export function VoiceCapture({
   match,
@@ -17,7 +18,7 @@ export function VoiceCapture({
   match: Match;
   data: Snapshot;
   allowReview: boolean;
-  saved?: (event: GameEvent, pending: boolean) => void;
+  saved?: (event: GameEvent, pending: boolean, undo?: EventUndo) => void;
   started?: () => void;
 }) {
   const {

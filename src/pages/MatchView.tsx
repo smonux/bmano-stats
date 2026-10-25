@@ -9,6 +9,7 @@ import { tr } from '../i18n';
 import { useId, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Pause, Play, Plus, Trash2, Flag, Timer, BellRing } from 'lucide-react';
 import { repo } from '../data/database';
+import type { EventUndo } from '../data/repository/event-undo';
 import {
   chronological,
   elapsed,
@@ -33,6 +34,9 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
   const pendingFilter = useRef<HTMLButtonElement>(null);
   const returnToFeed = useRef(false);
   const [notice, setNotice] = useState('');
+  const [undo, setUndo] = useState<{ receipt: EventUndo; label: string } | null>(null);
+  const undoAction = useAction();
+  const manualButton = useRef<HTMLButtonElement>(null);
   useLayoutEffect(() => {
     if (!editing && !confirm && returnToFeed.current) {
       returnToFeed.current = false;
@@ -51,7 +55,7 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
       else if (rect.bottom > bottom) window.scrollBy(0, rect.bottom - bottom + 8);
     }
   }, [editing, confirm]);
-  function eventSaved(event: GameEvent, pending: boolean) {
+  function eventSaved(event: GameEvent, pending: boolean, receipt?: EventUndo) {
     returnToFeed.current = Boolean(
       pendingOnly &&
       editing &&
@@ -64,15 +68,16 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
         : event.teamId === match.visitorTeamId
           ? tr('Equipo 2 (rival)')
           : '';
-    setNotice(
-      [
-        tr(event.type ? definitions[event.type].label : 'Evento sin indicar'),
-        team,
-        tr(pending ? '! Pendiente · no computa' : 'Evento guardado'),
-      ]
-        .filter(Boolean)
-        .join(' · '),
-    );
+    const label = [
+      tr(event.type ? definitions[event.type].label : 'Evento sin indicar'),
+      team,
+      tr(pending ? '! Pendiente · no computa' : 'Evento guardado'),
+    ]
+      .filter(Boolean)
+      .join(' · ');
+    setNotice(label);
+    setUndo(receipt ? { receipt, label } : null);
+    undoAction.setError('');
   }
   const [counterDialog, setCounterDialog] = useState(false);
   const action = useAction();
@@ -257,12 +262,30 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
         />
       </TabPanel>
       <div className="capture-bar">
-        {notice && (
-          <p className="capture-feedback" role="status">
-            {notice}
-          </p>
+        {(notice || undo) && (
+          <div className="capture-feedback">
+            <p role="status">{notice || undo?.label}</p>
+            {undo && (
+              <button
+                type="button"
+                disabled={undoAction.busy}
+                onClick={() =>
+                  void undoAction.run(async () => {
+                    await repo.undoEventCreation(undo.receipt);
+                    setUndo(null);
+                    setNotice(tr('Creación deshecha'));
+                    manualButton.current?.focus({ preventScroll: true });
+                  })
+                }
+              >
+                {tr('Deshacer creación')}
+              </button>
+            )}
+            <ErrorMessage text={undoAction.error} />
+          </div>
         )}
         <button
+          ref={manualButton}
           className="primary"
           onClick={() => {
             setNotice('');
