@@ -87,3 +87,11 @@ CHROMIUM_PATH=/ruta/a/chrome-headless-shell npx playwright test \
 ```
 
 Siguiente bloque: completar entrega 1 con tipografía, contraste y objetivos táctiles, ajustando la distribución para que no se recorten textos o controles. Después, entrega 2 del editor. El inicio manual explícito sin voz queda aprobado y pendiente de su bloque separado. No se ha validado aún la matriz física de navegadores/tecnologías de asistencia.
+
+### Seguimiento: iconos en el selector manual
+
+Ante el aviso de que no se veían iconos, se comprobó que Tailscale sirve este `dist` y que el bundle descargado por HTTPS coincide con el local. Samuel confirmó que los veía tras recargar. No se cambió el servicio ni se borraron datos/cachés del navegador.
+
+En el selector del editor sí faltaba la integración: inicialmente solo se habían conectado al registro. Ahora cada opción de evento muestra su SVG decorativo junto a la etiqueta, conservando la apertura neutral, navegación por teclado y geometría de selección. El resto de ruedas mantiene sus opciones habituales.
+
+Validación: formato y build correctos, más 14 recorridos de navegador de `hmi-identity`, `wheels` y `editor-viewport`, en móvil y escritorio. Incluye selección con iconos, guardado, persistencia tras recarga y acciones visibles con teclado simulado. `dist` regenerado.

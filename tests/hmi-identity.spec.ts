@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { definitions, eventTypes } from '../src/domain/event-definitions';
 import { reportFixture } from './fixtures/report';
+import { selectWheelOption } from './wheel-helpers';
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -129,4 +130,47 @@ test('favicon and install icons use the chosen artwork and remain available offl
     [512, 512],
     [180, 180],
   ]);
+});
+
+test('manual selection shows event icons while keeping labels, neutral defaults and saving', async ({
+  page,
+}, info) => {
+  const backup = reportFixture();
+  backup.events = [];
+  await page.goto('/#/ajustes');
+  await page.getByLabel('Importar copia', { exact: true }).setInputFiles({
+    name: 'manual-icons.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(backup)),
+  });
+  await page.getByRole('dialog').getByRole('button', { name: 'Confirmar', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.goto('/#/partidos/report-match');
+  await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
+  const editor = page.getByRole('dialog');
+  const events = editor.getByRole('listbox', { name: 'Evento', exact: true });
+  const teams = editor.getByRole('listbox', { name: 'Equipo', exact: true });
+  await expect(events.getByRole('option', { selected: true })).toHaveText('Seleccionar evento');
+  await expect(teams.getByRole('option', { selected: true })).toHaveText('Seleccionar equipo');
+  for (const type of eventTypes) {
+    const option = events.getByRole('option', { name: definitions[type].label, exact: true });
+    await expect(option.locator('.event-symbol')).toHaveCount(1);
+    await expect(option.locator('.wheel-option-icon')).toHaveAttribute('aria-hidden', 'true');
+  }
+  await events.focus();
+  await events.press('ArrowDown');
+  const goal = events.getByRole('option', { selected: true });
+  await expect(goal).toHaveText('Gol');
+  await expect(goal.locator('.event-symbol')).toBeInViewport({ ratio: 1 });
+  const iconBox = (await goal.locator('.event-symbol').boundingBox())!;
+  const labelBox = (await goal.locator(':scope > span:last-child').boundingBox())!;
+  expect(iconBox.x + iconBox.width).toBeLessThan(labelBox.x);
+  await selectWheelOption(teams, 'La Jota');
+  await page.screenshot({ path: info.outputPath('manual-event-icons.png') });
+  await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
+  await expect(editor).toHaveCount(0);
+  await expect(page.getByLabel('Marcador 1 a 0', { exact: true })).toBeVisible();
+  await expect(page.locator('.event-card .event-symbol')).toHaveCount(1);
+  await page.reload();
+  await expect(page.locator('.event-card .event-symbol')).toHaveCount(1);
 });

@@ -1,4 +1,4 @@
-import { useEffect, useId, useLayoutEffect, useRef } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, type ReactNode } from 'react';
 
 const ROW_HEIGHT = 40;
 const SCROLL_SETTLE_MS = 100;
@@ -6,6 +6,7 @@ const SCROLL_SETTLE_MS = 100;
 export type WheelOption<Value extends string = string> = {
   value: Value;
   label: string;
+  icon?: ReactNode;
   disabled?: boolean;
 };
 
@@ -146,6 +147,11 @@ export function WheelPicker<Value extends string>({
                 }
               }}
             >
+              {option.icon && (
+                <span className="wheel-option-icon" aria-hidden="true">
+                  {option.icon}
+                </span>
+              )}
               <span>{option.label}</span>
             </div>
           ))}

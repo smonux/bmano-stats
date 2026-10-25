@@ -265,6 +265,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   padding: 0 8px;
   font-size: 13px;
   color: var(--muted);
@@ -280,6 +281,11 @@
   overflow: hidden;
   overflow-wrap: anywhere;
   line-height: 1.25;
+}
+.scroll-wheel [role='option'] > .wheel-option-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  overflow: visible;
 }
 .scroll-wheel:focus-visible {
   outline: 2px solid var(--ink);

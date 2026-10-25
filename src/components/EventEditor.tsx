@@ -2,6 +2,7 @@ import { createEditorDraft } from './event-editor/draft';
 import { eventDraftIssues } from '../presentation/event-draft';
 import { lastGoalkeeper } from '../domain/goalkeepers';
 import { WheelPicker } from './WheelPicker';
+import { EventIcon } from './EventIcon';
 import { ParticipantPicker } from './event-editor/ParticipantPicker';
 import { EventMetadata } from './event-editor/EventMetadata';
 import { tr } from '../i18n';
@@ -90,6 +91,7 @@ export function EventEditor({
                 ...eventTypes.map((value) => ({
                   value,
                   label: tr(definitions[value].label),
+                  icon: <EventIcon type={value} />,
                 })),
               ]}
               change={(value) => setType(value || null)}
