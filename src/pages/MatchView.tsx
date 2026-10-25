@@ -1,3 +1,4 @@
+import { TabBar, TabPanel } from '../components/ui/TabBar';
 import {
   MatchConfirmation,
   type MatchConfirmationIntent,
@@ -5,7 +6,7 @@ import {
 import { EventFeed } from '../components/EventFeed';
 import { ExclusionTimers } from '../components/ExclusionTimers';
 import { tr } from '../i18n';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useId, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Pause, Play, Plus, Trash2, Flag, Timer, BellRing } from 'lucide-react';
 import { repo } from '../data/database';
 import {
@@ -24,6 +25,7 @@ import { EventEditor } from '../components/EventEditor';
 import { Statistics } from '../components/Statistics';
 import { teamName, formatMatchDate, matchScore } from '../presentation/matches';
 function MatchView({ data, match }: { data: Snapshot; match: Match }) {
+  const tabsId = useId();
   const [tab, setTab] = useState('events');
   const [editing, setEditing] = useState<GameEvent | 'new' | null>(null);
   const [pendingOnly, setPendingOnly] = useState(false);
@@ -212,30 +214,31 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
         </div>
         <ExclusionTimers match={match} data={data} now={now} onDialogChange={setCounterDialog} />
       </section>
-      <div className="tabs match-tabs" role="tablist" aria-label={tr('Vista del partido')}>
-        <button
-          role="tab"
-          aria-selected={tab === 'events'}
-          className={tab === 'events' ? 'selected' : ''}
-          onClick={() => setTab('events')}
-        >
-          {tr('Eventos')} <span>{events.length}</span>
-        </button>
-        <button
-          role="tab"
-          aria-selected={tab === 'stats'}
-          className={tab === 'stats' ? 'selected' : ''}
-          onClick={() => setTab('stats')}
-        >
-          {tr('Estadísticas')}
-        </button>
-      </div>
+      <TabBar
+        id={tabsId}
+        label={tr('Vista del partido')}
+        className="match-tabs"
+        value={tab}
+        change={setTab}
+        tabs={[
+          {
+            value: 'events',
+            label: (
+              <>
+                {tr('Eventos')} <span>{events.length}</span>
+              </>
+            ),
+          },
+          { value: 'stats', label: tr('Estadísticas') },
+        ]}
+      />
       <ErrorMessage text={action.error} />
-      {tab === 'stats' ? (
+      <TabPanel id={tabsId} value="stats" selected={tab}>
         <section className="panel">
           <Statistics data={data} matchId={match.id} />
         </section>
-      ) : (
+      </TabPanel>
+      <TabPanel id={tabsId} value="events" selected={tab}>
         <EventFeed
           data={data}
           match={match}
@@ -252,7 +255,7 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
             setConfirm(event);
           }}
         />
-      )}
+      </TabPanel>
       <div className="capture-bar">
         {notice && (
           <p className="capture-feedback" role="status">

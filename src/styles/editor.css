@@ -558,3 +558,66 @@
     max-height: 1.5em;
   }
 }
+.form-dialog[open],
+.voice-review[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: fixed;
+  top: var(--dialog-viewport-top, 0px);
+  bottom: var(--dialog-viewport-bottom, 0px);
+  height: min(820px, calc(var(--dialog-viewport-height, 100dvh) - 24px));
+  max-height: calc(var(--dialog-viewport-height, 100dvh) - 24px);
+  margin-block: auto;
+}
+.form-dialog > .section-heading,
+.form-dialog > .modal-handle {
+  flex-shrink: 0;
+}
+.dialog-form {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+.dialog-fields {
+  overflow-y: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+}
+.dialog-footer {
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  margin-top: 8px;
+}
+.dialog-footer .actions {
+  margin-top: 0;
+  flex-wrap: wrap;
+}
+.dialog-footer .actions > button {
+  min-height: 48px;
+  min-width: min(100%, 7rem);
+}
+.dialog-footer .error {
+  max-height: 3em;
+  overflow: auto;
+  margin: 0 0 6px;
+  font-size: var(--text-caption);
+}
+.form-dialog[data-compact-viewport] {
+  padding: 8px;
+}
+.form-dialog[data-compact-viewport] .modal-handle {
+  display: none;
+}
+.form-dialog[data-compact-viewport] .section-heading {
+  margin-bottom: 6px;
+}
+.form-dialog[data-compact-viewport] h2 {
+  font-size: var(--text-emphasis);
+}
+.form-dialog input:not([type='checkbox']) {
+  font-size: var(--text-body);
+}

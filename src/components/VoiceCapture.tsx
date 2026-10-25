@@ -33,6 +33,17 @@ export function VoiceCapture({
     ready,
     problem,
   } = useVoiceCapture(match, data);
+  useEffect(() => {
+    const hidden = () => {
+      if (document.hidden) release();
+    };
+    window.addEventListener('blur', release);
+    document.addEventListener('visibilitychange', hidden);
+    return () => {
+      window.removeEventListener('blur', release);
+      document.removeEventListener('visibilitychange', hidden);
+    };
+  }, [release]);
   const [editing, setEditing] = useState(false);
   const talkButton = useRef<HTMLButtonElement>(null);
   const hadReview = useRef(false);

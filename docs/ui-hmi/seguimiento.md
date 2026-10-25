@@ -2,7 +2,7 @@
 
 Rama: `cambios-hmi`, creada desde `main` en `138fbf1`. Trabajo por entregas; sin merge ni publicación.
 
-Estado vigente: entregas 1–4 completadas. La selección directa del editor es la entrega 2 (`0f4eb2e`, `hmi-02-editor-directo`). La siguiente es la entrega 5; la tabla del objetivo ampliado resume todos los bloques pendientes.
+Estado vigente: entregas 1–5 completadas. La siguiente es la entrega 6; la tabla del objetivo ampliado resume todos los bloques pendientes.
 
 ## Decisiones aprobadas
 
@@ -134,7 +134,7 @@ Samuel pide completar todos los bloques pendientes, con commit y etiqueta por bl
 | 2                       | Editor directo, participantes y pendientes explicados                                                | Completado · `hmi-02-editor-directo`  |
 | 3                       | Prioridad de contadores activos, acceso desde reloj y ayuda sobre independencia                      | Completado · `hmi-03-contadores`      |
 | 4                       | Motivos/Completar en registro, lectura de detalles, confirmaciones, acuse y protección de borrador   | Completado · `hmi-04-registro-seguro` |
-| 5                       | Revisión de voz, PTT, pestañas y formularios/modales compartidos                                     | Pendiente                             |
+| 5                       | Revisión de voz, PTT, pestañas y formularios/modales compartidos                                     | Completado · `hmi-05-accesibilidad`   |
 | 6                       | Equipos comparables, denominadores y tabla del gráfico                                               | Pendiente                             |
 | 7                       | Inicio, ajustes, bienvenida y reproducción de transición de carga                                    | Pendiente                             |
 | Manual                  | Inicio explícito solo con entrada manual, conservando preparación para usar voz                      | Pendiente                             |
@@ -183,4 +183,14 @@ Validación: 42 recorridos de `hmi-counters`, `courtside`, `features`, `wheels`,
 
 Validación: 135 unitarias, formato, TypeScript y build correctos. Suite general: 116 correctas, una omisión prevista y un desbordamiento real al 200 % posteriormente corregido. Los 68 recorridos finales pertinentes pasaron, incluida voz real y recarga offline; tras cerrar la posición común de acciones pasaron otros 44, parcialmente solapados. Revisión de voz: 14 correctos. Los 26 casos de seguridad/lectura cubren cuatro motivos de pendiente, teclado/toque, vacíos, rival, nombres de 100 caracteres, cancelación/confirmación del objetivo, foco, Atrás repetido, descarte al navegar y recarga nativa. [Capturas y límites](evidencias/04-registro/README.md). Etiqueta: `hmi-04-registro-seguro`.
 
-Siguiente entrega vigente: 5, revisión de voz y accesibilidad compartida de pestañas y formularios. Siguen pendientes 6, 7, inicio manual explícito, deshacer creación, acceso precargado al contador tras exclusión y auditoría final. El objetivo global continúa sin completar; no se ha mergeado ni publicado.
+## Entrega 5: revisión de voz y accesibilidad compartida
+
+- La interpretación recibe el foco y precede a la transcripción, plegada inicialmente. Enter sobre el resumen no guarda. Editar precede a Guardar y los valores inferidos tienen una indicación legible.
+- PTT conserva pulsar/soltar con ratón, tacto y teclado; perder foco o esconder la página libera la captura. Sin cambios de modelos ni interpretación.
+- Pestañas con controles/paneles enlazados, un único tabulador activo y flechas, Inicio y Fin. Los paneles inactivos no montan sus formularios.
+- Formularios de equipos, jugadores, contador y confirmación comparten cuerpo desplazable y pie estable, ajustados al viewport visual. Cancelar está junto a guardar; los errores se vinculan a los campos. Enfocar una rueda revela la selección dentro del cuerpo sin alterar su valor.
+- Textos nuevos traducidos a los seis idiomas adicionales.
+
+Validación: 135 pruebas unitarias, formato, TypeScript y build correctos. 46 recorridos finales de accesibilidad, viewport, voz real, ruedas y seguridad del registro correctos; 16 de revisión de voz correctos. Incluyen Enter sin guardado, transcripción plegada, permiso denegado, parada de pistas, recarga offline, teclas de pestañas, errores de formulario y viewport visual de 420/340/220 px. [Capturas y límites](evidencias/05-accesibilidad/README.md). Etiqueta: `hmi-05-accesibilidad`.
+
+Siguiente entrega vigente: 6, estadísticas. Siguen pendientes 7, inicio manual explícito, deshacer creación, acceso precargado al contador tras exclusión y auditoría final. El objetivo global continúa sin completar; no se ha mergeado ni publicado.

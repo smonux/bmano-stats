@@ -1,5 +1,6 @@
+import { TabBar, TabPanel } from './ui/TabBar';
 import { tr } from '../i18n';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { type Snapshot } from '../domain/model';
 import { calculate, emptyStats } from '../domain/statistics';
@@ -9,6 +10,7 @@ import { ScoreCharts } from './ScoreCharts';
 import { ShareMatchPdf } from './ShareMatchPdf';
 import { WheelPicker } from './WheelPicker';
 export function Statistics({ data, matchId }: { data: Snapshot; matchId?: string }) {
+  const tabsId = useId();
   const matches = data.matches.filter(
     (match) => !match.deletedAt && (!matchId || match.id === matchId),
   );
@@ -84,62 +86,57 @@ export function Statistics({ data, matchId }: { data: Snapshot; matchId?: string
         )}
       </div>
       <h3 className="statistics-team-name">{teamName(teamId)}</h3>
-      <div className="tabs" role="tablist" aria-label={tr('Tipo de estadísticas')}>
-        <button
-          role="tab"
-          aria-selected={view === 'team'}
-          className={view === 'team' ? 'selected' : ''}
-          onClick={() => {
-            setView('team');
-            setPlayer(null);
-          }}
-        >
-          {tr('Equipo')}
-        </button>
-        <button
-          role="tab"
-          aria-selected={view === 'players'}
-          className={view === 'players' ? 'selected' : ''}
-          onClick={() => setView('players')}
-        >
-          {tr('Jugadores')}
-        </button>
-      </div>
-      {view === 'team' ? (
+      <TabBar
+        id={tabsId}
+        label={tr('Tipo de estadísticas')}
+        value={view}
+        tabs={[
+          { value: 'team', label: tr('Equipo') },
+          { value: 'players', label: tr('Jugadores') },
+        ]}
+        change={(value) => {
+          setView(value);
+          setPlayer(null);
+        }}
+      />
+      <TabPanel id={tabsId} value="team" selected={view}>
         <Metrics stats={stats.teams[teamId] ?? emptyStats()} />
-      ) : player ? (
-        <>
-          <button className="back" onClick={() => setPlayer(null)}>
-            <ChevronLeft size={16} /> {tr('Todos los jugadores')}
-          </button>
-          <h3>
-            {player.isUnknown
-              ? tr('Desconocido')
-              : `#${player.dorsal} · ${player.name || tr('Sin nombre')}`}
-          </h3>
-          <Metrics player stats={stats.players[player.id] ?? emptyStats()} />
-        </>
-      ) : (
-        <div className="player-stats">
-          <div className="player-stat-head">
-            <span>{tr('Jugador')}</span>
-            <span>{tr('Goles')}</span>
-            <span>{tr('Fallados')}</span>
-            <span />
-          </div>
-          {players.map((player) => (
-            <button className="player-stat" key={player.id} onClick={() => setPlayer(player.id)}>
-              <span>
-                <b className="jersey">{player.dorsal ?? '?'}</b>
-                {player.isUnknown ? tr('Desconocido') : player.name || tr('Sin nombre')}
-              </span>
-              <strong>{stats.players[player.id]?.goals ?? 0}</strong>
-              <strong>{stats.players[player.id]?.misses ?? 0}</strong>
-              <ChevronRight size={16} />
+      </TabPanel>
+      <TabPanel id={tabsId} value="players" selected={view}>
+        {player ? (
+          <>
+            <button className="back" onClick={() => setPlayer(null)}>
+              <ChevronLeft size={16} /> {tr('Todos los jugadores')}
             </button>
-          ))}
-        </div>
-      )}
+            <h3>
+              {player.isUnknown
+                ? tr('Desconocido')
+                : `#${player.dorsal} · ${player.name || tr('Sin nombre')}`}
+            </h3>
+            <Metrics player stats={stats.players[player.id] ?? emptyStats()} />
+          </>
+        ) : (
+          <div className="player-stats">
+            <div className="player-stat-head">
+              <span>{tr('Jugador')}</span>
+              <span>{tr('Goles')}</span>
+              <span>{tr('Fallados')}</span>
+              <span />
+            </div>
+            {players.map((player) => (
+              <button className="player-stat" key={player.id} onClick={() => setPlayer(player.id)}>
+                <span>
+                  <b className="jersey">{player.dorsal ?? '?'}</b>
+                  {player.isUnknown ? tr('Desconocido') : player.name || tr('Sin nombre')}
+                </span>
+                <strong>{stats.players[player.id]?.goals ?? 0}</strong>
+                <strong>{stats.players[player.id]?.misses ?? 0}</strong>
+                <ChevronRight size={16} />
+              </button>
+            ))}
+          </div>
+        )}
+      </TabPanel>
       <p className="caption">
         {tr('Solo se contabilizan los eventos válidos registrados. Pasivos separados de pérdidas.')}
       </p>

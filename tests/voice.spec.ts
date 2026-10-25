@@ -140,11 +140,11 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
     timeout: 30000,
   });
   const hold = page.getByRole('button', { name: 'Voz (mantener)' });
-  await hold.hover();
-  await page.mouse.down();
+  await hold.focus();
+  await page.keyboard.down('Space');
   await expect(page.getByRole('button', { name: /Grabando ·/ })).toBeVisible();
   await page.waitForTimeout(6500);
-  await page.mouse.up();
+  await page.keyboard.up('Space');
   await expect(review).toBeVisible({ timeout: 40000 });
   await expect(review.getByText(/Transcripción original/)).toBeVisible();
   await review.getByRole('button', { name: 'Descartar', exact: true }).click();

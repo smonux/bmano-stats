@@ -1,5 +1,6 @@
+import { DialogForm } from './ui/DialogForm';
 import { ShirtNumberPicker } from './ShirtNumberPicker';
-import { useEffect, useRef, useState } from 'react';
+import { useId, useEffect, useRef, useState } from 'react';
 import { Plus, Volume2 } from 'lucide-react';
 import type { Match, Snapshot } from '../domain/model';
 import { exclusionRemaining } from '../domain/exclusions';
@@ -20,6 +21,7 @@ export function ExclusionTimers({
   now: number;
   onDialogChange: (open: boolean) => void;
 }) {
+  const errorId = useId();
   const timers = match.exclusions ?? [null, null, null];
   const [editing, setEditing] = useState<number | null>(null);
   const [clearing, setClearing] = useState<number | null>(null);
@@ -111,12 +113,26 @@ export function ExclusionTimers({
       <ErrorMessage text={action.error || sound.error} />
       {editing !== null && (
         <Modal
+          className="form-dialog"
           title={tr('Exclusión {number}', {
             number: editing + 1,
           })}
           close={() => !action.busy && setEditing(null)}
         >
-          <form
+          <DialogForm
+            error={action.error}
+            errorId={errorId}
+            busy={action.busy}
+            actions={
+              <>
+                <button type="button" disabled={action.busy} onClick={() => setEditing(null)}>
+                  {tr('Cancelar')}
+                </button>
+                <button className="primary" disabled={action.busy}>
+                  {tr('Activar')} · 02:00
+                </button>
+              </>
+            }
             onSubmit={(inputEvent) => {
               inputEvent.preventDefault();
               action.run(async () => {
@@ -138,11 +154,7 @@ export function ExclusionTimers({
               change={setTeam}
             />
             <ShirtNumberPicker label={tr('Dorsal (opcional)')} value={dorsal} change={setDorsal} />
-            <ErrorMessage text={action.error} />
-            <button className="primary full" disabled={action.busy}>
-              {tr('Activar')} · 02:00
-            </button>
-          </form>
+          </DialogForm>
         </Modal>
       )}
       {clearing !== null && (

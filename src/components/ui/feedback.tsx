@@ -1,9 +1,9 @@
 import { tr } from '../../i18n';
 import type { ReactNode } from 'react';
 
-export const ErrorMessage = ({ text }: { text: string }) =>
+export const ErrorMessage = ({ text, id }: { text: string; id?: string }) =>
   text ? (
-    <p role="alert" className="error">
+    <p id={id} role="alert" className="error">
       {tr(text)}
     </p>
   ) : null;

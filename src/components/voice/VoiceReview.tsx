@@ -26,7 +26,7 @@ export function VoiceReview({
 }) {
   const { draft } = result;
   const action = useAction();
-  const saveButton = useRef<HTMLButtonElement>(null);
+  const interpretation = useRef<HTMLDivElement>(null);
   const saveReview = () => {
     void action.run(async () => {
       const event = await repo.saveEvent(draft);
@@ -50,13 +50,15 @@ export function VoiceReview({
       title={tr('Confirmar jugada')}
       className="voice-review"
       close={() => !action.busy && close()}
-      initialFocus={saveButton}
+      initialFocus={interpretation}
     >
-      <div className="voice-review-copy">
-        <p className="voice-transcript">
-          <strong>{tr('Transcripción original')}</strong>
-          <span>{draft.rawText}</span>
-        </p>
+      <div
+        ref={interpretation}
+        className="voice-review-copy"
+        role="region"
+        aria-label={tr('Interpretación de voz')}
+        tabIndex={-1}
+      >
         <dl className="voice-review-summary">
           <dt>{tr('Evento')}</dt>
           <dd>
@@ -74,7 +76,9 @@ export function VoiceReview({
                 {draft.teamId
                   ? `${teamNumber} · ${teamName(data, draft.teamId)}`
                   : tr('Equipo pendiente')}
-                {result.defaultTeamApplied && <small> · {tr('Equipo por defecto')}</small>}
+                {result.defaultTeamApplied && (
+                  <strong className="inferred-value">{tr('Equipo por defecto')}</strong>
+                )}
               </dd>
             </>
           )}
@@ -84,7 +88,7 @@ export function VoiceReview({
               <dd>
                 {player(draft.teamId, draft.primaryDorsal)}
                 {result.goalkeeperDefaultApplied && (
-                  <small> · {tr('Último portero utilizado')}</small>
+                  <strong className="inferred-value">{tr('Último portero utilizado')}</strong>
                 )}
               </dd>
             </>
@@ -131,23 +135,23 @@ export function VoiceReview({
             {issues.map((issue) => tr(issue)).join('. ')}.
           </p>
         )}
+        <details className="review-transcript">
+          <summary>{tr('Transcripción original')}</summary>
+          <p className="voice-transcript">
+            <span>{draft.rawText}</span>
+          </p>
+        </details>
       </div>
       <footer className="voice-review-footer">
         <ErrorMessage text={action.error} />
         <div className="actions">
-          <button
-            ref={saveButton}
-            className="primary"
-            type="button"
-            disabled={action.busy}
-            onClick={saveReview}
-          >
+          <button type="button" disabled={action.busy} onClick={edit}>
+            {tr('Editar')}
+          </button>
+          <button className="primary" type="button" disabled={action.busy} onClick={saveReview}>
             {tr(
               action.busy ? 'Guardando…' : issues.length ? 'Guardar pendiente' : 'Guardar evento',
             )}
-          </button>
-          <button type="button" disabled={action.busy} onClick={edit}>
-            {tr('Editar')}
           </button>
         </div>
         <button type="button" className="text-button" disabled={action.busy} onClick={close}>

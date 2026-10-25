@@ -13,12 +13,14 @@ export function ShirtNumberPicker({
   change,
   disabled = false,
   hideLabel = false,
+  errorId,
 }: {
   label: string;
   value: string;
   change: (number: string) => void;
   disabled?: boolean;
   hideLabel?: boolean;
+  errorId?: string;
 }) {
   const number = value === '' ? '' : String(Number(value)).padStart(2, '0');
   function changeDigit(position: 0 | 1, digit: string) {
@@ -31,7 +33,12 @@ export function ShirtNumberPicker({
     change(String(Number(next.join(''))));
   }
   return (
-    <fieldset className="shirt-number-picker" disabled={disabled}>
+    <fieldset
+      className="shirt-number-picker"
+      disabled={disabled}
+      aria-describedby={errorId}
+      aria-invalid={!!errorId || undefined}
+    >
       <legend className={hideLabel ? 'sr-only' : 'field-label'}>{label}</legend>
       <div className="shirt-number-digits">
         <WheelPicker

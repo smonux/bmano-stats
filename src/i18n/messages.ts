@@ -1,3 +1,4 @@
+import { hmiAccessibilityMessages } from './hmi-accessibility';
 import { hmiFeedMessages } from './hmi-feed';
 import { hmiCounterMessages } from './hmi-counters';
 import { hmiMessages } from './hmi';
@@ -11,6 +12,7 @@ export const translationLanguages = ['en', 'de', 'fr', 'it', 'nl', 'pl'] as cons
 // Order: English, German, French, Italian, Dutch, Polish. Spanish keys are the source text.
 export const catalog: Record<string, readonly string[]> = {
   ...hmiMessages,
+  ...hmiAccessibilityMessages,
   ...hmiFeedMessages,
   ...hmiCounterMessages,
   ...voiceCommandMessages,

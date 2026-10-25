@@ -26,26 +26,38 @@ export function Confirm({
   const action = useAction();
   const cancel = useRef<HTMLButtonElement>(null);
   return (
-    <Modal initialFocus={cancel} title={title} close={() => !action.busy && close()}>
-      {context && <div className="confirmation-context">{context}</div>}
-      <p>{tr(text)}</p>
-      <ErrorMessage text={action.error} />
-      <div className="actions">
-        <button ref={cancel} type="button" disabled={action.busy} onClick={close}>
-          {cancelLabel ?? tr('Cancelar')}
-        </button>
-        <button
-          className={danger ? 'danger' : 'primary'}
-          disabled={action.busy}
-          onClick={() =>
-            action.run(async () => {
-              await confirm();
-              close();
-            })
-          }
-        >
-          {action.busy ? tr('Guardando…') : (actionLabel ?? tr('Confirmar'))}
-        </button>
+    <Modal
+      className="form-dialog"
+      initialFocus={cancel}
+      title={title}
+      close={() => !action.busy && close()}
+    >
+      <div className="dialog-form">
+        <div className="dialog-fields">
+          {context && <div className="confirmation-context">{context}</div>}
+          <p>{tr(text)}</p>
+        </div>
+        <footer className="dialog-footer">
+          <ErrorMessage text={action.error} />
+          <div className="actions">
+            <button ref={cancel} type="button" disabled={action.busy} onClick={close}>
+              {cancelLabel ?? tr('Cancelar')}
+            </button>
+            <button
+              type="button"
+              className={danger ? 'danger' : 'primary'}
+              disabled={action.busy}
+              onClick={() =>
+                action.run(async () => {
+                  await confirm();
+                  close();
+                })
+              }
+            >
+              {action.busy ? tr('Guardando…') : (actionLabel ?? tr('Confirmar'))}
+            </button>
+          </div>
+        </footer>
       </div>
     </Modal>
   );

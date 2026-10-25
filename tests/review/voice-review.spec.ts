@@ -8,7 +8,9 @@ async function open(page: Page, query = '') {
   await page.clock.install();
   await page.getByRole('button', { name: 'Mostrar propuesta', exact: true }).click();
   await expect(dialog(page)).toBeVisible();
-  await expect(saveButton(page)).toBeFocused();
+  await expect(
+    dialog(page).getByRole('region', { name: 'Interpretación de voz', exact: true }),
+  ).toBeFocused();
 }
 test('golden saves one goal with both players, penalty and original transcription', async ({
   page,
@@ -206,4 +208,25 @@ test('substitution shows outgoing/incoming and long names fit a short viewport',
   const box = await button.boundingBox();
   expect(box!.y + box!.height).toBeLessThanOrEqual(520);
   await page.screenshot({ path: info.outputPath('compact-review-short.png'), fullPage: true });
+});
+
+test('review starts with interpretation, keeps transcript collapsed and Enter does not confirm', async ({
+  page,
+}, info) => {
+  await open(page);
+  const review = dialog(page);
+  const interpretation = review.getByRole('region', { name: 'Interpretación de voz', exact: true });
+  await expect(interpretation).toBeFocused();
+  await expect(review.locator('.review-transcript')).toHaveJSProperty('open', false);
+  await interpretation.press('Enter');
+  await page.clock.runFor(10000);
+  await expect(page.getByTestId('events')).toHaveText('[]');
+  const edit = review.getByRole('button', { name: 'Editar', exact: true });
+  const save = saveButton(page);
+  expect((await edit.boundingBox())!.x).toBeLessThan((await save.boundingBox())!.x);
+  await review.locator('.review-transcript > summary').focus();
+  await page.keyboard.press('Enter');
+  await expect(review.locator('.voice-transcript')).toBeVisible();
+  await page.screenshot({ path: info.outputPath('interpretation-first.png') });
+  await review.getByRole('button', { name: 'Descartar', exact: true }).click();
 });

@@ -1,11 +1,13 @@
+import { DialogForm } from '../components/ui/DialogForm';
 import { ShirtNumberPicker } from '../components/ShirtNumberPicker';
 import { tr } from '../i18n';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { ChevronRight, Plus, Pencil, Search } from 'lucide-react';
 import { repo } from '../data/database';
 import { type Snapshot } from '../domain/model';
-import { Empty, ErrorMessage, Modal, PageTitle, navigate, useAction } from '../components/ui';
+import { Empty, Modal, PageTitle, navigate, useAction } from '../components/ui';
 function Teams({ data, id }: { data: Snapshot; id?: string }) {
+  const errorId = useId();
   const [query, setQuery] = useState('');
   const [add, setAdd] = useState(false);
   const [name, setName] = useState('');
@@ -148,8 +150,25 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
         </>
       )}
       {add && (
-        <Modal title={tr('Nuevo equipo')} close={() => !action.busy && setAdd(false)}>
-          <form
+        <Modal
+          className="form-dialog"
+          title={tr('Nuevo equipo')}
+          close={() => !action.busy && setAdd(false)}
+        >
+          <DialogForm
+            error={action.error}
+            errorId={errorId}
+            busy={action.busy}
+            actions={
+              <>
+                <button type="button" disabled={action.busy} onClick={() => setAdd(false)}>
+                  {tr('Cancelar')}
+                </button>
+                <button className="primary" disabled={action.busy}>
+                  {tr('Crear equipo')}
+                </button>
+              </>
+            }
             onSubmit={(inputEvent) => {
               inputEvent.preventDefault();
               action.run(async () => {
@@ -164,22 +183,37 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
               {tr('Nombre del equipo')}
               <input
                 autoFocus
+                aria-invalid={!!action.error || undefined}
+                aria-describedby={action.error ? errorId : undefined}
                 required
                 maxLength={100}
                 value={name}
                 onChange={(inputEvent) => setName(inputEvent.target.value)}
               />
             </label>
-            <ErrorMessage text={action.error} />
-            <button className="primary full" disabled={action.busy}>
-              {tr('Crear equipo')}
-            </button>
-          </form>
+          </DialogForm>
         </Modal>
       )}
       {rename !== null && team && (
-        <Modal title={tr('Nombre del equipo')} close={() => !action.busy && setRename(null)}>
-          <form
+        <Modal
+          className="form-dialog"
+          title={tr('Nombre del equipo')}
+          close={() => !action.busy && setRename(null)}
+        >
+          <DialogForm
+            error={action.error}
+            errorId={errorId}
+            busy={action.busy}
+            actions={
+              <>
+                <button type="button" disabled={action.busy} onClick={() => setRename(null)}>
+                  {tr('Cancelar')}
+                </button>
+                <button className="primary" disabled={action.busy}>
+                  {tr('Guardar nombre')}
+                </button>
+              </>
+            }
             onSubmit={(inputEvent) => {
               inputEvent.preventDefault();
               action.run(async () => {
@@ -193,20 +227,35 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
               <input
                 value={rename}
                 onChange={(inputEvent) => setRename(inputEvent.target.value)}
+                aria-invalid={!!action.error || undefined}
+                aria-describedby={action.error ? errorId : undefined}
                 required
                 maxLength={100}
               />
             </label>
-            <ErrorMessage text={action.error} />
-            <button className="primary full" disabled={action.busy}>
-              {tr('Guardar nombre')}
-            </button>
-          </form>
+          </DialogForm>
         </Modal>
       )}
       {editing && team && (
-        <Modal title={tr('Jugador')} close={() => !action.busy && setEditing(null)}>
-          <form
+        <Modal
+          className="form-dialog"
+          title={tr('Jugador')}
+          close={() => !action.busy && setEditing(null)}
+        >
+          <DialogForm
+            error={action.error}
+            errorId={errorId}
+            busy={action.busy}
+            actions={
+              <>
+                <button type="button" disabled={action.busy} onClick={() => setEditing(null)}>
+                  {tr('Cancelar')}
+                </button>
+                <button className="primary" disabled={action.busy}>
+                  {tr('Guardar jugador')}
+                </button>
+              </>
+            }
             onSubmit={(inputEvent) => {
               inputEvent.preventDefault();
               action.run(async () => {
@@ -218,6 +267,7 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
             <div className="filter-row">
               <ShirtNumberPicker
                 label={tr('Dorsal')}
+                errorId={action.error ? errorId : undefined}
                 value={editing.dorsal}
                 disabled={Boolean(editing.id)}
                 change={(dorsal) => setEditing({ ...editing, dorsal })}
@@ -247,11 +297,7 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
             <p className="caption">
               {tr('Un dorsal identifica siempre al mismo jugador dentro de su equipo.')}
             </p>
-            <ErrorMessage text={action.error} />
-            <button className="primary full" disabled={action.busy}>
-              {tr('Guardar jugador')}
-            </button>
-          </form>
+          </DialogForm>
         </Modal>
       )}
     </>

@@ -132,3 +132,28 @@
 .voice-review-footer .actions button {
   min-height: var(--target-primary);
 }
+.inferred-value {
+  display: block;
+  font-size: var(--text-caption);
+  padding: 4px 8px;
+  border-left: 3px solid var(--ink);
+  background: #fff4b8;
+  margin-top: 4px;
+}
+.review-transcript {
+  margin-top: 12px;
+}
+.review-transcript summary {
+  min-height: 44px;
+  padding: 10px 0;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: var(--text-caption);
+}
+.voice-review-copy:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+}
+.voice-review > .section-heading {
+  flex-shrink: 0;
+}

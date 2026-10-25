@@ -14,6 +14,16 @@ function alignSelection(wheel: HTMLDivElement, index: number) {
   }
 }
 
+function revealSelection(wheel: HTMLDivElement) {
+  const body = wheel.closest<HTMLElement>('.dialog-fields, .event-editor-fields');
+  const row = wheel.querySelector<HTMLElement>('[aria-selected="true"]');
+  if (!body || !row) return;
+  const bounds = body.getBoundingClientRect(),
+    selected = row.getBoundingClientRect();
+  if (selected.top < bounds.top) body.scrollTop += selected.top - bounds.top;
+  else if (selected.bottom > bounds.bottom) body.scrollTop += selected.bottom - bounds.bottom;
+}
+
 export type WheelOption<Value extends string = string> = {
   value: Value;
   label: string;
@@ -59,7 +69,10 @@ export function WheelPicker<Value extends string>({
   useEffect(() => {
     // Dialog layout effects run before showModal makes its contents measurable.
     const frame = requestAnimationFrame(() => {
-      if (wheel.current) alignSelection(wheel.current, selectedIndex);
+      if (wheel.current) {
+        alignSelection(wheel.current, selectedIndex);
+        if (document.activeElement === wheel.current) revealSelection(wheel.current);
+      }
     });
     return () => cancelAnimationFrame(frame);
   }, [selectedIndex, value]);
@@ -146,6 +159,11 @@ export function WheelPicker<Value extends string>({
           aria-disabled={disabled || undefined}
           aria-activedescendant={options.length ? `${optionId}-${selectedIndex}` : undefined}
           tabIndex={disabled ? -1 : 0}
+          onFocus={() => {
+            requestAnimationFrame(() => {
+              if (wheel.current) revealSelection(wheel.current);
+            });
+          }}
           onPointerDown={() => {
             if (!disabled) wheel.current?.focus({ preventScroll: true });
           }}
