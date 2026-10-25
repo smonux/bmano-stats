@@ -8,6 +8,12 @@
   border-radius: 15px;
   box-shadow: 0 7px 18px #17171705;
 }
+/* Short screens need room between the header and the fixed capture bar. */
+@media (max-height: 640px) {
+  .match-header {
+    position: static;
+  }
+}
 .scoreboard {
   display: grid;
   grid-template-columns: 1fr auto 1fr;

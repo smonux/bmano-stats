@@ -50,3 +50,13 @@ Regeneración de los iconos de instalación a partir del vector original:
 ```sh
 CHROMIUM_PATH=/ruta/a/chrome-headless-shell node scripts/export-app-icons.mjs
 ```
+
+### Ajuste previo de cabecera en pantallas cortas — HMI-12 parcial
+
+El caso de nombres largos a 320 × 568 reprodujo una oclusión real: la cabecera sticky y la barra de captura interceptaban los toques sobre el selector de estadísticas. La traza mostró ambas superficies interceptando el puntero; no era un fallo de guardado ni un problema de espera.
+
+Se permite que la cabecera se desplace normalmente cuando la altura disponible es de 640 CSS px o menos. No se eliminan controles ni se introduce un panel colapsable. Es un ajuste previo pequeño; la separación completa de marcador/reloj respecto a controles secundarios sigue prevista para la entrega 3.
+
+- Regresión independiente en `hmi-short-viewport.spec.ts`, correcta en móvil y escritorio; selección mediante puntero normal, sin clicks forzados ni sleeps.
+- [Antes y después a 320 × 568](evidencias/01-pantalla-corta). El antes procede de un fotograma de la traza fallida; el después muestra la selección rival realizada con éxito. Mismos nombres y datos, con diferente posición de scroll durante el intento.
+- Se conservan distribución y tamaño actuales de exclusiones y barra inferior. Sus mejoras de legibilidad y espacio siguen pendientes de las entregas siguientes.
