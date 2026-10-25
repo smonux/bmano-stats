@@ -10,16 +10,23 @@ import { Confirm, ErrorMessage, Modal, useAction } from './ui';
 import { WheelPicker } from './WheelPicker';
 import { ExclusionCounter } from './exclusions/ExclusionCounter';
 import { useExclusionSound } from './exclusions/useExclusionSound';
+export type CounterPrefill = { eventId: string; teamId: string; dorsal: string };
 export function ExclusionTimers({
   match,
   data,
   now,
   onDialogChange,
+  prefill,
+  onPrefillHandled,
+  onPrefillStarted,
 }: {
   match: Match;
   data: Snapshot;
   now: number;
   onDialogChange: (open: boolean) => void;
+  prefill?: CounterPrefill | null;
+  onPrefillHandled?: () => void;
+  onPrefillStarted?: (eventId: string) => void;
 }) {
   const errorId = useId();
   const timers = match.exclusions ?? [null, null, null];
@@ -27,16 +34,32 @@ export function ExclusionTimers({
   const [clearing, setClearing] = useState<number | null>(null);
   const [teamId, setTeam] = useState(match.localTeamId);
   const [dorsal, setDorsal] = useState('');
+  const [sourceEvent, setSourceEvent] = useState<string | null>(null);
   const sound = useExclusionSound();
   const announced = useRef(new Set<string>());
   const action = useAction();
   const freeSlot = timers.findIndex((timer) => timer === null);
   const activeCount = timers.filter(Boolean).length;
   function startCounter(slot: number) {
+    setSourceEvent(null);
     setEditing(slot);
     setDorsal('');
     setTeam(match.localTeamId);
   }
+  useEffect(() => {
+    if (!prefill) return;
+    onPrefillHandled?.();
+    if (freeSlot < 0 || match.status !== 'active') {
+      action.setError(tr('Los tres contadores están ocupados. Libera uno antes de activar otro.'));
+      onDialogChange(false);
+      return;
+    }
+    action.setError('');
+    setSourceEvent(prefill.eventId);
+    setTeam(prefill.teamId);
+    setDorsal(prefill.dorsal);
+    setEditing(freeSlot);
+  }, [prefill, freeSlot, match.status, onPrefillHandled, onDialogChange]);
   useEffect(() => {
     onDialogChange(editing !== null || clearing !== null);
     return () => onDialogChange(false);
@@ -140,10 +163,18 @@ export function ExclusionTimers({
                   teamId,
                   dorsal: dorsal === '' ? null : Number(dorsal),
                 });
+                if (sourceEvent) onPrefillStarted?.(sourceEvent);
                 setEditing(null);
               });
             }}
           >
+            {sourceEvent && (
+              <p className="caption">
+                {tr(
+                  'Activa el contador cuando empiece la exclusión. Editar, borrar o deshacer la jugada no cambia el contador, y liberarlo no borra la jugada.',
+                )}
+              </p>
+            )}
             <WheelPicker
               label={tr('Equipo')}
               value={teamId}

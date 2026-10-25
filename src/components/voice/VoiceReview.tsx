@@ -23,7 +23,7 @@ export function VoiceReview({
   match: Match;
   edit: () => void;
   close: () => void;
-  saved?: (event: GameEvent, pending: boolean, undo?: EventUndo) => void;
+  saved?: (event: GameEvent, pending: boolean, undo?: EventUndo, primaryDorsal?: string) => void;
 }) {
   const { draft } = result;
   const action = useAction();
@@ -31,7 +31,7 @@ export function VoiceReview({
   const saveReview = () => {
     void action.run(async () => {
       const { event, undo } = await repo.createEventWithUndo(draft);
-      saved?.(event, issues.length > 0, undo);
+      saved?.(event, issues.length > 0, undo, draft.primaryDorsal);
       close();
     });
   };

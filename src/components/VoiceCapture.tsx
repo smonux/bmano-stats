@@ -18,7 +18,7 @@ export function VoiceCapture({
   match: Match;
   data: Snapshot;
   allowReview: boolean;
-  saved?: (event: GameEvent, pending: boolean, undo?: EventUndo) => void;
+  saved?: (event: GameEvent, pending: boolean, undo?: EventUndo, primaryDorsal?: string) => void;
   started?: () => void;
 }) {
   const {

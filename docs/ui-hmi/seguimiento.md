@@ -2,7 +2,7 @@
 
 Rama: `cambios-hmi`, creada desde `main` en `138fbf1`. Trabajo por entregas; sin merge ni publicación.
 
-Estado vigente: entregas 1–7, inicio manual y Deshacer completados. La siguiente es Contador tras exclusión; la tabla del objetivo ampliado resume todos los bloques pendientes.
+Estado vigente: entregas 1–7, inicio manual, Deshacer y Contador tras exclusión completados. Resta la auditoría final; la tabla del objetivo ampliado resume el estado.
 
 ## Decisiones aprobadas
 
@@ -139,7 +139,7 @@ Samuel pide completar todos los bloques pendientes, con commit y etiqueta por bl
 | 7                       | Inicio, ajustes, bienvenida y reproducción de transición de carga                                    | Completado · `hmi-07-inicio`          |
 | Manual                  | Inicio explícito solo con entrada manual, conservando preparación para usar voz                      | Completado · `hmi-manual`             |
 | Deshacer                | Reversión de una creación, incluido efecto sobre último portero; sin prometer reversión de ediciones | Completado · `hmi-deshacer`           |
-| Contador tras exclusión | Acción explícita precargada; evento y contador siguen independientes                                 | Pendiente                             |
+| Contador tras exclusión | Acción explícita precargada; evento y contador siguen independientes                                 | Completado · `hmi-contador-desde-evento` |
 | Auditoría final         | Matriz transversal, regresión de voz/PDF/ZIP/JSON, build, evidencia y límites físicos                | Pendiente                             |
 
 Las decisiones aprobadas prevalecen sobre alternativas del informe: se conserva menú lateral, push to talk, lado de cada equipo y entrada manual neutral. No se cambiarán modelos ni interpretación de voz para resolver presentación.
@@ -220,3 +220,9 @@ Validación: cuatro recorridos manuales finales correctos en móvil/escritorio, 
 Recibo transaccional temporal para la última creación manual o de voz. Deshacer retira la creación y sus jugadores nuevos, restaura los revividos/rol/último portero, conservando cambios ajenos. Comprueba versiones, referencias y portero antes de escribir; un conflicto rechaza toda la operación. El borrado habitual sigue siendo lógico. No se modifica el esquema ni la copia; tampoco se ofrece Deshacer de ediciones o tras recarga.
 
 Validación: 146 unitarias, 34 recorridos de navegador y 16 de revisión de voz correctos. Cuatro recorridos finales repiten Deshacer después de compactar el acuse. Incluye guardar voz y deshacer offline, dos ventanas, último portero, rollback, pendiente/nota, doble intento y copia restaurable. Formato, TypeScript y build correctos. [Decisiones, captura y límites](evidencias/deshacer/README.md). Etiqueta: `hmi-deshacer`. Siguiente: contador precargado mediante acción explícita tras exclusión.
+
+## Contador precargado tras exclusión
+
+Acción explícita después del guardado, con equipo y dorsal enviados por el formulario/revisión (incluidos vacío/cero/nuevo). Abre la activación actual en el siguiente hueco libre; no inicia ni registra nada al abrir. Con tres ocupados lleva al bloque de contadores. Cancelar devuelve foco; Activar lo lleva al bloque existente. Oferta invalidada al cambiar la versión de la jugada. Se explica que editar/borrar/deshacer y liberar contador son independientes.
+
+Validación: 18 recorridos correctos de contadores y acceso tras evento; dos adicionales de borrado/ZIP restaurado. Incluye ambos equipos, nombres largos, 0/99/vacío, doble toque sin duplicar, límite de tres, edición, Deshacer, recarga y copia. 146 unitarias, formato, TypeScript y build correctos. [Capturas, decisiones y límites](evidencias/contador-desde-evento/README.md). Etiqueta: `hmi-contador-desde-evento`. Solo resta auditoría final transversal.

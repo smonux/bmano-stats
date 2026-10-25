@@ -4,7 +4,7 @@ import {
   type MatchConfirmationIntent,
 } from '../components/match/MatchConfirmation';
 import { EventFeed } from '../components/EventFeed';
-import { ExclusionTimers } from '../components/ExclusionTimers';
+import { ExclusionTimers, type CounterPrefill } from '../components/ExclusionTimers';
 import { tr } from '../i18n';
 import { useId, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Pause, Play, Plus, Trash2, Flag, Timer, BellRing } from 'lucide-react';
@@ -37,6 +37,11 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
   const [undo, setUndo] = useState<{ receipt: EventUndo; label: string } | null>(null);
   const undoAction = useAction();
   const manualButton = useRef<HTMLButtonElement>(null);
+  const [counterOffer, setCounterOffer] = useState<(CounterPrefill & { updatedAt: number }) | null>(
+    null,
+  );
+  const [counterRequest, setCounterRequest] = useState<CounterPrefill | null>(null);
+  const returnToCounters = useRef(false);
   useLayoutEffect(() => {
     if (!editing && !confirm && returnToFeed.current) {
       returnToFeed.current = false;
@@ -55,7 +60,7 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
       else if (rect.bottom > bottom) window.scrollBy(0, rect.bottom - bottom + 8);
     }
   }, [editing, confirm]);
-  function eventSaved(event: GameEvent, pending: boolean, receipt?: EventUndo) {
+  function eventSaved(event: GameEvent, pending: boolean, receipt?: EventUndo, primaryDorsal = '') {
     returnToFeed.current = Boolean(
       pendingOnly &&
       editing &&
@@ -78,8 +83,24 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
     setNotice(label);
     setUndo(receipt ? { receipt, label } : null);
     undoAction.setError('');
+    setCounterOffer(
+      event.type === 'exclusion' && event.teamId && match.status === 'active'
+        ? {
+            eventId: event.id,
+            updatedAt: event.updatedAt,
+            teamId: event.teamId,
+            dorsal: primaryDorsal,
+          }
+        : null,
+    );
   }
   const [counterDialog, setCounterDialog] = useState(false);
+  useLayoutEffect(() => {
+    if (!counterDialog && returnToCounters.current) {
+      returnToCounters.current = false;
+      showCounters();
+    }
+  }, [counterDialog]);
   const action = useAction();
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
@@ -94,6 +115,17 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
   const header = useRef<HTMLElement>(null);
   const counters = (match.exclusions ?? []).filter((timer) => timer !== null);
   const expiredCount = counters.filter((timer) => exclusionRemaining(timer, now) === 0).length;
+  const offer =
+    counterOffer &&
+    match.status === 'active' &&
+    data.events.some(
+      (event) =>
+        event.id === counterOffer.eventId &&
+        !event.deletedAt &&
+        event.updatedAt === counterOffer.updatedAt,
+    )
+      ? counterOffer
+      : null;
   function showCounters() {
     const section = document.getElementById('match-exclusions-' + match.id);
     if (!section) return;
@@ -217,7 +249,19 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
             <button onClick={() => setConfirm('period')}>{tr('Nuevo tiempo')}</button>
           )}
         </div>
-        <ExclusionTimers match={match} data={data} now={now} onDialogChange={setCounterDialog} />
+        <ExclusionTimers
+          match={match}
+          data={data}
+          now={now}
+          onDialogChange={setCounterDialog}
+          prefill={counterRequest}
+          onPrefillHandled={() => setCounterRequest(null)}
+          onPrefillStarted={() => {
+            setCounterOffer(null);
+            returnToCounters.current = true;
+            setNotice(tr('Contador activado. La exclusión sigue en el registro.'));
+          }}
+        />
       </section>
       <TabBar
         id={tabsId}
@@ -262,7 +306,7 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
         />
       </TabPanel>
       <div className="capture-bar">
-        {(notice || undo) && (
+        {(notice || undo || offer) && (
           <div className="capture-feedback">
             <p role="status">{notice || undo?.label}</p>
             {undo && (
@@ -272,13 +316,38 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
                 onClick={() =>
                   void undoAction.run(async () => {
                     await repo.undoEventCreation(undo.receipt);
+                    if (counterOffer?.eventId === undo.receipt.event.id) setCounterOffer(null);
                     setUndo(null);
-                    setNotice(tr('Creación deshecha'));
+                    setNotice(
+                      tr(
+                        undo.receipt.event.type === 'exclusion'
+                          ? 'Creación deshecha. Los contadores se gestionan aparte.'
+                          : 'Creación deshecha',
+                      ),
+                    );
                     manualButton.current?.focus({ preventScroll: true });
                   })
                 }
               >
                 {tr('Deshacer creación')}
+              </button>
+            )}
+            {offer && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (counters.length >= 3) showCounters();
+                  else {
+                    setCounterDialog(true);
+                    setCounterRequest(offer);
+                  }
+                }}
+              >
+                {tr(
+                  counters.length >= 3
+                    ? 'Contadores llenos · Ver contadores'
+                    : 'Iniciar contador de esta exclusión',
+                )}
               </button>
             )}
             <ErrorMessage text={undoAction.error} />
@@ -300,7 +369,7 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
           match={match}
           saved={eventSaved}
           started={() => setNotice('')}
-          allowReview={!editing && !confirm && !counterDialog}
+          allowReview={!editing && !confirm && !counterDialog && !counterRequest}
         />
       </div>
       <div className="match-footer">

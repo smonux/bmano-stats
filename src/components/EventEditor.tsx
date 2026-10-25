@@ -41,7 +41,7 @@ export function EventEditor({
     needleMs: number;
   };
   close: () => void;
-  saved?: (event: GameEvent, pending: boolean, undo?: EventUndo) => void;
+  saved?: (event: GameEvent, pending: boolean, undo?: EventUndo, primaryDorsal?: string) => void;
 }) {
   const [draft, setDraft] = useState<EventDraft>(
     () => initialDraft ?? createEditorDraft(data, match, event),
@@ -115,7 +115,7 @@ export function EventEditor({
               const { event, undo } = draft.id
                 ? { event: await repo.saveEvent(draft), undo: undefined }
                 : await repo.createEventWithUndo(draft);
-              saved?.(event, missing, undo);
+              saved?.(event, missing, undo, draft.primaryDorsal);
               close();
             });
           }}
