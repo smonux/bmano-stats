@@ -1,3 +1,4 @@
+import { useRef, type ReactNode } from 'react';
 import { tr } from '../../i18n';
 import { Modal } from './Modal';
 import { ErrorMessage } from './feedback';
@@ -9,21 +10,29 @@ export function Confirm({
   confirm,
   close,
   danger = false,
+  actionLabel,
+  cancelLabel,
+  context,
 }: {
   title: string;
   text: string;
   confirm: () => Promise<unknown>;
   close: () => void;
   danger?: boolean;
+  actionLabel?: string;
+  cancelLabel?: string;
+  context?: ReactNode;
 }) {
   const action = useAction();
+  const cancel = useRef<HTMLButtonElement>(null);
   return (
-    <Modal title={title} close={() => !action.busy && close()}>
+    <Modal initialFocus={cancel} title={title} close={() => !action.busy && close()}>
+      {context && <div className="confirmation-context">{context}</div>}
       <p>{tr(text)}</p>
       <ErrorMessage text={action.error} />
       <div className="actions">
-        <button disabled={action.busy} onClick={close}>
-          {tr('Cancelar')}
+        <button ref={cancel} type="button" disabled={action.busy} onClick={close}>
+          {cancelLabel ?? tr('Cancelar')}
         </button>
         <button
           className={danger ? 'danger' : 'primary'}
@@ -35,7 +44,7 @@ export function Confirm({
             })
           }
         >
-          {action.busy ? tr('Guardando…') : tr('Confirmar')}
+          {action.busy ? tr('Guardando…') : (actionLabel ?? tr('Confirmar'))}
         </button>
       </div>
     </Modal>

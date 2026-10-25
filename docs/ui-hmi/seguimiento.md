@@ -2,6 +2,8 @@
 
 Rama: `cambios-hmi`, creada desde `main` en `138fbf1`. Trabajo por entregas; sin merge ni publicación.
 
+Estado vigente: entregas 1–4 completadas. La selección directa del editor es la entrega 2 (`0f4eb2e`, `hmi-02-editor-directo`). La siguiente es la entrega 5; la tabla del objetivo ampliado resume todos los bloques pendientes.
+
 ## Decisiones aprobadas
 
 Samuel aprobó el 25 de octubre de 2026 las recomendaciones de la propuesta y de la conversación de contradicciones:
@@ -127,18 +129,18 @@ Siguiente entrega: editor con selección directa de equipo, acción y jugador po
 
 Samuel pide completar todos los bloques pendientes, con commit y etiqueta por bloque. Se mantiene `cambios-hmi`, sin merge ni publicación. La entrega 1 terminada está etiquetada como `hmi-01-base-visual` en `aa0f997`.
 
-| Bloque                  | Alcance restante                                                                                     | Estado                               |
-| ----------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| 2                       | Editor directo, participantes y pendientes explicados                                                | Completado · `hmi-02-editor-directo` |
-| 3                       | Prioridad de contadores activos, acceso desde reloj y ayuda sobre independencia                      | Completado · `hmi-03-contadores`     |
-| 4                       | Motivos/Completar en registro, lectura de detalles, confirmaciones, acuse y protección de borrador   | Pendiente                            |
-| 5                       | Revisión de voz, PTT, pestañas y formularios/modales compartidos                                     | Pendiente                            |
-| 6                       | Equipos comparables, denominadores y tabla del gráfico                                               | Pendiente                            |
-| 7                       | Inicio, ajustes, bienvenida y reproducción de transición de carga                                    | Pendiente                            |
-| Manual                  | Inicio explícito solo con entrada manual, conservando preparación para usar voz                      | Pendiente                            |
-| Deshacer                | Reversión de una creación, incluido efecto sobre último portero; sin prometer reversión de ediciones | Pendiente                            |
-| Contador tras exclusión | Acción explícita precargada; evento y contador siguen independientes                                 | Pendiente                            |
-| Auditoría final         | Matriz transversal, regresión de voz/PDF/ZIP/JSON, build, evidencia y límites físicos                | Pendiente                            |
+| Bloque                  | Alcance restante                                                                                     | Estado                                |
+| ----------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| 2                       | Editor directo, participantes y pendientes explicados                                                | Completado · `hmi-02-editor-directo`  |
+| 3                       | Prioridad de contadores activos, acceso desde reloj y ayuda sobre independencia                      | Completado · `hmi-03-contadores`      |
+| 4                       | Motivos/Completar en registro, lectura de detalles, confirmaciones, acuse y protección de borrador   | Completado · `hmi-04-registro-seguro` |
+| 5                       | Revisión de voz, PTT, pestañas y formularios/modales compartidos                                     | Pendiente                             |
+| 6                       | Equipos comparables, denominadores y tabla del gráfico                                               | Pendiente                             |
+| 7                       | Inicio, ajustes, bienvenida y reproducción de transición de carga                                    | Pendiente                             |
+| Manual                  | Inicio explícito solo con entrada manual, conservando preparación para usar voz                      | Pendiente                             |
+| Deshacer                | Reversión de una creación, incluido efecto sobre último portero; sin prometer reversión de ediciones | Pendiente                             |
+| Contador tras exclusión | Acción explícita precargada; evento y contador siguen independientes                                 | Pendiente                             |
+| Auditoría final         | Matriz transversal, regresión de voz/PDF/ZIP/JSON, build, evidencia y límites físicos                | Pendiente                             |
 
 Las decisiones aprobadas prevalecen sobre alternativas del informe: se conserva menú lateral, push to talk, lado de cada equipo y entrada manual neutral. No se cambiarán modelos ni interpretación de voz para resolver presentación.
 
@@ -167,3 +169,18 @@ Cierre adicional del dorsal 10: los 12 casos de `hmi-editor.spec.ts` se repitier
 - Nuevos textos traducidos a los seis idiomas adicionales. La medición del reloj en el script de capturas sigue señalando el botón de pausa, no el nuevo acceso.
 
 Validación: 42 recorridos de `hmi-counters`, `courtside`, `features`, `wheels`, `hmi-readability` y `hmi-short-viewport` correctos; formato, TypeScript y build correctos. Contadores de 0/1/3, teclado, nombres largos, cuatro tamaños, recarga, pausa común/individual y din-don de cinco segundos. A 390 × 664 el presupuesto del registro conserva 374/358,4 px con nombres cortos/largos. [Evidencia comparable y límites](evidencias/03-contadores/README.md). Etiqueta: `hmi-03-contadores`.
+
+## Entrega 4: registro, confirmaciones y protección del borrador
+
+- Pendientes con los motivos de `eventIssues`, sin duplicar reglas, y acción Completar; los registrados conservan Editar. El filtro indica el recuento también al estar activo. Tras completar/eliminar el último pendiente, el foco queda en un filtro existente, visible bajo la cabecera.
+- Nota y transcripción se pueden leer en un desplegable por tarjeta, cerrado inicialmente y solo si hay contenido. Etiquetas, saltos de línea, texto largo y estado nativo accesible; se conservan al actualizar el reloj, sin escrituras ni apertura automática por voz.
+- Lectura por lado conservada; acciones en una franja común a ambos equipos. La primera medición reprodujo 42/44 px de diferencia; la regresión final exige anclajes relativos con diferencia máxima de 3 px. Se permite envolver filas al ampliar texto, conservando objetivos de 48 px y separación.
+- Borrar se traslada a Más en cada tarjeta y en el partido. Las confirmaciones identifican el objetivo y usan Eliminar evento/Eliminar partido. Cancelar/X/Escape conservan datos y foco; finalizar y nuevo tiempo mantienen sus operaciones actuales.
+- Acuse después de persistir, para entrada manual y voz. Se usa la validación del borrador enviado para evitar anunciar pendiente cuando el snapshot anterior aún no incluye un dorsal recién creado. El acuse tiene su propia fila, sin comprimir los botones, y se limpia al comenzar otra captura/edición.
+- Un borrador modificado pregunta Continuar editando/Descartar al cerrar. Se protege también la navegación por hash y Atrás, conservando las entradas indexadas para poder cancelar repetidamente. Una recarga utiliza el aviso nativo; no se implementa recuperación persistente del borrador.
+- `Modal` captura el activador antes de autofocus y restaura foco tras desmontar diálogos anidados, respetando el destino elegido por el padre. No vuelve a controles desmontados o deshabilitados. Los formularios intactos cierran directamente.
+- Traducciones en los seis idiomas adicionales; sin cambios del dominio, repositorio, modelos ni formato de copia.
+
+Validación: 135 unitarias, formato, TypeScript y build correctos. Suite general: 116 correctas, una omisión prevista y un desbordamiento real al 200 % posteriormente corregido. Los 68 recorridos finales pertinentes pasaron, incluida voz real y recarga offline; tras cerrar la posición común de acciones pasaron otros 44, parcialmente solapados. Revisión de voz: 14 correctos. Los 26 casos de seguridad/lectura cubren cuatro motivos de pendiente, teclado/toque, vacíos, rival, nombres de 100 caracteres, cancelación/confirmación del objetivo, foco, Atrás repetido, descarte al navegar y recarga nativa. [Capturas y límites](evidencias/04-registro/README.md). Etiqueta: `hmi-04-registro-seguro`.
+
+Siguiente entrega vigente: 5, revisión de voz y accesibilidad compartida de pestañas y formularios. Siguen pendientes 6, 7, inicio manual explícito, deshacer creación, acceso precargado al contador tras exclusión y auditoría final. El objetivo global continúa sin completar; no se ha mergeado ni publicado.

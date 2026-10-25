@@ -35,3 +35,13 @@ export async function editContext(editor: Locator) {
 export async function editNote(editor: Locator) {
   await expand(editor.locator('.event-additional'));
 }
+
+/** Explicitly discard an edited draft; callers use ordinary Cancel for untouched forms. */
+export async function discardEditor(editor: Locator) {
+  await editor.getByRole('button', { name: 'Cancelar', exact: true }).click();
+  await editor
+    .page()
+    .getByRole('dialog', { name: 'Descartar cambios', exact: true })
+    .getByRole('button', { name: 'Descartar', exact: true })
+    .click();
+}

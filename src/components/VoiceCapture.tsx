@@ -1,5 +1,5 @@
 import { LoaderCircle, Mic } from 'lucide-react';
-import type { Match, Snapshot } from '../domain/schema';
+import type { GameEvent, Match, Snapshot } from '../domain/schema';
 import { tr } from '../i18n';
 import { EventEditor } from './EventEditor';
 import { ErrorMessage } from './ui';
@@ -11,10 +11,14 @@ export function VoiceCapture({
   match,
   data,
   allowReview,
+  saved,
+  started,
 }: {
   match: Match;
   data: Snapshot;
   allowReview: boolean;
+  saved?: (event: GameEvent, pending: boolean) => void;
+  started?: () => void;
 }) {
   const {
     setup,
@@ -57,6 +61,7 @@ export function VoiceCapture({
             return;
           }
           e.preventDefault();
+          started?.();
           e.currentTarget.setPointerCapture(e.pointerId);
           void start();
         }}
@@ -66,6 +71,7 @@ export function VoiceCapture({
         onKeyDown={(e) => {
           if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
             e.preventDefault();
+            if (phase === 'ready') started?.();
             void start();
           }
         }}
@@ -112,12 +118,14 @@ export function VoiceCapture({
             <EventEditor
               data={data}
               match={match}
+              saved={saved}
               initialDraft={result.draft}
               voiceTimings={result.timings}
               close={closeReview}
             />
           ) : (
             <VoiceReview
+              saved={saved}
               result={result}
               data={data}
               match={match}

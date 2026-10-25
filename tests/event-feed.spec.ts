@@ -39,6 +39,24 @@ test('opponent events mirror their title and icon and both teams are explicitly 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: info.outputPath('event-perspective.png'), fullPage: true });
 
+  const homeBounds = (await ours.boundingBox())!,
+    awayBounds = (await rival.boundingBox())!;
+  const homeEdit = (await ours.getByRole('button', { name: 'Editar', exact: true }).boundingBox())!;
+  const awayEdit = (await rival
+    .getByRole('button', { name: 'Editar', exact: true })
+    .boundingBox())!;
+  const homeMore = (await ours.locator('.event-menu > summary').boundingBox())!;
+  const awayMore = (await rival.locator('.event-menu > summary').boundingBox())!;
+  expect(Math.abs(homeEdit.x - homeBounds.x - (awayEdit.x - awayBounds.x))).toBeLessThanOrEqual(3);
+  expect(
+    Math.abs(
+      homeBounds.x +
+        homeBounds.width -
+        homeMore.x -
+        homeMore.width -
+        (awayBounds.x + awayBounds.width - awayMore.x - awayMore.width),
+    ),
+  ).toBeLessThanOrEqual(3);
   await rival.getByRole('button', { name: 'Editar', exact: true }).click();
   await expect(
     page

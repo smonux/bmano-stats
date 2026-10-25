@@ -1,8 +1,10 @@
 import { Trash2 } from 'lucide-react';
+import type { RefObject } from 'react';
 import { tr } from '../i18n';
 import {
   definitions,
   eventState,
+  eventIssues,
   type GameEvent,
   type Match,
   type Player,
@@ -19,6 +21,7 @@ type EventFeedProps = EventActions & {
   events: GameEvent[];
   pendingOnly: boolean;
   togglePending: () => void;
+  filterRef?: RefObject<HTMLButtonElement | null>;
 };
 
 export function EventFeed({
@@ -29,6 +32,7 @@ export function EventFeed({
   togglePending,
   onEdit,
   onDelete,
+  filterRef,
 }: EventFeedProps) {
   const pendingEvents = events.filter(
     (event) => eventState(event, match, data.players) === 'pending',
@@ -39,15 +43,17 @@ export function EventFeed({
       <div className="section-heading">
         <h2>{tr('Registro de eventos')}</h2>
         <button
+          ref={filterRef}
           className={`filter-chip ${pendingOnly ? 'active' : ''}`}
           aria-pressed={pendingOnly}
           onClick={togglePending}
         >
           {pendingOnly
-            ? tr('Ver todos')
+            ? tr('Ver todos') + ' · ' + tr('{count} pendientes', { count: pendingEvents.length })
             : tr('{count} pendientes', { count: pendingEvents.length })}
         </button>
       </div>
+      <p className="caption feed-order">{tr('Más recientes primero')}</p>
       {!visibleEvents.length && (
         <Empty
           title={pendingOnly ? tr('Sin eventos pendientes') : tr('Empieza con la primera jugada')}
@@ -81,6 +87,9 @@ function EventCard({
   onDelete,
 }: EventActions & { data: Snapshot; match: Match; event: GameEvent }) {
   const state = eventState(event, match, data.players);
+  const issues = eventIssues(event, match, data.players);
+  const hasNote = event.note.trim().length > 0;
+  const hasTranscript = event.rawText.trim().length > 0;
   const primaryPlayer = data.players.find((player) => player.id === event.primaryPlayerId);
   const incomingPlayer = data.players.find((player) => player.id === event.relatedPlayerId);
   const definition = event.type ? definitions[event.type] : undefined;
@@ -103,7 +112,7 @@ function EventCard({
     statusLabel = tr('✓ Registrado · sin identificar');
   }
   return (
-    <article className={`event-card ${side} ${state}`}>
+    <article className={`event-card ${side} ${state}`} data-event-id={event.id}>
       <div className="event-icon" aria-hidden="true">
         {event.type ? <EventIcon type={event.type} /> : '?'}
       </div>
@@ -150,26 +159,63 @@ function EventCard({
             </>
           )}
         </p>
-        {event.type === 'note' && <p className="event-note">{event.note}</p>}
-        <div className="event-bottom">
-          <span className="caption">
-            {statusLabel}
-            {event.metadata.penalty ? ' · 7 m' : ''}
-            {event.metadata.infraction ? ' · ' + tr(event.metadata.infraction) : ''}
-          </span>
+        {(hasNote || hasTranscript) && (
+          <details className="event-details">
+            <summary>
+              {tr(
+                hasNote && hasTranscript
+                  ? 'Ver nota y transcripción'
+                  : hasNote
+                    ? 'Ver nota'
+                    : 'Ver transcripción original',
+              )}
+            </summary>
+            {hasNote && (
+              <div>
+                <strong>{tr('Nota')}</strong>
+                <p className="event-note">{event.note}</p>
+              </div>
+            )}
+            {hasTranscript && (
+              <div>
+                <strong>{tr('Transcripción original')}</strong>
+                <p className="event-original">{event.rawText}</p>
+              </div>
+            )}
+          </details>
+        )}
+      </div>
+      <div className="event-bottom">
+        <span className="caption">
+          {statusLabel}
+          {event.metadata.penalty ? ' · 7 m' : ''}
+          {event.metadata.infraction ? ' · ' + tr(event.metadata.infraction) : ''}
+        </span>
+        {issues.length > 0 && (
+          <ul className="event-issues">
+            {issues.map((issue) => (
+              <li key={issue}>{tr(issue)}</li>
+            ))}
+          </ul>
+        )}
+        <div className="event-actions">
           <button className="text-button" onClick={() => onEdit(event)}>
-            {tr('Editar')}
+            {tr(state === 'pending' ? 'Completar' : 'Editar')}
           </button>
-          <button
-            className="icon-button delete-event"
-            aria-label={tr('Eliminar {event} del minuto {minute}', {
-              event: tr(definition?.label ?? 'Evento'),
-              minute: event.minute,
-            })}
-            onClick={() => onDelete(event)}
-          >
-            <Trash2 size={20} />
-          </button>
+          <details className="event-menu">
+            <summary>{tr('Más')}</summary>
+            <button
+              className="danger-text delete-event"
+              aria-label={tr('Eliminar {event} del minuto {minute}', {
+                event: tr(definition?.label ?? 'Evento'),
+                minute: event.minute,
+              })}
+              onClick={() => onDelete(event)}
+            >
+              <Trash2 size={20} />
+              {tr('Eliminar evento')}
+            </button>
+          </details>
         </div>
       </div>
     </article>

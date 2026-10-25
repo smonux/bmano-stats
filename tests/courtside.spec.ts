@@ -1,3 +1,4 @@
+import { discardEditor } from './editor-helpers';
 import { editNote } from './editor-helpers';
 import { choose } from './editor-helpers';
 import { test, expect, type Page } from '@playwright/test';
@@ -157,6 +158,6 @@ for (const supported of [true, false]) {
     await expect(
       editor.getByRole('button', { name: 'Guardar evento', exact: true }),
     ).toBeInViewport({ ratio: 1 });
-    await editor.getByRole('button', { name: 'Cancelar', exact: true }).click();
+    await discardEditor(editor);
   });
 }

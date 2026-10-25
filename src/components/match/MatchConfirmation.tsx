@@ -1,4 +1,7 @@
-import type { GameEvent, Match } from '../../domain/schema';
+import { createEditorDraft } from '../event-editor/draft';
+import { draftSummary } from '../../presentation/event-summary';
+import { teamName, formatMatchDate } from '../../presentation/matches';
+import type { GameEvent, Match, Snapshot } from '../../domain/schema';
 import { repo } from '../../data/database';
 import { tr } from '../../i18n';
 import { Confirm, navigate } from '../ui';
@@ -8,9 +11,13 @@ export function MatchConfirmation({
   intent,
   match,
   close,
+  data,
+  deleted,
 }: {
   intent: MatchConfirmationIntent;
   match: Match;
+  data: Snapshot;
+  deleted?: () => void;
   close: () => void;
 }) {
   function description() {
@@ -40,8 +47,10 @@ export function MatchConfirmation({
     }
   }
   async function confirm() {
-    if (typeof intent === 'object') await repo.deleteEvent(intent.id);
-    else if (intent === 'delete') {
+    if (typeof intent === 'object') {
+      await repo.deleteEvent(intent.id);
+      deleted?.();
+    } else if (intent === 'delete') {
       await repo.deleteMatch(match.id);
       navigate('/partidos');
     } else await repo.clock(match.id, intent);
@@ -49,6 +58,24 @@ export function MatchConfirmation({
   return (
     <Confirm
       {...description()}
+      context={
+        typeof intent === 'object'
+          ? draftSummary(createEditorDraft(data, match, intent), match, data)
+          : intent === 'delete'
+            ? teamName(data, match.localTeamId) +
+              ' — ' +
+              teamName(data, match.visitorTeamId) +
+              ' · ' +
+              formatMatchDate(match.date)
+            : undefined
+      }
+      actionLabel={
+        typeof intent === 'object'
+          ? tr('Eliminar evento')
+          : intent === 'delete'
+            ? tr('Eliminar partido')
+            : undefined
+      }
       danger={intent === 'delete' || typeof intent === 'object'}
       close={close}
       confirm={confirm}

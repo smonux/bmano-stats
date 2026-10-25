@@ -1,3 +1,4 @@
+import { discardEditor } from './editor-helpers';
 import { choose } from './editor-helpers';
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
@@ -55,7 +56,7 @@ test('goalkeeper roles are explicit in the roster and saves remember zero across
   await choose(editor, 'Equipo', 'La Jota');
   expect(await readShirtNumber(editor, 'Dorsal principal')).toBe('0');
   await page.screenshot({ path: info.outputPath('remembered-goalkeeper.png'), fullPage: true });
-  await editor.getByRole('button', { name: 'Cancelar', exact: true }).click();
+  await discardEditor(editor);
   await page.goto('/#/ajustes');
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Exportar copia ZIP', exact: true }).click();

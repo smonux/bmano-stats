@@ -65,6 +65,12 @@ try {
     const measure = await page.evaluate(() => {
       const box = (selector) => {
         const element = document.querySelector(selector);
+        if (
+          !element ||
+          !element.getClientRects().length ||
+          (element.tagName !== 'SUMMARY' && element.closest('details:not([open])'))
+        )
+          return null;
         const bounds = element.getBoundingClientRect();
         return {
           width: bounds.width,
@@ -96,6 +102,7 @@ try {
           clock: box('.clock-actions button:last-child'),
           edit: box('.event-bottom .text-button'),
           delete: box('.delete-event'),
+          more: box('.event-menu > summary'),
           clearTimer: box('.timer-clear'),
           capture: box('.capture-bar > button'),
         },

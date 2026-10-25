@@ -1,3 +1,4 @@
+import { discardEditor } from './editor-helpers';
 import { choose } from './editor-helpers';
 import { test, expect } from '@playwright/test';
 import { reportFixture } from './fixtures/report';
@@ -44,5 +45,5 @@ test('catalogue creates shirt zero with digit wheels and keeps existing shirt nu
   await choose(dialog, 'Equipo', 'La Jota');
   await choose(dialog, 'Jugador principal', '#0 Cero editado');
   await expect.poll(() => readShirtNumber(dialog, 'Dorsal principal')).toBe('0');
-  await dialog.getByRole('button', { name: 'Cancelar', exact: true }).click();
+  await discardEditor(dialog);
 });

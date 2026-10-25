@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import type { Match, Snapshot } from '../../domain/schema';
+import type { GameEvent, Match, Snapshot } from '../../domain/schema';
 import { definitions } from '../../domain/event-definitions';
 import { relatedTeam } from '../../domain/events';
 import { repo } from '../../data/database';
@@ -15,19 +15,22 @@ export function VoiceReview({
   match,
   edit,
   close,
+  saved,
 }: {
   result: RecognizedEvent;
   data: Snapshot;
   match: Match;
   edit: () => void;
   close: () => void;
+  saved?: (event: GameEvent, pending: boolean) => void;
 }) {
   const { draft } = result;
   const action = useAction();
   const saveButton = useRef<HTMLButtonElement>(null);
   const saveReview = () => {
     void action.run(async () => {
-      await repo.saveEvent(draft);
+      const event = await repo.saveEvent(draft);
+      saved?.(event, issues.length > 0);
       close();
     });
   };

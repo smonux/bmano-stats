@@ -5,10 +5,18 @@ import {
 import { EventFeed } from '../components/EventFeed';
 import { ExclusionTimers } from '../components/ExclusionTimers';
 import { tr } from '../i18n';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Pause, Play, Plus, Trash2, Flag, Timer, BellRing } from 'lucide-react';
 import { repo } from '../data/database';
-import { chronological, elapsed, type GameEvent, type Match, type Snapshot } from '../domain/model';
+import {
+  chronological,
+  elapsed,
+  eventState,
+  definitions,
+  type GameEvent,
+  type Match,
+  type Snapshot,
+} from '../domain/model';
 import { exclusionRemaining } from '../domain/exclusions';
 import { ErrorMessage, PageTitle, useAction } from '../components/ui';
 import { VoiceCapture } from '../components/VoiceCapture';
@@ -20,6 +28,50 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
   const [editing, setEditing] = useState<GameEvent | 'new' | null>(null);
   const [pendingOnly, setPendingOnly] = useState(false);
   const [confirm, setConfirm] = useState<MatchConfirmationIntent | null>(null);
+  const pendingFilter = useRef<HTMLButtonElement>(null);
+  const returnToFeed = useRef(false);
+  const [notice, setNotice] = useState('');
+  useLayoutEffect(() => {
+    if (!editing && !confirm && returnToFeed.current) {
+      returnToFeed.current = false;
+      const button = pendingFilter.current;
+      if (!button) return;
+      button.focus({ preventScroll: true });
+      const rect = button.getBoundingClientRect();
+      const sticky = document.querySelector('.match-header');
+      const top =
+        sticky && getComputedStyle(sticky).position === 'sticky'
+          ? sticky.getBoundingClientRect().bottom + 8
+          : 8;
+      const bottom =
+        document.querySelector('.capture-bar')?.getBoundingClientRect().top ?? innerHeight;
+      if (rect.top < top) window.scrollBy(0, rect.top - top);
+      else if (rect.bottom > bottom) window.scrollBy(0, rect.bottom - bottom + 8);
+    }
+  }, [editing, confirm]);
+  function eventSaved(event: GameEvent, pending: boolean) {
+    returnToFeed.current = Boolean(
+      pendingOnly &&
+      editing &&
+      editing !== 'new' &&
+      eventState(editing, match, data.players) === 'pending',
+    );
+    const team =
+      event.teamId === match.localTeamId
+        ? tr('Equipo 1 (nuestro)')
+        : event.teamId === match.visitorTeamId
+          ? tr('Equipo 2 (rival)')
+          : '';
+    setNotice(
+      [
+        tr(event.type ? definitions[event.type].label : 'Evento sin indicar'),
+        team,
+        tr(pending ? '! Pendiente · no computa' : 'Evento guardado'),
+      ]
+        .filter(Boolean)
+        .join(' · '),
+    );
+  }
   const [counterDialog, setCounterDialog] = useState(false);
   const action = useAction();
   const [now, setNow] = useState(Date.now());
@@ -187,21 +239,41 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
         <EventFeed
           data={data}
           match={match}
+          filterRef={pendingFilter}
           events={events}
           pendingOnly={pendingOnly}
           togglePending={() => setPendingOnly(!pendingOnly)}
-          onEdit={setEditing}
-          onDelete={setConfirm}
+          onEdit={(event) => {
+            setNotice('');
+            setEditing(event);
+          }}
+          onDelete={(event) => {
+            setNotice('');
+            setConfirm(event);
+          }}
         />
       )}
       <div className="capture-bar">
-        <button className="primary" onClick={() => setEditing('new')}>
+        {notice && (
+          <p className="capture-feedback" role="status">
+            {notice}
+          </p>
+        )}
+        <button
+          className="primary"
+          onClick={() => {
+            setNotice('');
+            setEditing('new');
+          }}
+        >
           <Plus size={19} /> {tr('Evento manual')}
         </button>
         <VoiceCapture
           key={match.id}
           data={data}
           match={match}
+          saved={eventSaved}
+          started={() => setNotice('')}
           allowReview={!editing && !confirm && !counterDialog}
         />
       </div>
@@ -211,21 +283,34 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
             <Flag size={16} /> {tr('Finalizar partido')}
           </button>
         )}
-        <button className="text-button danger-text" onClick={() => setConfirm('delete')}>
-          <Trash2 size={15} /> {tr('Eliminar partido')}
-        </button>
+        <details className="match-more">
+          <summary>{tr('Más acciones del partido')}</summary>
+          <button className="text-button danger-text" onClick={() => setConfirm('delete')}>
+            <Trash2 size={15} />
+            {tr('Eliminar partido')}
+          </button>
+        </details>
       </div>
       {editing && (
         <EventEditor
           key={editing === 'new' ? 'new' : editing.id}
           data={data}
           match={match}
+          saved={eventSaved}
           event={editing === 'new' ? undefined : editing}
           close={() => setEditing(null)}
         />
       )}{' '}
       {confirm && (
-        <MatchConfirmation intent={confirm} match={match} close={() => setConfirm(null)} />
+        <MatchConfirmation
+          deleted={() => {
+            returnToFeed.current = true;
+          }}
+          data={data}
+          intent={confirm}
+          match={match}
+          close={() => setConfirm(null)}
+        />
       )}
     </>
   );
