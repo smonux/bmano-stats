@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 1280 1280" role="img" aria-labelledby="title desc">
+  <title id="title">Handball Stats</title>
+  <desc id="desc">Balón de balonmano con costuras y contorno amarillos sobre fondo negro.</desc>
+  <rect width="1280" height="1280" fill="#000000"/>
+  <g transform="translate(12 26)" fill="none" stroke="#FFD600" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="628" cy="614" r="477"/>
+    <path d="M538 333 Q625 322 714 330 L773 484 L627 580 L481 485 Z"/>
+    <path d="M538 333 Q496 283 445 253 Q484 196 533 147
+             M714 330 Q763 284 807 253 Q773 195 724 147
+             M445 253 Q346 271 267 313
+             M807 253 Q898 272 982 316"/>
+    <path d="M267 313 Q250 385 245 461 L335 554 L481 485
+             M982 316 Q998 386 1004 461 L916 555 L773 484
+             M245 461 Q194 505 155 555
+             M1004 461 Q1063 507 1102 555"/>
+    <path d="M335 554 L322 713 L477 811 L627 715 L627 580
+             M627 715 L779 812 L927 717 L916 555
+             M322 713 L232 769 Q239 846 269 916
+             M927 717 L1018 769 Q1009 846 984 919
+             M232 769 L158 697
+             M1018 769 L1099 696"/>
+    <path d="M477 811 L528 937 Q627 941 729 936 L779 812
+             M528 937 L448 1000 L269 916
+             M729 936 L808 1001 L984 919
+             M448 1000 L512 1077
+             M808 1001 L746 1076"/>
+  </g>
+</svg>
