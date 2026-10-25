@@ -1,5 +1,9 @@
 /* Responsive rules retain their cascade order; superseded declarations have been removed. */
 
+.statistics-team-name {
+  overflow-wrap: anywhere;
+  margin-bottom: 12px;
+}
 .metrics {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

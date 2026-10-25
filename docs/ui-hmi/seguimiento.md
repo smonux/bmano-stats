@@ -60,3 +60,30 @@ Se permite que la cabecera se desplace normalmente cuando la altura disponible e
 - Regresión independiente en `hmi-short-viewport.spec.ts`, correcta en móvil y escritorio; selección mediante puntero normal, sin clicks forzados ni sleeps.
 - [Antes y después a 320 × 568](evidencias/01-pantalla-corta). El antes procede de un fotograma de la traza fallida; el después muestra la selección rival realizada con éxito. Mismos nombres y datos, con diferente posición de scroll durante el intento.
 - Se conservan distribución y tamaño actuales de exclusiones y barra inferior. Sus mejoras de legibilidad y espacio siguen pendientes de las entregas siguientes.
+
+### Contexto inicial de estadísticas — HMI-21
+
+- En un partido, el equipo inicial es `localTeamId` (Equipo 1 desde la perspectiva del anotador), no el primer equipo del catálogo. Una elección explícita del rival se conserva ante actualizaciones de datos/reloj.
+- Otro partido empieza desde su propia perspectiva. Las estadísticas globales conservan su selección válida y filtros habituales.
+- Se muestra el nombre completo del equipo junto a sus estadísticas y se permite ajuste de línea. Los cálculos y formatos de datos no cambian.
+- `hmi-statistics.spec.ts`: dos pruebas correctas entre móvil y escritorio, con nuestro equipo situado después del contrario en el orden real de IndexedDB. Cubre teclado, actualización del reloj, cambio de partido, filtro global y recarga.
+- Capturas de [estadísticas móvil](evidencias/01-identidad/estadisticas-390x844.png) y [escritorio](evidencias/01-identidad/estadisticas-1440x1000.png).
+
+### Validación al cerrar esta primera parte
+
+- Formato, TypeScript, 135 pruebas unitarias y build correctos; `dist` regenerado.
+- 22 recorridos de navegador pertinentes correctos: 14 de regresión existentes, cuatro de identidad, dos de contexto de estadísticas y dos de pantalla corta. Los dos últimos casos se separaron en suites propias y se repitieron (4/4) para acompañar sus commits.
+- Las primeras ejecuciones detectaron errores en los datos de prueba: el orden de importación no cambia el orden por ID de IndexedDB; los nombres largos necesitan actualizar también `nameKey`; una primera visita instala el service worker y la siguiente navegación queda bajo su control. Se corrigieron las pruebas, sin modificar validación de copias ni activación del worker para hacerlas pasar.
+- La oclusión de la cabecera a 320 × 568 fue un fallo real de interfaz y se corrigió por separado. Las capturas se revisaron visualmente.
+- Sin merge, push ni despliegue. `main` permanece en `138fbf1`.
+
+Comando conjunto para reproducir los recorridos de este bloque:
+
+```sh
+CHROMIUM_PATH=/ruta/a/chrome-headless-shell npx playwright test \
+  tests/courtside.spec.ts tests/editor-viewport.spec.ts tests/event-feed.spec.ts \
+  tests/hmi-identity.spec.ts tests/hmi-statistics.spec.ts tests/hmi-short-viewport.spec.ts \
+  --workers=1 --output=test-results/hmi-01
+```
+
+Siguiente bloque: completar entrega 1 con tipografía, contraste y objetivos táctiles, ajustando la distribución para que no se recorten textos o controles. Después, entrega 2 del editor. El inicio manual explícito sin voz queda aprobado y pendiente de su bloque separado. No se ha validado aún la matriz física de navegadores/tecnologías de asistencia.

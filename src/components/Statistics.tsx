@@ -14,10 +14,14 @@ export function Statistics({ data, matchId }: { data: Snapshot; matchId?: string
   );
   const teamIds = new Set(matches.flatMap((match) => [match.localTeamId, match.visitorTeamId]));
   const teams = data.teams.filter((team) => !team.deletedAt && (!matchId || teamIds.has(team.id)));
-  const [selectedTeam, setTeam] = useState(teams[0]?.id ?? '');
-  const teamId = teams.some((team) => team.id === selectedTeam)
-    ? selectedTeam
-    : (teams[0]?.id ?? '');
+  const ownTeamId = matchId
+    ? matches.find((match) => match.id === matchId)?.localTeamId
+    : undefined;
+  const initialTeamId = teams.find((team) => team.id === ownTeamId)?.id ?? teams[0]?.id ?? '';
+  const [selection, setSelection] = useState({ matchId, teamId: initialTeamId });
+  // A new match starts from its own perspective; live updates keep an explicit selection.
+  const selectedTeam = selection.matchId === matchId ? selection.teamId : initialTeamId;
+  const teamId = teams.some((team) => team.id === selectedTeam) ? selectedTeam : initialTeamId;
   const [selectedMatch, setMatch] = useState('all');
   const [view, setView] = useState('team');
   const [selectedPlayer, setPlayer] = useState<string | null>(null);
@@ -53,7 +57,7 @@ export function Statistics({ data, matchId }: { data: Snapshot; matchId?: string
             label: team.name,
           }))}
           change={(teamId) => {
-            setTeam(teamId);
+            setSelection({ matchId, teamId });
             setMatch('all');
             setPlayer(null);
           }}
@@ -79,6 +83,7 @@ export function Statistics({ data, matchId }: { data: Snapshot; matchId?: string
           />
         )}
       </div>
+      <h3 className="statistics-team-name">{teamName(teamId)}</h3>
       <div className="tabs" role="tablist" aria-label={tr('Tipo de estadísticas')}>
         <button
           role="tab"
