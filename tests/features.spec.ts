@@ -59,14 +59,14 @@ test('first-use gallery changes language, persists completion and reopens from s
     .click();
   await page.getByRole('button', { name: 'View welcome guide' }).click();
   await expect(dialog).toBeVisible();
-  await dialog.getByRole('button', { name: 'Skip guide' }).click();
+  await dialog.getByRole('button', { name: 'Open app; guide available in Settings' }).click();
   for (const [language, label] of [
-    ['Español', 'Tus datos'],
-    ['Deutsch', 'Deine Daten'],
-    ['Français', 'Vos données'],
-    ['Italiano', 'I tuoi dati'],
-    ['Nederlands', 'Je gegevens'],
-    ['Polski', 'Twoje dane'],
+    ['Español', 'Ajustes'],
+    ['Deutsch', 'Einstellungen'],
+    ['Français', 'Réglages'],
+    ['Italiano', 'Impostazioni'],
+    ['Nederlands', 'Instellingen'],
+    ['Polski', 'Ustawienia'],
   ]) {
     await selectWheelOption(page.locator('.language-picker').getByRole('listbox'), language);
     await expect(page.getByRole('heading', { name: label, exact: true })).toBeVisible();

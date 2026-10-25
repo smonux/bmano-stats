@@ -8,7 +8,7 @@ function Dashboard({ data }: { data: Snapshot }) {
   const total = data.matches.filter((match) => !match.deletedAt).length;
   return (
     <>
-      <div className="home-heading">
+      <div className={`home-heading ${active.length ? 'has-active' : ''}`}>
         <span className="eyebrow">{tr('A PIE DE PISTA')}</span>
         <h1>{tr('Cada jugada cuenta.')}</h1>
         <p>
@@ -17,6 +17,21 @@ function Dashboard({ data }: { data: Snapshot }) {
           {tr('Más atención en el partido.')}
         </p>
       </div>
+      {active.length > 0 && (
+        <section className="section">
+          <div className="section-heading">
+            <h2>{tr('Volver a la pista')}</h2>
+            <span className="badge live">
+              {active.length} {tr('en curso')}
+            </span>
+          </div>
+          <div className="match-grid">
+            {active.map((match) => (
+              <MatchCard key={match.id} data={data} match={match} />
+            ))}
+          </div>
+        </section>
+      )}
       <div className="dashboard-grid">
         <button className="new-match-card" onClick={() => navigate('/nuevo')}>
           <div className="court" aria-hidden="true">
@@ -62,21 +77,6 @@ function Dashboard({ data }: { data: Snapshot }) {
           <ArrowRight />
         </button>
       </div>
-      {active.length > 0 && (
-        <section className="section">
-          <div className="section-heading">
-            <h2>{tr('Volver a la pista')}</h2>
-            <span className="badge live">
-              {active.length} {tr('en curso')}
-            </span>
-          </div>
-          <div className="match-grid">
-            {active.map((match) => (
-              <MatchCard key={match.id} data={data} match={match} />
-            ))}
-          </div>
-        </section>
-      )}
       <div className="local-note">
         <ShieldCheck size={19} />
         <p>

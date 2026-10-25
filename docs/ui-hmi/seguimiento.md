@@ -2,7 +2,7 @@
 
 Rama: `cambios-hmi`, creada desde `main` en `138fbf1`. Trabajo por entregas; sin merge ni publicación.
 
-Estado vigente: entregas 1–6 completadas. La siguiente es la entrega 7; la tabla del objetivo ampliado resume todos los bloques pendientes.
+Estado vigente: entregas 1–7 completadas. La siguiente es inicio manual explícito; la tabla del objetivo ampliado resume todos los bloques pendientes.
 
 ## Decisiones aprobadas
 
@@ -136,7 +136,7 @@ Samuel pide completar todos los bloques pendientes, con commit y etiqueta por bl
 | 4                       | Motivos/Completar en registro, lectura de detalles, confirmaciones, acuse y protección de borrador   | Completado · `hmi-04-registro-seguro` |
 | 5                       | Revisión de voz, PTT, pestañas y formularios/modales compartidos                                     | Completado · `hmi-05-accesibilidad`   |
 | 6                       | Equipos comparables, denominadores y tabla del gráfico                                               | Completado · `hmi-06-estadisticas`    |
-| 7                       | Inicio, ajustes, bienvenida y reproducción de transición de carga                                    | Pendiente                             |
+| 7                       | Inicio, ajustes, bienvenida y reproducción de transición de carga                                    | Completado · `hmi-07-inicio`          |
 | Manual                  | Inicio explícito solo con entrada manual, conservando preparación para usar voz                      | Pendiente                             |
 | Deshacer                | Reversión de una creación, incluido efecto sobre último portero; sin prometer reversión de ediciones | Pendiente                             |
 | Contador tras exclusión | Acción explícita precargada; evento y contador siguen independientes                                 | Pendiente                             |
@@ -200,3 +200,11 @@ Siguiente entrega vigente: 6, estadísticas. Siguen pendientes 7, inicio manual 
 Ambos equipos se eligen directamente en el partido, en orden 1/2 y con nombre completo, conservando la perspectiva inicial y elecciones explícitas. El catálogo global sigue con sus controles actuales. La eficacia muestra goles/lanzamientos del cálculo existente; sin intentos mantiene «—» y explicación. Cada gráfico ofrece una tabla plegada con inicio del tiempo y cada gol por minuto/equipo, sin duplicar puntos auxiliares del trazado.
 
 Validación: seis recorridos de estadísticas/viewport correctos, cinco de PDF correctos y una omisión prevista del PDF largo móvil; formato, TypeScript, build y 135 unitarias correctos. Se prueban segundo tiempo acumulado, teclado, cambio de partido, nombres largos a 320 px y jugador sin muestra. Textos traducidos a seis idiomas adicionales; sin cambios del cálculo ni persistencia. [Capturas y límites](evidencias/06-estadisticas/README.md). Etiqueta: `hmi-06-estadisticas`. Siguiente: 7, inicio/ajustes/bienvenida y transición de carga.
+
+## Entrega 7: inicio, ajustes, bienvenida y carga
+
+Partidos activos antes de las tarjetas de navegación; presentación más compacta cuando existen. Ajustes distingue Idioma, Voz y Datos, explica ZIP restaurable/PDF para compartir y pérdida de datos locales al borrar el navegador. La exportación anuncia descarga iniciada, sin asegurar que se haya guardado. Guía recuperable con acceso directo a la aplicación, conservando gramática, perspectiva, notas y contadores; idioma solo al principio.
+
+HMI-32 reproducido con creación real y entrega retrasada del snapshot: el error aparecía antes de conocer los nuevos datos. Ahora una ruta ausente en el snapshot espera lectura autoritativa; un ID inexistente sí produce el error. Dos recorridos correctos. Sin temporizador ni cambio de persistencia.
+
+La regresión de interfaz detectó movimiento de fila al enfocar rueda con puntero: se evita moverla entre pulsación y clic. Validación final: 29 recorridos de inicio/ajustes/idiomas/voz/copias/contadores/teclado correctos antes de que el proceso recibiera SIGTERM; los dos recorridos de guía pasan en una ejecución independiente. Formato, TypeScript y build correctos; las 135 unitarias del bloque anterior siguen cubriendo un dominio sin cambios. [Capturas, reproducción y límites](evidencias/07-inicio/README.md). Etiqueta: `hmi-07-inicio`. Siguiente: inicio manual explícito.

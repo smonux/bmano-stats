@@ -270,3 +270,9 @@
     font-size: clamp(16px, 5vw, 21px);
   }
 }
+.home-heading.has-active {
+  margin-bottom: 12px;
+}
+.home-heading.has-active p {
+  display: none;
+}

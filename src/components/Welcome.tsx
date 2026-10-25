@@ -30,7 +30,7 @@ export function Welcome({ close }: { close: () => void }) {
     <Modal title={tr('Guía de pista')} close={finish} className="welcome-dialog">
       <div className="welcome">
         <div className="welcome-content" ref={content}>
-          <LanguagePicker />
+          {step === 0 && <LanguagePicker />}
           <div className="welcome-visual" aria-hidden="true">
             <slide.icon size={44} />
             <Illustration kind={slide.illustration} />
@@ -83,7 +83,7 @@ export function Welcome({ close }: { close: () => void }) {
             </button>
           </div>
           <button className="text-button full" onClick={finish}>
-            {tr('Omitir guía')}
+            {tr('Ir a la aplicación; guía disponible en Ajustes')}
           </button>
         </footer>
       </div>

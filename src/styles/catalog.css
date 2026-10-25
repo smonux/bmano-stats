@@ -202,3 +202,6 @@
   vertical-align: middle;
   margin-inline-end: 8px;
 }
+.settings-panel + .settings-panel {
+  margin-top: 20px;
+}

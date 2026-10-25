@@ -55,7 +55,7 @@ test('left drawer contains all destinations, closes on navigation and restores f
   await expect(opener).toBeFocused();
   await opener.click();
   await drawer.getByRole('link', { name: 'Ajustes', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Tus datos', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Ajustes', exact: true })).toBeVisible();
 });
 
 test('readable exclusion controls and digit wheels preserve optional zero and roster selection', async ({

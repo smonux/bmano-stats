@@ -33,7 +33,10 @@ test('welcome explains ordered voice grammar and Spanish notes with reachable co
   await page.screenshot({ path: info.outputPath('voice-notes.png') });
   for (const height of [664, 520]) {
     await page.setViewportSize({ width, height });
-    const skip = guide.getByRole('button', { name: 'Omitir guía', exact: true });
+    const skip = guide.getByRole('button', {
+      name: 'Ir a la aplicación; guía disponible en Ajustes',
+      exact: true,
+    });
     const next = guide.getByRole('button', { name: 'Siguiente', exact: true });
     for (const control of [skip, next]) {
       const box = (await control.boundingBox())!;

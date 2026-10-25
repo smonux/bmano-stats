@@ -50,6 +50,7 @@ export function WheelPicker<Value extends string>({
   hideLabel = false,
 }: WheelPickerProps<Value>) {
   const wheel = useRef<HTMLDivElement>(null);
+  const pointerFocus = useRef(false);
   const scrollTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const optionId = useId();
   const selectedIndex = Math.max(
@@ -160,12 +161,18 @@ export function WheelPicker<Value extends string>({
           aria-activedescendant={options.length ? `${optionId}-${selectedIndex}` : undefined}
           tabIndex={disabled ? -1 : 0}
           onFocus={() => {
+            // Do not move the row between pointer-down and click.
+            if (pointerFocus.current) return;
             requestAnimationFrame(() => {
               if (wheel.current) revealSelection(wheel.current);
             });
           }}
           onPointerDown={() => {
-            if (!disabled) wheel.current?.focus({ preventScroll: true });
+            if (!disabled) {
+              pointerFocus.current = true;
+              wheel.current?.focus({ preventScroll: true });
+              pointerFocus.current = false;
+            }
           }}
           onBlur={() => {
             clearTimeout(scrollTimer.current);

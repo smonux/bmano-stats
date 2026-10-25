@@ -8,6 +8,29 @@ import { Teams } from './Teams';
 import { Matches } from './Matches';
 import { MatchView } from './MatchView';
 import { SettingsView } from './SettingsView';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { db } from '../data/database';
+
+/** A route can advance before the live snapshot delivers a newly committed match. */
+function MatchRoute({ id, data }: { id: string; data: Snapshot }) {
+  const present = data.matches.some((item) => item.id === id && !item.deletedAt);
+  const resolved = useLiveQuery(() => (present ? data : db.snapshot()), [id, data, present]);
+  const fresh = present ? data : resolved;
+  if (!fresh)
+    return (
+      <div className="empty" role="status">
+        {tr('Abriendo tus datos…')}
+      </div>
+    );
+  const match = fresh.matches.find((item) => item.id === id && !item.deletedAt);
+  return match ? (
+    <MatchView key={id} data={fresh} match={match} />
+  ) : (
+    <Empty title={tr('Partido no encontrado')}>
+      <button onClick={() => navigate('/partidos')}>{tr('Ver partidos')}</button>
+    </Empty>
+  );
+}
 
 export function AppPage({
   data,
@@ -31,14 +54,7 @@ export function AppPage({
   } else if (parts[0] === 'equipos') {
     page = <Teams key={parts[1] ?? 'list'} data={data} id={parts[1]} />;
   } else if (parts[0] === 'partidos' && parts[1]) {
-    const match = data.matches.find((match) => match.id === parts[1] && !match.deletedAt);
-    page = match ? (
-      <MatchView key={match.id} data={data} match={match} />
-    ) : (
-      <Empty title={tr('Partido no encontrado')}>
-        <button onClick={() => navigate('/partidos')}>{tr('Ver partidos')}</button>
-      </Empty>
-    );
+    page = <MatchRoute key={parts[1]} id={parts[1]} data={data} />;
   } else if (parts[0] === 'partidos') {
     page = <Matches data={data} />;
   } else if (parts[0] === 'estadisticas') {

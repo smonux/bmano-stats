@@ -15,11 +15,14 @@ function SettingsView({ showWelcome }: { showWelcome: () => void }) {
   return (
     <>
       <PageTitle
-        title={tr('Tus datos')}
+        title={tr('Ajustes')}
         subtitle={tr('Guardados en este dispositivo. Siempre a tu alcance.')}
       />
       <section className="panel settings-panel">
+        <h2>{tr('Idioma de la aplicación')}</h2>
         <LanguagePicker />
+      </section>
+      <section className="panel settings-panel">
         <VoicePreparation />
         <p className="caption">
           {tr(
@@ -27,7 +30,14 @@ function SettingsView({ showWelcome }: { showWelcome: () => void }) {
           )}
         </p>
         <button onClick={showWelcome}>{tr('Ver bienvenida')}</button>
-        <hr />
+      </section>
+      <section className="panel settings-panel">
+        <h2>{tr('Datos y copias')}</h2>
+        <p className="muted">
+          {tr(
+            'Borrar los datos del navegador elimina los partidos locales. Conserva una copia ZIP fuera de este dispositivo. El PDF comparte un partido, pero no sirve para restaurarlo.',
+          )}
+        </p>
         <ShieldCheck size={30} />
         <h2>{tr('Una copia, por tranquilidad')}</h2>
         <p className="muted">
@@ -52,7 +62,11 @@ function SettingsView({ showWelcome }: { showWelcome: () => void }) {
               downloadLink.download = `handball-stats-${todayDateString()}.zip`;
               downloadLink.click();
               setTimeout(() => URL.revokeObjectURL(url), 1000);
-              setNotice(tr('Copia exportada. Guarda el archivo en un lugar seguro.'));
+              setNotice(
+                tr(
+                  'Descarga iniciada. Comprueba que el ZIP se ha guardado y consérvalo en un lugar seguro.',
+                ),
+              );
             })
           }
         >
