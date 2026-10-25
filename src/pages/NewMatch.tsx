@@ -1,7 +1,7 @@
 import { VoicePreparation } from '../components/VoicePreparation';
 import { useVoiceSetup } from '../voice/setup';
 import { tr } from '../i18n';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ArrowRight, Plus } from 'lucide-react';
 import { repo, type TeamChoice } from '../data/database';
 import { type Snapshot } from '../domain/model';
@@ -13,15 +13,17 @@ function TeamPicker({
   data,
   value,
   change,
+  id,
 }: {
   label: string;
   data: Snapshot;
   value: TeamChoice;
   change: (v: TeamChoice) => void;
+  id: string;
 }) {
   const isNew = value.name !== undefined;
   return (
-    <fieldset className="team-picker">
+    <fieldset id={id} className="team-picker">
       <legend>{label}</legend>
       <div className="picker-row">
         {isNew ? (
@@ -99,6 +101,27 @@ function NewMatch({ data }: { data: Snapshot }) {
   const [date, setDate] = useState(todayDateString());
   const action = useAction();
   const setup = useVoiceSetup();
+  const form = useRef<HTMLFormElement>(null);
+  const voiceReady = setup.phase === 'ready' && setup.languageChosen;
+  const hasOurTeam = Boolean(local.id || local.name?.trim());
+  const hasRival = Boolean(visitor.id || visitor.name?.trim());
+  const sameTeam = Boolean(local.id && local.id === visitor.id);
+  const teamsReady = hasOurTeam && hasRival && !sameTeam && Boolean(date);
+  const focusChoice = (id: string) => {
+    document.getElementById(id)?.querySelector<HTMLElement>('input, [role="listbox"]')?.focus();
+  };
+  const create = (mode: 'voice' | 'manual') => {
+    if (!form.current?.reportValidity()) return;
+    void action.run(async () => {
+      if (mode === 'voice' && !voiceReady) {
+        throw new Error(
+          tr('Carga el reconocimiento de voz y elige el idioma antes de iniciar el partido.'),
+        );
+      }
+      const match = await repo.createMatch(local, visitor, date);
+      navigate(`/partidos/${match.id}`);
+    });
+  };
   return (
     <>
       <PageTitle title={tr('Nuevo partido')} subtitle={tr('Lo esencial para empezar.')} />
@@ -112,7 +135,7 @@ function NewMatch({ data }: { data: Snapshot }) {
             {tr(
               ['checking', 'cached', 'loading'].includes(setup.phase)
                 ? 'Preparando reconocimiento de voz desde este dispositivo…'
-                : 'El reconocimiento de voz necesita atención antes de empezar.',
+                : 'La voz necesita atención. Puedes iniciar con entrada manual.',
             )}
           </p>
           {setup.error && <ErrorMessage text={setup.error} />}
@@ -120,25 +143,25 @@ function NewMatch({ data }: { data: Snapshot }) {
         </div>
       ) : null}
       <form
+        ref={form}
         className="panel form-panel"
         onSubmit={(inputEvent) => {
           inputEvent.preventDefault();
-          action.run(async () => {
-            if (setup.phase !== 'ready' || !setup.languageChosen) {
-              throw new Error(
-                tr('Carga el reconocimiento de voz y elige el idioma antes de iniciar el partido.'),
-              );
-            }
-            const match = await repo.createMatch(local, visitor, date);
-            navigate(`/partidos/${match.id}`);
-          });
+          create('voice');
         }}
       >
-        <TeamPicker label={tr('Equipo 1 (nuestro)')} data={data} value={local} change={setLocal} />
+        <TeamPicker
+          id="our-team-choice"
+          label={tr('Equipo 1 (nuestro)')}
+          data={data}
+          value={local}
+          change={setLocal}
+        />
         <div className="versus">
           <span>VS</span>
         </div>
         <TeamPicker
+          id="rival-team-choice"
           label={tr('Equipo 2 (rival)')}
           data={data}
           value={visitor}
@@ -147,6 +170,7 @@ function NewMatch({ data }: { data: Snapshot }) {
         <label>
           {tr('Fecha')}
           <input
+            id="match-date"
             type="date"
             value={date}
             required
@@ -154,19 +178,44 @@ function NewMatch({ data }: { data: Snapshot }) {
           />
         </label>
         <ErrorMessage text={action.error} />
-        <button
-          className="primary full"
-          disabled={
-            action.busy ||
-            setup.phase !== 'ready' ||
-            !setup.languageChosen ||
-            !(local.id || local.name?.trim()) ||
-            !(visitor.id || visitor.name?.trim())
-          }
-        >
+        <div className="start-requirements">
+          {!hasOurTeam && (
+            <button type="button" onClick={() => focusChoice('our-team-choice')}>
+              {tr('Elige nuestro equipo')}
+            </button>
+          )}
+          {(!hasRival || sameTeam) && (
+            <button type="button" onClick={() => focusChoice('rival-team-choice')}>
+              {tr(sameTeam ? 'Elige un rival diferente' : 'Elige el equipo rival')}
+            </button>
+          )}
+          {!date && (
+            <button type="button" onClick={() => document.getElementById('match-date')?.focus()}>
+              {tr('Elige la fecha')}
+            </button>
+          )}
+          {!voiceReady && (
+            <p className="caption">
+              {tr(
+                'La voz necesita preparación. Puedes iniciar solo con entrada manual y prepararla después en Ajustes.',
+              )}
+            </p>
+          )}
+        </div>
+        <button className="primary full" disabled={action.busy || !voiceReady || !teamsReady}>
           {action.busy ? tr('Creando…') : tr('Iniciar partido')}
           <ArrowRight size={18} />
         </button>
+        {!voiceReady && (
+          <button
+            type="button"
+            className="full"
+            disabled={action.busy || !teamsReady}
+            onClick={() => create('manual')}
+          >
+            {tr('Iniciar solo con entrada manual')}
+          </button>
+        )}
         <p className="caption">{tr('No necesitas una plantilla para registrar el partido.')}</p>
       </form>
     </>

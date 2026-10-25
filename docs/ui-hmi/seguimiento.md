@@ -2,7 +2,7 @@
 
 Rama: `cambios-hmi`, creada desde `main` en `138fbf1`. Trabajo por entregas; sin merge ni publicación.
 
-Estado vigente: entregas 1–7 completadas. La siguiente es inicio manual explícito; la tabla del objetivo ampliado resume todos los bloques pendientes.
+Estado vigente: entregas 1–7 e inicio manual completados. La siguiente es Deshacer; la tabla del objetivo ampliado resume todos los bloques pendientes.
 
 ## Decisiones aprobadas
 
@@ -137,7 +137,7 @@ Samuel pide completar todos los bloques pendientes, con commit y etiqueta por bl
 | 5                       | Revisión de voz, PTT, pestañas y formularios/modales compartidos                                     | Completado · `hmi-05-accesibilidad`   |
 | 6                       | Equipos comparables, denominadores y tabla del gráfico                                               | Completado · `hmi-06-estadisticas`    |
 | 7                       | Inicio, ajustes, bienvenida y reproducción de transición de carga                                    | Completado · `hmi-07-inicio`          |
-| Manual                  | Inicio explícito solo con entrada manual, conservando preparación para usar voz                      | Pendiente                             |
+| Manual                  | Inicio explícito solo con entrada manual, conservando preparación para usar voz                      | Completado · `hmi-manual`             |
 | Deshacer                | Reversión de una creación, incluido efecto sobre último portero; sin prometer reversión de ediciones | Pendiente                             |
 | Contador tras exclusión | Acción explícita precargada; evento y contador siguen independientes                                 | Pendiente                             |
 | Auditoría final         | Matriz transversal, regresión de voz/PDF/ZIP/JSON, build, evidencia y límites físicos                | Pendiente                             |
@@ -208,3 +208,9 @@ Partidos activos antes de las tarjetas de navegación; presentación más compac
 HMI-32 reproducido con creación real y entrega retrasada del snapshot: el error aparecía antes de conocer los nuevos datos. Ahora una ruta ausente en el snapshot espera lectura autoritativa; un ID inexistente sí produce el error. Dos recorridos correctos. Sin temporizador ni cambio de persistencia.
 
 La regresión de interfaz detectó movimiento de fila al enfocar rueda con puntero: se evita moverla entre pulsación y clic. Validación final: 29 recorridos de inicio/ajustes/idiomas/voz/copias/contadores/teclado correctos antes de que el proceso recibiera SIGTERM; los dos recorridos de guía pasan en una ejecución independiente. Formato, TypeScript y build correctos; las 135 unitarias del bloque anterior siguen cubriendo un dominio sin cambios. [Capturas, reproducción y límites](evidencias/07-inicio/README.md). Etiqueta: `hmi-07-inicio`. Siguiente: inicio manual explícito.
+
+## Inicio manual explícito
+
+Acción separada «Iniciar solo con entrada manual» cuando la voz aún no está lista. El envío habitual sigue exigiendo voz preparada/idioma; Enter en un campo no activa el modo manual. Requisitos de equipos distintos y fecha junto a las acciones, con salto al control correspondiente. Se reutiliza `createMatch`, incluida su transacción y rechazo de nombres duplicados; PTT conserva sus comprobaciones reales. Los avisos hablan de preparar para usar voz, sin contradecir la nueva alternativa.
+
+Validación: cuatro recorridos manuales finales correctos en móvil/escritorio, más seis de ciclo normal/preferencias/manual previos (solapados). Incluye ausencia de idioma/modelo, offline, Enter, mismo equipo, fecha vacía, nombre duplicado corregible, nombres largos, editor neutral y recarga. Formato, TypeScript, build y 135 unitarias correctos. [Capturas y límites](evidencias/manual/README.md). Etiqueta: `hmi-manual`. Siguiente: Deshacer creación, con consecuencias sobre jugadores/último portero.

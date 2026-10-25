@@ -33,7 +33,7 @@ export function VoicePreparation({ live = false }: { live?: boolean }) {
       {missing && (
         <p role="alert" className="preparation-alert">
           {tr(
-            'El reconocimiento de voz no está preparado. Elige el idioma y cárgalo antes de iniciar el partido.',
+            'El reconocimiento de voz no está preparado. Elige el idioma y cárgalo para usar voz.',
           )}
         </p>
       )}

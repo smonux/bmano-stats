@@ -1,6 +1,7 @@
 import { hmiAccessibilityMessages } from './hmi-accessibility';
 import { hmiStatisticsMessages } from './hmi-statistics';
 import { hmiHomeMessages } from './hmi-home';
+import { hmiManualMessages } from './hmi-manual';
 import { hmiFeedMessages } from './hmi-feed';
 import { hmiCounterMessages } from './hmi-counters';
 import { hmiMessages } from './hmi';
@@ -17,6 +18,7 @@ export const catalog: Record<string, readonly string[]> = {
   ...hmiAccessibilityMessages,
   ...hmiStatisticsMessages,
   ...hmiHomeMessages,
+  ...hmiManualMessages,
   ...hmiFeedMessages,
   ...hmiCounterMessages,
   ...voiceCommandMessages,

@@ -1,0 +1,68 @@
+/** English, German, French, Italian, Dutch, Polish. */
+export const hmiManualMessages: Record<string, readonly string[]> = {
+  'El reconocimiento de voz no está preparado. Elige el idioma y cárgalo para usar voz.': [
+    'Voice recognition is not ready. Choose a language and load it to use voice.',
+    'Spracherkennung ist nicht bereit. Wähle eine Sprache und lade sie zur Spracheingabe.',
+    'La reconnaissance vocale n’est pas prête. Choisissez la langue et chargez-la pour utiliser la voix.',
+    'Il riconoscimento vocale non è pronto. Scegli la lingua e caricalo per usare la voce.',
+    'Spraakherkenning is niet klaar. Kies de taal en laad deze om spraak te gebruiken.',
+    'Rozpoznawanie głosu nie jest gotowe. Wybierz język i załaduj je, aby używać głosu.',
+  ],
+  'La voz necesita atención. Puedes iniciar con entrada manual.': [
+    'Voice needs attention. You can start with manual entry.',
+    'Sprache benötigt Aufmerksamkeit. Du kannst mit manueller Eingabe starten.',
+    'La voix nécessite une intervention. Vous pouvez démarrer avec la saisie manuelle.',
+    'La voce richiede attenzione. Puoi iniziare con inserimento manuale.',
+    'Spraak heeft aandacht nodig. Je kunt met handmatige invoer starten.',
+    'Głos wymaga uwagi. Możesz rozpocząć z ręcznym wprowadzaniem.',
+  ],
+  'Iniciar solo con entrada manual': [
+    'Start with manual entry only',
+    'Nur mit manueller Eingabe starten',
+    'Démarrer avec saisie manuelle uniquement',
+    'Inizia solo con inserimento manuale',
+    'Start met alleen handmatige invoer',
+    'Rozpocznij tylko z ręcznym wprowadzaniem',
+  ],
+  'Elige nuestro equipo': [
+    'Choose our team',
+    'Unser Team wählen',
+    'Choisir notre équipe',
+    'Scegli la nostra squadra',
+    'Kies ons team',
+    'Wybierz naszą drużynę',
+  ],
+  'Elige el equipo rival': [
+    'Choose the opposing team',
+    'Gegnerisches Team wählen',
+    'Choisir l’équipe adverse',
+    'Scegli la squadra avversaria',
+    'Kies het andere team',
+    'Wybierz drużynę przeciwną',
+  ],
+  'Elige un rival diferente': [
+    'Choose a different opponent',
+    'Einen anderen Gegner wählen',
+    'Choisir un adversaire différent',
+    'Scegli un avversario diverso',
+    'Kies een andere tegenstander',
+    'Wybierz innego przeciwnika',
+  ],
+  'Elige la fecha': [
+    'Choose the date',
+    'Datum wählen',
+    'Choisir la date',
+    'Scegli la data',
+    'Kies de datum',
+    'Wybierz datę',
+  ],
+  'La voz necesita preparación. Puedes iniciar solo con entrada manual y prepararla después en Ajustes.':
+    [
+      'Voice needs preparation. You can start with manual entry only and prepare it later in Settings.',
+      'Sprache muss vorbereitet werden. Du kannst nur mit manueller Eingabe starten und sie später in Einstellungen vorbereiten.',
+      'La voix doit être préparée. Vous pouvez démarrer en saisie manuelle et la préparer plus tard dans Réglages.',
+      'La voce richiede preparazione. Puoi iniziare solo con inserimento manuale e prepararla dopo nelle Impostazioni.',
+      'Spraak moet worden voorbereid. Je kunt alleen met handmatige invoer starten en spraak later in Instellingen voorbereiden.',
+      'Głos wymaga przygotowania. Możesz rozpocząć tylko z ręcznym wprowadzaniem i przygotować go później w Ustawieniach.',
+    ],
+};
