@@ -19,7 +19,7 @@ import {
   type Match,
   type Snapshot,
 } from '../domain/model';
-import { exclusionRemaining } from '../domain/exclusions';
+import { exclusionRemaining, EXCLUSION_SLOT_COUNT } from '../domain/exclusions';
 import { ErrorMessage, Modal, navigate, useAction } from '../components/ui';
 import { VoiceCapture } from '../components/VoiceCapture';
 import { EventEditor } from '../components/EventEditor';
@@ -254,16 +254,16 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
         </div>
       </section>
       <section className="match-controls panel">
-        <div className="match-secondary-actions">
-          {match.status === 'active' && (
-            <button onClick={() => setConfirm('period')}>{tr('Nuevo tiempo')}</button>
-          )}
-        </div>
         <ExclusionTimers
           match={match}
           data={data}
           now={now}
           onDialogChange={setCounterDialog}
+          periodAction={
+            match.status === 'active' ? (
+              <button onClick={() => setConfirm('period')}>{tr('Nuevo tiempo')}</button>
+            ) : undefined
+          }
           prefill={counterRequest}
           onPrefillHandled={() => setCounterRequest(null)}
           onPrefillStarted={() => {
@@ -351,7 +351,7 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
               <button
                 type="button"
                 onClick={() => {
-                  if (counters.length >= 3) showCounters();
+                  if (counters.length >= EXCLUSION_SLOT_COUNT) showCounters();
                   else {
                     setCounterDialog(true);
                     setCounterRequest(offer);
@@ -359,7 +359,7 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
                 }}
               >
                 {tr(
-                  counters.length >= 3
+                  counters.length >= EXCLUSION_SLOT_COUNT
                     ? 'Contadores llenos · Ver contadores'
                     : 'Iniciar contador de esta exclusión',
                 )}

@@ -68,7 +68,7 @@ La interfaz y la voz pueden usar idiomas distintos: español, inglés, alemán, 
 
 La bienvenida aparece en el primer uso y se puede reabrir en Ajustes. Explica cómo preparar la voz, registrar una jugada, revisar el borrador y trabajar desde la perspectiva de quien graba.
 
-Cada partido tiene tres contadores de exclusión de dos minutos con equipo y dorsal opcional. Se guardan localmente y en las copias, siguen las pausas del reloj y pueden pararse individualmente. El reloj del partido muestra minutos y segundos. A cero muestran «Puede volver». El sonido es opcional y requiere mantener abierta la vista del partido. La exclusión estadística se registra como evento aparte.
+Cada partido tiene cuatro contadores de exclusión de dos minutos con equipo y dorsal opcional. Se guardan localmente y en las copias, se pausan y reanudan con el reloj general; la X libera cada contador. El reloj del partido muestra minutos y segundos. A cero muestran «Puede volver». El sonido es opcional y requiere mantener abierta la vista del partido. La exclusión estadística se registra como evento aparte.
 
 Vite acepta cualquier nombre de host (`allowedHosts: true`) en desarrollo y vista previa.
 
@@ -93,10 +93,12 @@ La generación ocurre en un worker para mantener libre la interfaz. Cuando el na
 
 La [auditoría integral](docs/refactorizacion-integral.md) registra el alcance y las comprobaciones de equivalencia. Las [indicaciones de interfaz posteriores](docs/tareas-pendientes.md) se completaron después de cerrar esa refactorización.
 
-La navegación se abre con el botón de tres rayas de la izquierda. Los dorsales se introducen con dos ruedas. El editor mantiene Guardar y Cancelar sobre el teclado; los tres contadores ocupan una franja compacta. El menú ofrece «Fijar vertical» cuando se necesita pantalla completa; el navegador puede rechazar el bloqueo ([condiciones de la API](https://www.w3.org/TR/screen-orientation/#dom-screenorientation-lock)). Al girar se conserva la edición y se procesa el audio capturado si se cancela el contacto táctil.
+La navegación se abre con el botón de tres rayas de la izquierda. Los dorsales se introducen con dos ruedas. El editor mantiene Guardar y Cancelar sobre el teclado; los cuatro contadores ocupan una franja compacta. El menú ofrece «Fijar vertical» cuando se necesita pantalla completa; el navegador puede rechazar el bloqueo ([condiciones de la API](https://www.w3.org/TR/screen-orientation/#dom-screenorientation-lock)). Al girar se conserva la edición y se procesa el audio capturado si se cancela el contacto táctil.
 
 ## Licencia
 
 El código del proyecto se distribuye bajo la [licencia MIT](LICENSE). Copyright (c) 2026 smonux.
 
 Las dependencias, fuentes y modelos conservan sus respectivas licencias. Los avisos de los componentes incluidos se encuentran en [public/third-party](public/third-party).
+
+Las copias nuevas usan el formato 2 para los cuatro contadores con pausa común. Se pueden importar ZIP/JSON del formato 1 (tres contadores); se conservan los tiempos restantes y se adaptan al reloj general. Las versiones anteriores de la aplicación no leen las copias de formato 2.

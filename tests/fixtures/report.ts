@@ -28,7 +28,7 @@ export function reportFixture(): Backup {
   });
   return {
     format: 'handball-stats',
-    version: 1,
+    version: 2,
     exportedAt: Date.now(),
     teams: [
       { ...base, id: 'a', name: 'La Jota', nameKey: 'la jota' },
@@ -56,9 +56,10 @@ export function reportFixture(): Backup {
             teamId: 'a',
             dorsal: null,
             remainingMs: 60000,
-            running: false,
+            running: true,
             startedAt: null,
           },
+          null,
           null,
           null,
         ],

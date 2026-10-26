@@ -1,5 +1,31 @@
 /** English, German, French, Italian, Dutch, Polish. */
 export const mejoras2Messages: Record<string, readonly string[]> = {
+  '2 min': ['2 min', '2 Min.', '2 min', '2 min', '2 min', '2 min'],
+  'Los cuatro contadores están ocupados. Libera uno antes de activar otro.': [
+    'All four timers are occupied. Clear one before starting another.',
+    'Alle vier Timer sind belegt. Gib einen frei, bevor du einen weiteren startest.',
+    'Les quatre compteurs sont occupés. Libérez-en un avant d’en activer un autre.',
+    'I quattro timer sono occupati. Liberane uno prima di attivarne un altro.',
+    'Alle vier timers zijn bezet. Maak er een vrij voordat je een andere start.',
+    'Wszystkie cztery liczniki są zajęte. Zwolnij jeden przed uruchomieniem kolejnego.',
+  ],
+  'Acción de contador inválida.': [
+    'Invalid timer action.',
+    'Ungültige Timeraktion.',
+    'Action du compteur invalide.',
+    'Azione del timer non valida.',
+    'Ongeldige timeractie.',
+    'Nieprawidłowa operacja licznika.',
+  ],
+  'Cuatro contadores con equipo y dorsal opcional. Actívalos al comenzar la exclusión; todos siguen la pausa y reanudación del reloj del partido. Al llegar a cero, avisan de la reincorporación. La X libera cada contador. El evento estadístico se registra aparte.':
+    [
+      'Four timers with a team and optional shirt number. Start them when a suspension begins; all follow the match clock’s pause and resume. At zero they signal that the player can return. X clears each timer. Record the statistical event separately.',
+      'Vier Timer mit Team und optionaler Rückennummer. Starte sie zu Beginn der Zeitstrafe; alle folgen Pause und Fortsetzen der Spieluhr. Bei null melden sie die Rückkehr. X gibt den jeweiligen Timer frei. Die Statistikaktion wird separat erfasst.',
+      'Quatre compteurs avec équipe et numéro facultatif. Activez-les au début de l’exclusion ; tous suivent la pause et la reprise du chronomètre du match. À zéro, ils signalent le retour du joueur. X libère chaque compteur. L’événement statistique est enregistré séparément.',
+      'Quattro timer con squadra e numero facoltativo. Attivali all’inizio dell’esclusione; seguono tutti pausa e ripresa del cronometro della partita. A zero avvisano del rientro. X libera ciascun timer. L’evento statistico si registra separatamente.',
+      'Vier timers met team en optioneel rugnummer. Start ze wanneer de uitsluiting begint; ze volgen allemaal het pauzeren en hervatten van de wedstrijdklok. Bij nul melden ze de terugkeer. X maakt elke timer vrij. Registreer de statistische gebeurtenis apart.',
+      'Cztery liczniki z drużyną i opcjonalnym numerem. Uruchom je na początku wykluczenia; wszystkie reagują na pauzę i wznowienie zegara meczu. Przy zerze sygnalizują powrót. X zwalnia dany licznik. Zdarzenie statystyczne zapisuje się oddzielnie.',
+    ],
   'Partido del {date}': [
     'Match on {date}',
     'Spiel am {date}',

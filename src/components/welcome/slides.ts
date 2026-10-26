@@ -64,7 +64,7 @@ export const slides: WelcomeSlide[] = [
   },
   {
     title: 'Controla los dos minutos',
-    body: 'Tres contadores con equipo y dorsal. Actívalos al comenzar la exclusión; siguen el reloj del partido y puedes pararlos por separado. Al llegar a cero, avisan de la reincorporación. El evento estadístico se registra aparte.',
+    body: 'Cuatro contadores con equipo y dorsal opcional. Actívalos al comenzar la exclusión; todos siguen la pausa y reanudación del reloj del partido. Al llegar a cero, avisan de la reincorporación. La X libera cada contador. El evento estadístico se registra aparte.',
     icon: Timer,
     illustration: 'timers',
   },

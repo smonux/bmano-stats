@@ -50,6 +50,7 @@ try {
       { ...timer, dorsal: 7 },
       { ...timer, id: 'second-timer', teamId: 'b', dorsal: 9, remainingMs: 120000 },
       { ...timer, id: 'third-timer', dorsal: 99, remainingMs: 0 },
+      null,
     ];
     await page.goto(new URL('/#/ajustes', baseURL).href);
     await page.getByLabel('Importar copia', { exact: true }).setInputFiles({

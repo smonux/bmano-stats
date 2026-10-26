@@ -7,7 +7,7 @@ export function backupsRepository(database: HandballDatabase) {
     async exportBackup(): Promise<Backup> {
       return {
         format: 'handball-stats',
-        version: 1,
+        version: 2,
         exportedAt: Date.now(),
         ...(await database.snapshot()),
       };

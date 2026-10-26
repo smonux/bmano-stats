@@ -1,4 +1,4 @@
-import { Pause, Play, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import type { Match, Snapshot } from '../../domain/schema';
 import { exclusionRemaining, type ExclusionTimer } from '../../domain/exclusions';
 import { tr } from '../../i18n';
@@ -10,7 +10,6 @@ export function ExclusionCounter({
   data,
   now,
   busy,
-  toggle,
   clear,
 }: {
   timer: ExclusionTimer;
@@ -19,19 +18,11 @@ export function ExclusionCounter({
   data: Snapshot;
   now: number;
   busy: boolean;
-  toggle: () => void;
   clear: () => void;
 }) {
   const seconds = Math.ceil(exclusionRemaining(timer, now) / 1000);
   const finished = seconds === 0;
   const teamName = data.teams.find((team) => team.id === timer.teamId)?.name ?? '';
-  const stateLabel = tr(
-    finished
-      ? 'Puede volver'
-      : !timer.running || match.clock.startedAt === null
-        ? 'Pausado'
-        : 'En juego',
-  );
   const timeLabel =
     String(Math.floor(seconds / 60)).padStart(2, '0') + ':' + String(seconds % 60).padStart(2, '0');
   return (
@@ -39,44 +30,33 @@ export function ExclusionCounter({
       className={`exclusion-timer ${finished ? 'expired' : ''}`}
       role="group"
       aria-label={tr('Exclusión {number}', { number: slot + 1 })}
+      aria-description={[
+        teamName,
+        timer.dorsal === null ? tr('Sin identificar') : '#' + timer.dorsal,
+        tr(finished ? 'Puede volver' : match.clock.startedAt === null ? 'Pausado' : 'En juego'),
+        timeLabel,
+      ].join(' · ')}
     >
-      <button
-        className="timer-toggle"
-        disabled={busy || match.status === 'done'}
-        aria-label={tr(finished ? 'Liberar' : timer.running ? 'Parar' : 'Reanudar')}
-        aria-description={[
-          teamName,
-          timer.dorsal === null ? tr('Sin identificar') : '#' + timer.dorsal,
-          stateLabel,
-          timeLabel,
-        ].join(' · ')}
-        title={teamName}
-        onClick={toggle}
-      >
-        <span className="timer-meta">
-          <span className="timer-player">
-            {timer.teamId === match.localTeamId ? '1' : '2'} ·{' '}
-            {timer.dorsal === null ? '—' : '#' + timer.dorsal}
-          </span>
+      <div className="timer-reading" title={teamName}>
+        <span className="timer-player">
+          {timer.teamId === match.localTeamId ? '1' : '2'} ·{' '}
+          {timer.dorsal === null ? '—' : '#' + timer.dorsal}
+        </span>
+        <strong className="timer-digits">{timeLabel}</strong>
+        {finished && (
           <span className="timer-state" role="status">
-            {stateLabel}
+            {tr('Puede volver')}
           </span>
-        </span>
-        <span className="timer-time">
-          <strong className="timer-digits">{timeLabel}</strong>
-          {!finished && (timer.running ? <Pause size={20} /> : <Play size={20} />)}
-        </span>
+        )}
+      </div>
+      <button
+        className="timer-clear"
+        disabled={busy || match.status === 'done'}
+        aria-label={tr('Liberar')}
+        onClick={clear}
+      >
+        <X size={20} />
       </button>
-      {!finished && (
-        <button
-          className="timer-clear"
-          disabled={busy || match.status === 'done'}
-          aria-label={tr('Liberar')}
-          onClick={clear}
-        >
-          <X size={20} />
-        </button>
-      )}
     </div>
   );
 }

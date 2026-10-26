@@ -16,15 +16,15 @@ async function open(page: Page, full = false) {
     'Equipo contrario de balonmano con nombre muy largo para comprobar la identificación';
   fixture.teams[1].nameKey = nameKey(fixture.teams[1].name);
   fixture.matches[0].exclusions = full
-    ? [0, 1, 2].map((slot) => ({
+    ? [0, 1, 2, 3].map((slot) => ({
         id: 'occupied-' + slot,
         teamId: 'a',
         dorsal: slot,
         remainingMs: 60000,
-        running: false,
+        running: true,
         startedAt: null,
       }))
-    : [null, null, null];
+    : [null, null, null, null];
   await page.goto('/#/ajustes');
   await page.getByLabel('Importar copia', { exact: true }).setInputFiles({
     name: 'counter.json',
@@ -102,7 +102,7 @@ test('full counters remain accessible without overwriting and timer deletion lea
     page.getByRole('region', { name: 'Cuenta atrás de exclusiones', exact: true }),
   ).toBeFocused();
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page.locator('.exclusion-timer')).toHaveCount(3);
+  await expect(page.locator('.exclusion-timer')).toHaveCount(4);
   await page
     .getByRole('group', { name: 'Exclusión 1', exact: true })
     .getByRole('button', { name: 'Liberar', exact: true })
@@ -117,21 +117,21 @@ test('full counters remain accessible without overwriting and timer deletion lea
     .getByRole('button', { name: /^Activar/ })
     .click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page.locator('.exclusion-timer')).toHaveCount(3);
+  await expect(page.locator('.exclusion-timer')).toHaveCount(4);
   await page.locator('.event-card').getByRole('button', { name: 'Editar', exact: true }).click();
   const editor = page.getByRole('dialog');
   await editNote(editor);
   await editor.getByLabel('Nota', { exact: true }).fill('Exclusión revisada');
   await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(editor).toHaveCount(0);
-  await expect(page.locator('.exclusion-timer')).toHaveCount(3);
+  await expect(page.locator('.exclusion-timer')).toHaveCount(4);
   await page
     .getByRole('group', { name: 'Exclusión 1', exact: true })
     .getByRole('button', { name: 'Liberar', exact: true })
     .click();
   await page.getByRole('dialog').getByRole('button', { name: 'Confirmar', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page.locator('.exclusion-timer')).toHaveCount(2);
+  await expect(page.locator('.exclusion-timer')).toHaveCount(3);
   await expect(page.locator('.event-card')).toHaveCount(1);
   await page.locator('.event-card .event-menu > summary').click();
   await page.locator('.event-card .delete-event').click();
@@ -141,19 +141,19 @@ test('full counters remain accessible without overwriting and timer deletion lea
     .click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.locator('.event-card')).toHaveCount(0);
-  await expect(page.locator('.exclusion-timer')).toHaveCount(2);
+  await expect(page.locator('.exclusion-timer')).toHaveCount(3);
   await page.goto('/#/ajustes');
   const next = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Exportar copia ZIP', exact: true }).click();
   const file = info.outputPath('independent.zip');
   await (await next).saveAs(file);
   const data = JSON.parse(strFromU8(unzipSync(await readFile(file))['handball-stats.json']));
-  expect(data.matches[0].exclusions.filter(Boolean)).toHaveLength(2);
+  expect(data.matches[0].exclusions.filter(Boolean)).toHaveLength(3);
   expect(data.events[0].deletedAt).not.toBeNull();
   await page.getByLabel('Importar copia', { exact: true }).setInputFiles(file);
   await page.getByRole('dialog').getByRole('button', { name: 'Confirmar', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.goto('/#/partidos/report-match');
-  await expect(page.locator('.exclusion-timer')).toHaveCount(2);
+  await expect(page.locator('.exclusion-timer')).toHaveCount(3);
   await expect(page.locator('.event-card')).toHaveCount(0);
 });

@@ -10,7 +10,7 @@ async function restore(page: Page, count: number, longNames = false) {
   const backup = reportFixture();
   backup.events = [];
   const timer = backup.matches[0].exclusions![0]!;
-  backup.matches[0].exclusions = [0, 1, 2].map((index) =>
+  backup.matches[0].exclusions = [0, 1, 2, 3].map((index) =>
     index < count
       ? {
           ...timer,
@@ -72,24 +72,23 @@ for (const viewport of [
   { width: 844, height: 390 },
   { width: 1440, height: 1000 },
 ])
-  test(`three active counters stay reachable at ${viewport.width}x${viewport.height}`, async ({
+  test(`four active counters stay reachable at ${viewport.width}x${viewport.height}`, async ({
     page,
   }, info) => {
     await page.setViewportSize(viewport);
-    await restore(page, 3, true);
-    await expect(page.locator('.exclusion-timer')).toHaveCount(3);
+    await restore(page, 4, true);
+    await expect(page.locator('.exclusion-timer')).toHaveCount(4);
     await expect(page.getByRole('button', { name: 'Iniciar contador', exact: true })).toHaveCount(
       0,
     );
     await expect(page.getByRole('group', { name: 'Exclusión 3', exact: true })).toContainText(
       'Puede volver',
     );
-    await expect(
-      page
-        .getByRole('group', { name: 'Exclusión 1', exact: true })
-        .getByRole('button', { name: 'Reanudar', exact: true }),
-    ).toHaveAttribute('aria-description', /La Jota.*#0.*Pausado.*01:00/);
-    const access = page.getByRole('button', { name: 'Ver 3 contadores de exclusión', exact: true });
+    await expect(page.getByRole('group', { name: 'Exclusión 1', exact: true })).toHaveAttribute(
+      'aria-description',
+      /La Jota.*#0.*Pausado.*01:00/,
+    );
+    const access = page.getByRole('button', { name: 'Ver 4 contadores de exclusión', exact: true });
     await expect(access).toHaveAttribute('aria-description', 'Puede volver');
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await access.scrollIntoViewIfNeeded();
@@ -107,14 +106,16 @@ for (const viewport of [
       true,
     );
     await page.screenshot({
-      path: info.outputPath(`three-${viewport.width}x${viewport.height}.png`),
+      path: info.outputPath(`four-${viewport.width}x${viewport.height}.png`),
     });
     await page
       .getByRole('group', { name: 'Exclusión 3', exact: true })
       .getByRole('button', { name: 'Liberar', exact: true })
       .click();
+    await page.getByRole('dialog').getByRole('button', { name: 'Confirmar', exact: true }).click();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(
-      page.getByRole('button', { name: 'Ver 2 contadores de exclusión', exact: true }),
+      page.getByRole('button', { name: 'Ver 3 contadores de exclusión', exact: true }),
     ).toBeVisible();
     await expect(page.getByRole('button', { name: 'Iniciar contador', exact: true })).toBeVisible();
   });

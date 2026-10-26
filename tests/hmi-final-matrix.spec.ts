@@ -63,6 +63,7 @@ async function restore(page: Page, language: Language, roster: number) {
     timer,
     { ...timer, id: 'second', teamId: 'b', dorsal: 0, remainingMs: 120000 },
     { ...timer, id: 'third', dorsal: 99, remainingMs: 0 },
+    null,
   ];
   validateBackup(data);
   await page.goto('/#/ajustes');

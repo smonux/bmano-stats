@@ -278,14 +278,14 @@ test('three suspension timers survive backup and follow pauses, individual stops
   const mock = vi.spyOn(Date, 'now').mockImplementation(() => now);
   const read = async () => (await db.matches.get(match.id))!;
   try {
-    for (let slot = 0; slot < 3; slot++) {
+    for (let slot = 0; slot < 4; slot++) {
       await repo.exclusion(match.id, slot, 'start', {
         teamId: slot === 1 ? match.visitorTeamId : match.localTeamId,
         dorsal: slot + 7,
       });
     }
     await expect(
-      repo.exclusion(match.id, 3, 'start', {
+      repo.exclusion(match.id, 4, 'start', {
         teamId: match.localTeamId,
         dorsal: 4,
       }),
@@ -301,13 +301,14 @@ test('three suspension timers survive backup and follow pauses, individual stops
     expect((await read()).exclusions?.[0]?.remainingMs).toBe(90000);
     now += 60000;
     expect(exclusionRemaining((await read()).exclusions![0]!)).toBe(90000);
-    await repo.exclusion(match.id, 1, 'pause');
     await repo.clock(match.id, 'resume');
     now += 20000;
     await repo.clock(match.id, 'period');
     const next = await read();
     expect(next.clock.period).toBe(2);
-    expect(next.exclusions?.map((timer) => timer?.remainingMs)).toEqual([70000, 90000, 70000]);
+    expect(next.exclusions?.map((timer) => timer?.remainingMs)).toEqual([
+      70000, 70000, 70000, 70000,
+    ]);
     const backup = await repo.exportBackup();
     await repo.importBackup(JSON.parse(JSON.stringify(backup)));
     expect((await read()).exclusions).toEqual(next.exclusions);
@@ -317,7 +318,7 @@ test('three suspension timers survive backup and follow pauses, individual stops
     expect((await read()).exclusions).toEqual(next.exclusions);
     now += 70000;
     expect(exclusionRemaining((await read()).exclusions![0]!)).toBe(0);
-    expect(exclusionRemaining((await read()).exclusions![1]!)).toBe(90000);
+    expect(exclusionRemaining((await read()).exclusions![1]!)).toBe(0);
     await repo.exclusion(match.id, 0, 'clear');
     expect((await read()).exclusions![0]).toBeNull();
     await repo.clock(match.id, 'finish');
@@ -325,7 +326,7 @@ test('three suspension timers survive backup and follow pauses, individual stops
     expect(done.exclusions![1]).toMatchObject({
       running: false,
       startedAt: null,
-      remainingMs: 90000,
+      remainingMs: 0,
     });
     await expect(
       repo.exclusion(match.id, 0, 'start', {

@@ -120,17 +120,6 @@
   margin-bottom: 12px;
   padding: 12px;
 }
-.match-secondary-actions {
-  display: flex;
-  align-items: start;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-.match-secondary-actions > button {
-  min-height: var(--target-live);
-}
 .match-team-names {
   margin: 8px 0;
 }
@@ -363,7 +352,7 @@
 }
 .exclusion-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
   gap: 8px;
 }
 .exclusion-timer {
@@ -375,22 +364,16 @@
   border-radius: 10px;
   min-width: 0;
 }
-.timer-toggle {
+.timer-reading {
   flex: 1;
   min-width: 0;
-  min-height: 4rem;
-  border: 0;
-  background: transparent;
-  flex-direction: column;
-  gap: 4px;
-  padding: 8px 4px;
-}
-.timer-meta {
+  min-height: 64px;
+  padding: 4px;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
 }
 .timer-player {
   display: flex;
@@ -401,13 +384,10 @@
   font-weight: 700;
   line-height: 1.4;
 }
-.timer-time {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
 .timer-digits {
+  display: block;
+  white-space: nowrap;
+  flex-shrink: 0;
   font-size: var(--text-clock);
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
@@ -432,9 +412,6 @@
 }
 .expired .timer-state {
   font-weight: 700;
-}
-.expired .timer-toggle:hover {
-  background: #edc600;
 }
 .exclusions form > label {
   margin: 16px 0;
@@ -469,16 +446,6 @@
 .start-exclusion {
   margin-top: 8px;
   min-height: var(--target-live);
-}
-.counter-help summary {
-  min-height: var(--target-min);
-  padding-block: 10px;
-  cursor: pointer;
-  font-size: var(--text-caption);
-}
-.counter-help p {
-  font-size: var(--text-caption);
-  margin-bottom: 8px;
 }
 .exclusions:focus-visible {
   outline: 2px solid var(--ink);
@@ -601,4 +568,25 @@ summary:focus-visible {
 .capture-feedback > button {
   flex: 0 1 auto;
   min-height: var(--target-live);
+}
+
+.counter-toolbar {
+  justify-content: flex-start;
+  gap: 8px;
+}
+.counter-toolbar > button {
+  min-height: 48px;
+  padding: 8px;
+  font-size: var(--text-caption);
+}
+.counter-toolbar .start-exclusion {
+  width: auto;
+  margin: 0;
+  min-height: 48px;
+}
+.counter-toolbar .counter-sound {
+  margin-left: auto;
+  width: 48px;
+  min-width: 48px;
+  padding: 8px;
 }

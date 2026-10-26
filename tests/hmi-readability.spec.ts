@@ -21,6 +21,7 @@ async function restore(page: Page, longNames = false) {
     { ...timer, dorsal: 7 },
     { ...timer, id: 'second', teamId: 'b', dorsal: 9, remainingMs: 120000 },
     { ...timer, id: 'third', dorsal: 99, remainingMs: 0 },
+    null,
   ];
   await page.goto('/#/ajustes');
   await page.getByLabel('Importar copia', { exact: true }).setInputFiles({
@@ -89,7 +90,7 @@ for (const viewport of [
     }
     for (const button of await page
       .locator(
-        '.clock-actions button, .match-secondary-actions > button, .exclusion-heading button, .timer-toggle, .timer-clear, .event-actions > button, .event-menu > summary, .filter-chip, .match-tabs button',
+        '.clock-actions button, .match-secondary-actions > button, .exclusion-heading button, .timer-clear, .event-actions > button, .event-menu > summary, .filter-chip, .match-tabs button',
       )
       .all()) {
       const bounds = (await button.boundingBox())!;

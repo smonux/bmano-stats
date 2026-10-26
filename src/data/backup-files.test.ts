@@ -5,7 +5,7 @@ import type { Backup } from '../domain/model';
 const stamp = { createdAt: 1, updatedAt: 1, deletedAt: null };
 const backup: Backup = {
   format: 'handball-stats',
-  version: 1,
+  version: 2,
   exportedAt: 10,
   teams: [
     { ...stamp, id: 'a', name: 'La Jota', nameKey: 'la jota' },
@@ -25,7 +25,8 @@ const backup: Backup = {
       status: 'active',
       clock: { period: 1, elapsedMs: 3000, startedAt: null },
       exclusions: [
-        { id: 'x', teamId: 'a', dorsal: null, running: false, startedAt: null, remainingMs: 90000 },
+        { id: 'x', teamId: 'a', dorsal: null, running: true, startedAt: null, remainingMs: 90000 },
+        null,
         null,
         null,
       ],
@@ -53,6 +54,30 @@ const backup: Backup = {
 const file = (bytes: Uint8Array) => ({
   size: bytes.length,
   arrayBuffer: async () => new Uint8Array(bytes).buffer,
+});
+test('legacy three-slot JSON and ZIP restore as four common-clock slots', async () => {
+  const legacy = {
+    ...backup,
+    version: 1,
+    matches: backup.matches.map((match) => ({
+      ...match,
+      exclusions: match.exclusions
+        ?.slice(0, 3)
+        .map((timer) => (timer ? { ...timer, running: false } : null)),
+    })),
+  };
+  const json = strToU8(JSON.stringify(legacy));
+  for (const bytes of [json, zipSync({ 'old.json': json })]) {
+    const restored = await readBackupFile(file(bytes));
+    expect(restored.version).toBe(2);
+    expect(restored.matches[0].exclusions).toHaveLength(4);
+    expect(restored.matches[0].exclusions![0]).toMatchObject({
+      remainingMs: 90000,
+      running: true,
+      startedAt: null,
+    });
+    expect(restored.events).toEqual(backup.events);
+  }
 });
 test('a standard ZIP restores every entity, raw transcript and suspension timer unchanged', async () => {
   const bytes = await backupZip(backup);

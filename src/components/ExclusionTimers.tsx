@@ -1,9 +1,10 @@
 import { DialogForm } from './ui/DialogForm';
 import { ShirtNumberPicker } from './ShirtNumberPicker';
 import { useId, useEffect, useRef, useState } from 'react';
-import { Plus, Volume2 } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { Plus, Volume2, VolumeX } from 'lucide-react';
 import type { Match, Snapshot } from '../domain/model';
-import { exclusionRemaining } from '../domain/exclusions';
+import { exclusionRemaining, EXCLUSION_SLOT_COUNT } from '../domain/exclusions';
 import { repo } from '../data/database';
 import { tr } from '../i18n';
 import { Confirm, ErrorMessage, Modal, useAction } from './ui';
@@ -19,6 +20,7 @@ export function ExclusionTimers({
   prefill,
   onPrefillHandled,
   onPrefillStarted,
+  periodAction,
 }: {
   match: Match;
   data: Snapshot;
@@ -27,9 +29,10 @@ export function ExclusionTimers({
   prefill?: CounterPrefill | null;
   onPrefillHandled?: () => void;
   onPrefillStarted?: (eventId: string) => void;
+  periodAction?: ReactNode;
 }) {
   const errorId = useId();
-  const timers = match.exclusions ?? [null, null, null];
+  const timers = match.exclusions ?? Array(EXCLUSION_SLOT_COUNT).fill(null);
   const [editing, setEditing] = useState<number | null>(null);
   const [clearing, setClearing] = useState<number | null>(null);
   const [teamId, setTeam] = useState(match.localTeamId);
@@ -39,7 +42,6 @@ export function ExclusionTimers({
   const announced = useRef(new Set<string>());
   const action = useAction();
   const freeSlot = timers.findIndex((timer) => timer === null);
-  const activeCount = timers.filter(Boolean).length;
   function startCounter(slot: number) {
     setSourceEvent(null);
     setEditing(slot);
@@ -50,7 +52,9 @@ export function ExclusionTimers({
     if (!prefill) return;
     onPrefillHandled?.();
     if (freeSlot < 0 || match.status !== 'active') {
-      action.setError(tr('Los tres contadores están ocupados. Libera uno antes de activar otro.'));
+      action.setError(
+        tr('Los cuatro contadores están ocupados. Libera uno antes de activar otro.'),
+      );
       onDialogChange(false);
       return;
     }
@@ -80,13 +84,27 @@ export function ExclusionTimers({
       tabIndex={-1}
       aria-label={tr('Cuenta atrás de exclusiones')}
     >
-      <div className="exclusion-heading">
-        <h2>
-          {tr('Exclusiones (2 min)')} <span className="caption">{activeCount}/3</span>
-        </h2>
-        <button className="text-button" aria-pressed={sound.enabled} onClick={sound.toggle}>
-          <Volume2 size={16} />
-          {tr(sound.enabled ? 'Sonido activado' : 'Aviso sonoro')}
+      <div className="exclusion-heading counter-toolbar">
+        {periodAction}
+        {freeSlot !== -1 && (
+          <button
+            className="start-exclusion"
+            aria-label={tr('Iniciar contador')}
+            disabled={match.status === 'done' || action.busy}
+            onClick={() => startCounter(freeSlot)}
+          >
+            <Plus size={20} />
+            {tr('2 min')}
+          </button>
+        )}
+        <button
+          className="counter-sound"
+          aria-label={tr(sound.enabled ? 'Sonido activado' : 'Aviso sonoro')}
+          title={tr(sound.enabled ? 'Sonido activado' : 'Aviso sonoro')}
+          aria-pressed={sound.enabled}
+          onClick={sound.toggle}
+        >
+          {sound.enabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
         </button>
       </div>
       <div className="exclusion-grid">
@@ -102,29 +120,10 @@ export function ExclusionTimers({
                 now={now}
                 busy={action.busy}
                 clear={() => setClearing(slot)}
-                toggle={() => {
-                  if (exclusionRemaining(timer, now) === 0) {
-                    action.run(() => repo.exclusion(match.id, slot, 'clear'));
-                  } else {
-                    action.run(() =>
-                      repo.exclusion(match.id, slot, timer.running ? 'pause' : 'resume'),
-                    );
-                  }
-                }}
               />
             ),
         )}
       </div>
-      {freeSlot !== -1 && (
-        <button
-          className="start-exclusion"
-          disabled={match.status === 'done' || action.busy}
-          onClick={() => startCounter(freeSlot)}
-        >
-          <Plus size={20} />
-          {tr('Iniciar contador')}
-        </button>
-      )}
       <ErrorMessage text={action.error || sound.error} />
       {editing !== null && (
         <Modal

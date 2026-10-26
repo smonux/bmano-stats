@@ -1,5 +1,5 @@
 import {
-  backupSchema,
+  backupInputSchema,
   type Backup,
   type GameEvent,
   type Match,
@@ -8,10 +8,11 @@ import {
 } from './schema';
 import { nameKey, unknownId } from './identity';
 import { cleanEvent, relatedTeam } from './events';
+import { migrateLegacyExclusions } from './legacy-exclusions';
 
 /** Parse the file contract first, then validate identities and cross-collection references. */
 export function validateBackup(input: unknown): Backup {
-  const data = backupSchema.parse(input);
+  const data = backupInputSchema.parse(input);
   assertUniqueIds([data.teams, data.players, data.matches, data.events]);
   const teamsById = new Map(data.teams.map((team) => [team.id, team]));
   const playersById = new Map(data.players.map((player) => [player.id, player]));
@@ -20,11 +21,24 @@ export function validateBackup(input: unknown): Backup {
   validatePlayers(data.players, teamsById);
   for (const match of data.matches) {
     validateMatch(match, teamsById, playersById);
+    if (
+      data.version === 2 &&
+      match.exclusions?.some((timer) => timer && timer.running !== (match.status === 'active'))
+    ) {
+      throw new Error('Temporizador de exclusión inválido.');
+    }
   }
   for (const event of data.events) {
     validateEvent(event, matchesById, playersById);
   }
-  return data;
+  return {
+    ...data,
+    version: 2,
+    matches:
+      data.version === 1
+        ? data.matches.map((match) => migrateLegacyExclusions(match))
+        : data.matches,
+  };
 }
 
 function assertUniqueIds(collections: readonly (readonly { id: string }[])[]) {

@@ -2,9 +2,9 @@ import type { Match } from './schema';
 import { createId } from './id';
 
 export const EXCLUSION_DURATION_MS = 120000;
-export const EXCLUSION_SLOT_COUNT = 3;
-export type ExclusionSlot = 0 | 1 | 2;
-export type ExclusionAction = 'start' | 'pause' | 'resume' | 'clear';
+export const EXCLUSION_SLOT_COUNT = 4;
+export type ExclusionSlot = 0 | 1 | 2 | 3;
+export type ExclusionAction = 'start' | 'clear';
 export type ExcludedPlayer = { teamId: string; dorsal: number | null };
 export type ExclusionTimer = {
   id: string;
@@ -25,7 +25,7 @@ export function syncExclusions(match: Match, clockRunning: boolean, now: number,
       return timer;
     }
     const remainingMs = exclusionRemaining(timer, now);
-    const running = !finish && timer.running;
+    const running = !finish;
     return {
       ...timer,
       remainingMs,
@@ -64,7 +64,7 @@ export function changeExclusion(
   now = Date.now(),
   createTimerId = createId,
 ) {
-  const timers = [...(match.exclusions ?? [null, null, null])];
+  const timers = [...(match.exclusions ?? Array(EXCLUSION_SLOT_COUNT).fill(null))];
   const timer = timers[slot];
   if (action === 'start') {
     if (timer) {
@@ -80,15 +80,8 @@ export function changeExclusion(
     };
   } else if (action === 'clear') {
     timers[slot] = null;
-  } else if (timer) {
-    const remainingMs = exclusionRemaining(timer, now);
-    const running = action === 'resume';
-    timers[slot] = {
-      ...timer,
-      remainingMs,
-      running,
-      startedAt: running && match.clock.startedAt !== null && remainingMs > 0 ? now : null,
-    };
+  } else {
+    throw new Error('Acción de contador inválida.');
   }
   return timers;
 }

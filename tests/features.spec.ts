@@ -75,7 +75,7 @@ test('first-use gallery changes language, persists completion and reopens from s
     );
   }
 });
-test('three independent suspension timers persist, pause with match clock and signal expiry', async ({
+test('four common-clock suspension timers persist, pause with match clock and signal expiry', async ({
   page,
   context,
 }, info) => {
@@ -112,21 +112,21 @@ test('three independent suspension timers persist, pause with match clock and si
     'aria-pressed',
     'true',
   );
-  for (let i = 1; i <= 3; i++) {
+  for (let i = 1; i <= 4; i++) {
     await page.getByRole('button', { name: 'Iniciar contador', exact: true }).click();
     const dialog = page.getByRole('dialog');
-    if (i < 3) {
+    if (i < 4) {
       await selectShirtNumber(dialog, 'Dorsal (opcional)', String(i + 6));
     }
     await dialog.getByRole('button', { name: /Activar/ }).click();
     await expect(dialog).toHaveCount(0);
     await expect(page.getByRole('group', { name: `Exclusión ${i}`, exact: true })).toContainText(
-      i < 3 ? `#${i + 6}` : '—',
+      i < 4 ? `#${i + 6}` : '—',
     );
   }
   await page.reload();
   const slots = page.locator('.exclusion-timer');
-  await expect(slots).toHaveCount(3);
+  await expect(slots).toHaveCount(4);
   await expect(slots.nth(0)).toContainText('#7');
   expect((await page.locator('.match-header').boundingBox())!.height).toBeLessThan(260);
   expect((await slots.nth(0).boundingBox())!.height).toBeLessThan(72);
@@ -140,9 +140,6 @@ test('three independent suspension timers persist, pause with match clock and si
   const paused = await slots.nth(0).locator('.timer-digits').textContent();
   await page.clock.fastForward(60000);
   await expect(slots.nth(0).locator('.timer-digits')).toHaveText(paused!);
-  await slots.nth(1).getByRole('button', { name: 'Parar', exact: true }).click();
-  await expect(slots.nth(1).getByRole('button', { name: 'Reanudar', exact: true })).toBeVisible();
-  const individuallyPaused = await slots.nth(1).locator('.timer-digits').textContent();
   await page
     .locator('.clock-actions')
     .getByRole('button', { name: 'Reanudar', exact: true })
@@ -153,7 +150,8 @@ test('three independent suspension timers persist, pause with match clock and si
   await page.clock.fastForward(121000);
   await expect(slots.nth(0)).toContainText('Puede volver');
   await expect(slots.nth(2)).toContainText('Puede volver');
-  await expect(slots.nth(1).locator('.timer-digits')).toHaveText(individuallyPaused!);
+  await expect(slots.nth(1)).toContainText('Puede volver');
+  await expect(slots.nth(3)).toContainText('Puede volver');
   await expect
     .poll(() =>
       page.evaluate(
@@ -182,6 +180,8 @@ test('three independent suspension timers persist, pause with match clock and si
   await page.screenshot({ path: info.outputPath('exclusions.png'), fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await slots.nth(0).getByRole('button', { name: 'Liberar' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Confirmar', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.getByRole('group', { name: 'Exclusión 1', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Iniciar contador', exact: true })).toBeVisible();
   await expect(page.getByLabel('Marcador 0 a 0')).toBeVisible();

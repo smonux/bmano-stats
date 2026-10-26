@@ -69,7 +69,7 @@ export type GameEvent = z.infer<typeof eventSchema>;
 export type Snapshot = { teams: Team[]; players: Player[]; matches: Match[]; events: GameEvent[] };
 export const backupSchema = z.object({
   format: z.literal('handball-stats'),
-  version: z.literal(1),
+  version: z.literal(2),
   exportedAt: stamp,
   teams: z.array(teamSchema),
   players: z.array(playerSchema),
@@ -77,3 +77,15 @@ export const backupSchema = z.object({
   events: z.array(eventSchema),
 });
 export type Backup = z.infer<typeof backupSchema>;
+const legacyBackupSchema = backupSchema.extend({
+  version: z.literal(1),
+  matches: z.array(
+    matchSchema.extend({
+      exclusions: z.array(exclusionSchema.nullable()).length(3).optional(),
+    }),
+  ),
+});
+export const backupInputSchema = z.discriminatedUnion('version', [
+  legacyBackupSchema,
+  backupSchema,
+]);
