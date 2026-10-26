@@ -125,14 +125,6 @@ export function ExclusionTimers({
           {tr('Iniciar contador')}
         </button>
       )}
-      <details className="counter-help" aria-label={tr('Cómo funcionan los contadores')}>
-        <summary>{tr('El contador no añade una exclusión al registro.')}</summary>
-        <p className="caption">
-          {tr(
-            'Sigue el reloj del partido. Mantén la aplicación abierta para recibir avisos. Registra la exclusión como evento aparte.',
-          )}
-        </p>
-      </details>
       <ErrorMessage text={action.error || sound.error} />
       {editing !== null && (
         <Modal

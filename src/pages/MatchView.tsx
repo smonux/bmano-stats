@@ -7,7 +7,7 @@ import { EventFeed } from '../components/EventFeed';
 import { ExclusionTimers, type CounterPrefill } from '../components/ExclusionTimers';
 import { tr } from '../i18n';
 import { useId, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Pause, Play, Plus, Trash2, Flag, Timer, BellRing } from 'lucide-react';
+import { Pause, Play, Plus, Trash2, Flag, Timer, BellRing, ArrowLeft } from 'lucide-react';
 import { repo } from '../data/database';
 import type { EventUndo } from '../data/repository/event-undo';
 import {
@@ -20,7 +20,7 @@ import {
   type Snapshot,
 } from '../domain/model';
 import { exclusionRemaining } from '../domain/exclusions';
-import { ErrorMessage, PageTitle, useAction } from '../components/ui';
+import { ErrorMessage, Modal, navigate, useAction } from '../components/ui';
 import { VoiceCapture } from '../components/VoiceCapture';
 import { EventEditor } from '../components/EventEditor';
 import { Statistics } from '../components/Statistics';
@@ -28,6 +28,7 @@ import { teamName, formatMatchDate, matchScore } from '../presentation/matches';
 function MatchView({ data, match }: { data: Snapshot; match: Match }) {
   const tabsId = useId();
   const [tab, setTab] = useState('events');
+  const [namesOpen, setNamesOpen] = useState(false);
   const [editing, setEditing] = useState<GameEvent | 'new' | null>(null);
   const [pendingOnly, setPendingOnly] = useState(false);
   const [confirm, setConfirm] = useState<MatchConfirmationIntent | null>(null);
@@ -141,21 +142,30 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
   return (
     <>
       <div className="match-page-title">
-        <PageTitle
-          title={match.status === 'active' ? tr('Partido en curso') : tr('Detalle del partido')}
-          subtitle={formatMatchDate(match.date)}
-          back="/partidos"
-        >
-          <span className={`badge ${match.status === 'active' ? 'live' : ''}`}>
-            {match.status === 'active' ? tr('En curso') : tr('Finalizado')}
-          </span>
-        </PageTitle>
+        <button className="back" aria-label={tr('Volver')} onClick={() => navigate('/partidos')}>
+          <ArrowLeft size={18} />
+        </button>
+        <h1 aria-label={tr('Partido del {date}', { date: formatMatchDate(match.date) })}>
+          {formatMatchDate(match.date)}
+        </h1>
+        <span className={`badge ${match.status === 'active' ? 'live' : ''}`}>
+          {tr(match.status === 'active' ? 'En curso' : 'Finalizado')}
+        </span>
       </div>
       <section ref={header} className="match-header panel">
         <div className="scoreboard">
           <div>
             <span className="eyebrow">{tr('Equipo 1 (nuestro)')}</span>
-            <h2>{teamName(data, match.localTeamId)}</h2>
+            <h2>
+              <button
+                className="team-name-button"
+                onClick={() => setNamesOpen(true)}
+                aria-haspopup="dialog"
+                aria-label={teamName(data, match.localTeamId)}
+              >
+                <span>{teamName(data, match.localTeamId)}</span>
+              </button>
+            </h2>
           </div>
           <strong
             aria-label={tr('Marcador {a} a {b}', {
@@ -170,7 +180,16 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
           </strong>
           <div>
             <span className="eyebrow">{tr('Equipo 2 (rival)')}</span>
-            <h2>{teamName(data, match.visitorTeamId)}</h2>
+            <h2>
+              <button
+                className="team-name-button"
+                onClick={() => setNamesOpen(true)}
+                aria-haspopup="dialog"
+                aria-label={teamName(data, match.visitorTeamId)}
+              >
+                <span>{teamName(data, match.visitorTeamId)}</span>
+              </button>
+            </h2>
           </div>
         </div>
         <div className="clock-row">
@@ -236,15 +255,6 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
       </section>
       <section className="match-controls panel">
         <div className="match-secondary-actions">
-          <details className="match-team-names">
-            <summary>{tr('Nombres de los equipos')}</summary>
-            <dl>
-              <dt>{tr('Equipo 1 (nuestro)')}</dt>
-              <dd>{teamName(data, match.localTeamId)}</dd>
-              <dt>{tr('Equipo 2 (rival)')}</dt>
-              <dd>{teamName(data, match.visitorTeamId)}</dd>
-            </dl>
-          </details>
           {match.status === 'active' && (
             <button onClick={() => setConfirm('period')}>{tr('Nuevo tiempo')}</button>
           )}
@@ -374,7 +384,7 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
           match={match}
           saved={eventSaved}
           started={() => setNotice('')}
-          allowReview={!editing && !confirm && !counterDialog && !counterRequest}
+          allowReview={!editing && !confirm && !counterDialog && !counterRequest && !namesOpen}
         />
       </div>
       <div className="match-footer">
@@ -383,14 +393,21 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
             <Flag size={16} /> {tr('Finalizar partido')}
           </button>
         )}
-        <details className="match-more">
-          <summary>{tr('Más acciones del partido')}</summary>
-          <button className="text-button danger-text" onClick={() => setConfirm('delete')}>
-            <Trash2 size={15} />
-            {tr('Eliminar partido')}
-          </button>
-        </details>
+        <button className="text-button danger-text" onClick={() => setConfirm('delete')}>
+          <Trash2 size={15} />
+          {tr('Eliminar partido')}
+        </button>
       </div>
+      {namesOpen && (
+        <Modal title={tr('Nombres de los equipos')} close={() => setNamesOpen(false)}>
+          <dl className="match-team-names">
+            <dt>{tr('Equipo 1 (nuestro)')}</dt>
+            <dd>{teamName(data, match.localTeamId)}</dd>
+            <dt>{tr('Equipo 2 (rival)')}</dt>
+            <dd>{teamName(data, match.visitorTeamId)}</dd>
+          </dl>
+        </Modal>
+      )}
       {editing && (
         <EventEditor
           key={editing === 'new' ? 'new' : editing.id}

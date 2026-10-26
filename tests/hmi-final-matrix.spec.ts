@@ -100,11 +100,12 @@ for (const [width, height, language, roster] of cases)
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
     );
-    await page.locator('.match-team-names > summary').click();
+    await page.locator('.team-name-button').first().click();
     await expect(page.locator('.match-team-names dd')).toHaveText(
       data.teams.map((team) => team.name),
     );
-    await page.locator('.match-team-names > summary').click();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
     const last = page.locator('.event-card').last();
     const edit = last.getByRole('button', {
       name: new RegExp(`^(${t('Editar')}|${t('Completar')})$`),

@@ -62,7 +62,9 @@ test('manual match lifecycle persists and works offline', async ({ page, context
   await expect(page.getByLabel('Marcador 1 a 0')).toBeVisible();
   await page.getByRole('button', { name: 'Finalizar partido', exact: true }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Confirmar' }).click();
-  await expect(page.getByRole('heading', { name: 'Detalle del partido' })).toBeVisible();
+  await expect(
+    page.locator('.match-page-title .badge').filter({ hasText: /^Finalizado$/ }),
+  ).toBeVisible();
   await page
     .locator('article')
     .filter({ hasText: 'Águilas · #7' })

@@ -29,7 +29,9 @@ test('active match shares a PDF snapshot; completed match downloads one, also of
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.goto('/#/partidos/report-match');
   await page.getByRole('tab', { name: 'Estadísticas', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Partido en curso', exact: true })).toBeVisible();
+  await expect(
+    page.locator('.match-page-title .badge').filter({ hasText: /^En curso$/ }),
+  ).toBeVisible();
   await expect(
     page.getByRole('img', { name: 'Marcador por minuto del tiempo 1', exact: true }),
   ).toBeVisible();
@@ -62,7 +64,7 @@ test('active match shares a PDF snapshot; completed match downloads one, also of
   await page.getByRole('dialog').getByRole('button', { name: 'Confirmar', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(
-    page.getByRole('heading', { name: 'Detalle del partido', exact: true }),
+    page.locator('.match-page-title .badge').filter({ hasText: /^Finalizado$/ }),
   ).toBeVisible();
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;

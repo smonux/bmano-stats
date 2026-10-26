@@ -117,21 +117,14 @@ for (const viewport of [
     expect(linkBounds.width).toBeGreaterThanOrEqual(44);
     expect(linkBounds.height).toBeGreaterThanOrEqual(44);
     await noOverflow(page);
-    const summary = page.getByText('Nombres de los equipos', { exact: true });
-    await summary.focus();
-    await summary.press('Enter');
+    const nameButton = page.locator('.team-name-button').first();
+    await nameButton.focus();
+    await nameButton.press('Enter');
     const names = page.locator('.match-team-names');
-    await expect(names).toHaveJSProperty('open', true);
     await expect(names.locator('dd')).toHaveText(backup.teams.map((team) => team.name));
-    await page
-      .locator('.clock-actions')
-      .getByRole('button', { name: 'Reanudar', exact: true })
-      .click();
-    await expect(
-      page.locator('.clock-actions').getByRole('button', { name: 'Parar', exact: true }),
-    ).toBeVisible();
-    await expect(names).toHaveJSProperty('open', true);
-    await summary.press('Enter');
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(nameButton).toBeFocused();
     if (viewport.width === 390) {
       const usable = await page.evaluate(
         () =>

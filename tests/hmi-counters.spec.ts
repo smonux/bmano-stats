@@ -48,7 +48,7 @@ test('empty counters use a single entry; starting without shirt does not add an 
   await expect(add).toHaveCount(1);
   await expect(
     page.getByText('El contador no añade una exclusión al registro.', { exact: true }),
-  ).toBeVisible();
+  ).toHaveCount(0);
   await add.focus();
   await add.press('Enter');
   const dialog = page.getByRole('dialog');

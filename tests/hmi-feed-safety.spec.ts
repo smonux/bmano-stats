@@ -66,7 +66,9 @@ async function restore(page: Page, mode: 'pending' | 'mixed' | 'delete' | 'long'
   // Use the app's navigation so Back/Forward exercise real history entries.
   await page.goto('/#/partidos');
   await page.locator('.match-card').first().click();
-  await expect(page.getByRole('heading', { name: 'Partido en curso', exact: true })).toBeVisible();
+  await expect(
+    page.locator('.match-page-title .badge').filter({ hasText: /^En curso$/ }),
+  ).toBeVisible();
   return backup;
 }
 const card = (page: Page, id: string) => page.locator(`[data-event-id="${id}"]`);
@@ -260,8 +262,7 @@ test('delete match names teams and date; cancel keeps the match and confirmation
   page,
 }) => {
   await restore(page, 'delete');
-  const more = page.locator('.match-more');
-  await more.locator('summary').click();
+  const more = page.locator('.match-footer');
   await more.getByRole('button', { name: 'Eliminar partido', exact: true }).click();
   let dialog = page.getByRole('dialog', { name: 'Eliminar partido', exact: true });
   await expect(dialog.locator('.confirmation-context')).toContainText('La Jota — Rival');

@@ -12,19 +12,21 @@
     position: static;
   }
 }
-.match-page-title .page-heading {
-  margin-bottom: 12px;
+.match-page-title {
+  display: flex;
   align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 .match-page-title .back {
-  margin-bottom: 0;
+  margin: 0;
+  flex-shrink: 0;
 }
 .match-page-title h1 {
-  font-size: var(--text-section);
-}
-.match-page-title .page-heading p {
-  margin-top: 4px;
-  font-size: var(--text-caption);
+  margin: 0;
+  flex: 1;
+  font-size: var(--text-body);
+  overflow-wrap: anywhere;
 }
 .scoreboard {
   display: grid;
@@ -43,11 +45,24 @@
   font-size: var(--text-body);
   line-height: 1.3;
   margin-top: 4px;
-  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.team-name-button {
+  width: 100%;
+  min-height: 44px;
+  padding: 2px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  line-height: inherit;
+  display: block;
+}
+.team-name-button > span {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
+  overflow-wrap: anywhere;
 }
 .score {
   display: flex;
@@ -117,17 +132,6 @@
   min-height: var(--target-live);
 }
 .match-team-names {
-  flex: 1 1 12rem;
-  min-width: 0;
-}
-.match-team-names summary {
-  min-height: var(--target-live);
-  padding: 10px 4px;
-  cursor: pointer;
-  font-size: var(--text-caption);
-  font-weight: 600;
-}
-.match-team-names dl {
   margin: 8px 0;
 }
 .match-team-names dt {
