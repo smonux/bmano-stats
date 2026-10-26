@@ -77,7 +77,7 @@ test('manual starts with team 1 and a goal without a shirt takes three activatio
   await expect(editor).toHaveCount(0);
   await expect(page.getByLabel('Marcador 1 a 0')).toBeVisible();
   await page.reload();
-  await expect(page.locator('.event-card')).toContainText('sin identificar');
+  await expect(page.locator('.event-card .event-player')).toHaveText('Sin identificar');
 });
 
 for (const count of [0, 7, 30])
@@ -155,7 +155,10 @@ test('substitution summary identifies both participants, permits unidentified an
   await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(editor).toHaveCount(0);
   await page.reload();
-  await expect(page.locator('.event-card')).toContainText('Sale #0 Persona 0 → Entra #1 Persona 1');
+  await expect(page.locator('.event-card .event-player')).toHaveText([
+    'Sale: #0 · Persona 0',
+    'Entra: #1 · Persona 1',
+  ]);
 });
 
 test('captured minute survives the running clock and rapid repeated submit creates one event', async ({

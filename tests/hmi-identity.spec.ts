@@ -5,6 +5,7 @@ import { definitions, eventTypes } from '../src/domain/event-definitions';
 import { reportFixture } from './fixtures/report';
 
 test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
   await page.addInitScript(() => {
     localStorage.setItem('handball-language', 'es');
     localStorage.setItem('handball-welcome-v1', 'done');
@@ -59,11 +60,14 @@ test('every event keeps its label and perspective with the new decorative vector
     await expect(icon).toHaveAttribute('stroke', 'currentColor');
     await expect(icon).toHaveCSS(
       'color',
-      index % 2 && type !== 'note' ? 'rgb(255, 214, 0)' : 'rgb(68, 68, 68)',
+      index % 2 && type !== 'note' ? 'rgb(255, 255, 255)' : 'rgb(23, 23, 23)',
     );
     if (type !== 'note') {
       await expect(card.locator('.event-team-name')).toHaveText(index % 2 ? 'Rival' : 'La Jota');
-      await expect(card.getByRole('img')).toHaveCount(1); // Team identity, no duplicate icon label.
+      await expect(card.locator('.event-team-label')).toHaveText(
+        index % 2 ? 'Equipo 2' : 'Equipo 1',
+      );
+      await expect(card.getByRole('img')).toHaveCount(0); // Visible team text; decorative event icon.
     }
   }
   const pending = page.locator('.event-card').filter({ hasText: 'Evento sin indicar' });
@@ -160,7 +164,7 @@ test('manual selection shows event icons and short labels while keeping the even
   await goal.focus();
   await goal.press('Enter');
   await expect(goal).toHaveAttribute('aria-pressed', 'true');
-  await expect(goal.locator('.event-symbol')).toBeInViewport({ ratio: 1 });
+  await expect(editor.getByRole('group', { name: 'Datos del evento', exact: true })).toBeFocused();
   await page.screenshot({ path: info.outputPath('manual-event-icons.png') });
   await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(editor).toHaveCount(0);

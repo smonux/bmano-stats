@@ -1,3 +1,4 @@
+import { contrast } from './color-helpers';
 import { choose, editContext } from './editor-helpers';
 import { expect, test, type Page } from '@playwright/test';
 import { reportFixture } from './fixtures/report';
@@ -39,23 +40,6 @@ async function noOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 }
 
-function contrast(first: string, second: string) {
-  const luminance = (color: string) => {
-    const values = color
-      .match(/[\d.]+/g)!
-      .slice(0, 3)
-      .map(Number)
-      .map((value) => {
-        const channel = value / 255;
-        return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-      });
-    return values[0] * 0.2126 + values[1] * 0.7152 + values[2] * 0.0722;
-  };
-  const a = luminance(first),
-    b = luminance(second);
-  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
-}
-
 for (const viewport of [
   { width: 320, height: 568 },
   { width: 390, height: 664 },
@@ -74,7 +58,7 @@ for (const viewport of [
       ['.event-title', 16],
       ['.event-copy p', 16],
       ['.event-copy time', 14],
-      ['.event-bottom .caption', 14],
+      ['.event-status, .event-metadata', 14],
       ['.timer-player', 14],
       ['.timer-digits', 20],
       ['.timer-state', 14],

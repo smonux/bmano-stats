@@ -48,12 +48,17 @@ test('substitution editor preserves two teammates, statistics, PDF and ZIP resto
   await selectShirtNumber(dialog, 'Dorsal relacionado', '9');
   await page.screenshot({ path: info.outputPath('substitution-editor.png'), fullPage: true });
   await dialog.getByRole('button', { name: 'Guardar evento', exact: true }).click();
-  await expect(page.locator('.event-card').filter({ hasText: 'Sustitución' })).toContainText(
-    'La Jota · Sale #6 → Entra #9',
-  );
+  await expect(page.locator('.event-card .event-team-name')).toHaveText('La Jota');
+  await expect(page.locator('.event-card .event-player')).toHaveText([
+    'Sale: #6 · Sin nombre',
+    'Entra: #9 · Sin nombre',
+  ]);
   await expect(page.getByLabel('Marcador 0 a 0')).toBeVisible();
   await page.reload();
-  await expect(page.locator('.event-card')).toContainText('Sale #6 → Entra #9');
+  await expect(page.locator('.event-card .event-player')).toHaveText([
+    'Sale: #6 · Sin nombre',
+    'Entra: #9 · Sin nombre',
+  ]);
   await page.getByRole('tab', { name: 'Estadísticas', exact: true }).click();
   await expect(
     page.locator('.stat-list div').filter({ hasText: 'Sustituciones' }).locator('dd'),
@@ -98,6 +103,9 @@ test('substitution editor preserves two teammates, statistics, PDF and ZIP resto
   await page.getByRole('dialog').getByRole('button', { name: 'Confirmar', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.goto('/#/partidos/report-match');
-  await expect(page.locator('.event-card')).toContainText('Sale #6 → Entra #9');
+  await expect(page.locator('.event-card .event-player')).toHaveText([
+    'Sale: #6 · Sin nombre',
+    'Entra: #9 · Sin nombre',
+  ]);
   expect(errors).toEqual([]);
 });

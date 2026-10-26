@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { reportFixture } from './fixtures/report';
 
-test('opponent events mirror their title and icon and both teams are explicitly identified', async ({
+test('every card names its team in a full header and both teams share the approved icon and text layout', async ({
   page,
 }, info) => {
+  await page.emulateMedia({ colorScheme: 'light' });
   await page.addInitScript(() => {
     localStorage.setItem('handball-language', 'es');
     localStorage.setItem('handball-welcome-v1', 'done');
@@ -17,22 +18,36 @@ test('opponent events mirror their title and icon and both teams are explicitly 
   await page.getByRole('dialog').getByRole('button', { name: 'Confirmar', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.goto('/#/partidos/report-match');
-  const ours = page.locator('.event-card.home').filter({ hasText: 'T1 · 3′' });
-  const rival = page.locator('.event-card.away').filter({ hasText: 'T1 · 1′' });
-  await expect(ours.getByRole('img', { name: 'Equipo 1 (nuestro)', exact: true })).toHaveText('1');
-  await expect(rival.getByRole('img', { name: 'Equipo 2 (rival)', exact: true })).toHaveText('2');
+  const ours = page.locator('[data-event-id="e1"]');
+  const rival = page.locator('[data-event-id="e2"]');
+  await expect(ours.locator('.event-team-label')).toHaveText('Equipo 1');
+  await expect(rival.locator('.event-team-label')).toHaveText('Equipo 2');
   await expect(ours.locator('.event-team-name')).toHaveText('La Jota');
   await expect(rival.locator('.event-team-name')).toContainText('Rival');
+  await expect(ours.locator('.event-team')).toHaveCSS('background-color', 'rgb(255, 214, 0)');
+  await expect(rival.locator('.event-team')).toHaveCSS('background-color', 'rgb(41, 45, 50)');
+  await expect(ours).toHaveAccessibleName('La Jota Equipo 1 Gol');
+  await expect(rival).toHaveAccessibleName('Rival Equipo 2 Gol');
 
   const ourIcon = (await ours.locator('.event-icon').boundingBox())!;
   const ourTitle = (await ours.locator('.event-title').boundingBox())!;
   expect(ourIcon.x + ourIcon.width).toBeLessThan(ourTitle.x);
   const rivalIcon = (await rival.locator('.event-icon').boundingBox())!;
   const rivalTitle = (await rival.locator('.event-title').boundingBox())!;
-  const rivalTime = (await rival.locator('time').boundingBox())!;
-  expect(rivalTime.x + rivalTime.width).toBeLessThan(rivalTitle.x);
-  expect(rivalTitle.x + rivalTitle.width).toBeLessThan(rivalIcon.x);
-  await expect(rival.locator('.event-copy')).toHaveCSS('text-align', 'right');
+  expect(rivalIcon.x + rivalIcon.width).toBeLessThan(rivalTitle.x);
+  for (const card of [ours, rival]) {
+    await expect(card.locator('.event-copy')).toHaveCSS('text-align', 'start');
+    await expect(card.locator('.event-icon')).toHaveCSS('width', '52px');
+    await expect(card.locator('.event-icon')).toHaveCSS('height', '52px');
+    await expect(card.locator('.event-symbol')).toHaveCSS('width', '34px');
+    await expect(card.locator('.event-title')).toHaveCSS('font-size', '16px');
+    await expect(card.locator('.event-player')).toHaveCSS('font-size', '16px');
+    await expect(card.locator('time')).toHaveCSS('font-size', '14px');
+    const time = (await card.locator('time').boundingBox())!;
+    const copy = (await card.locator('.event-copy').boundingBox())!;
+    expect(Math.abs(time.x + time.width - copy.x - copy.width)).toBeLessThanOrEqual(1);
+  }
+  await expect(page.locator('.event-feed')).not.toContainText('Registrado');
   const unassigned = page.locator('.event-card.unassigned');
   await expect(unassigned).toContainText('Equipo pendiente');
   await expect(unassigned.getByRole('img')).toHaveCount(0);
@@ -41,6 +56,8 @@ test('opponent events mirror their title and icon and both teams are explicitly 
 
   const homeBounds = (await ours.boundingBox())!,
     awayBounds = (await rival.boundingBox())!;
+  expect(Math.abs(homeBounds.x - awayBounds.x)).toBeLessThanOrEqual(1);
+  expect(Math.abs(homeBounds.width - awayBounds.width)).toBeLessThanOrEqual(1);
   const homeEdit = (await ours.getByRole('button', { name: 'Editar', exact: true }).boundingBox())!;
   const awayEdit = (await rival
     .getByRole('button', { name: 'Editar', exact: true })

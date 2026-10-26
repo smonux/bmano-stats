@@ -1,5 +1,21 @@
 /** Feed and editing protection: English, German, French, Italian, Dutch, Polish. */
 export const hmiFeedMessages: Record<string, readonly string[]> = {
+  'Equipo {number}': [
+    'Team {number}',
+    'Team {number}',
+    'Équipe {number}',
+    'Squadra {number}',
+    'Team {number}',
+    'Drużyna {number}',
+  ],
+  'Tiempo {period} · Minuto {minute}': [
+    'Period {period} · Minute {minute}',
+    'Abschnitt {period} · Minute {minute}',
+    'Période {period} · Minute {minute}',
+    'Tempo {period} · Minuto {minute}',
+    'Periode {period} · Minuut {minute}',
+    'Okres {period} · Minuta {minute}',
+  ],
   'Datos del evento': [
     'Event details',
     'Aktionsdaten',

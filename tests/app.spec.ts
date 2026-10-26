@@ -45,12 +45,13 @@ test('manual match lifecycle persists and works offline', async ({ page, context
   await choose(dialog, 'Equipo', 'Águilas');
   await dialog.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(page.getByLabel('Marcador 1 a 0')).toBeVisible();
-  await expect(page.getByText('Registrado · sin identificar', { exact: false })).toBeVisible();
+  await expect(page.locator('.event-card .event-player')).toHaveText('Sin identificar');
   await page.getByRole('button', { name: 'Editar', exact: true }).click();
   dialog = page.getByRole('dialog');
   await selectShirtNumber(dialog, 'Dorsal principal', '7');
   await dialog.getByRole('button', { name: 'Guardar evento', exact: true }).click();
-  await expect(page.getByText('Águilas · #7', { exact: false })).toBeVisible();
+  await expect(page.locator('.event-card .event-team-name')).toHaveText('Águilas');
+  await expect(page.locator('.event-card .event-player')).toContainText('#7');
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   await page.getByRole('button', { name: 'Guardar pendiente' }).click();
   await expect(page.getByRole('button', { name: '1 pendientes' })).toBeVisible();
@@ -67,7 +68,7 @@ test('manual match lifecycle persists and works offline', async ({ page, context
   ).toBeVisible();
   await page
     .locator('article')
-    .filter({ hasText: 'Águilas · #7' })
+    .filter({ has: page.locator('.event-player', { hasText: '#7' }) })
     .getByRole('button', { name: 'Editar', exact: true })
     .click();
   await editContext(page.getByRole('dialog'));

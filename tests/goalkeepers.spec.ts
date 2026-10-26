@@ -46,7 +46,9 @@ test('goalkeeper roles are explicit in the roster and saves remember zero across
     await expect.poll(() => readShirtNumber(editor, 'Dorsal principal')).toBe(shirt);
     await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
     await expect(editor).toHaveCount(0);
-    await expect(page.locator('.event-card').first()).toContainText(`· #${shirt}`);
+    await expect(
+      page.locator('.event-card').first().locator('.event-player').first(),
+    ).toContainText(`#${shirt}`);
   }
   await expect(page.locator('.event-card')).toHaveCount(2);
   await page.reload();

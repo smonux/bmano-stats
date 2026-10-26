@@ -1,5 +1,5 @@
-import { Trash2 } from 'lucide-react';
-import type { RefObject } from 'react';
+import { CircleHelp, Trash2 } from 'lucide-react';
+import { useId, type RefObject } from 'react';
 import { tr } from '../i18n';
 import {
   definitions,
@@ -86,6 +86,7 @@ function EventCard({
   onEdit,
   onDelete,
 }: EventActions & { data: Snapshot; match: Match; event: GameEvent }) {
+  const id = useId();
   const state = eventState(event, match, data.players);
   const issues = eventIssues(event, match, data.players);
   const hasNote = event.note.trim().length > 0;
@@ -93,110 +94,120 @@ function EventCard({
   const primaryPlayer = data.players.find((player) => player.id === event.primaryPlayerId);
   const incomingPlayer = data.players.find((player) => player.id === event.relatedPlayerId);
   const definition = event.type ? definitions[event.type] : undefined;
-  let side = 'unassigned';
-  let teamNumber: number | null = null;
-  let perspectiveLabel = '';
-  if (event.teamId === match.localTeamId) {
-    side = 'home';
-    teamNumber = 1;
-    perspectiveLabel = tr('Equipo 1 (nuestro)');
-  } else if (event.teamId === match.visitorTeamId) {
-    side = 'away';
-    teamNumber = 2;
-    perspectiveLabel = tr('Equipo 2 (rival)');
-  }
-  let statusLabel = tr('✓ Registrado');
-  if (state === 'pending') {
-    statusLabel = tr('! Pendiente · no computa');
-  } else if (state === 'unidentified') {
-    statusLabel = tr('✓ Registrado · sin identificar');
-  }
+  const teamNumber =
+    event.teamId === match.localTeamId ? 1 : event.teamId === match.visitorTeamId ? 2 : null;
+  const side =
+    event.type === 'note'
+      ? 'match-note'
+      : teamNumber === 1
+        ? 'team-one'
+        : teamNumber === 2
+          ? 'team-two'
+          : 'unassigned';
+  const heading =
+    event.type === 'note'
+      ? tr('Nota del partido')
+      : teamNumber !== null
+        ? teamName(data, teamNumber === 1 ? match.localTeamId : match.visitorTeamId)
+        : tr('Equipo pendiente');
+  const metadata = [
+    event.metadata.penalty ? '7 m' : '',
+    event.metadata.infraction ? tr(event.metadata.infraction) : '',
+    event.metadata.blue ? tr('Tarjeta azul') : '',
+  ].filter(Boolean);
+  const showPlayer = event.type !== 'passive' && event.type !== 'note';
+  const relatedRole =
+    definition?.related &&
+    (event.type === 'substitution' || (incomingPlayer && !incomingPlayer.isUnknown))
+      ? definition.related
+      : null;
   return (
-    <article className={`event-card ${side} ${state}`} data-event-id={event.id}>
-      <div className="event-icon" aria-hidden="true">
-        {event.type ? <EventIcon type={event.type} /> : '?'}
-      </div>
-      <div className="event-copy">
-        <div className="event-heading">
-          <strong className="event-title">
-            {definition ? tr(definition.label) : tr('Evento sin indicar')}
-          </strong>
-          <time>
-            T{event.period} · {event.minute}′
-          </time>
-        </div>
-        <p>
-          <span className="event-team">
-            {teamNumber !== null && (
-              <span
-                className="event-team-number"
-                role="img"
-                aria-label={perspectiveLabel}
-                title={perspectiveLabel}
-              >
-                {teamNumber}
-              </span>
-            )}
-            <b className="event-team-name">
-              {event.type === 'note'
-                ? tr('Nota del partido')
-                : event.teamId
-                  ? teamName(data, event.teamId)
-                  : tr('Equipo pendiente')}
-            </b>
-          </span>
-          {event.type !== 'passive' && event.type !== 'note' && (
-            <>
-              {' '}
-              · {event.type === 'substitution' && `${tr('Sale')} `}
-              {playerLabel(primaryPlayer)}
-              {event.type === 'substitution' && (
-                <>
-                  {' '}
-                  → {tr('Entra')} {playerLabel(incomingPlayer)}
-                </>
-              )}
-            </>
-          )}
-        </p>
-        {(hasNote || hasTranscript) && (
-          <details className="event-details">
-            <summary>
-              {tr(
-                hasNote && hasTranscript
-                  ? 'Ver nota y transcripción'
-                  : hasNote
-                    ? 'Ver nota'
-                    : 'Ver transcripción original',
-              )}
-            </summary>
-            {hasNote && (
-              <div>
-                <strong>{tr('Nota')}</strong>
-                <p className="event-note">{event.note}</p>
-              </div>
-            )}
-            {hasTranscript && (
-              <div>
-                <strong>{tr('Transcripción original')}</strong>
-                <p className="event-original">{event.rawText}</p>
-              </div>
-            )}
-          </details>
+    <article
+      className={`event-card ${side} ${state}`}
+      data-event-id={event.id}
+      data-team={teamNumber ?? 'none'}
+      aria-labelledby={`${id}-team ${id}-event`}
+    >
+      <header className="event-team" id={`${id}-team`}>
+        <strong className="event-team-name">{heading}</strong>
+        {teamNumber !== null && (
+          <span className="event-team-label">{tr('Equipo {number}', { number: teamNumber })}</span>
         )}
+      </header>
+      <div className="event-body">
+        <div className="event-icon" aria-hidden="true">
+          {event.type ? <EventIcon type={event.type} /> : <CircleHelp size={34} />}
+        </div>
+        <div className="event-copy">
+          <div className="event-heading">
+            <strong className="event-title" id={`${id}-event`}>
+              {definition ? tr(definition.label) : tr('Evento sin indicar')}
+            </strong>
+            <time
+              aria-label={tr('Tiempo {period} · Minuto {minute}', {
+                period: event.period,
+                minute: event.minute,
+              })}
+            >
+              T{event.period} · {event.minute}′
+            </time>
+          </div>
+          {showPlayer && (
+            <p className="event-player">
+              {event.type === 'substitution' && (
+                <span className="event-player-role">{tr('Sale')}: </span>
+              )}
+              {playerLabel(primaryPlayer)}
+            </p>
+          )}
+          {relatedRole && (
+            <p className="event-player">
+              <span className="event-player-role">{tr(relatedRole)}: </span>
+              {playerLabel(incomingPlayer)}
+            </p>
+          )}
+        </div>
       </div>
+      {(hasNote || hasTranscript) && (
+        <details className="event-details">
+          <summary>
+            {tr(
+              hasNote && hasTranscript
+                ? 'Ver nota y transcripción'
+                : hasNote
+                  ? 'Ver nota'
+                  : 'Ver transcripción original',
+            )}
+          </summary>
+          {hasNote && (
+            <div>
+              <strong>{tr('Nota')}</strong>
+              <p className="event-note">{event.note}</p>
+            </div>
+          )}
+          {hasTranscript && (
+            <div>
+              <strong>{tr('Transcripción original')}</strong>
+              <p className="event-original">{event.rawText}</p>
+            </div>
+          )}
+        </details>
+      )}
       <div className="event-bottom">
-        <span className="caption">
-          {statusLabel}
-          {event.metadata.penalty ? ' · 7 m' : ''}
-          {event.metadata.infraction ? ' · ' + tr(event.metadata.infraction) : ''}
-        </span>
+        {state === 'pending' && <p className="event-status">{tr('! Pendiente · no computa')}</p>}
         {issues.length > 0 && (
           <ul className="event-issues">
             {issues.map((issue) => (
               <li key={issue}>{tr(issue)}</li>
             ))}
           </ul>
+        )}
+        {metadata.length > 0 && (
+          <p className="event-metadata">
+            {metadata.map((label) => (
+              <span key={label}>{label}</span>
+            ))}
+          </p>
         )}
         <div className="event-actions">
           <button className="text-button" onClick={() => onEdit(event)}>
@@ -221,7 +232,7 @@ function EventCard({
 
 function playerLabel(player: Player | undefined): string {
   if (!player || player.isUnknown) {
-    return tr('Desconocido');
+    return tr('Sin identificar');
   }
-  return `#${player.dorsal}${player.name ? ' ' + player.name : ''}`;
+  return `#${player.dorsal} · ${player.name || tr('Sin nombre')}`;
 }
