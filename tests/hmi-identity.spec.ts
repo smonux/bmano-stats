@@ -1,3 +1,4 @@
+import { eventChoiceLabels } from '../src/components/event-editor/event-choice-labels';
 import { choose } from './editor-helpers';
 import { expect, test } from '@playwright/test';
 import { definitions, eventTypes } from '../src/domain/event-definitions';
@@ -132,7 +133,7 @@ test('favicon and install icons use the chosen artwork and remain available offl
   ]);
 });
 
-test('manual selection shows event icons while keeping labels, neutral defaults and saving', async ({
+test('manual selection shows event icons and short labels while keeping the event unselected until chosen', async ({
   page,
 }, info) => {
   const backup = reportFixture();
@@ -148,10 +149,9 @@ test('manual selection shows event icons while keeping labels, neutral defaults 
   await page.goto('/#/partidos/report-match');
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   const editor = page.getByRole('dialog');
-  await expect(editor.locator('[aria-pressed="true"]')).toHaveCount(0);
-  await editor.locator('.more-actions').click();
+  await expect(editor.locator('.event-action-choices [aria-pressed="true"]')).toHaveCount(0);
   for (const type of eventTypes) {
-    const option = editor.getByRole('button', { name: definitions[type].label, exact: true });
+    const option = editor.getByRole('button', { name: eventChoiceLabels[type], exact: true });
     await expect(option.locator('.event-symbol')).toHaveCount(1);
     await expect(option.locator('.event-symbol')).toHaveAttribute('aria-hidden', 'true');
   }

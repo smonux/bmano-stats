@@ -236,3 +236,7 @@ Validación final: 146 unitarias en 29 archivos; formato, TypeScript y build cor
 Sin cambios de modelos/configuración/reglas de voz, cálculo de estadísticas, PDF o formato de copia. La investigación de caché permanece aparcada. WebKit no está instalado; Safari/iPhone, Android físicos, ruido y lectores de pantalla quedan como límites de validación, sin atribuirles resultados de Chromium emulado.
 
 Objetivo de software completado, etiqueta `hmi-auditoria-final`. Todo en `cambios-hmi`; `main` conserva `138fbf17e85668c890b36ecbe250fc91297d7650`. Sin merge, push ni publicación. `dist` regenerado y corresponde al código verificado.
+
+## Ampliación aprobada: Mejoras 2
+
+El trabajo posterior del ZIP y las precisiones de Samuel se siguen en [mejoras-2.md](mejoras-2.md), con commits y etiquetas por bloque. Sus decisiones sustituyen las anteriores sobre equipo inicial en entrada manual, acciones frecuentes y tres contadores: Equipo 1 propuesto solo en manual nuevo (evento sin seleccionar), matriz completa y cuatro contadores con pausa común. Se conserva el histórico de entregas de este documento. Esta ampliación permanece local en `cambios-hmi`, sin merge ni publicación.

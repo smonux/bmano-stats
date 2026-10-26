@@ -100,10 +100,9 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
   const chosenTypes = await editor
     .locator('.event-action-choices button[aria-pressed="true"]')
     .allTextContents();
-  const moreLabel = await editor.locator('.more-actions').textContent();
   const actualProposal = {
     transcripcion: await page.locator('.voice-transcript').first().textContent(),
-    tipo: chosenTypes[0] ?? moreLabel?.split(' · ')[1] ?? null,
+    tipo: chosenTypes[0] ?? null,
     equipo: await editor
       .getByRole('group', { name: 'Equipo', exact: true })
       .getByRole('button', { pressed: true })

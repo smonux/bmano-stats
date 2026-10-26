@@ -1,5 +1,18 @@
 /** English, German, French, Italian, Dutch, Polish. */
 export const mejoras2Messages: Record<string, readonly string[]> = {
+  Fallo: ['Miss', 'Fehlwurf', 'Échec', 'Errore', 'Mis', 'Niecelny'],
+  Penalti: ['Penalty', 'Siebenmeter', 'Penalty', 'Rigore', 'Strafworp', 'Karny'],
+  Amarilla: ['Yellow', 'Gelb', 'Jaune', 'Gialla', 'Geel', 'Żółta'],
+  Roja: ['Red', 'Rot', 'Rouge', 'Rossa', 'Rood', 'Czerwona'],
+  Cambio: ['Change', 'Wechsel', 'Changement', 'Cambio', 'Wissel', 'Zmiana'],
+  'Nota opcional': [
+    'Optional note',
+    'Optionale Notiz',
+    'Note facultative',
+    'Nota facoltativa',
+    'Optionele notitie',
+    'Opcjonalna notatka',
+  ],
   '2 min': ['2 min', '2 Min.', '2 min', '2 min', '2 min', '2 min'],
   'Los cuatro contadores están ocupados. Libera uno antes de activar otro.': [
     'All four timers are occupied. Clear one before starting another.',

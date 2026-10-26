@@ -25,7 +25,7 @@ La primera visita requiere conexión para almacenar la aplicación. El service w
 - Equipos y jugadores, nombre opcional, dorsal fijo y creación automática al registrar una acción.
 - Inicio de partido con equipos del catálogo o nuevos y fecha.
 - Reloj con pausa, reanudación, nuevos tiempos y finalización; corrección de partidos finalizados.
-- Captura manual de los 12 eventos, participantes relacionados y metadatos aplicables.
+- Captura manual de los 13 tipos de evento, incluida Nota, con participantes relacionados y metadatos aplicables.
 - Sustituciones con jugador que sale y jugador que entra del mismo equipo; recuentos de cambios, entradas y salidas.
 - Captura local por voz: Whistle transcribe y las reglas interpretan comandos en orden evento/equipo/jugador 1/jugador 2/metadatos; resumen con guardado explícito, edición y transcripción original conservada.
 - Porteros editables en la plantilla y último portero confirmado por equipo/partido como propuesta cuando falta en una parada.
@@ -93,7 +93,7 @@ La generación ocurre en un worker para mantener libre la interfaz. Cuando el na
 
 La [auditoría integral](docs/refactorizacion-integral.md) registra el alcance y las comprobaciones de equivalencia. Las [indicaciones de interfaz posteriores](docs/tareas-pendientes.md) se completaron después de cerrar esa refactorización.
 
-La navegación se abre con el botón de tres rayas de la izquierda. Los dorsales se introducen con dos ruedas. El editor mantiene Guardar y Cancelar sobre el teclado; los cuatro contadores ocupan una franja compacta. El menú ofrece «Fijar vertical» cuando se necesita pantalla completa; el navegador puede rechazar el bloqueo ([condiciones de la API](https://www.w3.org/TR/screen-orientation/#dom-screenorientation-lock)). Al girar se conserva la edición y se procesa el audio capturado si se cancela el contacto táctil.
+La navegación se abre con el botón de tres rayas de la izquierda. El editor muestra todos los eventos en una matriz de tres columnas, con iconos y etiquetas cortas. En un evento manual nuevo propone Equipo 1, sin elegir evento; las correcciones conservan el equipo original. La nota está abierta y la transcripción original se consulta en su propio desplegable. Los jugadores conocidos se eligen directamente y «Otro dorsal» ofrece dos ruedas. Guardar y Cancelar permanecen sobre el teclado; los cuatro contadores ocupan una franja compacta. El menú ofrece «Fijar vertical» cuando se necesita pantalla completa; el navegador puede rechazar el bloqueo ([condiciones de la API](https://www.w3.org/TR/screen-orientation/#dom-screenorientation-lock)). Al girar se conserva la edición y se procesa el audio capturado si se cancela el contacto táctil.
 
 ## Licencia
 

@@ -28,9 +28,7 @@ test('compact match heading, readable full names and direct deletion preserve da
   await expect(
     page.getByText('El contador no añade una exclusión al registro.', { exact: true }),
   ).toHaveCount(0);
-  await expect(page.locator('.match-secondary-actions')).not.toContainText(
-    'Nombres de los equipos',
-  );
+  await expect(page.locator('.match-secondary-actions')).toHaveCount(0);
   const button = page.locator('.team-name-button').first();
   await button.focus();
   await button.press('Enter');

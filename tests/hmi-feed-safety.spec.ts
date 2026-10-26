@@ -293,7 +293,7 @@ test('discarding Back leaves the match without saving or leaking a draft into th
   await page.locator('.match-card').click();
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   editor = page.getByRole('dialog', { name: 'Nuevo evento', exact: true });
-  await expect(editor.locator('[aria-pressed="true"]')).toHaveCount(0);
+  await expect(editor.locator('.event-action-choices [aria-pressed="true"]')).toHaveCount(0);
   await editor.getByRole('button', { name: 'Cancelar', exact: true }).click();
   await expect(page.locator('.event-card')).toHaveCount(1);
 });

@@ -45,21 +45,21 @@ async function open(page: Page, rosterSize = 7, longNames = false) {
   return backup;
 }
 
-test('manual starts neutral and a goal without a shirt takes four activations without scrolling', async ({
+test('manual starts with team 1 and a goal without a shirt takes three activations without scrolling', async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const data = await open(page);
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   const editor = page.getByRole('dialog');
-  await expect(editor.locator('[aria-pressed="true"]')).toHaveCount(0);
+  await expect(editor.locator('.event-action-choices [aria-pressed="true"]')).toHaveCount(0);
   await expect(editor.locator('.draft-issues')).toContainText('Selecciona un evento');
-  await expect(editor.locator('.draft-issues')).toContainText('Selecciona un equipo');
+  await expect(editor.locator('.draft-issues')).not.toContainText('Selecciona un equipo');
   const team = editor
     .getByRole('group', { name: 'Equipo', exact: true })
     .getByRole('button', { name: data.teams[0].name, exact: true });
   await expect(team).toBeInViewport({ ratio: 1 });
-  await team.click();
+  await expect(team).toHaveAttribute('aria-pressed', 'true');
   const goal = editor.getByRole('button', { name: 'Gol', exact: true });
   await expect(goal).toBeInViewport({ ratio: 1 });
   await goal.click();
@@ -69,7 +69,7 @@ test('manual starts neutral and a goal without a shirt takes four activations wi
       .getByRole('group', { name: 'Jugador principal', exact: true })
       .getByRole('button', { pressed: true }),
   ).toHaveText('Sin identificar');
-  await page.screenshot({ path: info.outputPath('four-activations.png') });
+  await page.screenshot({ path: info.outputPath('three-activations.png') });
   await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(editor).toHaveCount(0);
   await expect(page.getByLabel('Marcador 1 a 0')).toBeVisible();

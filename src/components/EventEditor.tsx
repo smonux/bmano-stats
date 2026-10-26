@@ -1,5 +1,6 @@
 import { useDraftProtection } from '../hooks/useDraftProtection';
 import { createEditorDraft } from './event-editor/draft';
+import { eventChoiceLabels } from './event-editor/event-choice-labels';
 import { eventDraftIssues } from '../presentation/event-draft';
 import { lastGoalkeeper } from '../domain/goalkeepers';
 import { WheelPicker } from './WheelPicker';
@@ -54,9 +55,7 @@ export function EventEditor({
     close,
   );
   const noteId = useId();
-  const moreButton = useRef<HTMLButtonElement>(null);
   const [contextOpen, setContextOpen] = useState(false);
-  const [moreActions, setMoreActions] = useState(false);
   const eventDefinition = draft.type ? definitions[draft.type] : null;
   const teamName = (id: string) => data.teams.find((team) => team.id === id)?.name ?? '';
   const setType = (type: EventType | null) =>
@@ -79,15 +78,15 @@ export function EventEditor({
     draft.type && draft.teamId ? relatedTeam(match, draft.type, draft.teamId) : draft.teamId;
   const issues = eventDraftIssues(draft, match, data.players);
   const missing = issues.length > 0;
-  const frequent: EventType[] = ['goal', 'save', 'loss', 'miss'];
   const actionChoices = (types: readonly EventType[]) =>
     types.map((value) => ({
       value,
-      label: tr(definitions[value].label),
+      label: tr(eventChoiceLabels[value]),
+      description: tr(definitions[value].label),
       content: (
         <>
           <EventIcon type={value} />
-          <span>{tr(definitions[value].label)}</span>
+          <span>{tr(eventChoiceLabels[value])}</span>
         </>
       ),
     }));
@@ -183,34 +182,9 @@ export function EventEditor({
                 issues.includes('Selecciona un evento') ? tr('Selecciona un evento') : undefined
               }
               value={draft.type ?? ''}
-              options={actionChoices(frequent)}
+              options={actionChoices(eventTypes)}
               change={(type) => setType(type as EventType)}
             />
-            <button
-              type="button"
-              ref={moreButton}
-              className="more-actions"
-              aria-expanded={moreActions}
-              onClick={() => setMoreActions(!moreActions)}
-            >
-              {tr('Más acciones')}
-              {draft.type && !frequent.includes(draft.type)
-                ? ' · ' + tr(definitions[draft.type].label)
-                : ''}
-            </button>
-            {moreActions && (
-              <ChoiceGroup
-                label={tr('Más acciones')}
-                className="event-action-choices"
-                value={draft.type ?? ''}
-                options={actionChoices(eventTypes.filter((type) => !frequent.includes(type)))}
-                change={(type) => {
-                  setType(type as EventType);
-                  setMoreActions(false);
-                  moreButton.current?.focus({ preventScroll: true });
-                }}
-              />
-            )}
             {draft.teamId &&
               eventDefinition &&
               draft.type !== 'passive' &&
@@ -260,18 +234,7 @@ export function EventEditor({
               metadata={draft.metadata}
               change={(metadata) => setDraft((previous) => ({ ...previous, metadata }))}
             />
-            <details
-              open={draft.type === 'note' || !!draft.note || !!draft.rawText || undefined}
-              className="event-additional"
-              aria-label={tr(
-                draft.type === 'note' ? 'Nota del partido' : 'Información adicional (opcional)',
-              )}
-            >
-              <summary>
-                {tr(
-                  draft.type === 'note' ? 'Nota del partido' : 'Información adicional (opcional)',
-                )}
-              </summary>
+            <div className="event-additional">
               {draft.type === 'note' && (
                 <p className="caption">
                   {tr('Se guarda en el registro, sin afectar al marcador ni a las estadísticas.')}
@@ -284,24 +247,21 @@ export function EventEditor({
                 rows={draft.type === 'note' ? 4 : 2}
                 value={draft.note}
                 placeholder={tr(
-                  draft.type === 'note'
-                    ? 'Escribe el texto de la nota'
-                    : 'Información adicional (opcional)',
+                  draft.type === 'note' ? 'Escribe el texto de la nota' : 'Nota opcional',
                 )}
-                onChange={(inputEvent) =>
-                  setDraft((previousDraft) => ({
-                    ...previousDraft,
-                    note: inputEvent.target.value,
-                  }))
+                onChange={(event) =>
+                  setDraft((previous) => ({ ...previous, note: event.target.value }))
                 }
               />
-              {draft.rawText && (
-                <p className="voice-transcript">
-                  <strong>{tr('Transcripción original')}</strong>
-                  <span>«{draft.rawText}»</span>
-                </p>
+              {!!draft.rawText.trim() && (
+                <details className="editor-transcript">
+                  <summary>{tr('Transcripción original')}</summary>
+                  <p className="voice-transcript">
+                    <span>«{draft.rawText}»</span>
+                  </p>
+                </details>
               )}
-            </details>
+            </div>
             {event && (
               <p className="caption">
                 {tr('Cambiar minuto o tiempo recoloca el evento en orden cronológico.')}

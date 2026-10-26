@@ -50,7 +50,7 @@ test('manual start is explicit, validates teams/date, works offline and leaves P
   await page.getByRole('button', { name: 'Evento manual', exact: true }).click();
   const editor = page.getByRole('dialog', { name: 'Nuevo evento', exact: true });
   await expect(editor).toBeVisible();
-  await expect(editor.locator('[aria-pressed=true]')).toHaveCount(0);
+  await expect(editor.locator('.event-action-choices [aria-pressed=true]')).toHaveCount(0);
   await editor.getByRole('button', { name: 'Cancelar', exact: true }).click();
   await expect(editor).toHaveCount(0);
   await context.setOffline(false);

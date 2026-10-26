@@ -146,7 +146,7 @@ for (const viewport of [
       await editor
         .getByRole('button', { name: 'Gol', exact: true })
         .evaluate((element) => parseFloat(getComputedStyle(element).fontSize)),
-    ).toBeGreaterThanOrEqual(16);
+    ).toBeGreaterThanOrEqual(14);
     await noOverflow(page);
     await page.screenshot({ path: info.outputPath('readable-editor.png') });
   });

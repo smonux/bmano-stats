@@ -10,7 +10,7 @@ export function createEditorDraft(data: Snapshot, match: Match, event?: GameEven
     expectedUpdatedAt: event?.updatedAt,
     matchId: match.id,
     type: event?.type ?? null,
-    teamId: event?.teamId ?? null,
+    teamId: event ? event.teamId : match.localTeamId,
     primaryDorsal: shirtNumberForPlayer(event?.primaryPlayerId ?? null),
     relatedDorsal: shirtNumberForPlayer(event?.relatedPlayerId ?? null),
     minute: event?.minute ?? Math.min(999, Math.floor(elapsed(match.clock) / 60000)),

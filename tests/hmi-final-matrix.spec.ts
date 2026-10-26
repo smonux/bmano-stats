@@ -152,7 +152,7 @@ for (const [width, height, language, roster] of cases)
     );
     await page.getByRole('button', { name: t('Evento manual'), exact: true }).click();
     const editor = page.getByRole('dialog');
-    await expect(editor.locator('.team-choices [aria-pressed=true]')).toHaveCount(0);
+    await expect(editor.locator('.team-choices [aria-pressed=true]')).toHaveCount(1);
     await expect(editor.locator('.event-action-choices [aria-pressed=true]')).toHaveCount(0);
     for (const button of await editor.locator('.event-editor-footer .actions button').all())
       await expect(button).toBeInViewport({ ratio: 1 });
@@ -176,10 +176,9 @@ test('200 percent text keeps save feedback, undo, counter action and capture rea
     .getByRole('button')
     .first()
     .click();
-  await editor.locator('.more-actions').click();
   await editor
-    .getByRole('group', { name: 'Más acciones', exact: true })
-    .getByRole('button', { name: 'Exclusión', exact: true })
+    .getByRole('group', { name: 'Evento', exact: true })
+    .getByRole('button', { name: '2 min', exact: true })
     .click();
   await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(editor).toHaveCount(0);
