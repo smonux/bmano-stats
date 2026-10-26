@@ -70,6 +70,8 @@ La bienvenida aparece en el primer uso y se puede reabrir en Ajustes. Explica c�
 
 Cada partido tiene cuatro contadores de exclusión de dos minutos con equipo y dorsal opcional. Se guardan localmente y en las copias, se pausan y reanudan con el reloj general; la X libera cada contador. El reloj del partido muestra minutos y segundos. A cero muestran «Puede volver». El sonido es opcional y requiere mantener abierta la vista del partido. La exclusión estadística se registra como evento aparte.
 
+Si el reloj del tiempo en curso alcanza 150:00, el partido finaliza automáticamente sin confirmación y se detienen las exclusiones. Las pausas no cuentan; «Nuevo tiempo» sigue reiniciando el reloj. La comprobación funciona desde cualquier pantalla y al volver a abrir o reactivar la aplicación. Si el navegador estaba cerrado o suspendido, la finalización se guarda al volver, con el reloj detenido en 150:00. Se pueden seguir corrigiendo los eventos.
+
 Vite acepta cualquier nombre de host (`allowedHosts: true`) en desarrollo y vista previa.
 
 

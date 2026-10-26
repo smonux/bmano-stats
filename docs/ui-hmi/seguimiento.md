@@ -240,3 +240,11 @@ Objetivo de software completado, etiqueta `hmi-auditoria-final`. Todo en `cambio
 ## Ampliación aprobada: Mejoras 2
 
 El trabajo posterior del ZIP y las precisiones de Samuel se siguen en [mejoras-2.md](mejoras-2.md), con commits y etiquetas por bloque. Sus decisiones sustituyen las anteriores sobre equipo inicial en entrada manual, acciones frecuentes y tres contadores: Equipo 1 propuesto solo en manual nuevo (evento sin seleccionar), matriz completa y cuatro contadores con pausa común. Se conserva el histórico de entregas de este documento. Esta ampliación permanece local en `cambios-hmi`, sin merge ni publicación.
+
+## Finalización automática a 150 minutos
+
+Petición posterior de Samuel: finalizar directamente al alcanzar 150:00 en el reloj visible del tiempo en curso, excluyendo pausas. Se mantiene el reinicio al iniciar otro tiempo antes del límite. La comprobación se ejecuta en cualquier pantalla y al retomar/cargar la aplicación; una transacción vuelve a leer el estado actual, ignora partidos borrados/finalizados y admite comprobaciones concurrentes sin reescribir el resultado. Cualquier acción del reloj al alcanzar el límite también finaliza, evitando que «Nuevo tiempo» lo eluda por una carrera.
+
+Reloj y exclusiones se detienen en el instante del límite, aunque se detecte más tarde; la fecha de modificación refleja la escritura real. No se generan eventos ni se alteran marcador/estadísticas. Se conservan correcciones de eventos después del cierre. Sin cambios de esquema, copia, voz o modelos. Una escritura fallida muestra el error y permite reintentar en la siguiente comprobación.
+
+Validación: 158 unitarias en 33 archivos; 16 recorridos de Chromium móvil/escritorio correctos. Incluyen frontera exacta, pausa de una hora, despertar tardío/foco, recarga desde catálogo, persistencia/backup, dos llamadas concurrentes, acción de reloj en el límite, edición posterior, ciclo normal offline y cuatro contadores. Formato, TypeScript y build correctos; `dist` regenerado. [Captura revisada y límites](evidencias/limite-150/README.md). Etiqueta `hmi-limite-150-min`. Solo `cambios-hmi`; sin merge/push/publicación.

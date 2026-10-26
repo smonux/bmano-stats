@@ -1,5 +1,5 @@
 import { createId } from '../../domain/id';
-import { changeClock, type ClockAction } from '../../domain/clock';
+import { changeClock, finishAtTimeLimit, type ClockAction } from '../../domain/clock';
 import {
   assertExclusionSlot,
   changeExclusion,
@@ -21,6 +21,21 @@ async function resolveTeamChoice(database: HandballDatabase, choice: TeamChoice)
 
 export function matchesRepository(database: HandballDatabase) {
   return {
+    async finishExpiredMatches() {
+      return database.transaction('rw', database.matches, async () => {
+        const matches = await database.matches.where('status').equals('active').toArray();
+        const now = Date.now();
+        let finished = 0;
+        for (const match of matches) {
+          const result = finishAtTimeLimit(match, now);
+          if (result !== match) {
+            await database.matches.put(result);
+            finished++;
+          }
+        }
+        return finished;
+      });
+    },
     async createMatch(ourChoice: TeamChoice, rivalChoice: TeamChoice, date: string) {
       return database.transaction(
         'rw',

@@ -1,5 +1,6 @@
 import { NavigationDrawer } from './components/NavigationDrawer';
 import { usePortraitOrientation } from './hooks/usePortraitOrientation';
+import { useMatchTimeLimit } from './hooks/useMatchTimeLimit';
 import { AppPage } from './pages/AppPage';
 import { restoreVoice } from './voice/setup';
 import { Welcome, hasSeenWelcome } from './components/Welcome';
@@ -8,7 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Menu, X } from 'lucide-react';
 import { db } from './data/database';
-import { navigate, useRoute } from './components/ui';
+import { ErrorMessage, navigate, useRoute } from './components/ui';
 export default function App() {
   useEffect(() => {
     void restoreVoice();
@@ -19,6 +20,7 @@ export default function App() {
     document.documentElement.lang = language;
   }, [language]);
   const data = useLiveQuery(() => db.snapshot(), []);
+  const timeLimitError = useMatchTimeLimit(data?.matches);
   const route = useRoute();
   const [navigationOpen, setNavigationOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
@@ -73,6 +75,7 @@ export default function App() {
         />
       )}
       <main className="app-main">
+        <ErrorMessage text={timeLimitError} />
         {portrait.notice && (
           <div className="orientation-notice" role="status">
             <p>{portrait.notice}</p>

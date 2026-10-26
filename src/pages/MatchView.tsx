@@ -20,6 +20,7 @@ import {
   type Snapshot,
 } from '../domain/model';
 import { exclusionRemaining, EXCLUSION_SLOT_COUNT } from '../domain/exclusions';
+import { MATCH_TIME_LIMIT_MS } from '../domain/clock';
 import { ErrorMessage, Modal, navigate, useAction } from '../components/ui';
 import { VoiceCapture } from '../components/VoiceCapture';
 import { EventEditor } from '../components/EventEditor';
@@ -113,6 +114,10 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
     .sort(chronological)
     .reverse();
   const scores = matchScore(data, match);
+  const elapsedMs =
+    match.status === 'active'
+      ? Math.min(elapsed(match.clock, now), MATCH_TIME_LIMIT_MS)
+      : elapsed(match.clock, now);
   const header = useRef<HTMLElement>(null);
   const counters = (match.exclusions ?? []).filter((timer) => timer !== null);
   const expiredCount = counters.filter((timer) => exclusionRemaining(timer, now) === 0).length;
@@ -202,8 +207,8 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
               <small>{tr(match.clock.startedAt === null ? 'Pausado' : 'En juego')}</small>
             </span>
             <span className="minute" role="timer" aria-label={tr('Reloj del partido')}>
-              {String(Math.floor(elapsed(match.clock, now) / 60000)).padStart(2, '0')}:
-              {String(Math.floor(elapsed(match.clock, now) / 1000) % 60).padStart(2, '0')}
+              {String(Math.floor(elapsedMs / 60000)).padStart(2, '0')}:
+              {String(Math.floor(elapsedMs / 1000) % 60).padStart(2, '0')}
             </span>
           </div>
           {match.status === 'active' && (
