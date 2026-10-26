@@ -158,7 +158,7 @@ test('four common-clock suspension timers persist, pause with match clock and si
         () => (window as unknown as { exclusionNotes: unknown[] }).exclusionNotes.length,
       ),
     )
-    .toBe(4);
+    .toBe(11);
   const notes = await page.evaluate(
     () =>
       (
@@ -167,7 +167,12 @@ test('four common-clock suspension timers persist, pause with match clock and si
         }
       ).exclusionNotes,
   );
-  expect(notes.map((note) => note.frequency)).toEqual([880, 660, 880, 660]);
+  const frequencies = [
+    440, 587.33, 659.26, 739.99, 739.99, 783.99, 739.99, 783.99, 739.99, 659.26, 587.33,
+  ];
+  for (const [index, note] of notes.entries()) {
+    expect(note.frequency).toBeCloseTo(frequencies[index], 2);
+  }
   expect(
     Math.max(...notes.map((note) => note.stop)) - Math.min(...notes.map((note) => note.start)),
   ).toBeCloseTo(5);

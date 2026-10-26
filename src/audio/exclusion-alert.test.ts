@@ -60,14 +60,28 @@ describe('exclusion expiry sound', () => {
     expect(alert.play()).toBe(true);
   });
 
-  it('plays two falling din-don pairs over five seconds with a soft attack and decay', async () => {
+  it('plays the opening jota melody with its quarter/eighth rhythm over five seconds', async () => {
     const audio = fakeAudio();
     const alert = new ExclusionAlert(audio.createContext);
     await alert.prepare();
     alert.play();
-    expect(audio.notes.map((note) => note.frequency.value)).toEqual([880, 660, 880, 660]);
-    expect(audio.notes.map((note) => note.start.mock.calls[0][0])).toEqual([12, 12.6, 14.4, 15]);
-    expect(audio.notes.map((note) => note.stop.mock.calls[0][0])).toEqual([14, 14.6, 16.4, 17]);
+    const frequencies = [
+      440, 587.33, 659.26, 739.99, 739.99, 783.99, 739.99, 783.99, 739.99, 659.26, 587.33,
+    ];
+    const beats = [0, 1, 2, 3, 4, 4.5, 5, 5.5, 6, 7, 8];
+    expect(audio.notes).toHaveLength(11);
+    for (const [index, note] of audio.notes.entries()) {
+      expect(note.type).toBe('triangle');
+      expect(note.frequency.value).toBeCloseTo(frequencies[index], 2);
+      expect(note.start.mock.calls[0][0]).toBeCloseTo(12 + beats[index] * (5 / 9));
+      const end = note.stop.mock.calls[0][0];
+      expect(end).toBeGreaterThan(note.start.mock.calls[0][0] + 0.01);
+      if (index < audio.notes.length - 1) {
+        expect(end).toBeCloseTo(12 + beats[index + 1] * (5 / 9) - 0.025);
+      } else {
+        expect(end).toBe(17);
+      }
+    }
     for (const volume of audio.volumes) {
       expect(volume.gain.setValueAtTime.mock.calls[0][0]).toBe(0);
       expect(volume.gain.linearRampToValueAtTime.mock.calls[0][0]).toBe(0.16);
@@ -81,10 +95,10 @@ describe('exclusion expiry sound', () => {
     await alert.prepare();
     alert.play();
     expect(alert.play()).toBe(true);
-    expect(audio.notes).toHaveLength(4);
+    expect(audio.notes).toHaveLength(11);
     audio.context.currentTime += 6;
     alert.play();
-    expect(audio.notes).toHaveLength(8);
+    expect(audio.notes).toHaveLength(22);
   });
 
   it('silences scheduled notes immediately, disconnects them and releases the audio context', async () => {
@@ -99,6 +113,9 @@ describe('exclusion expiry sound', () => {
       expect(note.disconnect).toHaveBeenCalledOnce();
     }
     expect(audio.volumes.every((volume) => volume.disconnect.mock.calls.length === 1)).toBe(true);
+    // Muting must cancel even the notes that have not started yet; unmuting can replay.
+    expect(alert.play()).toBe(true);
+    expect(audio.notes).toHaveLength(22);
     await alert.close();
     await alert.close();
     expect(audio.context.close).toHaveBeenCalledOnce();
