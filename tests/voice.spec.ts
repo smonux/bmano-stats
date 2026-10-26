@@ -149,7 +149,13 @@ test('real Whistle and ordered commands: microphone to reviewed event, then relo
   await review.getByRole('button', { name: /^Guardar (evento|pendiente)$/ }).click();
   await expect(review).toHaveCount(0);
   await expect(page.locator('.event-card')).toHaveCount(2);
-  await page.getByRole('button', { name: 'Deshacer creación', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Deshacer creación', exact: true })).toHaveCount(0);
+  await page.locator('.event-card').first().locator('.delete-event').click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Eliminar evento', exact: true })
+    .click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.locator('.event-card')).toHaveCount(1);
   await expect(page.getByLabel('Marcador 1 a 0')).toBeVisible();
   expect(modelRequests).toBe(downloads);

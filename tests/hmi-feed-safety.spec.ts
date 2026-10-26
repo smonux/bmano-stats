@@ -229,10 +229,10 @@ test('event deletion identifies the target, preserves it on Cancel/X/Escape and 
 }, info) => {
   await page.setViewportSize({ width: 390, height: 664 });
   await restore(page, 'delete');
-  const target = card(page, 'e1'),
-    menu = target.locator('.event-menu');
-  await expect(target.locator('.delete-event')).toBeHidden();
-  await menu.locator('summary').click();
+  const target = card(page, 'e1');
+  await expect(target.locator('.event-menu')).toHaveCount(0);
+  await expect(target.locator('.delete-event')).toBeVisible();
+  await expect(target.locator('.delete-event')).toHaveText('');
   const remove = target.locator('.delete-event');
   for (const method of ['Cancelar', 'Cerrar', 'Escape']) {
     await remove.click();
@@ -322,7 +322,6 @@ for (const target of ['rival', 'pending'])
     if (target === 'pending')
       await page.getByRole('button', { name: '1 pendientes', exact: true }).click();
     const item = card(page, target === 'pending' ? 'e9' : 'e2');
-    await item.locator('.event-menu > summary').click();
     await item.locator('.delete-event').click();
     const dialog = page.getByRole('dialog', { name: 'Eliminar evento', exact: true });
     await expect(dialog.locator('.confirmation-context')).toContainText(
@@ -362,7 +361,6 @@ test('confirmation retains complete long team/player names and permits cancellat
   await page.setViewportSize({ width: 320, height: 568 });
   const data = await restore(page, 'long');
   const target = card(page, 'e1');
-  await target.locator('.event-menu > summary').click();
   await target.locator('.delete-event').click();
   const dialog = page.getByRole('dialog', { name: 'Eliminar evento', exact: true });
   await expect(dialog.locator('.confirmation-context')).toContainText(data.teams[0].name);

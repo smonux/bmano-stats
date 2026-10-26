@@ -90,7 +90,7 @@ for (const viewport of [
     }
     for (const button of await page
       .locator(
-        '.clock-actions button, .match-secondary-actions > button, .exclusion-heading button, .timer-clear, .event-actions > button, .event-menu > summary, .filter-chip, .match-tabs button',
+        '.clock-actions button, .match-secondary-actions > button, .exclusion-heading button, .timer-clear, .event-actions > button, .filter-chip, .match-tabs button',
       )
       .all()) {
       const bounds = (await button.boundingBox())!;
@@ -98,9 +98,6 @@ for (const viewport of [
       expect(bounds.height).toBeGreaterThanOrEqual(48);
     }
     for (const card of await page.locator('.event-card').all()) {
-      const summary = card.locator('.event-menu > summary');
-      await summary.focus();
-      await summary.press('Enter');
       const edit = (await card
         .getByRole('button', { name: /^(Editar|Completar)$/, exact: true })
         .boundingBox())!;
@@ -108,7 +105,6 @@ for (const viewport of [
       expect(
         Math.max(remove.x - edit.x - edit.width, remove.y - edit.y - edit.height),
       ).toBeGreaterThanOrEqual(8);
-      await summary.press('Enter');
     }
     for (const button of await page.locator('.capture-bar > button').all()) {
       expect((await button.boundingBox())!.height).toBeGreaterThanOrEqual(56);

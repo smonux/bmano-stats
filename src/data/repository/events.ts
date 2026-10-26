@@ -6,7 +6,6 @@ import type { HandballDatabase } from '../connection';
 import { resolvePlayerInTransaction } from './catalog';
 import { availableMatch } from './match-access';
 import type { EventDraft } from './types';
-import { eventUndoRepository } from './event-undo';
 
 function validateEventPosition(draft: EventDraft, match: Match) {
   if (draft.period > match.clock.period) {
@@ -49,7 +48,7 @@ async function resolveParticipants(database: HandballDatabase, draft: EventDraft
 }
 
 export function eventsRepository(database: HandballDatabase) {
-  const actions = {
+  return {
     async saveEvent(draft: EventDraft) {
       // Player creation/revival and the event write must commit or roll back together.
       return database.transaction(
@@ -109,5 +108,4 @@ export function eventsRepository(database: HandballDatabase) {
       await database.events.update(eventId, { deletedAt: Date.now(), updatedAt: Date.now() });
     },
   };
-  return { ...actions, ...eventUndoRepository(database, actions.saveEvent) };
 }

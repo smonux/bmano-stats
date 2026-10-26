@@ -10,7 +10,7 @@ import { EventIcon } from './EventIcon';
 import { ParticipantPicker } from './event-editor/ParticipantPicker';
 import { EventMetadata } from './event-editor/EventMetadata';
 import { tr } from '../i18n';
-import { useId, useRef, useState } from 'react';
+import { useId, useLayoutEffect, useRef, useState } from 'react';
 import {
   definitions,
   eventTypes,
@@ -21,7 +21,6 @@ import {
   type Snapshot,
 } from '../domain/model';
 import { repo, type EventDraft } from '../data/database';
-import type { EventUndo } from '../data/repository/event-undo';
 import { Confirm, ErrorMessage, Modal, NumberWheel, useAction } from './ui';
 export function EventEditor({
   data,
@@ -42,7 +41,7 @@ export function EventEditor({
     needleMs: number;
   };
   close: () => void;
-  saved?: (event: GameEvent, pending: boolean, undo?: EventUndo, primaryDorsal?: string) => void;
+  saved?: (event: GameEvent, pending: boolean, primaryDorsal?: string) => void;
 }) {
   const [draft, setDraft] = useState<EventDraft>(
     () => initialDraft ?? createEditorDraft(data, match, event),
@@ -55,10 +54,15 @@ export function EventEditor({
     close,
   );
   const noteId = useId();
+  const fields = useRef<HTMLDivElement>(null);
+  const teamFields = useRef<HTMLDivElement>(null);
+  const eventFields = useRef<HTMLDivElement>(null);
+  const revealFields = useRef(false);
   const [contextOpen, setContextOpen] = useState(false);
   const eventDefinition = draft.type ? definitions[draft.type] : null;
   const teamName = (id: string) => data.teams.find((team) => team.id === id)?.name ?? '';
-  const setType = (type: EventType | null) =>
+  const setType = (type: EventType | null) => {
+    revealFields.current = true;
     setDraft((previousDraft) => ({
       ...previousDraft,
       type,
@@ -74,6 +78,20 @@ export function EventEditor({
                 '')
               : ''),
     }));
+  };
+  useLayoutEffect(() => {
+    if (!revealFields.current) return;
+    revealFields.current = false;
+    const container = fields.current;
+    const needsTeam = draft.type !== 'note' && !draft.teamId;
+    const target = needsTeam ? teamFields.current : eventFields.current;
+    if (!container || !target) return;
+    // Move keyboard navigation with the revealed fields, without opening the software keyboard.
+    const focusTarget = needsTeam ? target.querySelector('button') : target;
+    focusTarget?.focus({ preventScroll: true });
+    container.scrollTop +=
+      target.getBoundingClientRect().top - container.getBoundingClientRect().top;
+  }, [draft.type, draft.teamId]);
   const relatedTeamId =
     draft.type && draft.teamId ? relatedTeam(match, draft.type, draft.teamId) : draft.teamId;
   const issues = eventDraftIssues(draft, match, data.players);
@@ -90,7 +108,8 @@ export function EventEditor({
         </>
       ),
     }));
-  const selectTeam = (teamId: string) =>
+  const selectTeam = (teamId: string) => {
+    revealFields.current = Boolean(draft.type);
     setDraft((previous) => ({
       ...previous,
       teamId,
@@ -100,6 +119,7 @@ export function EventEditor({
           : '',
       relatedDorsal: '',
     }));
+  };
   return (
     <>
       <Modal
@@ -111,15 +131,13 @@ export function EventEditor({
           onSubmit={(inputEvent) => {
             inputEvent.preventDefault();
             action.run(async () => {
-              const { event, undo } = draft.id
-                ? { event: await repo.saveEvent(draft), undo: undefined }
-                : await repo.createEventWithUndo(draft);
-              saved?.(event, missing, undo, draft.primaryDorsal);
+              const event = await repo.saveEvent(draft);
+              saved?.(event, missing, draft.primaryDorsal);
               close();
             });
           }}
         >
-          <div className="event-editor-fields">
+          <div ref={fields} className="event-editor-fields">
             <div className="event-context">
               <button
                 type="button"
@@ -153,27 +171,29 @@ export function EventEditor({
               )}
             </div>
             {draft.type !== 'note' && (
-              <ChoiceGroup
-                label={tr('Equipo')}
-                value={draft.teamId ?? ''}
-                className="team-choices"
-                hint={
-                  issues.includes('Selecciona un equipo') ? tr('Selecciona un equipo') : undefined
-                }
-                options={[match.localTeamId, match.visitorTeamId].map((value, index) => ({
-                  value,
-                  label: teamName(value),
-                  accessibleLabel: teamName(value),
-                  description: tr(index === 0 ? 'Equipo 1 (nuestro)' : 'Equipo 2 (rival)'),
-                  content: (
-                    <>
-                      <span>{tr(index === 0 ? 'Equipo 1 (nuestro)' : 'Equipo 2 (rival)')}</span>
-                      <strong>{teamName(value)}</strong>
-                    </>
-                  ),
-                }))}
-                change={selectTeam}
-              />
+              <div ref={teamFields}>
+                <ChoiceGroup
+                  label={tr('Equipo')}
+                  value={draft.teamId ?? ''}
+                  className="team-choices"
+                  hint={
+                    issues.includes('Selecciona un equipo') ? tr('Selecciona un equipo') : undefined
+                  }
+                  options={[match.localTeamId, match.visitorTeamId].map((value, index) => ({
+                    value,
+                    label: teamName(value),
+                    accessibleLabel: teamName(value),
+                    description: tr(index === 0 ? 'Equipo 1 (nuestro)' : 'Equipo 2 (rival)'),
+                    content: (
+                      <>
+                        <span>{tr(index === 0 ? 'Equipo 1 (nuestro)' : 'Equipo 2 (rival)')}</span>
+                        <strong>{teamName(value)}</strong>
+                      </>
+                    ),
+                  }))}
+                  change={selectTeam}
+                />
+              </div>
             )}
             <ChoiceGroup
               label={tr('Evento')}
@@ -185,82 +205,90 @@ export function EventEditor({
               options={actionChoices(eventTypes)}
               change={(type) => setType(type as EventType)}
             />
-            {draft.teamId &&
-              eventDefinition &&
-              draft.type !== 'passive' &&
-              draft.type !== 'note' && (
-                <>
-                  <ParticipantPicker
-                    key={'primary:' + draft.teamId}
-                    role="primary"
-                    participantLabel={tr(eventDefinition.principal)}
-                    teamId={draft.teamId}
-                    teamName={teamName(draft.teamId)}
-                    players={data.players}
-                    shirtNumber={draft.primaryDorsal}
-                    change={(primaryDorsal) =>
-                      setDraft((previous) => ({ ...previous, primaryDorsal }))
-                    }
-                  />
-                  {eventDefinition.related && relatedTeamId && (
-                    <details
-                      className="related-participant"
-                      open={
-                        draft.type === 'substitution' || draft.relatedDorsal !== '' || undefined
+            <div
+              ref={eventFields}
+              className="event-data-fields"
+              role="group"
+              aria-label={tr('Datos del evento')}
+              tabIndex={-1}
+            >
+              {draft.teamId &&
+                eventDefinition &&
+                draft.type !== 'passive' &&
+                draft.type !== 'note' && (
+                  <>
+                    <ParticipantPicker
+                      key={'primary:' + draft.teamId}
+                      role="primary"
+                      participantLabel={tr(eventDefinition.principal)}
+                      teamId={draft.teamId}
+                      teamName={teamName(draft.teamId)}
+                      players={data.players}
+                      shirtNumber={draft.primaryDorsal}
+                      change={(primaryDorsal) =>
+                        setDraft((previous) => ({ ...previous, primaryDorsal }))
                       }
-                    >
-                      <summary>
-                        {tr(eventDefinition.related)}
-                        {draft.type === 'substitution' ? '' : ' · ' + tr('Opcional')}
-                      </summary>
-                      <ParticipantPicker
-                        key={'related:' + relatedTeamId}
-                        role="related"
-                        participantLabel={tr(eventDefinition.related)}
-                        teamId={relatedTeamId}
-                        teamName={teamName(relatedTeamId)}
-                        players={data.players}
-                        shirtNumber={draft.relatedDorsal}
-                        change={(relatedDorsal) =>
-                          setDraft((previous) => ({ ...previous, relatedDorsal }))
+                    />
+                    {eventDefinition.related && relatedTeamId && (
+                      <details
+                        className="related-participant"
+                        open={
+                          draft.type === 'substitution' || draft.relatedDorsal !== '' || undefined
                         }
-                      />
-                    </details>
-                  )}
-                </>
-              )}
-            <EventMetadata
-              type={draft.type}
-              metadata={draft.metadata}
-              change={(metadata) => setDraft((previous) => ({ ...previous, metadata }))}
-            />
-            <div className="event-additional">
-              {draft.type === 'note' && (
-                <p className="caption">
-                  {tr('Se guarda en el registro, sin afectar al marcador ni a las estadísticas.')}
-                </p>
-              )}
-              <label htmlFor={noteId}>{tr('Nota')}</label>
-              <textarea
-                id={noteId}
-                maxLength={10000}
-                rows={draft.type === 'note' ? 4 : 2}
-                value={draft.note}
-                placeholder={tr(
-                  draft.type === 'note' ? 'Escribe el texto de la nota' : 'Nota opcional',
+                      >
+                        <summary>
+                          {tr(eventDefinition.related)}
+                          {draft.type === 'substitution' ? '' : ' · ' + tr('Opcional')}
+                        </summary>
+                        <ParticipantPicker
+                          key={'related:' + relatedTeamId}
+                          role="related"
+                          participantLabel={tr(eventDefinition.related)}
+                          teamId={relatedTeamId}
+                          teamName={teamName(relatedTeamId)}
+                          players={data.players}
+                          shirtNumber={draft.relatedDorsal}
+                          change={(relatedDorsal) =>
+                            setDraft((previous) => ({ ...previous, relatedDorsal }))
+                          }
+                        />
+                      </details>
+                    )}
+                  </>
                 )}
-                onChange={(event) =>
-                  setDraft((previous) => ({ ...previous, note: event.target.value }))
-                }
+              <EventMetadata
+                type={draft.type}
+                metadata={draft.metadata}
+                change={(metadata) => setDraft((previous) => ({ ...previous, metadata }))}
               />
-              {!!draft.rawText.trim() && (
-                <details className="editor-transcript">
-                  <summary>{tr('Transcripción original')}</summary>
-                  <p className="voice-transcript">
-                    <span>«{draft.rawText}»</span>
+              <div className="event-additional">
+                {draft.type === 'note' && (
+                  <p className="caption">
+                    {tr('Se guarda en el registro, sin afectar al marcador ni a las estadísticas.')}
                   </p>
-                </details>
-              )}
+                )}
+                <label htmlFor={noteId}>{tr('Nota')}</label>
+                <textarea
+                  id={noteId}
+                  maxLength={10000}
+                  rows={draft.type === 'note' ? 4 : 2}
+                  value={draft.note}
+                  placeholder={tr(
+                    draft.type === 'note' ? 'Escribe el texto de la nota' : 'Nota opcional',
+                  )}
+                  onChange={(event) =>
+                    setDraft((previous) => ({ ...previous, note: event.target.value }))
+                  }
+                />
+                {!!draft.rawText.trim() && (
+                  <details className="editor-transcript">
+                    <summary>{tr('Transcripción original')}</summary>
+                    <p className="voice-transcript">
+                      <span>«{draft.rawText}»</span>
+                    </p>
+                  </details>
+                )}
+              </div>
             </div>
             {event && (
               <p className="caption">

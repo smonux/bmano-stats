@@ -1,5 +1,13 @@
 /** Feed and editing protection: English, German, French, Italian, Dutch, Polish. */
 export const hmiFeedMessages: Record<string, readonly string[]> = {
+  'Datos del evento': [
+    'Event details',
+    'Aktionsdaten',
+    'Détails de l’événement',
+    'Dati dell’evento',
+    'Actiegegevens',
+    'Dane zdarzenia',
+  ],
   Completar: ['Complete', 'Vervollständigen', 'Compléter', 'Completa', 'Aanvullen', 'Uzupełnij'],
   Más: ['More', 'Mehr', 'Plus', 'Altro', 'Meer', 'Więcej'],
   'Más recientes primero': [

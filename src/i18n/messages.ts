@@ -3,7 +3,6 @@ import { mejoras2Messages } from './mejoras2';
 import { hmiStatisticsMessages } from './hmi-statistics';
 import { hmiHomeMessages } from './hmi-home';
 import { hmiManualMessages } from './hmi-manual';
-import { hmiUndoMessages } from './hmi-undo';
 import { hmiCounterActionMessages } from './hmi-counter-action';
 import { hmiFeedMessages } from './hmi-feed';
 import { hmiCounterMessages } from './hmi-counters';
@@ -23,7 +22,6 @@ export const catalog: Record<string, readonly string[]> = {
   ...hmiStatisticsMessages,
   ...hmiHomeMessages,
   ...hmiManualMessages,
-  ...hmiUndoMessages,
   ...hmiCounterActionMessages,
   ...hmiFeedMessages,
   ...hmiCounterMessages,

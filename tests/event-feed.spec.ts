@@ -45,16 +45,16 @@ test('opponent events mirror their title and icon and both teams are explicitly 
   const awayEdit = (await rival
     .getByRole('button', { name: 'Editar', exact: true })
     .boundingBox())!;
-  const homeMore = (await ours.locator('.event-menu > summary').boundingBox())!;
-  const awayMore = (await rival.locator('.event-menu > summary').boundingBox())!;
+  const homeDelete = (await ours.locator('.delete-event').boundingBox())!;
+  const awayDelete = (await rival.locator('.delete-event').boundingBox())!;
   expect(Math.abs(homeEdit.x - homeBounds.x - (awayEdit.x - awayBounds.x))).toBeLessThanOrEqual(3);
   expect(
     Math.abs(
       homeBounds.x +
         homeBounds.width -
-        homeMore.x -
-        homeMore.width -
-        (awayBounds.x + awayBounds.width - awayMore.x - awayMore.width),
+        homeDelete.x -
+        homeDelete.width -
+        (awayBounds.x + awayBounds.width - awayDelete.x - awayDelete.width),
     ),
   ).toBeLessThanOrEqual(3);
   await rival.getByRole('button', { name: 'Editar', exact: true }).click();

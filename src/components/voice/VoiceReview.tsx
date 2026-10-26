@@ -3,7 +3,6 @@ import type { GameEvent, Match, Snapshot } from '../../domain/schema';
 import { definitions } from '../../domain/event-definitions';
 import { relatedTeam } from '../../domain/events';
 import { repo } from '../../data/database';
-import type { EventUndo } from '../../data/repository/event-undo';
 import { eventDraftIssues } from '../../presentation/event-draft';
 import { teamName } from '../../presentation/matches';
 import { tr } from '../../i18n';
@@ -23,15 +22,15 @@ export function VoiceReview({
   match: Match;
   edit: () => void;
   close: () => void;
-  saved?: (event: GameEvent, pending: boolean, undo?: EventUndo, primaryDorsal?: string) => void;
+  saved?: (event: GameEvent, pending: boolean, primaryDorsal?: string) => void;
 }) {
   const { draft } = result;
   const action = useAction();
   const interpretation = useRef<HTMLDivElement>(null);
   const saveReview = () => {
     void action.run(async () => {
-      const { event, undo } = await repo.createEventWithUndo(draft);
-      saved?.(event, issues.length > 0, undo, draft.primaryDorsal);
+      const event = await repo.saveEvent(draft);
+      saved?.(event, issues.length > 0, draft.primaryDorsal);
       close();
     });
   };

@@ -32,21 +32,13 @@ export const hmiCounterActionMessages: Record<string, readonly string[]> = {
     'Timer gestart. De uitsluiting blijft in het logboek.',
     'Licznik uruchomiony. Wykluczenie pozostaje w rejestrze.',
   ],
-  'Creación deshecha. Los contadores se gestionan aparte.': [
-    'Creation undone. Timers are managed separately.',
-    'Erstellung rückgängig gemacht. Timer werden separat verwaltet.',
-    'Création annulée. Les compteurs sont gérés séparément.',
-    'Creazione annullata. I timer si gestiscono separatamente.',
-    'Aanmaken ongedaan gemaakt. Timers worden apart beheerd.',
-    'Utworzenie cofnięte. Liczniki są zarządzane oddzielnie.',
-  ],
-  'Activa el contador cuando empiece la exclusión. Editar, borrar o deshacer la jugada no cambia el contador, y liberarlo no borra la jugada.':
+  'Activa el contador cuando empiece la exclusión. Editar o borrar la jugada no cambia el contador, y liberarlo no borra la jugada.':
     [
-      'Start the timer when the suspension begins. Editing, deleting or undoing the play does not change the timer; clearing it does not delete the play.',
-      'Starte den Timer beim Beginn der Zeitstrafe. Bearbeiten, Löschen oder Rückgängigmachen der Aktion ändert den Timer nicht; Freigeben löscht die Aktion nicht.',
-      'Activez le compteur au début de l’exclusion. Modifier, supprimer ou annuler l’action ne change pas le compteur ; le libérer ne supprime pas l’action.',
-      'Attiva il timer all’inizio dell’esclusione. Modificare, eliminare o annullare la giocata non cambia il timer; liberarlo non elimina la giocata.',
-      'Start de timer wanneer de uitsluiting begint. Bewerken, verwijderen of ongedaan maken van de actie verandert de timer niet; vrijmaken verwijdert de actie niet.',
-      'Uruchom licznik na początku wykluczenia. Edycja, usunięcie lub cofnięcie akcji nie zmienia licznika; zwolnienie go nie usuwa akcji.',
+      'Start the timer when the suspension begins. Editing or deleting the play does not change the timer; clearing it does not delete the play.',
+      'Starte den Timer beim Beginn der Zeitstrafe. Bearbeiten oder Löschen der Aktion ändert den Timer nicht; Freigeben löscht die Aktion nicht.',
+      'Activez le compteur au début de l’exclusion. Modifier ou supprimer l’action ne change pas le compteur ; le libérer ne supprime pas l’action.',
+      'Attiva il timer all’inizio dell’esclusione. Modificare o eliminare la giocata non cambia il timer; liberarlo non elimina la giocata.',
+      'Start de timer wanneer de uitsluiting begint. Bewerken of verwijderen van de actie verandert de timer niet; vrijmaken verwijdert de actie niet.',
+      'Uruchom licznik na początku wykluczenia. Edycja lub usunięcie akcji nie zmienia licznika; zwolnienie go nie usuwa akcji.',
     ],
 };

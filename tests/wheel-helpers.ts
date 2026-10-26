@@ -31,11 +31,9 @@ export async function selectShirtNumber(container: Locator, label: string, value
 
 export async function readShirtNumber(container: Locator, label: string) {
   if (label === 'Dorsal principal' || label === 'Dorsal relacionado') {
-    const participant = container.locator(
-      label === 'Dorsal principal'
-        ? '.event-editor-fields > .participant'
-        : '.related-participant .participant',
-    );
+    const participant = container
+      .locator(label === 'Dorsal principal' ? '.participant' : '.related-participant .participant')
+      .first();
     if (!(await participant.count())) return '';
     const text = await participant.locator('.participant-selection').textContent();
     return text?.match(/^#(\d+)/)?.[1] ?? '';

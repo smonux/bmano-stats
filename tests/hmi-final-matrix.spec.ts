@@ -161,7 +161,7 @@ for (const [width, height, language, roster] of cases)
     await expect(editor).toHaveCount(0);
   });
 
-test('200 percent text keeps save feedback, undo, counter action and capture reachable', async ({
+test('200 percent text keeps save feedback, counter action and capture reachable without undo', async ({
   page,
 }, info) => {
   await page.setViewportSize({ width: 320, height: 568 });
@@ -183,7 +183,7 @@ test('200 percent text keeps save feedback, undo, counter action and capture rea
   await editor.getByRole('button', { name: 'Guardar evento', exact: true }).click();
   await expect(editor).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: info.outputPath('feedback-before-undo.png') });
+  await page.screenshot({ path: info.outputPath('feedback-text-200.png') });
   for (const button of await page.locator('.capture-bar > button').all())
     await expect(button).toBeInViewport({ ratio: 1 });
   for (const button of await page.locator('.capture-feedback > button').all()) {
@@ -195,10 +195,10 @@ test('200 percent text keeps save feedback, undo, counter action and capture rea
     expect(box.y).toBeGreaterThanOrEqual(region.y - 1);
     expect(box.y + box.height).toBeLessThanOrEqual(region.y + region.height + 1);
   }
-  const undo = page.getByRole('button', { name: 'Deshacer creación', exact: true });
-  await undo.click();
-  await expect(
-    page.getByText('Creación deshecha. Los contadores se gestionan aparte.', { exact: true }),
-  ).toBeVisible();
-  await page.screenshot({ path: info.outputPath('feedback-text-200.png') });
+  await expect(page.getByRole('button', { name: 'Deshacer creación', exact: true })).toHaveCount(0);
+  await page
+    .getByRole('button', { name: 'Iniciar contador de esta exclusión', exact: true })
+    .click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Cancelar', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
 });

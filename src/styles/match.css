@@ -290,7 +290,9 @@
 }
 .delete-event {
   width: var(--target-live);
+  height: var(--target-live);
   min-height: var(--target-live);
+  flex-shrink: 0;
   color: var(--muted);
 }
 .capture-bar {
@@ -451,32 +453,9 @@
   outline: 2px solid var(--ink);
   outline-offset: 4px;
 }
-.event-actions > button,
-.event-menu > summary {
+.event-actions > button {
   min-height: var(--target-live);
   min-width: var(--target-live);
-}
-.event-menu > summary {
-  padding: 12px;
-  cursor: pointer;
-  border: 1px solid var(--control-line);
-  border-radius: 8px;
-  font-size: var(--text-body);
-}
-.event-menu > button {
-  width: 100%;
-  margin-top: 8px;
-  min-height: var(--target-live);
-}
-.event-menu {
-  max-width: min(100%, 12rem);
-  text-align: start;
-}
-.event-menu .delete-event {
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  padding: 10px;
 }
 .event-issues {
   width: 100%;
@@ -549,9 +528,6 @@ summary:focus-visible {
   gap: 8px;
   width: 100%;
   justify-content: space-between;
-}
-.event-menu {
-  margin-left: auto;
 }
 
 .event-card.away .event-icon {

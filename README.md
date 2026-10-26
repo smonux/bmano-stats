@@ -97,6 +97,8 @@ La [auditoría integral](docs/refactorizacion-integral.md) registra el alcance y
 
 La navegación se abre con el botón de tres rayas de la izquierda. El editor muestra todos los eventos en una matriz de tres columnas, con iconos y etiquetas cortas. En un evento manual nuevo propone Equipo 1, sin elegir evento; las correcciones conservan el equipo original. La nota está abierta y la transcripción original se consulta en su propio desplegable. Los jugadores conocidos se eligen directamente y «Otro dorsal» ofrece dos ruedas. Guardar y Cancelar permanecen sobre el teclado; los cuatro contadores ocupan una franja compacta. El menú ofrece «Fijar vertical» cuando se necesita pantalla completa; el navegador puede rechazar el bloqueo ([condiciones de la API](https://www.w3.org/TR/screen-orientation/#dom-screenorientation-lock)). Al girar se conserva la edición y se procesa el audio capturado si se cancela el contacto táctil.
 
+Al elegir un evento, el editor desplaza su contenido hasta los datos de jugador/metadatos/nota; si falta equipo, lleva primero a seleccionarlo. El foco acompaña el recorrido sin abrir el teclado automáticamente. Cada tarjeta del registro tiene una papelera visible, sin menú «Más» ni texto largo; pide confirmación antes de eliminar. No se ofrece «Deshacer creación».
+
 ## Licencia
 
 El código del proyecto se distribuye bajo la [licencia MIT](LICENSE). Copyright (c) 2026 smonux.

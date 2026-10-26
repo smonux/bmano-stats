@@ -47,7 +47,7 @@ async function exclusion(page: Page, team: string, shirt: string) {
   await expect(page.locator('.event-card')).toHaveCount(1);
 }
 for (const shirt of ['', '0', '99'])
-  test(`explicit counter action preserves team and optional/new shirt ${shirt || 'empty'} independently from undo`, async ({
+  test(`explicit counter action preserves team and optional/new shirt ${shirt || 'empty'} independently from event deletion`, async ({
     page,
   }, info) => {
     const fixture = await open(page);
@@ -81,7 +81,12 @@ for (const shirt of ['', '0', '99'])
     await expect(page.locator('.exclusion-timer')).toContainText(
       shirt === '' ? '1 · —' : `2 · #${shirt}`,
     );
-    await page.getByRole('button', { name: 'Deshacer creación', exact: true }).click();
+    await page.locator('.event-card .delete-event').click();
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: 'Eliminar evento', exact: true })
+      .click();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(page.locator('.event-card')).toHaveCount(0);
     await expect(page.locator('.exclusion-timer')).toHaveCount(1);
     await page.reload();
@@ -133,7 +138,6 @@ test('full counters remain accessible without overwriting and timer deletion lea
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.locator('.exclusion-timer')).toHaveCount(3);
   await expect(page.locator('.event-card')).toHaveCount(1);
-  await page.locator('.event-card .event-menu > summary').click();
   await page.locator('.event-card .delete-event').click();
   await page
     .getByRole('dialog')

@@ -63,7 +63,10 @@ test('manual starts with team 1 and a goal without a shirt takes three activatio
   const goal = editor.getByRole('button', { name: 'Gol', exact: true });
   await expect(goal).toBeInViewport({ ratio: 1 });
   await goal.click();
-  await expect(editor.locator('.event-editor-fields')).toHaveJSProperty('scrollTop', 0);
+  expect(
+    await editor.locator('.event-editor-fields').evaluate((element) => element.scrollTop),
+  ).toBeGreaterThan(0);
+  await expect(editor.getByRole('group', { name: 'Datos del evento', exact: true })).toBeFocused();
   await expect(
     editor
       .getByRole('group', { name: 'Jugador principal', exact: true })

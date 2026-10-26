@@ -162,7 +162,7 @@ export function ExclusionTimers({
             {sourceEvent && (
               <p className="caption">
                 {tr(
-                  'Activa el contador cuando empiece la exclusión. Editar, borrar o deshacer la jugada no cambia el contador, y liberarlo no borra la jugada.',
+                  'Activa el contador cuando empiece la exclusión. Editar o borrar la jugada no cambia el contador, y liberarlo no borra la jugada.',
                 )}
               </p>
             )}

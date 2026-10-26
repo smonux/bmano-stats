@@ -202,20 +202,17 @@ function EventCard({
           <button className="text-button" onClick={() => onEdit(event)}>
             {tr(state === 'pending' ? 'Completar' : 'Editar')}
           </button>
-          <details className="event-menu">
-            <summary>{tr('Más')}</summary>
-            <button
-              className="danger-text delete-event"
-              aria-label={tr('Eliminar {event} del minuto {minute}', {
-                event: tr(definition?.label ?? 'Evento'),
-                minute: event.minute,
-              })}
-              onClick={() => onDelete(event)}
-            >
-              <Trash2 size={20} />
-              {tr('Eliminar evento')}
-            </button>
-          </details>
+          <button
+            className="icon-button delete-event"
+            aria-label={tr('Eliminar {event} del minuto {minute}', {
+              event: tr(definition?.label ?? 'Evento'),
+              minute: event.minute,
+            })}
+            title={tr('Eliminar evento')}
+            onClick={() => onDelete(event)}
+          >
+            <Trash2 size={20} aria-hidden="true" />
+          </button>
         </div>
       </div>
     </article>

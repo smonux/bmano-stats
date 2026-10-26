@@ -9,7 +9,6 @@ import { tr } from '../i18n';
 import { useId, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Pause, Play, Plus, Trash2, Flag, Timer, BellRing, ArrowLeft } from 'lucide-react';
 import { repo } from '../data/database';
-import type { EventUndo } from '../data/repository/event-undo';
 import {
   chronological,
   elapsed,
@@ -36,9 +35,6 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
   const pendingFilter = useRef<HTMLButtonElement>(null);
   const returnToFeed = useRef(false);
   const [notice, setNotice] = useState('');
-  const [undo, setUndo] = useState<{ receipt: EventUndo; label: string } | null>(null);
-  const undoAction = useAction();
-  const manualButton = useRef<HTMLButtonElement>(null);
   const [counterOffer, setCounterOffer] = useState<(CounterPrefill & { updatedAt: number }) | null>(
     null,
   );
@@ -62,7 +58,7 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
       else if (rect.bottom > bottom) window.scrollBy(0, rect.bottom - bottom + 8);
     }
   }, [editing, confirm]);
-  function eventSaved(event: GameEvent, pending: boolean, receipt?: EventUndo, primaryDorsal = '') {
+  function eventSaved(event: GameEvent, pending: boolean, primaryDorsal = '') {
     returnToFeed.current = Boolean(
       pendingOnly &&
       editing &&
@@ -83,8 +79,6 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
       .filter(Boolean)
       .join(' · ');
     setNotice(label);
-    setUndo(receipt ? { receipt, label } : null);
-    undoAction.setError('');
     setCounterOffer(
       event.type === 'exclusion' && event.teamId && match.status === 'active'
         ? {
@@ -321,37 +315,14 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
         />
       </TabPanel>
       <div className="capture-bar">
-        {(notice || undo || offer) && (
+        {(notice || offer) && (
           <div
             className="capture-feedback"
             role="region"
             aria-label={tr('Acciones de la última jugada')}
             tabIndex={0}
           >
-            <p role="status">{notice || undo?.label}</p>
-            {undo && (
-              <button
-                type="button"
-                disabled={undoAction.busy}
-                onClick={() =>
-                  void undoAction.run(async () => {
-                    await repo.undoEventCreation(undo.receipt);
-                    if (counterOffer?.eventId === undo.receipt.event.id) setCounterOffer(null);
-                    setUndo(null);
-                    setNotice(
-                      tr(
-                        undo.receipt.event.type === 'exclusion'
-                          ? 'Creación deshecha. Los contadores se gestionan aparte.'
-                          : 'Creación deshecha',
-                      ),
-                    );
-                    manualButton.current?.focus({ preventScroll: true });
-                  })
-                }
-              >
-                {tr('Deshacer creación')}
-              </button>
-            )}
+            <p role="status">{notice}</p>
             {offer && (
               <button
                 type="button"
@@ -370,11 +341,9 @@ function MatchView({ data, match }: { data: Snapshot; match: Match }) {
                 )}
               </button>
             )}
-            <ErrorMessage text={undoAction.error} />
           </div>
         )}
         <button
-          ref={manualButton}
           className="primary"
           onClick={() => {
             setNotice('');
