@@ -115,6 +115,11 @@
   font-size: var(--text-caption);
   font-weight: 650;
 }
+.event-original {
+  margin: 0 12px 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .event-details {
   margin: 0 12px 8px;
 }

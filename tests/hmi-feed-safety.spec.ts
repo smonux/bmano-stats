@@ -25,7 +25,7 @@ async function restore(page: Page, mode: 'pending' | 'mixed' | 'delete' | 'long'
     mode === 'delete' || mode === 'long'
       ? [ours, theirs]
       : [
-          { ...empty, id: 'missing-event', teamId: 'a' },
+          { ...empty, id: 'missing-event', teamId: 'a', note: ' \n ', rawText: ' \n ' },
           { ...empty, id: 'missing-team', type: 'goal' },
           {
             ...empty,
@@ -42,6 +42,7 @@ async function restore(page: Page, mode: 'pending' | 'mixed' | 'delete' | 'long'
             primaryPlayerId: 'a7',
             relatedPlayerId: 'a7',
             note: 'Salida y entrada por corregir',
+            rawText: 'Cambio nuestro siete siete',
           },
           ours,
           theirs,
@@ -94,19 +95,31 @@ test('pending reasons reuse domain validation and reading details stays separate
   }
   const details = card(page, 'e1').locator('.event-details');
   await expect(details).toHaveJSProperty('open', false);
+  await expect(card(page, 'e1').locator('.event-original')).toHaveText(
+    'Gol nuestro siete\nTranscripción original',
+  );
+  await expect(card(page, 'e1').locator('.event-original')).toBeVisible();
+  await expect(details.locator('.event-original')).toHaveCount(0);
+  await expect(details.locator('summary')).toHaveText('Ver nota');
   await details.locator('summary').focus();
   await details.locator('summary').press('Enter');
   await expect(details).toHaveJSProperty('open', true);
   await expect(details.locator('.event-note')).toContainText('TextoLargo');
-  await expect(details.locator('.event-original')).toHaveText(
-    'Gol nuestro siete\nTranscripción original',
-  );
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  const rival = card(page, 'e2').locator('.event-details');
-  await rival.locator('summary').click();
-  await expect(rival.getByText('Transcripción original', { exact: true })).toBeVisible();
+  const rival = card(page, 'e2');
+  await expect(rival.locator('.event-original')).toHaveText('Gol rival nueve');
+  await expect(rival.locator('.event-original')).toBeVisible();
+  await expect(rival.locator('.event-details')).toHaveCount(0);
   await expect(rival.locator('.event-note')).toHaveCount(0);
   await expect(card(page, 'missing-event').locator('.event-details')).toHaveCount(0);
+  await expect(card(page, 'missing-event').locator('.event-original')).toHaveCount(0);
+  await expect(card(page, 'invalid-substitution').locator('.event-original')).toBeVisible();
+  await expect(
+    page.locator('.event-feed strong').filter({ hasText: /^Transcripción original$/ }),
+  ).toHaveCount(0);
+  await expect(
+    page.locator('.event-feed summary').filter({ hasText: /transcripción/i }),
+  ).toHaveCount(0);
   const pendingDetails = card(page, 'invalid-substitution').locator('.event-details');
   await pendingDetails.locator('summary').click();
   await expect(pendingDetails.locator('.event-note')).toHaveText('Salida y entrada por corregir');

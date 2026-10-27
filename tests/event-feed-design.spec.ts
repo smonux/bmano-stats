@@ -165,6 +165,15 @@ for (const width of [320, 390, 430])
           `${scale * 16}px`,
         );
         await expect(first.locator('time')).toHaveCSS('font-size', `${scale * 14}px`);
+        for (const id of ['feed-goal', 'feed-save', 'feed-note']) {
+          const transcript = card(page, id).locator('.event-original');
+          await expect(transcript).toHaveText(
+            fixture.events.find((event) => event.id === id)!.rawText,
+          );
+          await expect(transcript).toBeVisible();
+          await expect(transcript).toHaveCSS('white-space', 'pre-wrap');
+          expect(await transcript.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+        }
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
           true,
         );

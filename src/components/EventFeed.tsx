@@ -168,29 +168,12 @@ function EventCard({
           )}
         </div>
       </div>
-      {(hasNote || hasTranscript) && (
+      {hasTranscript && <p className="event-original">{event.rawText}</p>}
+      {hasNote && (
         <details className="event-details">
-          <summary>
-            {tr(
-              hasNote && hasTranscript
-                ? 'Ver nota y transcripción'
-                : hasNote
-                  ? 'Ver nota'
-                  : 'Ver transcripción original',
-            )}
-          </summary>
-          {hasNote && (
-            <div>
-              <strong>{tr('Nota')}</strong>
-              <p className="event-note">{event.note}</p>
-            </div>
-          )}
-          {hasTranscript && (
-            <div>
-              <strong>{tr('Transcripción original')}</strong>
-              <p className="event-original">{event.rawText}</p>
-            </div>
-          )}
+          <summary>{tr('Ver nota')}</summary>
+          <strong>{tr('Nota')}</strong>
+          <p className="event-note">{event.note}</p>
         </details>
       )}
       <div className="event-bottom">

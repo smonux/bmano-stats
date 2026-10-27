@@ -39,7 +39,14 @@ export function eventFeedFixture(longNames = false) {
               ? { blue: true }
               : {},
       note: type === 'note' ? 'Recordatorio del descanso.\n' + 'TextoLargo'.repeat(100) : '',
-      rawText: type === 'note' ? 'Comentario original.\n' + 'TranscripciónLarga'.repeat(100) : '',
+      rawText:
+        type === 'note'
+          ? 'Comentario original.\n' + 'TranscripciónLarga'.repeat(100)
+          : type === 'goal'
+            ? 'Gol nuestro siete, de penalti.'
+            : type === 'save'
+              ? 'Parada rival nueve.'
+              : '',
     };
   });
   const pending: GameEvent = {

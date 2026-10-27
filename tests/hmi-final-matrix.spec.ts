@@ -130,9 +130,11 @@ for (const [width, height, language, roster] of cases)
     expect(visibleAction!.y).toBeGreaterThanOrEqual(frame.top);
     expect(visibleAction!.y + visibleAction!.height).toBeLessThanOrEqual(frame.bottom);
     const details = last.locator('.event-details');
+    await expect(last.locator('.event-original')).toHaveText(data.events[0].rawText);
+    await expect(last.locator('.event-original')).toBeVisible();
     await details.locator('summary').press('Enter');
     await expect(details).toHaveJSProperty('open', true);
-    await expect(details.getByText(t('Transcripción original'), { exact: true })).toBeVisible();
+    await expect(details.locator('.event-note')).toHaveText(data.events[0].note);
     await page.screenshot({ path: info.outputPath('matrix.png') });
     const measurement = await page.evaluate(() => {
       const header = document.querySelector('.match-header')!,

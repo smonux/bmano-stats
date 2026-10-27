@@ -34,14 +34,6 @@ export const hmiFeedMessages: Record<string, readonly string[]> = {
     'Nieuwste eerst',
     'Najnowsze najpierw',
   ],
-  'Ver nota y transcripción': [
-    'Read note and transcript',
-    'Notiz und Transkript lesen',
-    'Lire la note et la transcription',
-    'Leggi nota e trascrizione',
-    'Notitie en transcript lezen',
-    'Czytaj notatkę i transkrypcję',
-  ],
   'Ver nota': [
     'Read note',
     'Notiz lesen',
@@ -49,14 +41,6 @@ export const hmiFeedMessages: Record<string, readonly string[]> = {
     'Leggi nota',
     'Notitie lezen',
     'Czytaj notatkę',
-  ],
-  'Ver transcripción original': [
-    'Read original transcript',
-    'Originaltranskript lesen',
-    'Lire la transcription originale',
-    'Leggi trascrizione originale',
-    'Oorspronkelijk transcript lezen',
-    'Czytaj oryginalną transkrypcję',
   ],
   'Descartar cambios': [
     'Discard changes',

@@ -101,6 +101,8 @@ Al elegir un evento, el editor desplaza su contenido hasta los datos de jugador/
 
 El historial identifica el equipo en la cabecera de cada tarjeta: amarillo para Equipo 1, oscuro para Equipo 2, con su nombre completo y sin efecto espejo. La acción, el jugador y el periodo/minuto comparten una alineación uniforme, con el icono vectorial destacado a la izquierda. Los pendientes conservan sus motivos; los eventos válidos no repiten «Registrado». Las notas del partido y los eventos sin equipo usan cabeceras neutrales. Las tarjetas se adaptan al esquema de color del sistema y al texto aumentado; «Editar» conserva el editor existente.
 
+La transcripción se muestra directamente en la tarjeta, sin botón ni etiqueta repetida, con su texto completo y saltos de línea. Las notas adicionales conservan «Ver nota». El editor y el PDF mantienen su presentación actual.
+
 ## Licencia
 
 El código del proyecto se distribuye bajo la [licencia MIT](LICENSE). Copyright (c) 2026 smonux.
