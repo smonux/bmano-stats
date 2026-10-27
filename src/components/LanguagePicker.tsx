@@ -1,5 +1,5 @@
-import { languages, setLanguage, tr, useLanguage, type Language } from '../../i18n';
-import { WheelPicker } from '../WheelPicker';
+import { languages, setLanguage, tr, useLanguage, type Language } from '../i18n';
+import { WheelPicker } from './WheelPicker';
 
 export function LanguagePicker() {
   const language = useLanguage();

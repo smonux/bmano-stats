@@ -3,7 +3,12 @@ import { usePortraitOrientation } from './hooks/usePortraitOrientation';
 import { useMatchTimeLimit } from './hooks/useMatchTimeLimit';
 import { AppPage } from './pages/AppPage';
 import { restoreVoice } from './voice/setup';
-import { Welcome, hasSeenWelcome } from './components/Welcome';
+import { VoicePractice } from './pages/VoicePractice';
+import {
+  needsVoiceOnboarding,
+  markVoicePracticeSeen,
+  voicePracticeRoute,
+} from './components/voice-practice/VoicePracticeEntry';
 import { tr, useLanguage } from './i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -15,13 +20,20 @@ export default function App() {
     void restoreVoice();
   }, []);
   const language = useLanguage();
-  const [welcome, setWelcome] = useState(() => !hasSeenWelcome());
+  const [firstRun, setFirstRun] = useState(needsVoiceOnboarding);
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
   const data = useLiveQuery(() => db.snapshot(), []);
   const timeLimitError = useMatchTimeLimit(data?.matches);
   const route = useRoute();
+  const initialRoute = useRef(route);
+  useEffect(() => {
+    if (firstRun && route !== initialRoute.current) {
+      markVoicePracticeSeen();
+      setFirstRun(false);
+    }
+  }, [route, firstRun]);
   const [navigationOpen, setNavigationOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const portrait = usePortraitOrientation();
@@ -88,9 +100,16 @@ export default function App() {
             </button>
           </div>
         )}
-        <AppPage data={data} route={route} showWelcome={() => setWelcome(true)} />
+        {firstRun && route === initialRoute.current && !route.startsWith('/practica-voz') ? (
+          <VoicePractice
+            route={voicePracticeRoute(route)}
+            live={data?.matches.some((match) => !match.deletedAt && match.status === 'active')}
+            onboarding={{ finish: () => setFirstRun(false) }}
+          />
+        ) : (
+          <AppPage data={data} route={route} />
+        )}
       </main>
-      {welcome && <Welcome close={() => setWelcome(false)} />}
     </>
   );
 }

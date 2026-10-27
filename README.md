@@ -64,9 +64,9 @@ Si Chromium ya está instalado, se puede indicar su ejecutable con `CHROMIUM_PAT
 
 ## Idiomas y uso durante el partido
 
-La interfaz y la voz pueden usar idiomas distintos: español, inglés, alemán, francés, italiano, neerlandés y polaco. El idioma de la interfaz se cambia en Ajustes o en la galería de bienvenida; el de captura, en la preparación previa al partido. El reconocimiento se prepara la primera vez y se restaura desde archivos locales en las siguientes visitas; durante el juego el botón Voz es push to talk directo, sin panel adicional. Los siete comparten el mismo Whistle descargado.
+La interfaz y la voz pueden usar idiomas distintos: español, inglés, alemán, francés, italiano, neerlandés y polaco. El idioma de la interfaz se cambia en Ajustes o en el primer arranque; el de captura, en la preparación previa al partido. El reconocimiento se prepara la primera vez y se restaura desde archivos locales en las siguientes visitas; durante el juego el botón Voz es push to talk directo, sin panel adicional. Los siete comparten el mismo Whistle descargado.
 
-La bienvenida aparece en el primer uso y se puede reabrir en Ajustes. Explica cómo preparar la voz, registrar una jugada, revisar el borrador y trabajar desde la perspectiva de quien graba.
+En el primer arranque aparece directamente el entrenamiento de voz, que sustituye a la bienvenida general. Permite elegir idioma y salir en cualquier momento. Si ya habías cerrado la bienvenida anterior o visto la práctica, la actualización respeta esa elección.
 
 «Practicar voz», en Ajustes y el menú lateral, enseña primero Evento + Equipo + Jugador 1 + Jugador 2 y propone cuatro retos con reconocimiento real. Los resultados indican acierto, detalles pendientes o datos por revisar; el editor habitual permite corregirlos. Usa equipos ficticios y borradores en memoria, sin escribir en tus partidos ni copias. Es opcional y se puede completar manualmente si la voz no está disponible. Consulta la [práctica guiada](docs/ui-hmi/entrenamiento-voz.md).
 

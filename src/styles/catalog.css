@@ -1,4 +1,7 @@
 /* Responsive rules retain their cascade order; superseded declarations have been removed. */
+.language-picker {
+  max-width: 320px;
+}
 .catalog-heading {
   flex-wrap: wrap;
 }

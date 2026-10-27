@@ -30,19 +30,12 @@ test('active matches precede navigation and settings distinguish local backups f
   await match.click();
   await expect(page.locator('.scoreboard')).toBeVisible();
   await page.goto('/#/ajustes');
-  await page.getByRole('button', { name: 'Ver bienvenida', exact: true }).click();
-  const guide = page.getByRole('dialog', { name: 'Guía de pista', exact: true });
-  await guide.getByRole('button', { name: 'Pulsa, habla, revisa y guarda', exact: true }).click();
-  await expect(
-    guide.getByText('Evento → equipo → jugador 1 → jugador 2 → metadatos', { exact: true }),
-  ).toBeVisible();
-  await guide.getByRole('button', { name: 'También puedes dictar una nota', exact: true }).click();
-  await expect(
-    guide.getByText('«Comentario: buen movimiento de balón»', { exact: true }),
-  ).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Ver bienvenida', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Practicar voz', exact: true }).click();
+  const guide = page.locator('.voice-practice');
+  await expect(guide.getByRole('heading', { name: 'Una jugada. Cuatro piezas.' })).toBeVisible();
+  await expect(guide.locator('.practice-grammar li')).toHaveCount(4);
   await page.screenshot({ path: info.outputPath('recoverable-guide.png') });
-  await guide
-    .getByRole('button', { name: 'Ir a la aplicación; guía disponible en Ajustes', exact: true })
-    .press('Enter');
+  await guide.getByRole('button', { name: 'Salir de la práctica', exact: true }).press('Enter');
   await expect(guide).toHaveCount(0);
 });

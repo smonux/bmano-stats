@@ -30,36 +30,42 @@ async function match(page: import('@playwright/test').Page) {
   await page.getByRole('button', { name: 'Iniciar partido' }).click();
   await expect(page.getByLabel('Marcador 0 a 0')).toBeVisible();
 }
-test('first-use gallery changes language, persists completion and reopens from settings', async ({
+test('first-use voice practice changes language, persists dismissal and reopens from settings', async ({
   page,
 }, info) => {
   await spanish(page, false);
   await page.goto('/');
-  const dialog = page.getByRole('dialog');
-  await expect(dialog).toBeVisible();
-  await selectWheelOption(dialog.getByRole('listbox', { name: 'Idioma', exact: true }), 'English');
-  await expect(
-    dialog.getByRole('heading', { name: 'Watch the match. Describe the play.' }),
-  ).toBeVisible();
+  const practice = page.locator('.voice-practice');
+  await expect(practice).toBeVisible();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await selectWheelOption(
+    practice.getByRole('listbox', { name: 'Idioma', exact: true }),
+    'English',
+  );
+  await expect(practice.getByRole('heading', { name: 'One play. Four parts.' })).toBeVisible();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-  await page.screenshot({ path: info.outputPath('welcome-en.png') });
-  for (let i = 0; i < 5; i++) {
-    await dialog.getByRole('button', { name: 'Next', exact: true }).click();
-  }
-  await expect(dialog.getByText('Track the two minutes', { exact: true })).toBeVisible();
-  await dialog.getByRole('button', { name: 'Get started', exact: true }).click();
-  await expect(dialog).toHaveCount(0);
+  await page.screenshot({ path: info.outputPath('first-practice-en.png'), fullPage: true });
+  await practice.getByRole('button', { name: 'Got it · Let’s practise', exact: true }).click();
+  await expect(practice.getByText('Play 1 of 4', { exact: true })).toBeVisible();
+  await expect(practice.locator('blockquote')).toHaveText('«Goal our»');
+  await practice.getByRole('button', { name: 'Complete manually', exact: true }).click();
+  const editor = page.getByRole('dialog', { name: 'Correct practice', exact: true });
+  await expect(editor).toContainText('Practice team 1');
+  await editor.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await practice.getByRole('button', { name: 'Leave practice', exact: true }).click();
+  await expect(practice).toHaveCount(0);
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Every play counts.' })).toBeVisible();
-  await expect(dialog).toHaveCount(0);
+  await expect(practice).toHaveCount(0);
   await page.getByRole('button', { name: 'Open menu', exact: true }).click();
   await page
     .getByRole('dialog', { name: 'Main menu', exact: true })
     .getByRole('link', { name: 'Settings', exact: true })
     .click();
-  await page.getByRole('button', { name: 'View welcome guide' }).click();
-  await expect(dialog).toBeVisible();
-  await dialog.getByRole('button', { name: 'Open app; guide available in Settings' }).click();
+  await expect(page.getByRole('button', { name: 'View welcome guide' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Practise voice', exact: true }).click();
+  await expect(practice).toBeVisible();
+  await practice.getByRole('button', { name: 'Leave practice', exact: true }).click();
   for (const [language, label] of [
     ['Español', 'Ajustes'],
     ['Deutsch', 'Einstellungen'],

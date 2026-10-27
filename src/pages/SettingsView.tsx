@@ -1,5 +1,5 @@
 import { VoicePreparation } from '../components/VoicePreparation';
-import { LanguagePicker } from '../components/Welcome';
+import { LanguagePicker } from '../components/LanguagePicker';
 import { tr } from '../i18n';
 import { useState } from 'react';
 import { Check, Download, ShieldCheck, Upload } from 'lucide-react';
@@ -8,7 +8,7 @@ import { type Backup } from '../domain/model';
 import { Confirm, ErrorMessage, PageTitle, useAction } from '../components/ui';
 import { backupZip, readBackupFile } from '../data/backup-files';
 import { todayDateString } from '../presentation/matches';
-function SettingsView({ showWelcome }: { showWelcome: () => void }) {
+function SettingsView() {
   const action = useAction();
   const [backup, setBackup] = useState<Backup | null>(null);
   const [notice, setNotice] = useState('');
@@ -29,7 +29,6 @@ function SettingsView({ showWelcome }: { showWelcome: () => void }) {
             'Interfaz y voz pueden usar idiomas distintos. Los siete idiomas comparten el mismo modelo Whistle.',
           )}
         </p>
-        <button onClick={showWelcome}>{tr('Ver bienvenida')}</button>
       </section>
       <section className="panel settings-panel">
         <h2>{tr('Datos y copias')}</h2>

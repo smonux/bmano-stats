@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { CircleCheck, LoaderCircle } from 'lucide-react';
-import { tr, languages } from '../i18n';
+import { tr, languages, useLanguage } from '../i18n';
+import { LanguagePicker } from '../components/LanguagePicker';
 import type { EventDraft } from '../data/database';
 import { EventEditor } from '../components/EventEditor';
 import { VoicePreparation } from '../components/VoicePreparation';
@@ -17,8 +18,17 @@ import { practiceContext, emptyPracticeDraft } from '../voice/practice/context';
 import { practiceChallenges, practicePhrases } from '../voice/practice/challenges';
 import { evaluatePractice } from '../voice/practice/evaluate';
 
-export function VoicePractice({ route, live = false }: { route: string; live?: boolean }) {
-  const [data] = useState(practiceContext);
+export function VoicePractice({
+  route,
+  live = false,
+  onboarding,
+}: {
+  route: string;
+  live?: boolean;
+  onboarding?: { finish: () => void };
+}) {
+  const interfaceLanguage = useLanguage();
+  const data = useMemo(practiceContext, [interfaceLanguage]);
   const [screen, setScreen] = useState<'intro' | 'challenge' | 'finish'>('intro');
   const [index, setIndex] = useState(0);
   const [started, setStarted] = useState(false);
@@ -32,9 +42,7 @@ export function VoicePractice({ route, live = false }: { route: string; live?: b
   const challenge = practiceChallenges[index];
   const evaluation = draft ? evaluatePractice(draft, challenge, data, assisted) : null;
   const busy = ['permission', 'recording', 'transcribing', 'interpreting'].includes(capture.phase);
-  useEffect(() => {
-    markVoicePracticeSeen();
-  }, []);
+  const spokenLanguage = capture.setup.languageChosen ? capture.setup.language : interfaceLanguage;
   useEffect(() => {
     heading.current?.querySelector<HTMLHeadingElement>('h1')?.focus({ preventScroll: true });
     window.scrollTo(0, 0);
@@ -51,7 +59,9 @@ export function VoicePractice({ route, live = false }: { route: string; live?: b
     }
   }, [draft, screen]);
   const exit = () => {
+    markVoicePracticeSeen();
     capture.cancel();
+    onboarding?.finish();
     navigate(voicePracticeReturn(route));
     requestAnimationFrame(() =>
       (
@@ -85,7 +95,10 @@ export function VoicePractice({ route, live = false }: { route: string; live?: b
       <div className="practice-content">
         <div ref={heading} className="practice-heading">
           {screen === 'intro' ? (
-            <PracticeGrammar language={capture.setup.language} />
+            <>
+              {onboarding && <LanguagePicker />}
+              <PracticeGrammar language={spokenLanguage} />
+            </>
           ) : screen === 'finish' ? (
             <>
               <CircleCheck className="practice-finish-icon" size={64} aria-hidden="true" />
@@ -117,10 +130,10 @@ export function VoicePractice({ route, live = false }: { route: string; live?: b
               <p>{tr(challenge.tip)}</p>
               <div className="practice-sentence">
                 <small>
-                  {tr('Lee esta frase')} · {languages[capture.setup.language]}
+                  {tr('Lee esta frase')} · {languages[spokenLanguage]}
                 </small>
-                <blockquote lang={capture.setup.language}>
-                  «{practicePhrases[capture.setup.language][index]}»
+                <blockquote lang={spokenLanguage}>
+                  «{practicePhrases[spokenLanguage][index]}»
                 </blockquote>
               </div>
               <p>{tr(challenge.task)}</p>
@@ -201,6 +214,7 @@ export function VoicePractice({ route, live = false }: { route: string; live?: b
           <button
             className="primary full"
             onClick={() => {
+              markVoicePracticeSeen();
               setStarted(true);
               setScreen('challenge');
             }}

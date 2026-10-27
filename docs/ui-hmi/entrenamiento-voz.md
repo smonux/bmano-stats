@@ -4,7 +4,7 @@ Implementación de las [instrucciones aprobadas](instrucciones-entrenamiento-voz
 
 ## Recorrido
 
-`Practicar voz` está en Ajustes y en el menú lateral. También se ofrece, con «Ahora no», en la primera preparación de voz. La práctica siempre empieza enseñando Evento + Equipo + Jugador 1 + Jugador 2, el ejemplo segmentado y el mínimo «Gol nuestro». Los jugadores son opcionales según el evento; reconocer nombres exige incluirlos en la plantilla. Se explica el orden real del intérprete y el papel del segundo jugador, sin atribuir a los conectores una capacidad de reordenación que el parser actual no tiene.
+El entrenamiento sustituye a la bienvenida general y se abre directamente en el primer arranque. Ese recorrido incluye la elección del idioma de interfaz y siempre permite salir. `Practicar voz` permanece en Ajustes y el menú lateral; también se ofrece, con «Ahora no», al preparar voz por primera vez. La práctica siempre empieza enseñando Evento + Equipo + Jugador 1 + Jugador 2, el ejemplo segmentado y el mínimo «Gol nuestro». Los jugadores son opcionales según el evento; reconocer nombres exige incluirlos en la plantilla. Se explica el orden real del intérprete y el papel del segundo jugador, sin atribuir a los conectores una capacidad de reordenación que el parser actual no tiene.
 
 La ruta conserva el origen y Salir vuelve a esa pantalla. La introducción puede recuperarse durante cualquier reto sin perder el borrador. Siguiente exige un resultado verde. Repetir borra el intento actual; las respuestas tardías de capturas canceladas no cambian el reto. Finalizar muestra 4/4 y cuántos se completaron con ayuda, sin puntuación ni clasificación. Revisar un reconocimiento correcto sin cambiarlo conserva «Reconocido por voz».
 
@@ -35,7 +35,7 @@ La evaluación reutiliza `eventDraftIssues`, `eventSchema` y la validación de p
 
 El modo práctica de `EventEditor` termina en un callback que devuelve un clon del borrador, antes de cualquier llamada a `repo.saveEvent`. No se ofrece el inicio de contadores tras una exclusión de práctica. Los catálogos, eventos, estadísticas, último portero y copias usan exclusivamente datos reales. La prueba de aislamiento rechaza escrituras en las cuatro tablas durante los cuatro retos y compara sus snapshots completos. También se comprueba que la exportación ZIP no contiene objetos de práctica.
 
-Solo se persiste `handball-voice-practice-v1 = seen/done`, además de las preferencias habituales de voz si el usuario las cambia. Borradores, transcripciones y audio no se guardan. Recargar inicia de nuevo la introducción. La descarga y preparación siguen el flujo existente; si hay un partido activo, la práctica permite la voz local ya preparada o la corrección manual. El tutorial no condiciona crear un partido ni registrar manualmente.
+Solo se persiste `handball-voice-practice-v1 = seen/done`, además de las preferencias habituales de voz si el usuario las cambia. Salir o empezar marca visto; terminar conserva completado incluso después de salir. Recargar la introducción inicial antes de elegir no la omite. Los usuarios con `handball-welcome-v1 = done` no vuelven a ser interrumpidos al actualizar; pueden entrar explícitamente desde Ajustes/menú. Borradores, transcripciones y audio no se guardan. La descarga y preparación siguen el flujo existente; si hay un partido activo, la práctica permite la voz local ya preparada o la corrección manual. El tutorial no condiciona crear un partido ni registrar manualmente.
 
 ## Validación y límites
 

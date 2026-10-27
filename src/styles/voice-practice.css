@@ -38,6 +38,9 @@
 .practice-heading {
   scroll-margin-top: 80px;
 }
+.practice-heading > .language-picker {
+  margin-bottom: 20px;
+}
 .practice-heading h1 {
   margin-block: 8px 12px;
 }

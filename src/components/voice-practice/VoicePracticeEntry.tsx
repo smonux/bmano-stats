@@ -4,9 +4,20 @@ import { tr } from '../../i18n';
 import { navigate } from '../ui';
 
 const preference = 'handball-voice-practice-v1';
+/** Existing users keep their dismissed onboarding when upgrading. */
+export function needsVoiceOnboarding() {
+  try {
+    return (
+      !localStorage.getItem(preference) && localStorage.getItem('handball-welcome-v1') !== 'done'
+    );
+  } catch {
+    return true;
+  }
+}
 export function markVoicePracticeSeen(completed = false) {
   try {
-    localStorage.setItem(preference, completed ? 'done' : 'seen');
+    if (completed || localStorage.getItem(preference) !== 'done')
+      localStorage.setItem(preference, completed ? 'done' : 'seen');
   } catch {
     /* Optional onboarding preference. */
   }

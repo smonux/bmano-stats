@@ -33,15 +33,7 @@ function MatchRoute({ id, data }: { id: string; data: Snapshot }) {
   );
 }
 
-export function AppPage({
-  data,
-  route,
-  showWelcome,
-}: {
-  data: Snapshot | undefined;
-  route: string;
-  showWelcome: () => void;
-}) {
+export function AppPage({ data, route }: { data: Snapshot | undefined; route: string }) {
   const parts = route.split('?')[0].split('/').filter(Boolean);
   let page;
   if (!data) {
@@ -78,7 +70,7 @@ export function AppPage({
       </>
     );
   } else if (parts[0] === 'ajustes') {
-    page = <SettingsView showWelcome={showWelcome} />;
+    page = <SettingsView />;
   } else {
     page = <Dashboard data={data} />;
   }
