@@ -11,7 +11,14 @@ import {
 import { microphoneProblem } from '../voice/readiness';
 import { ErrorMessage } from './ui';
 import { WheelPicker } from './WheelPicker';
-export function VoicePreparation({ live = false }: { live?: boolean }) {
+import { VoicePracticeEntry } from './voice-practice/VoicePracticeEntry';
+export function VoicePreparation({
+  live = false,
+  practiceEntry = 'first',
+}: {
+  live?: boolean;
+  practiceEntry?: 'first' | 'always' | 'none';
+}) {
   const setup = useVoiceSetup();
   const { mic, error, testMic } = useMicrophoneCheck();
   useEffect(() => {
@@ -30,6 +37,7 @@ export function VoicePreparation({ live = false }: { live?: boolean }) {
           </span>
         )}
       </div>
+      {practiceEntry !== 'none' && <VoicePracticeEntry always={practiceEntry === 'always'} />}
       {missing && (
         <p role="alert" className="preparation-alert">
           {tr(

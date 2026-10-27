@@ -4,6 +4,11 @@ import type { GameEvent, Match, Player } from '../domain/schema';
 
 /** Preview the same domain validation without creating players or writing an event. */
 export function eventDraftIssues(draft: EventDraft, match: Match, players: Player[]): string[] {
+  const preview = previewEventDraft(draft, match, players);
+  return eventIssues(preview.event, match, preview.players);
+}
+
+export function previewEventDraft(draft: EventDraft, match: Match, players: Player[]) {
   const previewPlayers = [...players];
   const playerId = (teamId: string | null, dorsal: string) => {
     if (!teamId || dorsal === '') return null;
@@ -38,5 +43,5 @@ export function eventDraftIssues(draft: EventDraft, match: Match, players: Playe
       draft.relatedDorsal,
     ),
   };
-  return eventIssues(preview, match, previewPlayers);
+  return { event: preview, players: previewPlayers };
 }

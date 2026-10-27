@@ -23,7 +23,7 @@ function SettingsView({ showWelcome }: { showWelcome: () => void }) {
         <LanguagePicker />
       </section>
       <section className="panel settings-panel">
-        <VoicePreparation />
+        <VoicePreparation practiceEntry="always" />
         <p className="caption">
           {tr(
             'Interfaz y voz pueden usar idiomas distintos. Los siete idiomas comparten el mismo modelo Whistle.',

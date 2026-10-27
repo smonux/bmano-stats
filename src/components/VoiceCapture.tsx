@@ -1,4 +1,4 @@
-import { LoaderCircle, Mic } from 'lucide-react';
+import { LoaderCircle } from 'lucide-react';
 import type { GameEvent, Match, Snapshot } from '../domain/schema';
 import { tr } from '../i18n';
 import { EventEditor } from './EventEditor';
@@ -6,6 +6,7 @@ import { ErrorMessage } from './ui';
 import { useVoiceCapture } from './voice/useVoiceCapture';
 import { useEffect, useRef, useState } from 'react';
 import { VoiceReview } from './voice/VoiceReview';
+import { PushToTalkButton } from './voice/PushToTalkButton';
 
 export function VoiceCapture({
   match,
@@ -20,30 +21,8 @@ export function VoiceCapture({
   saved?: (event: GameEvent, pending: boolean, primaryDorsal?: string) => void;
   started?: () => void;
 }) {
-  const {
-    setup,
-    phase,
-    status,
-    error,
-    result,
-    seconds,
-    start,
-    release,
-    closeReview,
-    ready,
-    problem,
-  } = useVoiceCapture(match, data);
-  useEffect(() => {
-    const hidden = () => {
-      if (document.hidden) release();
-    };
-    window.addEventListener('blur', release);
-    document.addEventListener('visibilitychange', hidden);
-    return () => {
-      window.removeEventListener('blur', release);
-      document.removeEventListener('visibilitychange', hidden);
-    };
-  }, [release]);
+  const capture = useVoiceCapture(match, data);
+  const { setup, phase, status, error, result, closeReview, ready, problem } = capture;
   const [editing, setEditing] = useState(false);
   const talkButton = useRef<HTMLButtonElement>(null);
   const hadReview = useRef(false);
@@ -57,50 +36,7 @@ export function VoiceCapture({
   }, [result]);
   return (
     <>
-      <button
-        ref={talkButton}
-        className={`hold-to-talk ${phase === 'recording' ? 'recording' : ''}`}
-        aria-label={
-          phase === 'recording' ? tr('Grabando · {seconds} s', { seconds }) : tr('Voz (mantener)')
-        }
-        disabled={
-          !ready || Boolean(problem) || ['transcribing', 'interpreting', 'review'].includes(phase)
-        }
-        aria-disabled={phase === 'permission'}
-        onPointerDown={(e) => {
-          if (e.button !== 0 || phase !== 'ready') {
-            return;
-          }
-          e.preventDefault();
-          started?.();
-          e.currentTarget.setPointerCapture(e.pointerId);
-          void start();
-        }}
-        onPointerUp={release}
-        onPointerCancel={release}
-        onLostPointerCapture={release}
-        onKeyDown={(e) => {
-          if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) {
-            e.preventDefault();
-            if (phase === 'ready') started?.();
-            void start();
-          }
-        }}
-        onKeyUp={(e) => {
-          if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            release();
-          }
-        }}
-        onBlur={release}
-      >
-        <Mic size={20} />
-        {phase === 'recording'
-          ? tr('Grabando · {seconds} s', { seconds })
-          : phase === 'permission'
-            ? tr('Solicitando permiso…')
-            : tr('Voz (mantener)')}
-      </button>
+      <PushToTalkButton capture={capture} buttonRef={talkButton} started={started} />
       {setup.phase === 'loading' && (
         <p className="capture-status" role="status">
           {tr('Preparando reconocimiento…')} {setup.progress}

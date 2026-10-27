@@ -6,15 +6,7 @@ import type { HandballDatabase } from '../connection';
 import { resolvePlayerInTransaction } from './catalog';
 import { availableMatch } from './match-access';
 import type { EventDraft } from './types';
-
-function validateEventPosition(draft: EventDraft, match: Match) {
-  if (draft.period > match.clock.period) {
-    throw new Error('El tiempo indicado aún no existe.');
-  }
-  if (draft.teamId && ![match.localTeamId, match.visitorTeamId].includes(draft.teamId)) {
-    throw new Error('El equipo no pertenece al partido.');
-  }
-}
+import { validateEventPosition } from '../../domain/event-position';
 
 async function editableEvent(database: HandballDatabase, draft: EventDraft, matchId: string) {
   const existingEvent = draft.id ? await database.events.get(draft.id) : undefined;

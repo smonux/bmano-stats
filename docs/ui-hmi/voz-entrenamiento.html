@@ -1,0 +1,121 @@
+<div id="voice-coach" class="viz-dotted-background">
+<style>
+#voice-coach{font:16px/1.45 system-ui,sans-serif;padding:18px 8px;color:light-dark(#191919,#f6f5ed)}
+#voice-coach *{box-sizing:border-box}
+#voice-coach [hidden]{display:none!important}
+#voice-coach .phone{max-width:410px;margin:auto;background:light-dark(#fafaf6,#20201d);border:1px solid light-dark(#d9d9d0,#53534a);border-radius:24px;overflow:hidden}
+#voice-coach header{padding:16px 18px;background:#191919;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px}
+#voice-coach header b span{color:#ffd600}
+#voice-coach button,#voice-coach select{font:inherit}
+#voice-coach button{min-height:48px;padding:10px 14px;background:light-dark(#fff,#30302b);color:inherit;border:1px solid light-dark(#cecec2,#68685c);border-radius:12px;font-weight:650}
+#voice-coach button:disabled{opacity:.45}
+#voice-coach header button{background:transparent;color:#fff;border-color:#666;font-size:14px}
+#voice-coach button:focus-visible,#voice-coach select:focus-visible,#voice-coach summary:focus-visible{outline:3px solid #b49600;outline-offset:3px}
+#voice-coach main{padding:22px 18px}
+#voice-coach h1{font-size:25px;line-height:1.2;margin:6px 0 12px;letter-spacing:-.5px}
+#voice-coach h2{font-size:20px;margin:0 0 10px}
+#voice-coach p{margin:8px 0 16px}
+#voice-coach .eyebrow{font-size:12px;font-weight:750;letter-spacing:1px;color:light-dark(#676759,#bcbcaa)}
+#voice-coach .muted{font-size:14px;color:light-dark(#656559,#c0c0ae)}
+#voice-coach .grammar{margin:20px 0;display:grid;gap:8px}
+#voice-coach .piece{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;border-bottom:1px solid light-dark(#e2e2d6,#49493e);padding:8px 0 12px}
+#voice-coach .num{width:28px;height:28px;border-radius:8px;background:#ffd600;color:#191919;text-align:center;line-height:28px;font-weight:750}
+#voice-coach .piece small{display:block;font-size:14px;color:light-dark(#626255,#c3c3af);font-weight:400}
+#voice-coach .tag{font-size:12px;color:light-dark(#666657,#c3c3af)}
+#voice-coach .sentence{padding:16px;background:light-dark(#fff4b5,#3c351a);border-radius:14px;margin:16px 0}
+#voice-coach .tokens{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#voice-coach .token{padding:6px 9px;border-radius:7px;background:light-dark(#fff,#25251f);border-bottom:3px solid #c9aa00;font-weight:600}
+#voice-coach .token small{display:block;font-size:11px;font-weight:500;color:light-dark(#666657,#c3c3af)}
+#voice-coach .note{border-left:3px solid #d6b600;padding:2px 0 2px 12px;font-size:14px;margin:16px 0}
+#voice-coach .primary{background:#ffd600;color:#191919;border-color:#dfbe00;width:100%;min-height:54px}
+#voice-coach .full{width:100%}
+#voice-coach footer{padding:14px 18px 18px;border-top:1px solid light-dark(#e2e2d6,#49493e)}
+#voice-coach footer small{display:block;text-align:center;font-size:12px;margin-top:9px;color:light-dark(#656559,#c0c0ae)}
+#voice-coach .steps{display:flex;gap:6px;margin:10px 0 18px}
+#voice-coach .steps span{height:5px;flex:1;background:light-dark(#deded1,#4a4a3c);border-radius:4px}
+#voice-coach .steps .done{background:#398653}
+#voice-coach .steps .current{background:#d8b500}
+#voice-coach blockquote{font-size:23px;line-height:1.4;font-weight:650;margin:16px 0}
+#voice-coach .mic{width:100%;display:flex;align-items:center;justify-content:center;gap:10px}
+#voice-coach .mic svg{width:22px;height:22px}
+#voice-coach details{margin-top:12px;font-size:14px}
+#voice-coach summary{min-height:44px;padding:10px 0}
+#voice-coach .simoptions{display:flex;flex-wrap:wrap;gap:8px}
+#voice-coach .simoptions button{font-size:14px}
+#voice-coach .result{margin-top:18px;border-radius:14px;padding:14px;background:light-dark(#fff,#2b2b25);border:1px solid light-dark(#ddd,#505046)}
+#voice-coach .state{display:flex;align-items:center;gap:8px;font-weight:750}
+#voice-coach .state .symbol{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+#voice-coach .green .symbol{background:#217642;color:#fff}
+#voice-coach .amber .symbol{background:#f2c94c;color:#332800}
+#voice-coach .red .symbol{background:#b53333;color:#fff}
+#voice-coach .fields{margin:12px 0 0}
+#voice-coach .field{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid light-dark(#e9e9df,#45453a);font-size:14px}
+#voice-coach .field span{color:light-dark(#676759,#bcbcaa)}
+#voice-coach .field b{text-align:right;overflow-wrap:anywhere}
+#voice-coach .edit{margin-top:14px}
+#voice-coach label{display:block;font-size:14px;margin:12px 0}
+#voice-coach select{display:block;width:100%;min-height:48px;border:1px solid light-dark(#aaa,#666);border-radius:8px;margin-top:5px;padding:8px;background:light-dark(#fff,#30302b);color:inherit}
+#voice-coach .pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#voice-coach .finishmark{width:64px;height:64px;display:grid;place-items:center;background:#217642;color:#fff;font-size:32px;border-radius:20px;margin:8px 0 20px}
+</style>
+<div class="phone">
+<header><b>handball<span>stats</span></b><button id="vc-skip">Salir de la práctica</button></header>
+<section id="vc-intro">
+<main><div class="eyebrow">ANTES DE HABLAR</div><h1>Una jugada.<br>Cuatro piezas.</h1><p>Di qué ha pasado y de qué equipo. Después, añade quién intervino.</p>
+<div class="grammar">
+<div class="piece"><span class="num">1</span><b>Evento<small>Gol, parada, penalti cometido…</small></b><span class="tag">Esencial</span></div>
+<div class="piece"><span class="num">2</span><b>Equipo<small>«Nuestro» o «de ellos»</small></b><span class="tag">Esencial</span></div>
+<div class="piece"><span class="num">3</span><b>Jugador 1<small>Quién realiza la acción</small></b><span class="tag">Opcional</span></div>
+<div class="piece"><span class="num">4</span><b>Jugador 2<small>«Pase de…» o «provocado por…»</small></b><span class="tag">Si aplica</span></div>
+</div>
+<div class="sentence"><div class="tokens"><span class="token"><small>EVENTO</small>Gol</span><span>+</span><span class="token"><small>EQUIPO</small>nuestro</span><span>+</span><span class="token"><small>JUGADOR 1</small>de Marta</span><span>+</span><span class="token"><small>JUGADOR 2</small>pase de la 15</span></div></div>
+<p class="muted">Usa nombre o dorsal. La palabra que une al segundo jugador explica su papel: quién da el pase o quién provoca el penalti.</p>
+<div class="note"><b>No hace falta decirlo todo.</b><br>«Gol nuestro» ya sirve. Si falta un jugador, puedes completarlo después.</div>
+</main><footer><button class="primary" id="vc-start">Entendido · Vamos a practicar</button><small>4 jugadas · equipos ficticios · no afecta a tus partidos</small></footer>
+</section>
+<section id="vc-game" hidden>
+<main><div class="eyebrow" id="vc-progress">JUGADA 1 DE 4</div><div class="steps" id="vc-steps" aria-hidden="true"><span></span><span></span><span></span><span></span></div><h1 id="vc-title"></h1><p class="muted" id="vc-tip"></p>
+<div class="sentence"><small class="eyebrow">LEE ESTA FRASE</small><blockquote id="vc-phrase"></blockquote></div>
+<p class="muted" id="vc-task"></p>
+<button class="mic primary" id="vc-read"><i data-lucide="mic" aria-hidden="true"></i>Simular lectura</button>
+<p class="muted" style="text-align:center;margin:8px 0">Demo sin micrófono · reconocimiento simulado</p>
+<details><summary>Probar otros resultados de voz</summary><div class="simoptions"><button data-case="full">Todo reconocido</button><button data-case="partial">Faltan datos</button><button data-case="none">Sin reconocer</button></div></details>
+<section class="result" id="vc-result" hidden><div class="state" id="vc-state" role="status" aria-live="polite"><span class="symbol"></span><span class="state-label"></span></div><p class="muted" id="vc-feedback"></p><div class="fields" id="vc-fields"></div><button class="full edit" id="vc-edit">Revisar datos</button></section>
+<section class="result" id="vc-form" hidden><h2>Completar la jugada</h2><p class="muted">Representación del editor habitual.</p><div id="vc-inputs"></div><div class="pair"><button id="vc-cancel">Cancelar</button><button id="vc-save" class="primary">Comprobar</button></div></section>
+</main><footer><button class="primary" id="vc-next" disabled>Siguiente jugada</button><button class="full" id="vc-grammar" style="border:0;margin-top:8px">Recordar la gramática</button></footer>
+</section>
+<section id="vc-end" hidden><main><div class="finishmark">✓</div><div class="eyebrow" id="vc-end-label">PRÁCTICA COMPLETADA</div><h1 id="vc-end-title">Ya tienes la fórmula.</h1><p id="vc-end-text">Evento + equipo. Añade jugadores cuando puedas y completa lo que falte después.</p><div class="note" id="vc-end-summary"></div></main><footer><button class="primary" id="vc-restart">Volver a practicar</button><small>Fin de la demo · ninguna jugada se ha guardado</small></footer></section>
+</div>
+<script>
+(()=>{
+const root=document.getElementById('voice-coach'),$=s=>root.querySelector(s);
+const levels=[
+{title:'Empieza por lo esencial',tip:'El evento y el equipo bastan. No necesitas identificar al goleador.',phrase:'«Gol nuestro»',task:'Objetivo: reconocer el gol de nuestro equipo.',expected:['Gol','Nuestro','',''],labels:['Evento','Equipo','Goleador','Asistente'],mode:'full'},
+{title:'Pon nombre a la jugada',tip:'Jugador 1 marca. «Pase de» identifica a quien asiste.',phrase:'«Gol nuestro de Marta, pase de la quince»',task:'Marta y la dorsal 15 pertenecen a nuestro equipo de práctica.',expected:['Gol','Nuestro','Marta','#15'],labels:['Evento','Equipo','Goleadora','Asistente'],mode:'partial'},
+{title:'Una acción, dos equipos',tip:'«Cometido por» y «provocado por» distinguen los dos papeles.',phrase:'«Penalti cometido por ellos, número doce, provocado por Elena»',task:'El #12 es rival. Elena es de nuestro equipo.',expected:['Penalti cometido','Ellos','#12','Elena'],labels:['Evento','Equipo infractor','Lo comete · Ellos','Lo provoca · Nuestro'],mode:'full'},
+{title:'Completar también cuenta',tip:'La exclusión puede computar sin identificar al jugador.',phrase:'«Exclusión de ellos»',task:'Sabes que fue el dorsal 8. Añádelo después de leer para completar el reto.',expected:['Exclusión','Ellos','#8',''],labels:['Evento','Equipo','Jugador excluido','Segundo jugador'],mode:'partial'}
+];
+let index=0,values=[],complete=false,assisted=false,resume=false;
+const outcomes=[];
+function screen(name){['intro','game','end'].forEach(x=>$('#vc-'+x).hidden=x!==name);}
+function start(){index=0;outcomes.length=0;resume=false;load();}
+function load(){const l=levels[index];values=['','','',''];complete=false;assisted=false;$('#vc-progress').textContent='JUGADA '+(index+1)+' DE 4';$('#vc-title').textContent=l.title;$('#vc-tip').textContent=l.tip;$('#vc-phrase').textContent=l.phrase;$('#vc-task').textContent=l.task;$('#vc-result').hidden=true;$('#vc-form').hidden=true;$('#vc-next').disabled=true;$('#vc-next').textContent=index===3?'Terminar entrenamiento':'Siguiente jugada';[...$('#vc-steps').children].forEach((el,i)=>el.className=i<index?'done':i===index?'current':'');screen('game');}
+function evaluate(){const l=levels[index];const same=values.every((v,i)=>v===l.expected[i]);const valid=Boolean(values[0]&&values[1]);complete=same;const color=same?'green':valid?'amber':'red';$('#vc-result').hidden=false;const state=$('#vc-state');state.className='state '+color;state.querySelector('.symbol').textContent=same?'✓':valid?'!':'×';state.querySelector('.state-label').textContent=same?(assisted?'Completado con ayuda':'Reto completo'):valid?'Válida · revisa los detalles':'Necesita revisión';
+const missing=l.expected.map((v,i)=>v&&!values[i]?l.labels[i].toLowerCase():null).filter(Boolean);
+const wrong=l.expected.some((v,i)=>values[i]&&values[i]!==v);
+$('#vc-feedback').textContent=same?(index===0?'Sin jugador también vale. Ya puedes pasar al siguiente.':'Los datos coinciden con la jugada del reto.'):!valid?'No podemos registrar esta jugada todavía: faltan evento o equipo. Repite o corrige los datos.':wrong?'La jugada podría registrarse, pero algún dato no coincide con el reto. Revísalo antes de continuar.':'La jugada computaría. Para completar el reto falta: '+missing.join(', ')+'.';
+$('#vc-fields').replaceChildren();l.labels.forEach((label,i)=>{if(i>1&&!l.expected[i]&&!values[i])return;const row=document.createElement('div');row.className='field';const a=document.createElement('span');a.textContent=label;const b=document.createElement('b');b.textContent=values[i]||'Sin identificar';row.append(a,b);$('#vc-fields').append(row);});$('#vc-next').disabled=!same;$('#vc-edit').textContent=same?'Revisar datos':'Completar o corregir';}
+function simulate(mode){values=[...levels[index].expected];assisted=false;if(mode==='none')values=['','','',''];if(mode==='partial'){const last=values[3]?3:values[2]?2:1;values[last]='';}$('#vc-form').hidden=true;evaluate();}
+function edit(){const l=levels[index];$('#vc-inputs').replaceChildren();const choices=[['','Gol','Parada','Penalti cometido','Exclusión'],['','Nuestro','Ellos'],['','Marta','#12','#8'],['','#15','Elena']];l.labels.forEach((label,i)=>{if(i===3&&!l.expected[3])return;const wrap=document.createElement('label');wrap.textContent=label;const select=document.createElement('select');select.dataset.field=i;choices[i].forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v||'Sin identificar';select.append(o);});select.value=values[i];wrap.append(select);$('#vc-inputs').append(wrap);});$('#vc-form').hidden=false;}
+function end(skipped){screen('end');$('#vc-end-label').textContent=skipped?'PRÁCTICA INTERRUMPIDA':'PRÁCTICA COMPLETADA';$('#vc-end-title').textContent=skipped?'Puedes volver cuando quieras.':'Ya tienes la fórmula.';$('#vc-end-summary').textContent=skipped?outcomes.length+' de 4 retos completados.':'4 de 4 retos completados · '+outcomes.filter(Boolean).length+' con ayuda. Corregir también es parte del juego.';}
+$('#vc-start').onclick=()=>{if(resume){resume=false;screen('game');$('#vc-start').textContent='Entendido · Vamos a practicar';}else start();};
+$('#vc-grammar').onclick=()=>{resume=true;$('#vc-start').textContent='Volver a mi jugada';screen('intro');};
+$('#vc-read').onclick=()=>simulate(levels[index].mode);
+root.querySelectorAll('[data-case]').forEach(b=>b.onclick=()=>simulate(b.dataset.case));
+$('#vc-edit').onclick=edit;$('#vc-cancel').onclick=()=>$('#vc-form').hidden=true;
+$('#vc-save').onclick=()=>{root.querySelectorAll('#vc-inputs select').forEach(s=>values[Number(s.dataset.field)]=s.value);assisted=true;$('#vc-form').hidden=true;evaluate();};
+$('#vc-next').onclick=()=>{if(!complete)return;outcomes[index]=assisted;if(index===3)end(false);else{index++;load();}};
+$('#vc-skip').onclick=()=>end(true);$('#vc-restart').onclick=()=>{resume=false;outcomes.length=0;$('#vc-start').textContent='Entendido · Vamos a practicar';screen('intro');};
+})();
+</script>
+</div>

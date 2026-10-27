@@ -8,8 +8,10 @@ import {
   Smartphone,
   Users,
   X,
+  GraduationCap,
 } from 'lucide-react';
 import { tr } from '../i18n';
+import { voicePracticeRoute } from './voice-practice/VoicePracticeEntry';
 const destinations = [
   {
     path: '/',
@@ -36,6 +38,7 @@ const destinations = [
     label: 'Ajustes',
     icon: Settings,
   },
+  { path: '/practica-voz', label: 'Practicar voz', icon: GraduationCap },
 ];
 export function NavigationDrawer({
   route,
@@ -93,7 +96,7 @@ export function NavigationDrawer({
         {destinations.map(({ path, label, icon: Icon }) => (
           <a
             key={path}
-            href={`#${path}`}
+            href={`#${path === '/practica-voz' ? voicePracticeRoute(route) : path}`}
             onClick={close}
             aria-current={
               (path === '/' ? route === '/' : route.startsWith(path)) ? 'page' : undefined

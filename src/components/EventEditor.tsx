@@ -30,6 +30,7 @@ export function EventEditor({
   voiceTimings,
   close,
   saved,
+  practice,
 }: {
   data: Snapshot;
   match: Match;
@@ -42,6 +43,7 @@ export function EventEditor({
   };
   close: () => void;
   saved?: (event: GameEvent, pending: boolean, primaryDorsal?: string) => void;
+  practice?: { check: (draft: EventDraft) => void };
 }) {
   const [draft, setDraft] = useState<EventDraft>(
     () => initialDraft ?? createEditorDraft(data, match, event),
@@ -124,13 +126,20 @@ export function EventEditor({
     <>
       <Modal
         className="event-editor"
-        title={event ? tr('Editar evento') : tr('Nuevo evento')}
+        title={
+          practice ? tr('Corregir práctica') : event ? tr('Editar evento') : tr('Nuevo evento')
+        }
         close={protection.requestClose}
       >
         <form
           onSubmit={(inputEvent) => {
             inputEvent.preventDefault();
             action.run(async () => {
+              if (practice) {
+                practice.check(structuredClone(draft));
+                close();
+                return;
+              }
               const event = await repo.saveEvent(draft);
               saved?.(event, missing, draft.primaryDorsal);
               close();
@@ -138,6 +147,11 @@ export function EventEditor({
           }}
         >
           <div ref={fields} className="event-editor-fields">
+            {practice && (
+              <p className="practice-notice">
+                {tr('Modo práctica · esta jugada no se guarda en tus partidos.')}
+              </p>
+            )}
             <div className="event-context">
               <button
                 type="button"
@@ -314,7 +328,11 @@ export function EventEditor({
               <p className="draft-summary">{draftSummary(draft, match, data)}</p>
               {missing && (
                 <p className="draft-issues">
-                  {tr('Se guardará pendiente; no contará en las estadísticas.')}{' '}
+                  {tr(
+                    practice
+                      ? 'Esta jugada quedaría pendiente.'
+                      : 'Se guardará pendiente; no contará en las estadísticas.',
+                  )}{' '}
                   {issues.map((issue) => tr(issue)).join('. ')}
                 </p>
               )}
@@ -325,11 +343,13 @@ export function EventEditor({
                 {tr('Cancelar')}
               </button>
               <button className="primary" disabled={action.busy}>
-                {action.busy
-                  ? tr('Guardando…')
-                  : missing
-                    ? tr('Guardar pendiente')
-                    : tr('Guardar evento')}
+                {practice
+                  ? tr('Comprobar jugada')
+                  : action.busy
+                    ? tr('Guardando…')
+                    : missing
+                      ? tr('Guardar pendiente')
+                      : tr('Guardar evento')}
               </button>
             </div>
           </footer>

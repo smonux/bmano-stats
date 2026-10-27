@@ -26,11 +26,13 @@ export function useVoiceCapture(match: Match, data: Snapshot) {
   const inferenceRunning = useRef(false);
   const capturedMatch = useRef<CaptureContext | null>(null);
   const onRecordingLimit = useRef<() => void>(() => {});
+  const generation = useRef(0);
 
   useEffect(() => {
     mounted.current = true;
     return () => {
       mounted.current = false;
+      generation.current++;
       recorder.current?.cancel();
       if (inferenceRunning.current) {
         void discardVoiceEngine();
@@ -59,36 +61,47 @@ export function useVoiceCapture(match: Match, data: Snapshot) {
       return;
     }
     operationLocked.current = true;
+    const operation = generation.current;
+    const active = () => mounted.current && operation === generation.current;
     inferenceRunning.current = true;
     setPhase('transcribing');
     setStatus(tr('Whistle está transcribiendo…'));
     try {
-      const audio = await recorder.current.stop();
-      recorder.current = null;
-      if (!mounted.current) {
+      const recording = recorder.current;
+      const audio = await recording.stop();
+      if (recorder.current === recording) recorder.current = null;
+      if (!active()) {
         return;
       }
       const recognized = await recognizeCapture(audio, capturedMatch.current!, setup.language, {
-        isActive: () => mounted.current,
+        isActive: active,
         onInterpreting: () => {
-          setPhase('interpreting');
-          setStatus(tr('Interpretando el comando de voz…'));
+          if (active()) {
+            setPhase('interpreting');
+            setStatus(tr('Interpretando el comando de voz…'));
+          }
         },
-        onError: (error) => setError(voiceError(error)),
+        onError: (error) => {
+          if (active()) setError(voiceError(error));
+        },
       });
-      if (mounted.current && recognized) {
+      if (active() && recognized) {
         setResult(recognized);
         setPhase('review');
       }
     } catch (error) {
-      await discardVoiceEngine();
-      if (mounted.current) {
+      if (active()) {
+        await discardVoiceEngine();
+      }
+      if (active()) {
         setError(voiceError(error));
         setPhase('ready');
       }
     } finally {
-      operationLocked.current = false;
-      inferenceRunning.current = false;
+      if (operation === generation.current) {
+        operationLocked.current = false;
+        inferenceRunning.current = false;
+      }
     }
   }
   onRecordingLimit.current = () => {
@@ -101,6 +114,7 @@ export function useVoiceCapture(match: Match, data: Snapshot) {
       return;
     }
     buttonHeld.current = true;
+    const operation = ++generation.current;
     operationLocked.current = true;
     setError('');
     setResult(null);
@@ -111,7 +125,7 @@ export function useVoiceCapture(match: Match, data: Snapshot) {
     recorder.current = recording;
     try {
       const started = await recording.start(() => onRecordingLimit.current());
-      if (!mounted.current) {
+      if (!mounted.current || operation !== generation.current) {
         recording.cancel();
         return;
       }
@@ -125,13 +139,13 @@ export function useVoiceCapture(match: Match, data: Snapshot) {
         setPhase('ready');
       }
     } catch (error) {
-      if (mounted.current) {
+      if (mounted.current && operation === generation.current) {
         setError(voiceError(error));
         setPhase('ready');
       }
-      recorder.current = null;
+      if (operation === generation.current) recorder.current = null;
     } finally {
-      operationLocked.current = false;
+      if (operation === generation.current) operationLocked.current = false;
     }
   }
 
@@ -146,6 +160,20 @@ export function useVoiceCapture(match: Match, data: Snapshot) {
     setPhase('ready');
   }
 
+  function cancel() {
+    generation.current++;
+    buttonHeld.current = false;
+    recorder.current?.cancel();
+    recorder.current = null;
+    if (inferenceRunning.current) void discardVoiceEngine();
+    inferenceRunning.current = false;
+    operationLocked.current = false;
+    setResult(null);
+    setError('');
+    setStatus('');
+    setPhase('ready');
+  }
+
   return {
     setup,
     phase,
@@ -156,6 +184,7 @@ export function useVoiceCapture(match: Match, data: Snapshot) {
     start,
     release,
     closeReview,
+    cancel,
     ready: setup.phase === 'ready',
     problem: microphoneProblem(),
   };

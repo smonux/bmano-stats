@@ -1,0 +1,26 @@
+[
+  {
+    "index": 0,
+    "transcript": "Pol nuestro.",
+    "state": "practice-result green",
+    "result": "Reconocido por voz\n\nReto completo. Los datos coinciden con la jugada propuesta.\n\nEvento\nGol\nEquipo\nEquipo de práctica 1\nGoleador\nSin identificar\n\nPol nuestro."
+  },
+  {
+    "index": 1,
+    "transcript": "Por nuestro de Marta, pase de la 15.",
+    "state": "practice-result red",
+    "result": "Necesita revisión\nSelecciona un evento\nEvento\nEvento sin indicar\nEquipo\nEquipo de práctica 1\n\nPor nuestro de Marta, pase de la 15."
+  },
+  {
+    "index": 2,
+    "transcript": "Penarti cometido por ellos número 12, provocado por el N.",
+    "state": "practice-result amber",
+    "result": "Válida · revisa los detalles\n\nLa jugada puede registrarse, pero aún falta completar el reto.\n\nPara completar el reto falta: Beneficiario rival.\n\nEvento\nPenalti cometido\nEquipo\nEquipo de práctica 2\nInfractor\n#12 · Equipo de práctica 2\nBeneficiario rival\nSin identificar\n\nPenarti cometido por ellos número 12, provocado por el N."
+  },
+  {
+    "index": 3,
+    "transcript": "Exclusión de ellos.",
+    "state": "practice-result amber",
+    "result": "Válida · revisa los detalles\n\nLa jugada puede registrarse, pero aún falta completar el reto.\n\nPara completar el reto falta: Excluido.\n\nEvento\nExclusión\nEquipo\nEquipo de práctica 2\nExcluido\nSin identificar\n\nExclusión de ellos."
+  }
+]

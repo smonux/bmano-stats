@@ -10,6 +10,7 @@ import { MatchView } from './MatchView';
 import { SettingsView } from './SettingsView';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../data/database';
+import { VoicePractice } from './VoicePractice';
 
 /** A route can advance before the live snapshot delivers a newly committed match. */
 function MatchRoute({ id, data }: { id: string; data: Snapshot }) {
@@ -41,13 +42,20 @@ export function AppPage({
   route: string;
   showWelcome: () => void;
 }) {
-  const parts = route.split('/').filter(Boolean);
+  const parts = route.split('?')[0].split('/').filter(Boolean);
   let page;
   if (!data) {
     page = (
       <div className="empty" role="status">
         {tr('Abriendo tus datos…')}
       </div>
+    );
+  } else if (parts[0] === 'practica-voz') {
+    page = (
+      <VoicePractice
+        route={route}
+        live={data.matches.some((match) => !match.deletedAt && match.status === 'active')}
+      />
     );
   } else if (parts[0] === 'nuevo') {
     page = <NewMatch data={data} />;
