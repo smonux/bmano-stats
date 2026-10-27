@@ -8,14 +8,16 @@ export function PageTitle({
   subtitle,
   back = '/',
   children,
+  className = '',
 }: {
   title: string;
   subtitle?: string;
   back?: string;
   children?: ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="page-heading">
+    <div className={`page-heading ${className}`}>
       <div>
         <button className="back" onClick={() => navigate(back)}>
           <ChevronLeft size={16} /> {tr('Volver')}

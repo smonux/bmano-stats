@@ -36,6 +36,7 @@ function Teams({ data, id }: { data: Snapshot; id?: string }) {
   return (
     <>
       <PageTitle
+        className="catalog-heading"
         title={team?.name ?? tr('Equipos')}
         subtitle={
           team

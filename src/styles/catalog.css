@@ -1,4 +1,15 @@
 /* Responsive rules retain their cascade order; superseded declarations have been removed. */
+.catalog-heading {
+  flex-wrap: wrap;
+}
+.catalog-heading > div {
+  flex: 1 1 12rem;
+}
+.catalog-heading > .primary {
+  flex-shrink: 0;
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
 .goalkeeper-option {
   display: flex;
   align-items: center;
