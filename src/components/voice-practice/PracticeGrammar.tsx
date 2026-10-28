@@ -1,5 +1,6 @@
 import { tr } from '../../i18n';
 import type { Language } from '../../i18n';
+import { practiceGoalExample, practicePhrases } from '../../voice/practice/challenges';
 
 export function PracticeGrammar({ language }: { language: Language }) {
   const pieces = [
@@ -8,15 +9,6 @@ export function PracticeGrammar({ language }: { language: Language }) {
     ['Jugador 1', 'Quién realiza la acción.', 'Opcional'],
     ['Jugador 2', 'Quién asiste o provoca, según el evento.', 'Si aplica'],
   ];
-  const examples: Record<Language, string[]> = {
-    es: ['Gol', 'nuestro', 'de Marta', 'pase de la 15'],
-    en: ['Goal', 'our', 'by Marta', 'pass from number 15'],
-    de: ['Tor', 'unser', 'von Marta', 'Vorlage von Nummer 15'],
-    fr: ['But', 'notre', 'de Marta', 'passe de la 15'],
-    it: ['Gol', 'nostro', 'di Marta', 'passaggio della 15'],
-    nl: ['Doelpunt', 'ons', 'van Marta', 'pass van nummer 15'],
-    pl: ['Bramka', 'nasza', 'Marta', 'podanie numer 15'],
-  };
   return (
     <>
       <p className="eyebrow">{tr('ANTES DE HABLAR')}</p>
@@ -37,7 +29,7 @@ export function PracticeGrammar({ language }: { language: Language }) {
         ))}
       </ol>
       <div className="practice-tokens" aria-label={tr('Ejemplo de voz')} lang={language}>
-        {examples[language].map((text, index) => (
+        {practiceGoalExample[language].map((text, index) => (
           <span key={index}>
             <small>{tr(pieces[index][0])}</small>
             <strong>{text}</strong>
@@ -56,7 +48,7 @@ export function PracticeGrammar({ language }: { language: Language }) {
           'No hace falta decirlo todo. Evento y equipo bastan en estos ejemplos; puedes completar los jugadores después.',
         )}{' '}
         {tr('«{example}» ya sirve; completar después es normal.', {
-          example: examples[language].slice(0, 2).join(' '),
+          example: practicePhrases[language][0],
         })}
       </p>
     </>

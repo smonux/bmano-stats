@@ -10,16 +10,26 @@ La ruta conserva el origen y Salir vuelve a esa pantalla. La introducción puede
 
 ## Contexto y evaluación
 
-Dos equipos simétricos en memoria, con la perspectiva nuestro = 1 y ellos = 2 explícita. Equipo 1: Marta #7, #15 y Elena #9. Equipo 2: #12 y #8. No se crean registros de catálogo ni de partido. El reloj ficticio permanece en tiempo 1, minuto 0; el editor completo permite modificar la posición y todos los campos habituales.
+Dos equipos simétricos en memoria, con la perspectiva nuestro = 1 y ellos = 2 explícita. Equipo 1: Marta #7 y Elena #9. Equipo 2: #12 y #8. No se crean registros de catálogo ni de partido. El reloj ficticio permanece en tiempo 1, minuto 0; el editor completo permite modificar la posición y todos los campos habituales.
 
 | Reto | Objetivo semántico |
 | --- | --- |
 | A · Gol nuestro | Gol del equipo 1; no se exige identificar jugador. |
-| B · Gol nuestro de Marta, pase de la quince | Gol del equipo 1, Marta #7 y asistencia #15. |
+| B · Gol nuestro de Marta, pase de Elena | Gol del equipo 1, Marta #7 y asistencia de Elena #9, ambas identificadas por nombre. |
 | C · Penalti cometido por ellos, número doce, provocado por Elena | Penalti del equipo 2, infractor #12 y beneficiaria Elena #9 del equipo 1. |
 | D · Exclusión de ellos | Exclusión del equipo 2; falta deliberadamente #8. Se completa/confirma en el editor. |
 
-Las frases originales españolas pasan por el intérprete sin modificarlo. Hay equivalentes comprobados en inglés, alemán, francés, italiano, neerlandés y polaco. La frase leída sigue el idioma del reconocimiento, aunque la interfaz use otro idioma.
+Las frases españolas pasan por el intérprete sin modificarlo. Hay equivalentes comprobados en inglés, alemán, francés, italiano, neerlandés y polaco. La frase leída sigue el idioma del reconocimiento, aunque la interfaz use otro idioma. Introducción y reto B comparten las mismas cuatro piezas del ejemplo con Marta y Elena. C mantiene el contraste entre rival identificado por número (#12) y jugadora propia por nombre (Elena #9); A conserva el mínimo y D la exclusión sin dorsal para completar en el editor.
+
+| Idioma | Ejemplo completo de B |
+| --- | --- |
+| Español | Gol nuestro de Marta, pase de Elena |
+| Inglés | Goal for us by Marta, assisted by Elena |
+| Alemán | Tor für uns von Marta, Vorlage von Elena |
+| Francés | But pour nous de Marta, passe d’Elena |
+| Italiano | Gol nostro di Marta, passaggio di Elena |
+| Neerlandés | Doelpunt voor ons van Marta, pass van Elena |
+| Polaco | Bramka dla nas Marta, asystuje Elena |
 
 El motor recibe únicamente el contexto normal: dos equipos y la plantilla completa. `whistleKeywords` genera las mismas pistas de eventos, nombres y dorsales que en un partido. Los objetivos de la tabla solo se consultan al evaluar después del reconocimiento o de la corrección.
 
@@ -39,10 +49,10 @@ Solo se persiste `handball-voice-practice-v1 = seen/done`, además de las prefer
 
 ## Validación y límites
 
-161 pruebas unitarias en 33 archivos; catorce específicas comprueban los cuatro ejemplos en siete idiomas, equivalencia nombre/dorsal, roles opuestos, campos erróneos válidos, requisitos reales, posición, metadatos, traducciones y evaluación sin mutaciones.
+159 pruebas unitarias en 32 archivos; catorce específicas comprueban los cuatro ejemplos y la introducción en siete idiomas con el intérprete real, equivalencia nombre/dorsal, roles opuestos, campos erróneos válidos, requisitos reales, posición, metadatos, traducciones y evaluación sin mutaciones. B comprueba explícitamente equipo 1, goleadora #7 y asistente #9; C, equipo 2, infractor #12 y beneficiaria #9.
 
-70 casos de navegador validados en Chromium móvil emulado y escritorio: 42 de producción y 28 de componentes/origen. Incluyen captura real con cuatro WAV sintéticos, funcionamiento offline tras preparar una vez, cancelación durante una grabación con cierre de todas las pistas, ausencia de datos ficticios en ZIP, primer uso saltable, permisos/silencio con dobles identificados, cancelación tardía, editor completo, corrección D, retorno al partido activo con reloj en marcha, y regresión de voz/guardado/editor/contadores. La revisión visual cubre 320/390/430 px, siete idiomas, claro/oscuro, texto al 200 %, foco y controles táctiles. Se corrigieron el foco al cancelar y el contraste de los textos secundarios oscuros.
+40 casos de navegador validados para el cambio a Marta/Elena en Chromium móvil emulado y escritorio: 32 sobre la compilación de producción y ocho de componentes/origen. Incluyen captura real con cuatro WAV sintéticos, funcionamiento offline tras preparar una vez, cancelación durante una grabación con cierre de todas las pistas, ausencia de datos ficticios en ZIP, primer arranque saltable, permisos/silencio con dobles identificados, cancelación tardía, editor completo, corrección D, retorno al partido activo con reloj en marcha y regresión de contadores. La matriz cubre 320/390/430 px, siete idiomas, claro/oscuro, texto al 200 %, foco y controles táctiles; se revisan capturas de introducción y de B con ambos roles.
 
-Los WAV se generaron con Piper para probar el recorrido, no para medir precisión humana. Whistle produjo errores como «Pues nuestro» y «Por nuestro de Marta…» y omitió Elena en el ejemplo C: se conservaron los resultados reales y se corrigieron con el editor. D sí mantuvo la exclusión sin dorsal y pasó a verde al completar #8. No se alteraron modelo, configuración ni vocabulario para hacer pasar las muestras, y no se atribuye mejora de reconocimiento al tutorial. No se ha probado micrófono físico, ruido de pista, Safari/iOS ni Android real.
+Los WAV se generaron con Piper para probar el recorrido, no para medir precisión humana; se regenera `assist.wav` con «Gol nuestro de Marta, pase de Elena». Whistle devuelve ambos nombres en B: escritorio interpreta «Hol Nuestro de Marta, Pase de Elena» y da verde; móvil interpreta «Hoy nuestro de Marta pase de Elena.» y necesita corregir el evento. A no reconoce el gol en estas dos ejecuciones; C conserva el infractor #12 pero no identifica Elena. Se conservan los resultados reales antes de corregir con el editor. D mantiene la exclusión sin dorsal y pasa a verde al completar #8. No se alteran modelo, configuración ni parser para hacer pasar las muestras, y no se atribuye mejora de reconocimiento al tutorial. No se ha probado micrófono físico, ruido de pista, Safari/iOS ni Android real.
 
-[Capturas y resultados observados](evidencias/entrenamiento-voz/README.md). Compilación regenerada en `dist`. Entrega autorizada en `main`, sin esperar al despliegue.
+[Capturas y resultados actuales](evidencias/entrenamiento-nombres/README.md); [evidencia histórica de la entrega inicial](evidencias/entrenamiento-voz/README.md). Compilación regenerada en `dist`. Entrega autorizada en `main`, sin esperar al despliegue.

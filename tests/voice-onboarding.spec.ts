@@ -68,7 +68,7 @@ test('first-launch training can finish all four challenges manually without voic
     await choose(editor, 'Equipo', `Equipo de práctica ${index < 2 ? 1 : 2}`);
     if (index === 1) {
       await choose(editor, 'Jugador principal', '#7 Marta');
-      await choose(editor, 'Jugador relacionado', '#15 Sin nombre');
+      await choose(editor, 'Jugador relacionado', '#9 Elena');
     } else if (index === 2) {
       await choose(editor, 'Jugador principal', '#12 Sin nombre');
       await choose(editor, 'Jugador relacionado', '#9 Elena');

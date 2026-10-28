@@ -24,12 +24,12 @@ export const practiceChallenges: readonly PracticeChallenge[] = [
   },
   {
     title: 'Pon nombre a la jugada',
-    tip: 'Di primero a Marta, que marca, y después a quien da el pase.',
-    task: 'Marta es la dorsal 7 y la asistente lleva el 15. Ambas son de nuestro equipo de práctica.',
+    tip: 'Di primero a Marta, que marca, y después a Elena, que da el pase.',
+    task: 'Marta es la dorsal 7 y Elena la dorsal 9. Ambas son de nuestro equipo de práctica.',
     type: 'goal',
     teamId: practiceIds.own,
     primary: 7,
-    related: 15,
+    related: 9,
   },
   {
     title: 'Una acción, dos equipos',
@@ -51,47 +51,63 @@ export const practiceChallenges: readonly PracticeChallenge[] = [
   },
 ];
 
+/** The introduction and challenge B share the same four spoken pieces. */
+export const practiceGoalExample: Record<Language, readonly [string, string, string, string]> = {
+  es: ['Gol', 'nuestro', 'de Marta', 'pase de Elena'],
+  en: ['Goal', 'for us', 'by Marta', 'assisted by Elena'],
+  de: ['Tor', 'für uns', 'von Marta', 'Vorlage von Elena'],
+  fr: ['But', 'pour nous', 'de Marta', 'passe d’Elena'],
+  it: ['Gol', 'nostro', 'di Marta', 'passaggio di Elena'],
+  nl: ['Doelpunt', 'voor ons', 'van Marta', 'pass van Elena'],
+  pl: ['Bramka', 'dla nas', 'Marta', 'asystuje Elena'],
+};
+
+function goalPhrase(language: Language) {
+  const [event, team, scorer, assist] = practiceGoalExample[language];
+  return `${event} ${team} ${scorer}, ${assist}`;
+}
+
 /** Read-aloud examples follow the selected recognition language, independently of the UI. */
 export const practicePhrases: Record<Language, readonly [string, string, string, string]> = {
   es: [
     'Gol nuestro',
-    'Gol nuestro de Marta, pase de la quince',
+    goalPhrase('es'),
     'Penalti cometido por ellos, número doce, provocado por Elena',
     'Exclusión de ellos',
   ],
   en: [
     'Goal our',
-    'Goal our by Marta, pass from number fifteen',
+    goalPhrase('en'),
     'Penalty their number twelve, drawn by Elena',
     'Suspension their',
   ],
   de: [
     'Tor unser',
-    'Tor unser von Marta, Vorlage von Nummer fünfzehn',
+    goalPhrase('de'),
     'Siebenmeter Gegner Nummer zwölf, verursacht von Elena',
     'Zeitstrafe Gegner',
   ],
   fr: [
     'But notre',
-    'But notre de Marta, passe de la quinze',
+    goalPhrase('fr'),
     'Penalty commis par eux, numéro douze, provoqué par Elena',
     'Exclusion adversaire',
   ],
   it: [
     'Gol nostro',
-    'Gol nostro di Marta, passaggio della quindici',
+    goalPhrase('it'),
     'Rigore loro numero dodici, provocato da Elena',
     'Esclusione loro',
   ],
   nl: [
     'Doelpunt ons',
-    'Doelpunt ons van Marta, pass van nummer vijftien',
+    goalPhrase('nl'),
     'Strafworp tegenstander nummer twaalf, uitgelokt door Elena',
     'Tijdstraf tegenstander',
   ],
   pl: [
     'Bramka nasza',
-    'Bramka nasza Marta, podanie numer piętnaście',
+    goalPhrase('pl'),
     'Rzut karny rywala numer dwanaście, sprowokowany przez Elena',
     'Wykluczenie rywala',
   ],

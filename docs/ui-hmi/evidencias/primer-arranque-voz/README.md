@@ -1,5 +1,7 @@
 # Entrenamiento en el primer arranque
 
+Estas capturas documentan la sustitución de la bienvenida. El ejemplo con #15 que aparece en ellas se sustituyó después por Elena #9; consulta las [capturas actuales](../entrenamiento-nombres/README.md). El comportamiento de primer arranque se conserva.
+
 La introducción de voz sustituye a la galería general. El selector de idioma aparece en el primer arranque; Salir permite entrar directamente en la aplicación. No se solicita micrófono al leer o salir. Se puede recuperar la práctica desde Ajustes y el menú.
 
 - [Primer arranque en español a 320 × 664](primer-arranque-320.png): captura de página completa; cuatro piezas, ejemplo, frase mínima, idioma y acciones sin recorte horizontal.

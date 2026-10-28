@@ -7,6 +7,7 @@ import { selectWheelOption } from './wheel-helpers';
 import { choose } from './editor-helpers';
 import { tr, type Language } from '../src/i18n';
 import { contrast } from './color-helpers';
+import { practiceGoalExample } from '../src/voice/practice/challenges';
 
 async function locale(page: Page, language: Language = 'es') {
   await page.addInitScript((language) => {
@@ -41,6 +42,9 @@ for (const [width, language, scale, dark] of [
       page.getByRole('heading', { name: t('Una jugada. Cuatro piezas.') }),
     ).toBeVisible();
     await expect(page.locator('.practice-grammar li')).toHaveCount(4);
+    await expect(page.locator('.practice-tokens strong')).toHaveText([
+      ...practiceGoalExample[language],
+    ]);
     const colors = await page.locator('.voice-practice').evaluate((element) => ({
       background: getComputedStyle(element).backgroundColor,
       caption: getComputedStyle(element.querySelector('.eyebrow')!).color,
@@ -194,7 +198,7 @@ test('REAL Whistle: four synthetic utterances use the production recording pipel
       await choose(editor, 'Equipo', `Equipo de práctica ${index < 2 ? 1 : 2}`);
       if (index === 1) {
         await choose(editor, 'Jugador principal', '#7 Marta');
-        await choose(editor, 'Jugador relacionado', '#15 Sin nombre');
+        await choose(editor, 'Jugador relacionado', '#9 Elena');
       } else if (index === 2) {
         await choose(editor, 'Jugador principal', '#12 Sin nombre');
         await choose(editor, 'Jugador relacionado', '#9 Elena');

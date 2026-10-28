@@ -20,7 +20,6 @@ export function practiceContext(): Snapshot {
     teams,
     players: [
       { teamId: practiceIds.own, dorsal: 7, name: 'Marta' },
-      { teamId: practiceIds.own, dorsal: 15, name: '' },
       { teamId: practiceIds.own, dorsal: 9, name: 'Elena' },
       { teamId: practiceIds.other, dorsal: 12, name: '' },
       { teamId: practiceIds.other, dorsal: 8, name: '' },

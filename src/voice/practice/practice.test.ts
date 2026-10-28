@@ -4,7 +4,7 @@ import { interpretCommand } from '../commands';
 import { captureContext, toVoiceDraft } from '../interpretation';
 import { whistleKeywords } from '../keywords';
 import { practiceContext, emptyPracticeDraft, practiceIds } from './context';
-import { practiceChallenges, practicePhrases } from './challenges';
+import { practiceChallenges, practiceGoalExample, practicePhrases } from './challenges';
 import { evaluatePractice } from './evaluate';
 import { voicePracticeMessages } from '../../i18n/voice-practice';
 
@@ -34,6 +34,20 @@ describe('practice phrases through the real text interpreter (no acoustic accura
         expect(evaluation, `${index}: ${text} -> ${JSON.stringify(draft)}`).toMatchObject({
           state: index === 3 ? 'amber' : 'green',
         });
+        if (index === 1)
+          expect(draft).toMatchObject({
+            type: 'goal',
+            teamId: practiceIds.own,
+            primaryDorsal: '7',
+            relatedDorsal: '9',
+          });
+        if (index === 2)
+          expect(draft).toMatchObject({
+            type: 'penalty',
+            teamId: practiceIds.other,
+            primaryDorsal: '12',
+            relatedDorsal: '9',
+          });
         if (index === 0) expect(draft.primaryDorsal).toBe('');
         if (index === 3) {
           expect(draft.primaryDorsal).toBe('');
@@ -44,13 +58,20 @@ describe('practice phrases through the real text interpreter (no acoustic accura
           ).toBe('green');
         }
       }
+      const introduction = practiceGoalExample[language].join(' ');
+      expect(interpret(introduction, language)).toMatchObject({
+        type: 'goal',
+        teamId: practiceIds.own,
+        primaryDorsal: '7',
+        relatedDorsal: '9',
+      });
+      expect(
+        evaluatePractice(interpret(introduction, language), practiceChallenges[1], data, false)
+          .state,
+      ).toBe('green');
     });
   it('names and shirt numbers of the same identity are semantically interchangeable', () => {
-    for (const text of [
-      'Gol nuestro Marta quince',
-      'Gol nuestro siete quince',
-      'Gol nuestro 07 15',
-    ])
+    for (const text of ['Gol nuestro Marta Elena', 'Gol nuestro siete nueve', 'Gol nuestro 07 09'])
       expect(evaluatePractice(interpret(text), practiceChallenges[1], data, false).state).toBe(
         'green',
       );
@@ -64,8 +85,9 @@ describe('practice phrases through the real text interpreter (no acoustic accura
       data.teams.map((team) => team.name),
       data.players,
     );
-    for (const word of ['Marta', 'Elena', '7', 'siete', '15', 'quince', '12', 'doce', '8', 'ocho'])
+    for (const word of ['Marta', 'Elena', '7', 'siete', '9', 'nueve', '12', 'doce', '8', 'ocho'])
       expect(keywords).toContain(word);
+    expect(data.players.map(({ dorsal }) => dorsal)).not.toContain(15);
     expect(keywords).not.toContain(practicePhrases.es[1]);
     expect(keywords).not.toContain(practicePhrases.es[2]);
   });
@@ -98,7 +120,7 @@ describe('semantic practice evaluation uses domain validation before challenge c
       evaluatePractice(interpret('Gol nuestro Marta'), practiceChallenges[1], data, false),
     ).toMatchObject({ state: 'amber', missing: ['Asistente'], wrong: [] });
     expect(
-      evaluatePractice(interpret('Gol nuestro 15 7'), practiceChallenges[1], data, false),
+      evaluatePractice(interpret('Gol nuestro Elena Marta'), practiceChallenges[1], data, false),
     ).toMatchObject({ state: 'amber', missing: [], wrong: ['Goleador', 'Asistente'] });
     expect(
       evaluatePractice(interpret('Penalti nuestro 12 9'), practiceChallenges[2], data, false),
@@ -107,7 +129,7 @@ describe('semantic practice evaluation uses domain validation before challenge c
       evaluatePractice(interpret('Penalti rival 9 12'), practiceChallenges[2], data, false),
     ).toMatchObject({ state: 'amber', wrong: ['Infractor', 'Beneficiario rival'] });
     expect(
-      evaluatePractice(interpret('Gol nuestro 7 15 penalti'), practiceChallenges[1], data, false),
+      evaluatePractice(interpret('Gol nuestro 7 9 penalti'), practiceChallenges[1], data, false),
     ).toMatchObject({ state: 'amber', wrong: ['De penalti'] });
   });
   it('shows red for real missing requirements, invalid positions and same-player substitutions', () => {

@@ -1,5 +1,7 @@
 # Evidencia de la práctica guiada
 
+Evidencia histórica de la entrega inicial, anterior al cambio de B de #15 a Elena #9. No se reescriben las transcripciones realmente observadas. La versión actual y sus pruebas se describen en [Marta y Elena](../entrenamiento-nombres/README.md).
+
 Capturas revisadas; todos los nombres, equipos y audios son de prueba:
 
 - [Introducción a 390 px, tema oscuro](introduccion-390-oscuro.png). Descripciones secundarias con contraste medido ≥ 4,5:1; ejemplo completo y mínimo explícito.

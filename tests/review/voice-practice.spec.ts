@@ -134,8 +134,9 @@ test('FAKE capture/ASR: four semantic challenges, real editor, grammar return an
   const hints = await page.evaluate(
     () => (window as unknown as { practiceHints: string[] }).practiceHints,
   );
-  expect(hints).toEqual(expect.arrayContaining(['Marta', 'Elena', '15', '12', '8']));
-  expect(hints).not.toContain('Gol nuestro de Marta, pase de la quince');
+  expect(hints).toEqual(expect.arrayContaining(['Marta', 'Elena', '7', '9', '12', '8']));
+  expect(hints).not.toContain('15');
+  expect(hints).not.toContain('Gol nuestro de Marta, pase de Elena');
   await page.getByRole('button', { name: 'Completar o corregir', exact: true }).click();
   await page
     .getByRole('dialog', { name: 'Corregir práctica', exact: true })
@@ -144,6 +145,14 @@ test('FAKE capture/ASR: four semantic challenges, real editor, grammar return an
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(result).toContainText('Reconocido por voz');
   await page.getByRole('button', { name: 'Siguiente jugada', exact: true }).click();
+  await expect(page.locator('blockquote')).toHaveText('«Gol nuestro de Marta, pase de Elena»');
+  await readFake(page, 'Gol nuestro de Marta, pase de Elena');
+  await expect(result).toHaveClass(/green/);
+  await expect(result).toContainText('Reconocido por voz');
+  await expect(result).toContainText('#7 · Marta · Equipo de práctica 1');
+  await expect(result).toContainText('#9 · Elena · Equipo de práctica 1');
+  await page.screenshot({ path: info.outputPath('named-teammates-green.png') });
+  await page.getByRole('button', { name: 'Repetir jugada', exact: true }).click();
   await readFake(page, 'Gol nuestro Marta');
   await expect(result).toHaveClass(/amber/);
   await expect(result).toContainText('Para completar el reto falta: Asistente');
@@ -159,7 +168,7 @@ test('FAKE capture/ASR: four semantic challenges, real editor, grammar return an
     page.getByRole('button', { name: 'Completar o corregir', exact: true }),
   ).toBeFocused();
   await page.getByRole('button', { name: 'Completar o corregir', exact: true }).click();
-  await choose(editor, 'Jugador relacionado', '#15 Sin nombre');
+  await choose(editor, 'Jugador relacionado', '#9 Elena');
   await editor.getByRole('button', { name: 'Comprobar jugada', exact: true }).click();
   await expect(editor).toHaveCount(0);
   await expect(result).toHaveClass(/green/);
