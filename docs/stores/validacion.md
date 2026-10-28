@@ -11,11 +11,13 @@ Fecha de trabajo: 2026-10-28. Rama de trabajo `main`; ningún envío a tiendas. 
 | Regresión web | 43 casos de Chromium móvil emulado/escritorio correctos y una omisión prevista del PDF largo móvil; voz real/offline, siete idiomas, tutorial, contadores, ZIP y PDF |
 | Bundle móvil servido localmente | 2 casos correctos: sin caché previa ni acceso a hosts externos, Whistle/WASM/workers y PCM de prueba reales; cancelación al evento de segundo plano; recarga, restauración, ZIP y PDF/fonts bajo CSP |
 | Atrás / diálogos | 4 casos correctos en navegador de componentes: manejador nativo real cancela restauración sin importar datos y cierra menú restaurando foco |
+| Android compilado | APK debug con firma v2 válida y AAB release sin firmar; bundletool validate correcto; manifiestos finales y todos los assets comprobados por hash |
+| Android lint / instrumentación | Lint app: 0 errores, 28 avisos; APK de PackageAssetsTest compilado, no ejecutado. JUnit app: NO-SOURCE |
 | Metadata | Siete fichas dentro de límites de Google y Apple; keywords verificadas en bytes UTF-8; versiones coherentes con Android/Xcode |
 | Proyecto iOS | OpenStep/plists parseados correctamente; PrivacyInfo en fase Resources y siete InfoPlist.strings referenciados. No equivale a build Xcode |
 | Recursos | Balón aprobado en iconos/lanzamiento; iconos 512/1024 y feature 1024×500. Revisión visual de icono y referencias en los siete idiomas |
 | Capturas | 42 renderizaciones auténticas de la app en Chromium: 7 idiomas × 2 dimensiones × 3 pantallas. 1080×1920 y 1320×2868; no son capturas Android/iPhone nativos |
-| Dependencias / licencias | 42 paquetes NPM de producción inventariados con textos; audit de producción sin vulnerabilidades reportadas en esa consulta. Grafo/binario nativo aún por revisar |
+| Dependencias / licencias | 42 paquetes NPM de producción inventariados con textos; audit de producción sin vulnerabilidades reportadas en esa consulta. Grafo Android release archivado; revisión completa de avisos nativos/SPM y tráfico aún pendiente |
 
 ## Lo que se corrigió durante las pruebas
 
@@ -28,11 +30,13 @@ Fecha de trabajo: 2026-10-28. Rama de trabajo `main`; ningún envío a tiendas. 
 
 No se usan sleeps para disimular persistencia o preparación. Se observan cierre de diálogos, estado del micrófono, botones habilitados, cuerpos/hash reales y descargas efectivas.
 
-## Android: bloqueo real
+## Android: compilación desbloqueada y binarios verificados
 
-Se preparó JDK 21 y se ejecutaron SDK Manager y `gradlew assembleDebug bundleRelease` sin entrada para aceptar términos. La licencia antigua presente en el entorno no cubre los paquetes requeridos. Gradle falla al instalar Platform 36 y Build Tools 35.0.0 por licencias no aceptadas. Log: `artifacts/mobile/logs/android-build-blocked.log`; intento SDK: `sdk-install-blocked.log`. No se fabrican APK/AAB vacíos ni se renombran ZIPs.
+El primer intento quedó bloqueado por licencia SDK; los logs `android-build-blocked.log` y `sdk-install-blocked.log` se conservan como históricos. Tras autorización expresa del usuario se aceptó **únicamente** `android-sdk-license` para Platform 36 / Build Tools 35.0.0 / Platform Tools. La instalación y compilación finales se registran en `android-sdk-install.log` y `android-build.log`.
 
-No se ha firmado un APK de debug ni release, no hay AAB, no hay APK instalado y no hay tamaño instalado medido. No se ha validado el manifiesto fusionado ni una actualización instalada; solo las fuentes de app/plugins seleccionados. Se necesitan licencia/autorización o SDK preparado por el titular y repetición de la compilación.
+Hay APK debug real (21.500.685 bytes), con firma v2 verificada, y AAB release real (20.180.317 bytes), validado por bundletool 1.18.3 y **sin firmar**. Se comprueban permisos finales, versión, SDK/origen local, integridad del modelo y cada asset en ambos contenedores. El informe `android-verification.json` identifica sus hashes; el empaquetador exige coincidencia con los archivos actuales. [Detalle, comandos y avisos](entrega-android.md).
+
+El conjunto final de tareas `:app:` termina correctamente. La primera invocación agregada falló al compilar tests del módulo Cordova vacío por Kotlin duplicado; su log se conserva y no se afirma que los tests de bibliotecas hayan pasado. Nuestras pruebas instrumentadas sí están compiladas. Lint app tiene 0 errores y 28 avisos, conservados sin desactivar reglas. ADB no encuentra dispositivos y `/dev/kvm` no está disponible: no hay APK instalado, pruebas instrumentadas ejecutadas, tamaño instalado medido ni actualización instalada validada. Firma release y QA nativa siguen pendientes.
 
 ## iOS: límites concretos
 

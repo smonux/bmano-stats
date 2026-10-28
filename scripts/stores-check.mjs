@@ -45,5 +45,5 @@ assert(
 );
 assert(plist.includes('NSMicrophoneUsageDescription'));
 console.log(
-  'Source manifests checked. Final merged Android/iOS archive audit still requires native compilation.',
+  'Source manifests checked. Use mobile:verify:android for compiled Android containers; the iOS archive audit requires macOS.',
 );

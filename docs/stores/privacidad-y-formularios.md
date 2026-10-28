@@ -22,7 +22,7 @@ La prueba del bundle empaquetado registra solicitudes y bloquea cualquier host d
 - ¿Comparte datos? El envío explícito a un destino elegido por el usuario debe revisarse con la excepción de transferencias iniciadas por el usuario y la definición vigente. No marcar publicidad/venta/tracking: no existen en el producto.
 - Tipos tratados localmente: audio, nombres/dorsales y contenido libre. Se describen en política aunque no sean recogida remota. Si se añade soporte con envío de logs, analítica, sincronización o backend, reevaluar todos los tipos.
 - Cifrado en tránsito/eliminación de cuenta: no inventar cuenta ni un servicio de borrado de servidor. No hay login; borrado local completo mediante controles del sistema y gestión separada de copias.
-- Micrófono: permiso para registro voluntario de jugadas, sin grabación de fondo. No hay ubicación, contactos, cámara, fotos, publicidad ni acceso amplio a archivos en manifests fuente. Auditar el manifiesto fusionado antes de responder definitivamente.
+- Micrófono: permiso para registro voluntario de jugadas, sin servicio de grabación de fondo. Los manifiestos finales de APK/AAB tienen INTERNET, RECORD_AUDIO, MODIFY_AUDIO_SETTINGS y un permiso interno AndroidX protegido por firma. No tienen ubicación, contactos, cámara, fotos, publicidad ni acceso amplio a archivos. Esto no sustituye las pruebas de permisos y comportamiento en ejecución antes de responder definitivamente.
 
 ## Apple App Privacy · propuesta a revisar
 

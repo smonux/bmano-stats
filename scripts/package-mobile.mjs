@@ -3,6 +3,14 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile, stat, readdir, rm, copyFile } from 'node:fs/promises';
 const version = JSON.parse(await readFile('package.json', 'utf8')).version;
 await mkdir('artifacts/mobile', { recursive: true });
+let androidVerification;
+try {
+  androidVerification = JSON.parse(
+    await readFile('artifacts/mobile/logs/android-verification.json', 'utf8'),
+  );
+} catch (error) {
+  if (error.code !== 'ENOENT') throw error;
+}
 const binaries = {};
 for (const [kind, source, expectedEntry, suffix] of [
   ['apk', 'android/app/build/outputs/apk/debug/app-debug.apk', 'AndroidManifest.xml', 'debug.apk'],
@@ -10,7 +18,7 @@ for (const [kind, source, expectedEntry, suffix] of [
     'aab',
     'android/app/build/outputs/bundle/release/app-release.aab',
     'base/manifest/AndroidManifest.xml',
-    'release.aab',
+    'release-unsigned.aab',
   ],
 ]) {
   let exists = false;
@@ -20,21 +28,31 @@ for (const [kind, source, expectedEntry, suffix] of [
   if (!exists) {
     binaries[kind] = {
       produced: false,
-      reason: 'Android SDK license/build blocker; see logs/android-build-blocked.log',
+      reason: 'Android build output unavailable; see logs/android-build.log',
     };
     continue;
   }
   const archive = spawnSync('unzip', ['-Z1', source], { encoding: 'utf8' });
   if (archive.status !== 0 || !archive.stdout.split('\n').includes(expectedEntry))
     throw new Error(`${source} is not the expected compiled Android container`);
+  const bytes = await readFile(source);
+  const verified = androidVerification?.artifacts[kind];
+  if (
+    !verified ||
+    verified.bytes !== bytes.length ||
+    verified.sha256 !== createHash('sha256').update(bytes).digest('hex')
+  )
+    throw new Error(`Run npm run mobile:verify:android before packaging ${source}`);
   const path = `artifacts/mobile/handball-stats-${version}-${suffix}`;
   await copyFile(source, path);
   binaries[kind] = {
     produced: true,
     path,
-    signingVerification:
-      'not performed by this packaging script; verify before installation/upload',
-    sourceCommitVerification: 'Rebuild with the intended commit before distribution',
+    variant: verified.variant,
+    signing: verified.signing,
+    verificationReport: 'artifacts/mobile/logs/android-verification.json',
+    installedOnDevice: androidVerification.installedOnDevice,
+    nativeRuntimeTested: androidVerification.nativeRuntimeTested,
   };
 }
 const archives = [
@@ -74,6 +92,8 @@ const archives = [
       'public/models/*',
       '*.keystore',
       '*.jks',
+      '*.p12',
+      '*.mobileprovision',
     ],
   },
   {
@@ -136,7 +156,7 @@ const manifest = {
   installedSizeBytes: null,
   storeDownloadSizeBytes: null,
   warning:
-    'ZIP byte sizes and raw web assets are measured. Installed/store sizes and native compatibility are unmeasured until real native builds and QA.',
+    'Container byte sizes and raw web assets are measured. Installed/store sizes and native runtime compatibility remain unmeasured until installation and native QA.',
 };
 await writeFile('artifacts/mobile/manifest.json', JSON.stringify(manifest, null, 2));
 await writeFile(

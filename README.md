@@ -64,7 +64,7 @@ Si Chromium ya está instalado, se puede indicar su ejecutable con `CHROMIUM_PAT
 
 ## Idiomas y uso durante el partido
 
-Los proyectos Android/iOS y el material de Google Play/App Store se documentan en [docs/stores](docs/stores/README.md). `npm run mobile:sync` genera un bundle local separado con Whistle incluido; no depende de Render. Los APK/AAB están pendientes de la licencia SDK y el proyecto iOS requiere macOS/Xcode y firma. No se ha publicado en tiendas.
+Los proyectos Android/iOS y el material de Google Play/App Store se documentan en [docs/stores](docs/stores/README.md). `npm run mobile:sync` genera un bundle local separado con Whistle incluido; no depende de Render. Se han compilado y verificado un APK con firma debug y un AAB release sin firma de distribución; la ejecución en dispositivo sigue pendiente. El proyecto iOS requiere macOS/Xcode y firma. No se ha publicado en tiendas.
 
 La interfaz y la voz pueden usar idiomas distintos: español, inglés, alemán, francés, italiano, neerlandés y polaco. El idioma de la interfaz se cambia en Ajustes o en el primer arranque; el de captura, en la preparación previa al partido. El reconocimiento se prepara la primera vez y se restaura desde archivos locales en las siguientes visitas; durante el juego el botón Voz es push to talk directo, sin panel adicional. Los siete comparten el mismo Whistle descargado.
 

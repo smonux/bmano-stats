@@ -31,7 +31,8 @@ Nombres de jugadores y notas pueden referirse a menores o contener datos persona
 ## Checklist antes de beta / review
 
 - [ ] Confirmar titular, appId definitivo, precio/países, tipo de cuenta y contactos.
-- [ ] Android: autorización/licencia SDK, APK real, AAB con firma de upload, Play App Signing a nombre del titular.
+- [x] Android: autorización específica y aceptación de licencia SDK; APK debug y AAB release reales, verificados localmente.
+- [ ] Android: firmar AAB con upload key y configurar Play App Signing a nombre del titular; el AAB entregado está sin firmar.
 - [ ] Apple: Mac/Xcode 26+, Team, firma/provisioning, archive/IPA real; privacidad del archive y SPM resuelto.
 - [ ] Instalación limpia offline: sin caché previa, escoger idioma, cargar modelo, probar voz real y rechazo de micrófono.
 - [ ] Probar los siete idiomas, teclado, zonas seguras, atrás Android, interrupciones/permiso, suspensión/reanudación y orientación efectiva en dispositivos soportados.
@@ -40,7 +41,8 @@ Nombres de jugadores y notas pueden referirse a menores o contener datos persona
 - [ ] Exportación nativa, cancelación sin falso éxito, selector de archivos, importación válida/errónea y PDF con nombres largos, notas y transcripción.
 - [ ] Persistencia al reiniciar y al actualizar con mismo identificador/firma; migración web por ZIP; copia conservada fuera de la app.
 - [ ] Tutorial: salir/repetir/corregir; ningún objeto ficticio en catálogo, estadísticas ni ZIP real.
-- [ ] Auditar permisos fusionados y cualquier permiso de dependencias; sin cámara, contactos, localización, almacenamiento amplio ni servicios de grabación de fondo.
+- [x] Auditar manifiestos finales de APK/AAB: tres permisos previstos y permiso interno AndroidX protegido por firma; sin cámara, contactos, localización ni almacenamiento amplio.
+- [ ] Comprobar permisos/comportamiento en ejecución y repetir auditoría en el archive iOS final.
 - [ ] Captura de tráfico instalada y revisión de SDKs; aprobar Data Safety/App Privacy, privacy manifests y export compliance.
 - [ ] Publicar políticas y soporte con datos reales y acceso desde la app; sustituir marcadores de todos los idiomas.
 - [ ] Capturas nativas de producto real, datos ficticios, sin mockups; comparar con referencias de navegador y dimensiones oficiales.

@@ -2,7 +2,7 @@
 
 ## Hecho aquí / pendiente
 
-Se generan proyectos, assets y bundle web móvil con el mismo Whistle que usa la web. No hay APK/AAB por la licencia SDK no aceptada, ni archive/IPA por ausencia de macOS/Xcode/firma. No se han creado claves de distribución, certificados, cuentas, contratos ni publicaciones.
+Se generan proyectos, assets y bundle web móvil con el mismo Whistle que usa la web. Se han obtenido y verificado APK debug y AAB release sin firma de distribución; [detalle de entrega](entrega-android.md). La licencia específica del SDK se aceptó tras autorización expresa del usuario. Gradle creó una clave debug local para pruebas; no se han creado claves de distribución, cuentas ni publicaciones. Archive/IPA siguen pendientes de macOS/Xcode/firma.
 
 ## Reproducir assets y sincronización
 
@@ -20,23 +20,27 @@ Identificador provisional `io.github.smonux.bmanostats`, versión 0.1.0/build 1.
 
 ## Android
 
-Requisitos: JDK 21 completo, Android SDK Platform 36 y Build Tools 35.0.0 usados por AGP 8.13.0, licencias válidamente aceptadas por el titular. La caché local de esta máquina no es parte del entregable. No copiar hashes de licencia de Internet ni ejecutar aceptación automática. El titular puede proporcionar su SDK con `ANDROID_HOME`.
+Requisitos: JDK 21 completo, Android SDK Platform 36 y Build Tools 35.0.0 usados por AGP 8.13.0, licencia válidamente aceptada. En esta máquina está aceptada por la autorización específica del usuario; no se amplía a otras licencias o contratos. La caché local no es parte del entregable. No copiar hashes de licencia de Internet ni aceptar globalmente términos no autorizados. En otra máquina se puede indicar un SDK preparado con `ANDROID_HOME`.
 
 ```sh
 npm run mobile:sync
 cd android
-./gradlew assembleDebug bundleRelease --no-daemon
+./gradlew :app:assembleDebug :app:bundleRelease --no-daemon
 ```
 
-Si termina correctamente: `app/build/outputs/apk/debug/app-debug.apk` tiene firma de debug y sirve para pruebas; `app/build/outputs/bundle/release/app-release.aab` queda sin firma si no se configura release. No se denominan artefactos obtenidos hasta que esos archivos existan y se verifiquen.
+Resultados ya obtenidos aquí: `app/build/outputs/apk/debug/app-debug.apk` tiene firma de debug verificada y sirve para pruebas; `app/build/outputs/bundle/release/app-release.aab` está validado y sin firma. Las copias de entrega quedan en `artifacts/mobile/` tras ejecutar el verificador y `stores:package`. El AAB aún no está listo para subir.
+
+Desde la raíz, `npm run mobile:verify:android` usa `uv` y herramientas del SDK/JDK/bundletool para verificar firmas, manifiestos finales, permisos y cada asset. [Rutas y versión fijada del verificador](entrega-android.md). `stores:package` rechaza binarios nuevos que no coincidan por hash con ese informe. No confundir un exit code correcto de `jarsigner -verify` con una firma existente: también devuelve éxito para algunos archivos sin firmar.
 
 Instalar APK **solo en dispositivo/emulador de pruebas autorizado**: `adb install -r app-debug.apk`. Para probar conservación, instalar una versión anterior con el mismo app ID y firma, crear datos, después `adb install -r` de la nueva. Borrar datos o desinstalar invalida esa prueba.
 
-`./gradlew connectedDebugAndroidTest` ejecuta `PackageAssetsTest` en un dispositivo/emulador conectado: comprueba el modelo incluido por tamaño/hash y los permisos finales. Este test nativo está preparado pero **no se ha ejecutado** por el bloqueo SDK; no se cuenta entre las pruebas correctas de navegador/unitarias.
+`./gradlew :app:connectedDebugAndroidTest` ejecuta `PackageAssetsTest` en un dispositivo/emulador conectado: comprueba el modelo incluido por tamaño/hash y los permisos finales. Su APK se ha compilado con `:app:assembleDebugAndroidTest`, pero **no se ha ejecutado** al no haber dispositivos/emuladores disponibles; no se cuenta entre las pruebas correctas de navegador/unitarias. `:app:testDebugUnitTest` devuelve `NO-SOURCE`.
+
+Lint y comprobaciones de la app: `./gradlew :app:lintDebug :app:testDebugUnitTest :app:assembleDebugAndroidTest`. Se usan tareas `:app:` porque la invocación agregada intenta también los tests de los módulos de terceros; el módulo Cordova vacío presenta un conflicto Kotlin en su APK de tests, documentado en la entrega. No se oculta ni se cuenta como suite superada.
 
 El titular debe crear/proteger una upload key, registrar Play App Signing y configurar firma release fuera de git. No introducir contraseñas en scripts o argumentos visibles; usar secret store/Gradle properties locales fuera del repo. Tras firmar: `apksigner verify --verbose` para APK, `jarsigner -verify` para AAB y `bundletool validate --bundle=...`; medir con `bundletool get-size total` sobre APKs generados. Auditar el manifiesto fusionado (`processReleaseMainManifest`) y permisos finales con `aapt2 dump permissions`/APK Analyzer. Los manifests fuente auditados no sustituyen este paso.
 
-En Play Console: crear app con titular/país/precio confirmados; completar ficha, contenido, privacidad, edad y pruebas; subir AAB firmado al track interno, luego cerrado si la cuenta lo exige. Capturas, licencia del SDK, aceptación de términos y envío siguen pendientes del titular. No se ejecutan esos pasos aquí.
+En Play Console: crear app con titular/país/precio confirmados; completar ficha, contenido, privacidad, edad y pruebas; subir AAB firmado al track interno, luego cerrado si la cuenta lo exige. Firma release, capturas nativas, aceptación de términos de la tienda y envío siguen pendientes del titular. No se ejecutan esos pasos aquí; la excepción de licencia SDK no los autoriza.
 
 ## iOS / iPhone
 
