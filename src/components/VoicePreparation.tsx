@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useMicrophoneCheck } from './voice/useMicrophoneCheck';
 import { Check, Download, Mic } from 'lucide-react';
 import { languages, tr, type Language } from '../i18n';
+import { nativeBundle } from '../native/platform';
 import {
   chooseVoiceLanguage,
   prepareVoice,
@@ -120,7 +121,9 @@ export function VoicePreparation({
       <ErrorMessage text={error || setup.error} />
       <p className="caption">
         {tr(
-          'La descarga necesita conexión una vez. La voz funciona con los modelos locales; mantén pulsado para hablar y suelta para terminar.',
+          nativeBundle
+            ? 'Los archivos de voz vienen incluidos. Elige el idioma y carga la voz; no necesitas descargarlos.'
+            : 'La descarga necesita conexión una vez. La voz funciona con los modelos locales; mantén pulsado para hablar y suelta para terminar.',
         )}
       </p>
     </section>

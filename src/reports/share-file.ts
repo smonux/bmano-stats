@@ -1,8 +1,12 @@
+import { nativePlatform } from '../native/platform';
+import { shareNativeFile } from '../native/files';
+
 type FileSharing = {
   canShare?: (data: ShareData) => boolean;
   share?: (data: ShareData) => Promise<void>;
 };
 export function canShareFile(file: File, target: FileSharing = navigator): boolean {
+  if (nativePlatform()) return true;
   try {
     return (
       typeof target.share === 'function' &&
@@ -20,6 +24,15 @@ export async function shareFile(
   title: string,
   target: FileSharing = navigator,
 ): Promise<'shared' | 'unsupported' | 'cancelled'> {
+  if (nativePlatform()) {
+    try {
+      await shareNativeFile(file, title);
+      return 'shared';
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return 'cancelled';
+      throw error;
+    }
+  }
   if (!canShareFile(file, target)) return 'unsupported';
   try {
     await target.share!({ files: [file], title });

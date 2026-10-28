@@ -1,5 +1,7 @@
 import { tr, type Language } from '../i18n';
-import { createWhistle } from 'cactus-needle/browser';
+import { createWhistle, DEFAULT_SPEECH_MODEL } from 'cactus-needle/browser';
+import { nativeBundle } from '../native/platform';
+import { bundledWhistle } from '../native/whistle';
 import type { RulePlayer } from './analysis/types';
 import { interpretCommand } from './commands';
 type WhistleSession = Awaited<ReturnType<typeof createWhistle>>;
@@ -26,7 +28,18 @@ export class VoiceEngine {
     });
     try {
       progress(tr('Cargando Whistle…'));
-      this.whistle = await createWhistle(options('Whistle'));
+      this.whistle = await createWhistle({
+        ...options('Whistle'),
+        ...(nativeBundle
+          ? {
+              model: await bundledWhistle(),
+              modelSha256: DEFAULT_SPEECH_MODEL.sha256,
+              cache: false,
+              // Assets are read from the signed app, even on the very first offline launch.
+              offline: false,
+            }
+          : {}),
+      });
       progress(tr('Reconocimiento listo en este dispositivo.'));
     } catch (error) {
       await this.close();

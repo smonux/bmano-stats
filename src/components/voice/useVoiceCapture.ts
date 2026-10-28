@@ -27,6 +27,10 @@ export function useVoiceCapture(match: Match, data: Snapshot) {
   const capturedMatch = useRef<CaptureContext | null>(null);
   const onRecordingLimit = useRef<() => void>(() => {});
   const generation = useRef(0);
+  useEffect(() => {
+    window.addEventListener('handball:inactive', cancel);
+    return () => window.removeEventListener('handball:inactive', cancel);
+  });
 
   useEffect(() => {
     mounted.current = true;
@@ -40,10 +44,10 @@ export function useVoiceCapture(match: Match, data: Snapshot) {
     };
   }, []);
   useEffect(() => {
-    if (setup.phase === 'cached') {
+    if (setup.phase === 'cached' && setup.languageChosen) {
       void prepareVoice(false);
     }
-  }, [setup.phase]);
+  }, [setup.phase, setup.languageChosen]);
   useEffect(() => {
     if (phase !== 'recording') {
       return;

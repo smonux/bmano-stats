@@ -3,6 +3,7 @@ import { tr, useLanguage } from '../../i18n';
 import type { Snapshot } from '../../domain/schema';
 import type { PdfResponse } from '../../reports/pdf-messages';
 import { canShareFile, shareFile } from '../../reports/share-file';
+import { exportFile } from '../../native/files';
 
 /** Prepares off the main thread, while sharing still runs in the user's click gesture. */
 export function useMatchPdf(data: Snapshot, matchId: string) {
@@ -41,14 +42,16 @@ export function useMatchPdf(data: Snapshot, matchId: string) {
     prepared?.data === data && prepared.matchId === matchId && prepared.language === language
       ? prepared.file
       : null;
-  const download = (file: File) => {
-    const url = URL.createObjectURL(file);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = file.name;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setNotice(tr('PDF descargado. Puedes compartirlo desde tus archivos.'));
+  const download = async (file: File) => {
+    const outcome = await exportFile(file, tr('Estadísticas del partido'));
+    if (outcome === 'cancelled') return;
+    setNotice(
+      tr(
+        outcome === 'native'
+          ? 'Comprueba que la copia se ha guardado en el destino elegido.'
+          : 'PDF descargado. Puedes compartirlo desde tus archivos.',
+      ),
+    );
   };
   const share = async () => {
     if (!file || busy) {
@@ -59,7 +62,7 @@ export function useMatchPdf(data: Snapshot, matchId: string) {
     setError('');
     try {
       const outcome = await shareFile(file, tr('Estadísticas del partido'));
-      if (outcome === 'unsupported') download(file);
+      if (outcome === 'unsupported') await download(file);
     } catch {
       setError(tr('No se pudo abrir Enviar a. Puedes descargar el PDF.'));
     } finally {
@@ -73,10 +76,14 @@ export function useMatchPdf(data: Snapshot, matchId: string) {
     notice,
     share,
     nativeShare: Boolean(file && canShareFile(file)),
-    download: () => {
+    download: async () => {
       if (file) {
         setError('');
-        download(file);
+        try {
+          await download(file);
+        } catch {
+          setError(tr('No se pudo abrir Enviar a. Puedes descargar el PDF.'));
+        }
       }
     },
     retry: () => setAttempt((value) => value + 1),

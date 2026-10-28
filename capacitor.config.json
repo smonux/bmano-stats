@@ -1,0 +1,8 @@
+{
+  "appId": "io.github.smonux.bmanostats",
+  "appName": "Handball Stats",
+  "webDir": "dist-native",
+  "server": { "hostname": "localhost", "androidScheme": "https" },
+  "android": { "allowMixedContent": false, "webContentsDebuggingEnabled": false, "minWebViewVersion": 124 },
+  "ios": { "contentInset": "automatic", "allowsLinkPreview": false }
+}

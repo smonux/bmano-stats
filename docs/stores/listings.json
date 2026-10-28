@@ -1,0 +1,62 @@
+{
+  "status": "Prepared copy; native device QA, owner/contact/privacy URLs and store declarations must be completed before submission",
+  "version": "0.1.0",
+  "locales": {
+    "es-ES": {
+      "title": "Handball Stats",
+      "subtitle": "Tu partido, jugada a jugada",
+      "shortDescription": "Registra balonmano por voz o a mano y comparte las estadísticas del partido.",
+      "description": "Sigue el balonmano desde la pista con una interfaz amarilla y negra. Registra goles, paradas, pérdidas, recuperaciones, penaltis, sanciones, infracciones, cambios y notas.\n\nMantén pulsado para hablar, revisa la transcripción y los datos reconocidos y confirma la jugada. También puedes introducir y corregir todo manualmente. El entrenamiento opcional enseña el orden evento, equipo y jugadores con cuatro retos y equipos ficticios.\n\nConsulta el marcador, el reloj y cuatro contadores de exclusión mientras usas la aplicación. Revisa estadísticas por jugador y la evolución del tanteo por tiempo. Comparte un PDF con eventos, notas y transcripciones.\n\nLos equipos y partidos se guardan en el dispositivo. Exporta una copia ZIP y restaura copias ZIP o JSON para trasladar tus datos. No necesitas una cuenta. La interfaz y el reconocimiento admiten español, inglés, alemán, francés, italiano, neerlandés y polaco.\n\nLa voz usa Whistle local incluido en el paquete móvil. Revisa siempre el resultado: el reconocimiento puede necesitar correcciones. El micrófono es opcional. Los avisos de los contadores se usan con la aplicación abierta; no son alarmas de fondo.",
+      "keywords": "balonmano,marcador,jugadas,goles,estadisticas,equipo,entrenador,partido",
+      "releaseNotes": "Primera preparación móvil: registro manual y de voz, entrenamiento guiado, estadísticas, PDF y copias ZIP."
+    },
+    "en-US": {
+      "title": "Handball Stats",
+      "subtitle": "Track every handball play",
+      "shortDescription": "Record handball plays by voice or manually and share match statistics.",
+      "description": "Follow handball from the sidelines with a yellow and black interface. Record goals, saves, turnovers, recoveries, penalties, sanctions, infractions, substitutions and notes.\n\nHold to speak, review the transcript and recognised details, then confirm the play. You can also enter and correct everything manually. Optional voice practice teaches event, team and players through four challenges with fictional teams.\n\nKeep the score, clock and four suspension counters visible while using the app. Review player statistics and the scoring timeline for each period. Share a PDF with events, notes and transcripts.\n\nTeams and matches are stored on your device. Export a ZIP backup and restore ZIP or JSON backups to move your data. No account is required. Interface and recognition languages include Spanish, English, German, French, Italian, Dutch and Polish.\n\nVoice uses local Whistle weights included in the mobile package. Always review the result: recognition may need correction. Microphone access is optional. Counter alerts work while the app is open; they are not background alarms.",
+      "keywords": "score,match,goals,statistics,team,coach,plays,suspension,tracker",
+      "releaseNotes": "Initial mobile preparation: manual and voice entry, guided practice, statistics, PDF and ZIP backups."
+    },
+    "de-DE": {
+      "title": "Handball Stats",
+      "subtitle": "Handballspiel im Blick",
+      "shortDescription": "Handballaktionen per Sprache oder manuell erfassen und Spielstatistiken teilen.",
+      "description": "Verfolge Handball am Spielfeldrand mit einer gelb-schwarzen Oberfläche. Erfasse Tore, Paraden, Ballverluste, Ballgewinne, Siebenmeter, Strafen, Regelverstöße, Wechsel und Notizen.\n\nHalte die Sprachtaste gedrückt, prüfe Transkription und erkannte Angaben und bestätige die Aktion. Alles lässt sich auch manuell erfassen und korrigieren. Ein optionales Sprachtraining erklärt Aktion, Team und Spieler mit vier Aufgaben und fiktiven Teams.\n\nBehalte Spielstand, Uhr und vier Zeitstrafenzähler während der Nutzung im Blick. Prüfe Spielerstatistiken und den Torverlauf je Spielabschnitt. Teile ein PDF mit Aktionen, Notizen und Transkriptionen.\n\nTeams und Spiele bleiben auf dem Gerät. Exportiere eine ZIP-Sicherung und stelle ZIP- oder JSON-Kopien wieder her, um Daten zu übertragen. Kein Konto erforderlich. Oberfläche und Erkennung unterstützen Spanisch, Englisch, Deutsch, Französisch, Italienisch, Niederländisch und Polnisch.\n\nDie mobile App enthält das lokale Whistle-Sprachmodell. Prüfe die Ergebnisse: Korrekturen können nötig sein. Das Mikrofon ist optional. Zählerhinweise funktionieren bei geöffneter App, nicht als Hintergrundalarm.",
+      "keywords": "spielstand,tore,statistik,mannschaft,trainer,spiel,zeitstrafe,aktionen",
+      "releaseNotes": "Erste mobile Vorbereitung: manuelle und Spracheingabe, Training, Statistiken, PDF und ZIP-Sicherungen."
+    },
+    "fr-FR": {
+      "title": "Handball Stats",
+      "subtitle": "Chaque action du match",
+      "shortDescription": "Saisissez le handball à la voix ou à la main et partagez vos statistiques.",
+      "description": "Suivez le handball au bord du terrain avec une interface jaune et noire. Notez buts, arrêts, pertes et récupérations de balle, penalties, sanctions, infractions, changements et observations.\n\nMaintenez pour parler, vérifiez la transcription et les données reconnues, puis confirmez l’action. La saisie et la correction manuelles restent disponibles. Un entraînement vocal facultatif enseigne action, équipe et joueurs grâce à quatre défis avec des équipes fictives.\n\nConsultez score, chronomètre et quatre compteurs d’exclusion pendant l’utilisation. Analysez les statistiques des joueurs et l’évolution du score par période. Partagez un PDF avec actions, notes et transcriptions.\n\nÉquipes et matchs sont conservés sur l’appareil. Exportez une sauvegarde ZIP et restaurez un ZIP ou JSON pour transférer vos données. Aucun compte nécessaire. Interface et reconnaissance proposent espagnol, anglais, allemand, français, italien, néerlandais et polonais.\n\nLe modèle vocal local Whistle est inclus dans le paquet mobile. Vérifiez les résultats : des corrections peuvent être nécessaires. Le microphone est facultatif. Les alertes des compteurs fonctionnent avec l’application ouverte, pas en arrière-plan.",
+      "keywords": "score,match,buts,statistiques,equipe,entraineur,actions,exclusion",
+      "releaseNotes": "Première préparation mobile : saisie manuelle et vocale, entraînement, statistiques, PDF et sauvegardes ZIP."
+    },
+    "it-IT": {
+      "title": "Handball Stats",
+      "subtitle": "Ogni azione della partita",
+      "shortDescription": "Registra la pallamano a voce o manualmente e condividi le statistiche.",
+      "description": "Segui la pallamano a bordo campo con un’interfaccia gialla e nera. Registra gol, parate, palle perse e recuperate, rigori, sanzioni, infrazioni, cambi e note.\n\nTieni premuto per parlare, controlla trascrizione e dati riconosciuti e conferma l’azione. Puoi sempre inserire e correggere manualmente. L’allenamento vocale facoltativo insegna evento, squadra e giocatori attraverso quattro prove con squadre fittizie.\n\nConsulta punteggio, cronometro e quattro contatori delle esclusioni durante l’uso. Analizza le statistiche per giocatore e l’andamento del punteggio per tempo. Condividi un PDF con eventi, note e trascrizioni.\n\nSquadre e partite restano sul dispositivo. Esporta un backup ZIP e ripristina copie ZIP o JSON per trasferire i dati. Non serve un account. Interfaccia e riconoscimento supportano spagnolo, inglese, tedesco, francese, italiano, olandese e polacco.\n\nIl modello vocale locale Whistle è incluso nel pacchetto mobile. Controlla i risultati: possono richiedere correzioni. Il microfono è facoltativo. Gli avvisi dei contatori funzionano con l’app aperta, non come allarmi in background.",
+      "keywords": "pallamano,punteggio,partita,gol,statistiche,squadra,allenatore,esclusione",
+      "releaseNotes": "Prima preparazione mobile: inserimento manuale e vocale, allenamento, statistiche, PDF e backup ZIP."
+    },
+    "nl-NL": {
+      "title": "Handball Stats",
+      "subtitle": "Elke handbalactie vastgelegd",
+      "shortDescription": "Leg handbalacties met spraak of handmatig vast en deel wedstrijdstatistieken.",
+      "description": "Volg handbal vanaf de zijlijn met een gele en zwarte interface. Registreer doelpunten, reddingen, balverlies, balwinst, strafworpen, straffen, overtredingen, wissels en notities.\n\nHoud ingedrukt om te spreken, controleer transcriptie en herkende gegevens en bevestig de actie. Handmatig invoeren en corrigeren blijft mogelijk. De optionele spraakoefening leert actie, team en spelers met vier opdrachten en fictieve teams.\n\nBekijk score, klok en vier tijdstraftellers tijdens het gebruik. Analyseer spelersstatistieken en het scoreverloop per helft. Deel een PDF met acties, notities en transcripties.\n\nTeams en wedstrijden worden op het apparaat opgeslagen. Exporteer een ZIP-back-up en herstel ZIP- of JSON-kopieën om gegevens over te zetten. Geen account nodig. Interface en herkenning ondersteunen Spaans, Engels, Duits, Frans, Italiaans, Nederlands en Pools.\n\nHet lokale Whistle-spraakmodel is in het mobiele pakket opgenomen. Controleer de resultaten: correcties kunnen nodig zijn. Microfoontoegang is optioneel. Tellermeldingen werken met de app geopend, niet als achtergrondalarm.",
+      "keywords": "handbal,score,wedstrijd,doelpunten,statistieken,team,coach,tijdstraf",
+      "releaseNotes": "Eerste mobiele voorbereiding: handmatige en spraakinvoer, oefening, statistieken, PDF en ZIP-back-ups."
+    },
+    "pl-PL": {
+      "title": "Handball Stats",
+      "subtitle": "Każda akcja pod kontrolą",
+      "shortDescription": "Zapisuj akcje piłki ręcznej głosem lub ręcznie i udostępniaj statystyki meczu.",
+      "description": "Śledź piłkę ręczną z boku boiska dzięki żółto-czarnemu interfejsowi. Zapisuj bramki, obrony, straty, przechwyty, rzuty karne, kary, przewinienia, zmiany i notatki.\n\nPrzytrzymaj, aby mówić, sprawdź transkrypcję i rozpoznane dane, a następnie potwierdź akcję. Zawsze możesz wpisywać i poprawiać ręcznie. Opcjonalny trening głosowy uczy kolejności zdarzenie, drużyna, zawodnicy w czterech zadaniach z fikcyjnymi zespołami.\n\nSprawdzaj wynik, zegar i cztery liczniki wykluczeń podczas używania aplikacji. Analizuj statystyki zawodników i przebieg wyniku w każdej części meczu. Udostępniaj PDF ze zdarzeniami, notatkami i transkrypcjami.\n\nDrużyny i mecze są przechowywane na urządzeniu. Eksportuj kopię ZIP i przywracaj ZIP lub JSON, aby przenieść dane. Konto nie jest wymagane. Interfejs i rozpoznawanie obsługują hiszpański, angielski, niemiecki, francuski, włoski, niderlandzki i polski.\n\nLokalny model głosowy Whistle jest dołączony do pakietu mobilnego. Sprawdzaj wyniki: rozpoznawanie może wymagać korekt. Mikrofon jest opcjonalny. Powiadomienia liczników działają przy otwartej aplikacji, nie w tle.",
+      "keywords": "reczna,wynik,mecz,bramki,statystyki,druzyna,trener,wykluczenie",
+      "releaseNotes": "Pierwsze przygotowanie mobilne: wpisywanie i głos, trening, statystyki, PDF i kopie ZIP."
+    }
+  }
+}

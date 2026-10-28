@@ -8,6 +8,7 @@ import { type Backup } from '../domain/model';
 import { Confirm, ErrorMessage, PageTitle, useAction } from '../components/ui';
 import { backupZip, readBackupFile } from '../data/backup-files';
 import { todayDateString } from '../presentation/matches';
+import { exportFile } from '../native/files';
 function SettingsView() {
   const action = useAction();
   const [backup, setBackup] = useState<Backup | null>(null);
@@ -51,19 +52,22 @@ function SettingsView() {
             action.run(async () => {
               const data = await repo.exportBackup();
               const bytes = await backupZip(data);
-              const url = URL.createObjectURL(
-                new Blob([new Uint8Array(bytes).buffer], {
-                  type: 'application/zip',
-                }),
+              const result = await exportFile(
+                new File(
+                  [new Uint8Array(bytes).buffer],
+                  `handball-stats-${todayDateString()}.zip`,
+                  {
+                    type: 'application/zip',
+                  },
+                ),
+                tr('Exportar copia ZIP'),
               );
-              const downloadLink = document.createElement('a');
-              downloadLink.href = url;
-              downloadLink.download = `handball-stats-${todayDateString()}.zip`;
-              downloadLink.click();
-              setTimeout(() => URL.revokeObjectURL(url), 1000);
+              if (result === 'cancelled') return;
               setNotice(
                 tr(
-                  'Descarga iniciada. Comprueba que el ZIP se ha guardado y consérvalo en un lugar seguro.',
+                  result === 'native'
+                    ? 'Comprueba que la copia se ha guardado en el destino elegido.'
+                    : 'Descarga iniciada. Comprueba que el ZIP se ha guardado y consérvalo en un lugar seguro.',
                 ),
               );
             })

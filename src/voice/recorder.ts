@@ -11,11 +11,13 @@ export class VoiceRecorder {
   private stopping?: Promise<Recording>;
   private onWorkletDrained?: () => void;
   private limitTimer?: ReturnType<typeof setTimeout>;
+  private readonly inactive = () => this.cancel();
   async start(limit: () => void) {
     const problem = microphoneProblem();
     if (problem) {
       throw new Error(problem);
     }
+    window.addEventListener('handball:inactive', this.inactive);
     // Construct/resume in the user gesture for Safari and mobile autoplay policies.
     this.context = new AudioContext();
     const resume = this.context.resume();
@@ -95,6 +97,7 @@ export class VoiceRecorder {
     this.sampleCount = 0;
   }
   private release() {
+    window.removeEventListener('handball:inactive', this.inactive);
     clearTimeout(this.limitTimer);
     this.stream?.getTracks().forEach((track) => track.stop());
     this.node?.disconnect();

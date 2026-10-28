@@ -2,12 +2,14 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
+  build: { outDir: process.env.VITE_NATIVE_BUNDLE === 'true' ? 'dist-native' : 'dist' },
   server: { allowedHosts: true },
   preview: { allowedHosts: true },
   worker: { format: 'es' },
   plugins: [
     react(),
     VitePWA({
+      disable: process.env.VITE_NATIVE_BUNDLE === 'true',
       registerType: 'prompt',
       injectRegister: 'auto',
       manifest: {

@@ -1,0 +1,648 @@
+{
+  "scope": "Installed npm production dependency closure; native Maven/SPM resolution must also be audited",
+  "packages": [
+    {
+      "name": "@ai-sdk/provider",
+      "version": "3.0.19",
+      "license": "Apache-2.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/vercel/ai",
+        "directory": "packages/provider"
+      },
+      "texts": [
+        {
+          "file": "texts/@ai-sdk_provider@3.0.19-LICENSE",
+          "sha256": "b4f9adb7c568904834d0dd6cc98d16c390d21ca32fc17ae7a267715269bd5529"
+        }
+      ]
+    },
+    {
+      "name": "@babel/runtime",
+      "version": "7.29.10",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/babel/babel.git",
+        "directory": "packages/babel-runtime"
+      },
+      "texts": [
+        {
+          "file": "texts/@babel_runtime@7.29.10-LICENSE",
+          "sha256": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76"
+        }
+      ]
+    },
+    {
+      "name": "@capacitor/android",
+      "version": "8.6.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ionic-team/capacitor.git"
+      },
+      "texts": [
+        {
+          "file": "texts/@capacitor_android@8.6.0-LICENSE",
+          "sha256": "9c6ebf3e5ab832ba4d5af38f340978e1fedbfee6e3d23662dfdb8917a9d864dd"
+        }
+      ]
+    },
+    {
+      "name": "@capacitor/app",
+      "version": "8.1.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ionic-team/capacitor-plugins.git"
+      },
+      "texts": [
+        {
+          "file": "texts/@capacitor_app@8.1.2-LICENSE",
+          "sha256": "e8f989836e88732576472006444b65fd3d7d3c2455becdaaa4d82cd0dd43110f"
+        }
+      ]
+    },
+    {
+      "name": "@capacitor/core",
+      "version": "8.6.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ionic-team/capacitor.git"
+      },
+      "texts": [
+        {
+          "file": "texts/@capacitor_core@8.6.0-LICENSE",
+          "sha256": "9c6ebf3e5ab832ba4d5af38f340978e1fedbfee6e3d23662dfdb8917a9d864dd"
+        }
+      ]
+    },
+    {
+      "name": "@capacitor/filesystem",
+      "version": "8.1.5",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/ionic-team/capacitor-filesystem.git"
+      },
+      "texts": [
+        {
+          "file": "texts/@capacitor_filesystem@8.1.5-LICENSE",
+          "sha256": "de884404585ed20280150b0768082b6004d3548aaa0d6e596d6bfa0538ab331d"
+        }
+      ]
+    },
+    {
+      "name": "@capacitor/ios",
+      "version": "8.6.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ionic-team/capacitor.git"
+      },
+      "texts": [
+        {
+          "file": "texts/@capacitor_ios@8.6.0-LICENSE",
+          "sha256": "9c6ebf3e5ab832ba4d5af38f340978e1fedbfee6e3d23662dfdb8917a9d864dd"
+        }
+      ]
+    },
+    {
+      "name": "@capacitor/share",
+      "version": "8.0.3",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ionic-team/capacitor-plugins.git"
+      },
+      "texts": [
+        {
+          "file": "texts/@capacitor_share@8.0.3-LICENSE",
+          "sha256": "eb99a0d61b507ad0182e18e9d2a91537c1d9025c94e098e4e7603a53b4b5218a"
+        }
+      ]
+    },
+    {
+      "name": "@capacitor/synapse",
+      "version": "1.0.4",
+      "license": "ISC",
+      "repository": null,
+      "texts": [
+        {
+          "file": "texts/@capacitor_synapse@1.0.4-LICENSE.md",
+          "sha256": "de884404585ed20280150b0768082b6004d3548aaa0d6e596d6bfa0538ab331d"
+        }
+      ]
+    },
+    {
+      "name": "@types/json-schema",
+      "version": "7.0.15",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/json-schema"
+      },
+      "texts": [
+        {
+          "file": "texts/@types_json-schema@7.0.15-LICENSE",
+          "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+        }
+      ]
+    },
+    {
+      "name": "@types/pako",
+      "version": "2.0.4",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/pako"
+      },
+      "texts": [
+        {
+          "file": "texts/@types_pako@2.0.4-LICENSE",
+          "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+        }
+      ]
+    },
+    {
+      "name": "@types/raf",
+      "version": "3.4.3",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/raf"
+      },
+      "texts": [
+        {
+          "file": "texts/@types_raf@3.4.3-LICENSE",
+          "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+        }
+      ]
+    },
+    {
+      "name": "base64-arraybuffer",
+      "version": "1.0.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/niklasvh/base64-arraybuffer"
+      },
+      "texts": [
+        {
+          "file": "texts/base64-arraybuffer@1.0.2-LICENSE",
+          "sha256": "f3eca6ff762533fa5a77caf954a143e48afa204668cf97dce758c45a9e006be3"
+        }
+      ]
+    },
+    {
+      "name": "cactus-needle",
+      "version": "0.3.0",
+      "license": "Apache-2.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/afshinm/cactus-needle.git"
+      },
+      "texts": [
+        {
+          "file": "texts/cactus-needle@0.3.0-LICENSE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "file": "texts/cactus-needle@0.3.0-NOTICE",
+          "sha256": "b4b0190bd5fbac57923dca803eb3c4a5a2d80924c01cf5009aa3c26d875d0d16"
+        }
+      ]
+    },
+    {
+      "name": "canvg",
+      "version": "3.0.11",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/canvg/canvg"
+      },
+      "texts": [
+        {
+          "file": "texts/canvg@3.0.11-LICENSE",
+          "sha256": "86622ffc909487e6029235d31503263b796895679b0926f4a4d6f02d2623fde0"
+        }
+      ]
+    },
+    {
+      "name": "core-js",
+      "version": "3.50.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/zloirock/core-js.git",
+        "directory": "packages/core-js"
+      },
+      "texts": [
+        {
+          "file": "texts/core-js@3.50.0-LICENSE",
+          "sha256": "b87653fff2d44426ab5cd4723cee3b1364dc8d35a0acdf098c54689543123bf8"
+        }
+      ]
+    },
+    {
+      "name": "css-line-break",
+      "version": "2.1.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/niklasvh/css-line-break.git"
+      },
+      "texts": [
+        {
+          "file": "texts/css-line-break@2.1.0-LICENSE",
+          "sha256": "ce1ee0539f7fe1f7b75b76d121e674cb897c709c3e24ddba7f9a10fe2d0d88a5"
+        }
+      ]
+    },
+    {
+      "name": "dexie",
+      "version": "4.4.6",
+      "license": "Apache-2.0",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/dexie/Dexie.js.git"
+      },
+      "texts": [
+        {
+          "file": "texts/dexie@4.4.6-LICENSE",
+          "sha256": "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14"
+        },
+        {
+          "file": "texts/dexie@4.4.6-NOTICE",
+          "sha256": "6176d2e8a3fd8a881828a1a27bbcc5a9e03a75f437ce3c4ddbedd94fdac475c1"
+        }
+      ]
+    },
+    {
+      "name": "dexie-react-hooks",
+      "version": "4.4.0",
+      "license": "Apache-2.0",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/dexie/Dexie.js.git"
+      },
+      "texts": [
+        {
+          "file": "texts/dexie-react-hooks@4.4.0-LICENSE",
+          "sha256": "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14"
+        }
+      ]
+    },
+    {
+      "name": "dompurify",
+      "version": "3.4.17",
+      "license": "(MPL-2.0 OR Apache-2.0)",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/cure53/DOMPurify.git"
+      },
+      "texts": [
+        {
+          "file": "texts/dompurify@3.4.17-LICENSE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "file": "texts/dompurify@3.4.17-LICENSE-MPL",
+          "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+        }
+      ]
+    },
+    {
+      "name": "fast-png",
+      "version": "6.4.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/image-js/fast-png.git"
+      },
+      "texts": [
+        {
+          "file": "texts/fast-png@6.4.0-LICENSE",
+          "sha256": "47ec9747cf2c470a505fcb20f3ec2ff2e60ea4febaf2e1e7041a24fc369fac3c"
+        }
+      ]
+    },
+    {
+      "name": "fflate",
+      "version": "0.8.3",
+      "license": "MIT",
+      "repository": "https://github.com/101arrowz/fflate",
+      "texts": [
+        {
+          "file": "texts/fflate@0.8.3-LICENSE",
+          "sha256": "0a1df3a083d0c010560aa342e87959c8c1070e6fd54545741f083f22d0c8b551"
+        }
+      ]
+    },
+    {
+      "name": "html2canvas",
+      "version": "1.4.1",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git@github.com:niklasvh/html2canvas.git"
+      },
+      "texts": [
+        {
+          "file": "texts/html2canvas@1.4.1-LICENSE",
+          "sha256": "86200ce4e92d9a22c41c8647a55f7a5fddff304ff89b4d36ecc699ed8c123d2c"
+        }
+      ]
+    },
+    {
+      "name": "iobuffer",
+      "version": "5.4.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/image-js/iobuffer.git"
+      },
+      "texts": [
+        {
+          "file": "texts/iobuffer@5.4.0-LICENSE",
+          "sha256": "1c22118fd112e8c394a5ec0598d2e2dfcdc19b3e1055ac3eaccdb2522b777335"
+        }
+      ]
+    },
+    {
+      "name": "json-schema",
+      "version": "0.4.0",
+      "license": "(AFL-2.1 OR BSD-3-Clause)",
+      "repository": {
+        "type": "git",
+        "url": "http://github.com/kriszyp/json-schema"
+      },
+      "texts": [
+        {
+          "file": "texts/json-schema@0.4.0-LICENSE",
+          "sha256": "4e053c510d6f3e4724213a292c65142df68d069c40f558582bc4270914e16f77"
+        }
+      ]
+    },
+    {
+      "name": "jspdf",
+      "version": "4.2.1",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/parallax/jsPDF.git"
+      },
+      "texts": [
+        {
+          "file": "texts/jspdf@4.2.1-LICENSE",
+          "sha256": "dc388ec35ff463288cdde3588a36fd4ed12a45deff053243b37309acc9ef583b"
+        }
+      ]
+    },
+    {
+      "name": "jspdf-autotable",
+      "version": "5.0.8",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/simonbengtsson/jsPDF-AutoTable.git"
+      },
+      "texts": [
+        {
+          "file": "texts/jspdf-autotable@5.0.8-LICENSE.txt",
+          "sha256": "99a374e0385cf714d2faae5f6e02ec79217c6bcecec39bdb9e102091471b960a"
+        }
+      ]
+    },
+    {
+      "name": "lucide-react",
+      "version": "1.57.0",
+      "license": "ISC",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/lucide-icons/lucide.git",
+        "directory": "packages/lucide-react"
+      },
+      "texts": [
+        {
+          "file": "texts/lucide-react@1.57.0-LICENSE",
+          "sha256": "b495047bd93a9b06913511076f504daba17d5bbeb3e0650f3bb53a4220329c57"
+        }
+      ]
+    },
+    {
+      "name": "pako",
+      "version": "2.2.0",
+      "license": "(MIT AND Zlib)",
+      "repository": "nodeca/pako",
+      "texts": [
+        {
+          "file": "texts/pako@2.2.0-LICENSE",
+          "sha256": "a04665b3b2de56c66730c1f720f528175739e4104f79073614aa611da1e85539"
+        }
+      ]
+    },
+    {
+      "name": "performance-now",
+      "version": "2.1.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/braveg1rl/performance-now.git"
+      },
+      "texts": [
+        {
+          "file": "texts/performance-now@2.1.0-license.txt",
+          "sha256": "c3af1272f30870168177e888b184c1f802e5081e75a126c794670c0b562d3783"
+        }
+      ]
+    },
+    {
+      "name": "raf",
+      "version": "3.4.1",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/chrisdickinson/raf.git"
+      },
+      "texts": [
+        {
+          "file": "texts/raf@3.4.1-LICENSE",
+          "sha256": "6b2194e178545b3dcde4a40a09b5f6c00bd9b5b695db0c826c14995c6c9b4ec5"
+        }
+      ]
+    },
+    {
+      "name": "react",
+      "version": "19.3.1",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/react/react.git",
+        "directory": "packages/react"
+      },
+      "texts": [
+        {
+          "file": "texts/react@19.3.1-LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        }
+      ]
+    },
+    {
+      "name": "react-dom",
+      "version": "19.3.1",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/react/react.git",
+        "directory": "packages/react-dom"
+      },
+      "texts": [
+        {
+          "file": "texts/react-dom@19.3.1-LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        }
+      ]
+    },
+    {
+      "name": "regenerator-runtime",
+      "version": "0.13.11",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/facebook/regenerator/tree/main/packages/runtime"
+      },
+      "texts": [
+        {
+          "file": "texts/regenerator-runtime@0.13.11-LICENSE",
+          "sha256": "51887a3d47051ac2fce1210562e5b9fe0830a8a8fabeb272c2d586eeb18a05fd"
+        }
+      ]
+    },
+    {
+      "name": "rgbcolor",
+      "version": "1.0.1",
+      "license": "MIT OR SEE LICENSE IN FEEL-FREE.md",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/yetzt/node-rgbcolor.git"
+      },
+      "texts": [
+        {
+          "file": "texts/rgbcolor@1.0.1-LICENSE.md",
+          "sha256": "86045408b01f66f9319a2fe7bc7f7e115f272956ac44d2d840fc00127124a78c"
+        }
+      ]
+    },
+    {
+      "name": "scheduler",
+      "version": "0.28.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/react/react.git",
+        "directory": "packages/scheduler"
+      },
+      "texts": [
+        {
+          "file": "texts/scheduler@0.28.0-LICENSE",
+          "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+        }
+      ]
+    },
+    {
+      "name": "stackblur-canvas",
+      "version": "2.7.0",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/flozz/StackBlur.git"
+      },
+      "texts": [
+        {
+          "file": "texts/stackblur-canvas@2.7.0-LICENSE-MIT.txt",
+          "sha256": "609e3755e6e7a048b8ca85de25233cfc4f62ec7cb9afeea603269a03b73db197"
+        }
+      ]
+    },
+    {
+      "name": "svg-pathdata",
+      "version": "6.0.3",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/nfroidure/svg-pathdata.git"
+      },
+      "texts": [
+        {
+          "file": "texts/svg-pathdata@6.0.3-LICENSE",
+          "sha256": "cd05e8e2516f46a2cd79494bbabdea76f874e8d049dbc19a76b367534a4e013e"
+        }
+      ]
+    },
+    {
+      "name": "text-segmentation",
+      "version": "1.0.3",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/niklasvh/text-segmentation.git"
+      },
+      "texts": [
+        {
+          "file": "texts/text-segmentation@1.0.3-LICENSE",
+          "sha256": "8b00952cd8d0f5cbbefb13576778e1185dc963943151353d90c4e14a5a4caf40"
+        }
+      ]
+    },
+    {
+      "name": "tslib",
+      "version": "2.8.1",
+      "license": "0BSD",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/Microsoft/tslib.git"
+      },
+      "texts": [
+        {
+          "file": "texts/tslib@2.8.1-LICENSE.txt",
+          "sha256": "210b19e543130388c68654b7497e967119ce17145f66ab7d85688fbd70f08751"
+        }
+      ]
+    },
+    {
+      "name": "utrie",
+      "version": "1.0.2",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/niklasvh/utrie.git"
+      },
+      "texts": [
+        {
+          "file": "texts/utrie@1.0.2-LICENSE",
+          "sha256": "8b00952cd8d0f5cbbefb13576778e1185dc963943151353d90c4e14a5a4caf40"
+        }
+      ]
+    },
+    {
+      "name": "zod",
+      "version": "4.6.7",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/colinhacks/zod.git"
+      },
+      "texts": [
+        {
+          "file": "texts/zod@4.6.7-LICENSE",
+          "sha256": "3f1189b28e3866e0d979968d466b78f813f76827cfdca1fbb124cc0a5c8841f8"
+        }
+      ]
+    }
+  ]
+}

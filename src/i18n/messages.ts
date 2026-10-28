@@ -1,4 +1,5 @@
 import { hmiAccessibilityMessages } from './hmi-accessibility';
+import { nativeMessages } from './native';
 import { voicePracticeMessages } from './voice-practice';
 import { mejoras2Messages } from './mejoras2';
 import { hmiStatisticsMessages } from './hmi-statistics';
@@ -17,6 +18,7 @@ export const translationLanguages = ['en', 'de', 'fr', 'it', 'nl', 'pl'] as cons
 
 // Order: English, German, French, Italian, Dutch, Polish. Spanish keys are the source text.
 export const catalog: Record<string, readonly string[]> = {
+  ...nativeMessages,
   ...voicePracticeMessages,
   ...mejoras2Messages,
   ...hmiMessages,
