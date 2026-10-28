@@ -8,13 +8,21 @@ export const voicePracticeMessages: Record<string, readonly string[]> = {
     '“{example}” volstaat; later aanvullen is normaal.',
     '„{example}” wystarczy; uzupełnianie później jest normalne.',
   ],
-  'En esta práctica, «nuestro» es el equipo 1 y «ellos» el equipo 2.': [
-    'In this practice, “our” means team 1 and “their” means team 2.',
-    'In dieser Übung bedeutet „unser“ Team 1 und „Gegner“ Team 2.',
-    'Dans cet entraînement, « notre » désigne l’équipe 1 et « eux » l’équipe 2.',
-    'In questa pratica, «nostro» indica la squadra 1 e «loro» la squadra 2.',
-    'In deze oefening betekent “ons” team 1 en “hun” team 2.',
-    'W tym ćwiczeniu „nasza” oznacza drużynę 1, a „ich” drużynę 2.',
+  'Ejemplos en {language}': [
+    'Examples in {language}',
+    'Beispiele auf {language}',
+    'Exemples en {language}',
+    'Esempi in {language}',
+    'Voorbeelden in {language}',
+    'Przykłady w języku {language}',
+  ],
+  'En esta práctica, «{own}» es el equipo 1 y «{other}» el equipo 2.': [
+    'In this practice, “{own}” means team 1 and “{other}” means team 2.',
+    'In dieser Übung bedeutet „{own}“ Team 1 und „{other}“ Team 2.',
+    'Dans cet entraînement, « {own} » désigne l’équipe 1 et « {other} » l’équipe 2.',
+    'In questa pratica, «{own}» indica la squadra 1 e «{other}» la squadra 2.',
+    'In deze oefening betekent “{own}” team 1 en “{other}” team 2.',
+    'W tym ćwiczeniu „{own}” oznacza drużynę 1, a „{other}” drużynę 2.',
   ],
   'Entrenamiento de voz': [
     'Voice practice',
@@ -140,14 +148,14 @@ export const voicePracticeMessages: Record<string, readonly string[]> = {
     'Gebruik een naam of rugnummer. Een naam moet in de selectie staan om herkend te worden.',
     'Użyj imienia lub numeru. Imię musi być w składzie, aby zostało rozpoznane.',
   ],
-  'Di los jugadores en ese orden. El papel del segundo depende del evento; «pase de» y «provocado por» ayudan a expresarlo.':
+  'Di los jugadores en ese orden. El papel del segundo depende del evento; «{assist}» y «{beneficiary}» ayudan a expresarlo.':
     [
-      'Say the players in that order. The second role depends on the event; “pass from” and “drawn by” help express it.',
-      'Nenne die Spieler in dieser Reihenfolge. Die zweite Rolle hängt von der Aktion ab; „Vorlage von“ und „verursacht von“ helfen dabei.',
-      'Citez les joueurs dans cet ordre. Le second rôle dépend de l’action ; « passe de » et « provoqué par » aident à l’exprimer.',
-      'Di i giocatori in questo ordine. Il secondo ruolo dipende dall’evento; «passaggio di» e «provocato da» aiutano a esprimerlo.',
-      'Noem de spelers in die volgorde. De tweede rol hangt af van de actie; “pass van” en “uitgelokt door” helpen dit uit te drukken.',
-      'Podaj zawodników w tej kolejności. Druga rola zależy od zdarzenia; „podanie od” i „sprowokowany przez” pomagają ją wyrazić.',
+      'Say the players in that order. The second role depends on the event; “{assist}” and “{beneficiary}” help express it.',
+      'Nenne die Spieler in dieser Reihenfolge. Die zweite Rolle hängt von der Aktion ab; „{assist}“ und „{beneficiary}“ helfen dabei.',
+      'Citez les joueurs dans cet ordre. Le second rôle dépend de l’action ; « {assist} » et « {beneficiary} » aident à l’exprimer.',
+      'Di i giocatori in questo ordine. Il secondo ruolo dipende dall’evento; «{assist}» e «{beneficiary}» aiutano a esprimerlo.',
+      'Noem de spelers in die volgorde. De tweede rol hangt af van de actie; “{assist}” en “{beneficiary}” helpen dit uit te drukken.',
+      'Podaj zawodników w tej kolejności. Druga rola zależy od zdarzenia; „{assist}” i „{beneficiary}” pomagają ją wyrazić.',
     ],
   'No hace falta decirlo todo. Evento y equipo bastan en estos ejemplos; puedes completar los jugadores después.':
     [
@@ -222,21 +230,21 @@ export const voicePracticeMessages: Record<string, readonly string[]> = {
     'Benoem de spelers',
     'Nazwij uczestników akcji',
   ],
-  'Di primero a Marta, que marca, y después a Elena, que da el pase.': [
-    'Say Marta, who scores, first, then Elena, who passes.',
-    'Nenne zuerst Marta, die trifft, und dann Elena, die die Vorlage gibt.',
-    'Citez d’abord Marta qui marque, puis Elena qui fait la passe.',
-    'Di prima Marta, che segna, poi Elena, che fa il passaggio.',
-    'Noem eerst Marta, die scoort, en daarna Elena, die de pass geeft.',
-    'Najpierw podaj Martę, która strzela, potem Elenę, która podaje.',
+  'Di primero a {scorer}, que marca, y después a {assistant}, que da el pase.': [
+    'Say {scorer}, who scores, first, then {assistant}, who passes.',
+    'Nenne zuerst {scorer}, die trifft, und dann {assistant}, die die Vorlage gibt.',
+    'Citez d’abord {scorer} qui marque, puis {assistant} qui fait la passe.',
+    'Di prima {scorer}, che segna, poi {assistant}, che fa il passaggio.',
+    'Noem eerst {scorer}, die scoort, en daarna {assistant}, die de pass geeft.',
+    'Najpierw strzelczyni: {scorer}. Potem podająca: {assistant}.',
   ],
-  'Marta es la dorsal 7 y Elena la dorsal 9. Ambas son de nuestro equipo de práctica.': [
-    'Marta wears 7 and Elena wears 9. Both are on our practice team.',
-    'Marta trägt die 7 und Elena die 9. Beide gehören zu unserem Übungsteam.',
-    'Marta porte le 7 et Elena le 9. Toutes deux sont dans notre équipe d’entraînement.',
-    'Marta ha il 7 ed Elena il 9. Entrambe sono della nostra squadra di pratica.',
-    'Marta draagt 7 en Elena 9. Beiden spelen in ons oefenteam.',
-    'Marta ma numer 7, a Elena 9. Obie grają w naszej drużynie treningowej.',
+  '{scorer} es la dorsal 7 y {assistant} la dorsal 9. Ambas son de nuestro equipo de práctica.': [
+    '{scorer} wears 7 and {assistant} wears 9. Both are on our practice team.',
+    '{scorer} trägt die 7 und {assistant} die 9. Beide gehören zu unserem Übungsteam.',
+    '{scorer} porte le 7 et {assistant} le 9. Toutes deux sont dans notre équipe d’entraînement.',
+    '{scorer} ha il 7 e {assistant} il 9. Entrambe sono della nostra squadra di pratica.',
+    '{scorer} draagt 7 en {assistant} 9. Beiden spelen in ons oefenteam.',
+    '{scorer} ma numer 7, a {assistant} 9. Obie grają w naszej drużynie treningowej.',
   ],
   'Una acción, dos equipos': [
     'One action, two teams',
@@ -254,13 +262,13 @@ export const voicePracticeMessages: Record<string, readonly string[]> = {
     'Eerst wie de strafworp veroorzaakt, daarna wie deze uitlokt.',
     'Najpierw sprawca rzutu karnego, potem zawodnik, który go wywalczył.',
   ],
-  'El dorsal 12 es de ellos. Elena, dorsal 9, es de nuestro equipo.': [
-    'Number 12 is on their team. Elena, number 9, is on ours.',
-    'Nummer 12 gehört zum Gegner. Elena, Nummer 9, gehört zu unserem Team.',
-    'Le numéro 12 est chez eux. Elena, numéro 9, est dans notre équipe.',
-    'Il numero 12 è loro. Elena, numero 9, è della nostra squadra.',
-    'Nummer 12 is van hen. Elena, nummer 9, speelt bij ons.',
-    'Numer 12 gra u nich. Elena, numer 9, gra u nas.',
+  'El dorsal 12 es de ellos. {assistant}, dorsal 9, es de nuestro equipo.': [
+    'Number 12 is on their team. {assistant}, number 9, is on ours.',
+    'Nummer 12 gehört zum Gegner. {assistant}, Nummer 9, gehört zu unserem Team.',
+    'Le numéro 12 est chez eux. {assistant}, numéro 9, est dans notre équipe.',
+    'Il numero 12 è loro. {assistant}, numero 9, è della nostra squadra.',
+    'Nummer 12 is van hen. {assistant}, nummer 9, speelt bij ons.',
+    'Numer 12 gra u nich. {assistant}, numer 9, gra u nas.',
   ],
   'Completar también cuenta': [
     'Completing counts too',

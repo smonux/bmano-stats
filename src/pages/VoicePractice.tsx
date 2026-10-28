@@ -17,6 +17,8 @@ import { navigate, ErrorMessage } from '../components/ui';
 import { practiceContext, emptyPracticeDraft } from '../voice/practice/context';
 import { practiceChallenges, practicePhrases } from '../voice/practice/challenges';
 import { evaluatePractice } from '../voice/practice/evaluate';
+import { practiceNames } from '../voice/practice/names';
+import { useVoiceSetup } from '../voice/setup';
 
 export function VoicePractice({
   route,
@@ -28,7 +30,9 @@ export function VoicePractice({
   onboarding?: { finish: () => void };
 }) {
   const interfaceLanguage = useLanguage();
-  const data = useMemo(practiceContext, [interfaceLanguage]);
+  const setup = useVoiceSetup();
+  const spokenLanguage = setup.languageChosen ? setup.language : interfaceLanguage;
+  const data = useMemo(() => practiceContext(spokenLanguage), [interfaceLanguage, spokenLanguage]);
   const [screen, setScreen] = useState<'intro' | 'challenge' | 'finish'>('intro');
   const [index, setIndex] = useState(0);
   const [started, setStarted] = useState(false);
@@ -42,7 +46,6 @@ export function VoicePractice({
   const challenge = practiceChallenges[index];
   const evaluation = draft ? evaluatePractice(draft, challenge, data, assisted) : null;
   const busy = ['permission', 'recording', 'transcribing', 'interpreting'].includes(capture.phase);
-  const spokenLanguage = capture.setup.languageChosen ? capture.setup.language : interfaceLanguage;
   useEffect(() => {
     heading.current?.querySelector<HTMLHeadingElement>('h1')?.focus({ preventScroll: true });
     window.scrollTo(0, 0);
@@ -127,7 +130,7 @@ export function VoicePractice({
                 ))}
               </ol>
               <h1 tabIndex={-1}>{tr(challenge.title)}</h1>
-              <p>{tr(challenge.tip)}</p>
+              <p>{tr(challenge.tip, practiceNames[spokenLanguage])}</p>
               <div className="practice-sentence">
                 <small>
                   {tr('Lee esta frase')} · {languages[spokenLanguage]}
@@ -136,7 +139,7 @@ export function VoicePractice({
                   «{practicePhrases[spokenLanguage][index]}»
                 </blockquote>
               </div>
-              <p>{tr(challenge.task)}</p>
+              <p>{tr(challenge.task, practiceNames[spokenLanguage])}</p>
             </>
           )}
         </div>

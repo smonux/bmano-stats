@@ -47,7 +47,7 @@ test('first-use voice practice changes language, persists dismissal and reopens 
   await page.screenshot({ path: info.outputPath('first-practice-en.png'), fullPage: true });
   await practice.getByRole('button', { name: 'Got it · Let’s practise', exact: true }).click();
   await expect(practice.getByText('Play 1 of 4', { exact: true })).toBeVisible();
-  await expect(practice.locator('blockquote')).toHaveText('«Goal our»');
+  await expect(practice.locator('blockquote')).toHaveText('«Goal for us»');
   await practice.getByRole('button', { name: 'Complete manually', exact: true }).click();
   const editor = page.getByRole('dialog', { name: 'Correct practice', exact: true });
   await expect(editor).toContainText('Practice team 1');

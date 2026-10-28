@@ -1,7 +1,8 @@
 import type { Snapshot } from '../../domain/schema';
 import { nameKey } from '../../domain/identity';
-import { tr } from '../../i18n';
+import { getLanguage, tr, type Language } from '../../i18n';
 import type { EventDraft } from '../../data/database';
+import { practiceNames } from './names';
 
 export const practiceIds = {
   match: 'voice-practice:match',
@@ -10,7 +11,8 @@ export const practiceIds = {
 } as const;
 
 /** In-memory objects only. Never pass this context to a repository. */
-export function practiceContext(): Snapshot {
+export function practiceContext(language: Language = getLanguage()): Snapshot {
+  const names = practiceNames[language];
   const base = { createdAt: 0, updatedAt: 0, deletedAt: null };
   const teams = [practiceIds.own, practiceIds.other].map((id, index) => {
     const name = tr('Equipo de práctica {number}', { number: index + 1 });
@@ -19,8 +21,8 @@ export function practiceContext(): Snapshot {
   return {
     teams,
     players: [
-      { teamId: practiceIds.own, dorsal: 7, name: 'Marta' },
-      { teamId: practiceIds.own, dorsal: 9, name: 'Elena' },
+      { teamId: practiceIds.own, dorsal: 7, name: names.scorer },
+      { teamId: practiceIds.own, dorsal: 9, name: names.assistant },
       { teamId: practiceIds.other, dorsal: 12, name: '' },
       { teamId: practiceIds.other, dorsal: 8, name: '' },
     ].map((player) => ({

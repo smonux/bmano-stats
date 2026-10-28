@@ -1,6 +1,7 @@
 import type { Language } from '../../i18n';
 import type { EventType } from '../../domain/event-definitions';
 import { practiceIds } from './context';
+import { practiceNames } from './names';
 
 export type PracticeChallenge = {
   title: string;
@@ -24,8 +25,8 @@ export const practiceChallenges: readonly PracticeChallenge[] = [
   },
   {
     title: 'Pon nombre a la jugada',
-    tip: 'Di primero a Marta, que marca, y después a Elena, que da el pase.',
-    task: 'Marta es la dorsal 7 y Elena la dorsal 9. Ambas son de nuestro equipo de práctica.',
+    tip: 'Di primero a {scorer}, que marca, y después a {assistant}, que da el pase.',
+    task: '{scorer} es la dorsal 7 y {assistant} la dorsal 9. Ambas son de nuestro equipo de práctica.',
     type: 'goal',
     teamId: practiceIds.own,
     primary: 7,
@@ -34,7 +35,7 @@ export const practiceChallenges: readonly PracticeChallenge[] = [
   {
     title: 'Una acción, dos equipos',
     tip: 'Primero quien comete el penalti; después quien lo provoca.',
-    task: 'El dorsal 12 es de ellos. Elena, dorsal 9, es de nuestro equipo.',
+    task: 'El dorsal 12 es de ellos. {assistant}, dorsal 9, es de nuestro equipo.',
     type: 'penalty',
     teamId: practiceIds.other,
     primary: 12,
@@ -53,13 +54,52 @@ export const practiceChallenges: readonly PracticeChallenge[] = [
 
 /** The introduction and challenge B share the same four spoken pieces. */
 export const practiceGoalExample: Record<Language, readonly [string, string, string, string]> = {
-  es: ['Gol', 'nuestro', 'de Marta', 'pase de Elena'],
-  en: ['Goal', 'for us', 'by Marta', 'assisted by Elena'],
-  de: ['Tor', 'für uns', 'von Marta', 'Vorlage von Elena'],
-  fr: ['But', 'pour nous', 'de Marta', 'passe d’Elena'],
-  it: ['Gol', 'nostro', 'di Marta', 'passaggio di Elena'],
-  nl: ['Doelpunt', 'voor ons', 'van Marta', 'pass van Elena'],
-  pl: ['Bramka', 'dla nas', 'Marta', 'asystuje Elena'],
+  es: ['Gol', 'nuestro', `de ${practiceNames.es.scorer}`, `pase de ${practiceNames.es.assistant}`],
+  en: [
+    'Goal',
+    'for us',
+    `by ${practiceNames.en.scorer}`,
+    `assisted by ${practiceNames.en.assistant}`,
+  ],
+  de: [
+    'Tor',
+    'für uns',
+    `von ${practiceNames.de.scorer}`,
+    `Vorlage von ${practiceNames.de.assistant}`,
+  ],
+  fr: [
+    'But',
+    'pour nous',
+    `de ${practiceNames.fr.scorer}`,
+    `passe décisive d’${practiceNames.fr.assistant}`,
+  ],
+  it: [
+    'Gol',
+    'nostro',
+    `di ${practiceNames.it.scorer}`,
+    `su assist di ${practiceNames.it.assistant}`,
+  ],
+  nl: [
+    'Doelpunt',
+    'voor ons',
+    `van ${practiceNames.nl.scorer}`,
+    `pass van ${practiceNames.nl.assistant}`,
+  ],
+  pl: ['Bramka', 'dla nas', practiceNames.pl.scorer, `asystuje ${practiceNames.pl.assistant}`],
+};
+
+/** Quoted team/role examples follow the spoken language, even in a different UI language. */
+export const practiceExpressions: Record<
+  Language,
+  { opponent: string; assist: string; beneficiary: string }
+> = {
+  es: { opponent: 'ellos', assist: 'pase de', beneficiary: 'provocado por' },
+  en: { opponent: 'for them', assist: 'assisted by', beneficiary: 'drawn by' },
+  de: { opponent: 'für den Gegner', assist: 'Vorlage von', beneficiary: 'herausgeholt von' },
+  fr: { opponent: 'pour eux', assist: 'passe décisive de', beneficiary: 'obtenu par' },
+  it: { opponent: 'per loro', assist: 'assist di', beneficiary: 'procurato da' },
+  nl: { opponent: 'voor de tegenstander', assist: 'pass van', beneficiary: 'uitgelokt door' },
+  pl: { opponent: 'dla rywala', assist: 'asystuje', beneficiary: 'faulowana' },
 };
 
 function goalPhrase(language: Language) {
@@ -72,43 +112,43 @@ export const practicePhrases: Record<Language, readonly [string, string, string,
   es: [
     'Gol nuestro',
     goalPhrase('es'),
-    'Penalti cometido por ellos, número doce, provocado por Elena',
+    `Penalti cometido por ellos, número doce, provocado por ${practiceNames.es.assistant}`,
     'Exclusión de ellos',
   ],
   en: [
-    'Goal our',
+    'Goal for us',
     goalPhrase('en'),
-    'Penalty their number twelve, drawn by Elena',
-    'Suspension their',
+    `Penalty conceded by them, number twelve, drawn by ${practiceNames.en.assistant}`,
+    'Suspension for them',
   ],
   de: [
-    'Tor unser',
+    'Tor für uns',
     goalPhrase('de'),
-    'Siebenmeter Gegner Nummer zwölf, verursacht von Elena',
-    'Zeitstrafe Gegner',
+    `Siebenmeter verursacht vom Gegner mit der Nummer zwölf, herausgeholt von ${practiceNames.de.assistant}`,
+    'Zeitstrafe für den Gegner',
   ],
   fr: [
-    'But notre',
+    'But pour nous',
     goalPhrase('fr'),
-    'Penalty commis par eux, numéro douze, provoqué par Elena',
-    'Exclusion adversaire',
+    `Penalty concédé par eux, numéro douze, obtenu par ${practiceNames.fr.assistant}`,
+    'Exclusion pour eux',
   ],
   it: [
     'Gol nostro',
     goalPhrase('it'),
-    'Rigore loro numero dodici, provocato da Elena',
-    'Esclusione loro',
+    `Rigore causato da loro, numero dodici, procurato da ${practiceNames.it.assistant}`,
+    'Esclusione per loro',
   ],
   nl: [
-    'Doelpunt ons',
+    'Doelpunt voor ons',
     goalPhrase('nl'),
-    'Strafworp tegenstander nummer twaalf, uitgelokt door Elena',
-    'Tijdstraf tegenstander',
+    `Strafworp veroorzaakt door de tegenstander, nummer twaalf, uitgelokt door ${practiceNames.nl.assistant}`,
+    'Tijdstraf voor de tegenstander',
   ],
   pl: [
-    'Bramka nasza',
+    'Bramka dla nas',
     goalPhrase('pl'),
-    'Rzut karny rywala numer dwanaście, sprowokowany przez Elena',
-    'Wykluczenie rywala',
+    `Rzut karny po faulu rywala z numerem dwanaście, faulowana ${practiceNames.pl.assistant}`,
+    'Wykluczenie dla rywala',
   ],
 };

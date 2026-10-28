@@ -4,10 +4,15 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { unzipSync, strFromU8 } from 'fflate';
 import { serveModels } from './voice-helpers';
 import { selectWheelOption } from './wheel-helpers';
-import { choose } from './editor-helpers';
-import { tr, type Language } from '../src/i18n';
+import { choose, expand } from './editor-helpers';
+import { languages, tr, type Language } from '../src/i18n';
 import { contrast } from './color-helpers';
-import { practiceGoalExample } from '../src/voice/practice/challenges';
+import {
+  practiceExpressions,
+  practiceGoalExample,
+  practicePhrases,
+} from '../src/voice/practice/challenges';
+import { practiceNames } from '../src/voice/practice/names';
 
 async function locale(page: Page, language: Language = 'es') {
   await page.addInitScript((language) => {
@@ -83,6 +88,68 @@ for (const [width, language, scale, dark] of [
     await leave.focus();
     await expect(leave).toBeInViewport({ ratio: 1 });
     await leave.press('Enter');
+    await expect(page).toHaveURL(/#\/ajustes$/);
+  });
+
+for (const [ui, spoken, nextSpoken] of [
+  ['es', 'en', 'de'],
+  ['en', 'fr', 'pl'],
+] as [Language, Language, Language][])
+  test(`spoken examples and roster use ${spoken}, then ${nextSpoken}, with a ${ui} interface`, async ({
+    page,
+  }, info) => {
+    await locale(page, ui);
+    await page.addInitScript((language) => {
+      localStorage.setItem('handball-voice-language', language);
+    }, spoken);
+    await page.goto('/#/practica-voz?desde=%2Fajustes');
+    const t = (source: string) => tr(source, {}, ui);
+    const practice = page.locator('.voice-practice');
+    const checkIntroduction = async (language: Language) => {
+      await expect(practice.locator('.practice-tokens')).toHaveAttribute('lang', language);
+      await expect(practice.locator('.practice-tokens strong')).toHaveText([
+        ...practiceGoalExample[language],
+      ]);
+      await expect(practice.locator('.practice-example-language')).toHaveText(
+        tr('Ejemplos en {language}', { language: languages[language] }, ui),
+      );
+      const expressions = practiceExpressions[language];
+      await expect(practice).toContainText(expressions.opponent);
+      await expect(practice).toContainText(expressions.assist);
+      await expect(practice).toContainText(expressions.beneficiary);
+    };
+    await checkIntroduction(spoken);
+    await page.screenshot({ path: info.outputPath('spoken-language-intro.png'), fullPage: true });
+    await practice
+      .getByRole('button', { name: t('Entendido · Vamos a practicar'), exact: true })
+      .click();
+    const sentence = practice.locator('blockquote');
+    await expect(sentence).toHaveAttribute('lang', spoken);
+    await expect(sentence).toHaveText(`«${practicePhrases[spoken][0]}»`);
+    await selectWheelOption(
+      practice.getByRole('listbox', { name: t('Idioma de voz'), exact: true }),
+      languages[nextSpoken],
+    );
+    await expect(sentence).toHaveAttribute('lang', nextSpoken);
+    await expect(sentence).toHaveText(`«${practicePhrases[nextSpoken][0]}»`);
+    await practice.getByRole('button', { name: t('Completar manualmente'), exact: true }).click();
+    const editor = page.getByRole('dialog', { name: t('Corregir práctica'), exact: true });
+    await choose(editor, t('Evento'), t('Gol'));
+    await choose(editor, t('Equipo'), tr('Equipo de práctica {number}', { number: 1 }, ui));
+    const names = practiceNames[nextSpoken];
+    await choose(editor, t('Jugador principal'), `#7 ${names.scorer}`);
+    await expand(editor.locator('.related-participant'));
+    await choose(editor, t('Jugador relacionado'), `#9 ${names.assistant}`);
+    await editor.getByRole('button', { name: t('Comprobar jugada'), exact: true }).click();
+    await expect(editor).toHaveCount(0);
+    const result = practice.locator('.practice-result');
+    await expect(result).toHaveClass(/green/);
+    await expect(result).toContainText(`#7 · ${names.scorer}`);
+    await expect(result).toContainText(`#9 · ${names.assistant}`);
+    await practice.getByRole('button', { name: t('Recordar la gramática'), exact: true }).click();
+    await checkIntroduction(nextSpoken);
+    await expect(page.locator('html')).toHaveAttribute('lang', ui);
+    await practice.getByRole('button', { name: t('Salir de la práctica'), exact: true }).click();
     await expect(page).toHaveURL(/#\/ajustes$/);
   });
 

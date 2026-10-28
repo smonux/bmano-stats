@@ -10,7 +10,7 @@ La ruta conserva el origen y Salir vuelve a esa pantalla. La introducción puede
 
 ## Contexto y evaluación
 
-Dos equipos simétricos en memoria, con la perspectiva nuestro = 1 y ellos = 2 explícita. Equipo 1: Marta #7 y Elena #9. Equipo 2: #12 y #8. No se crean registros de catálogo ni de partido. El reloj ficticio permanece en tiempo 1, minuto 0; el editor completo permite modificar la posición y todos los campos habituales.
+Dos equipos simétricos en memoria, con la perspectiva nuestro = 1 y ellos = 2 explícita. Equipo 1: dos jugadoras ficticias #7 y #9, llamadas Marta y Elena en español. Sus nombres se adaptan al idioma de voz mediante una tabla exclusiva de práctica. Equipo 2: #12 y #8. No se crean registros de catálogo ni de partido. El reloj ficticio permanece en tiempo 1, minuto 0; el editor completo permite modificar la posición y todos los campos habituales.
 
 | Reto | Objetivo semántico |
 | --- | --- |
@@ -21,15 +21,19 @@ Dos equipos simétricos en memoria, con la perspectiva nuestro = 1 y ellos = 2 e
 
 Las frases españolas pasan por el intérprete sin modificarlo. Hay equivalentes comprobados en inglés, alemán, francés, italiano, neerlandés y polaco. La frase leída sigue el idioma del reconocimiento, aunque la interfaz use otro idioma. Introducción y reto B comparten las mismas cuatro piezas del ejemplo con Marta y Elena. C mantiene el contraste entre rival identificado por número (#12) y jugadora propia por nombre (Elena #9); A conserva el mínimo y D la exclusión sin dorsal para completar en el editor.
 
-| Idioma | Ejemplo completo de B |
-| --- | --- |
-| Español | Gol nuestro de Marta, pase de Elena |
-| Inglés | Goal for us by Marta, assisted by Elena |
-| Alemán | Tor für uns von Marta, Vorlage von Elena |
-| Francés | But pour nous de Marta, passe d’Elena |
-| Italiano | Gol nostro di Marta, passaggio di Elena |
-| Neerlandés | Doelpunt voor ons van Marta, pass van Elena |
-| Polaco | Bramka dla nas Marta, asystuje Elena |
+| Idioma de voz | Goleadora #7 | Asistente / beneficiaria #9 |
+| --- | --- | --- |
+| Español | Marta | Elena |
+| Inglés | Martha | Helen |
+| Alemán | Martha | Helene |
+| Francés | Marthe | Hélène |
+| Italiano | Marta | Elena |
+| Neerlandés | Martha | Heleen |
+| Polaco | Marta | Helena |
+
+Las [28 frases por idioma](ejemplos-voz-idiomas.md) mantienen evento → equipo → jugadores y usan expresiones naturales dentro de ese orden. En inglés, el mínimo es «Goal for us», no «Goal our». En alemán C dice que #12 causa el penalti y Helene lo obtiene; no atribuye la infracción a Helene. Las ayudas citan conectores del idioma de voz y la introducción lo identifica explícitamente. Si todavía no se ha elegido idioma de voz, se usa el de interfaz.
+
+Esta adaptación afecta exclusivamente a los personajes ficticios predefinidos. Los nombres, notas, transcripciones y demás datos introducidos por el usuario en partidos y equipos reales se conservan tal cual; no se traducen ni se sustituyen por equivalentes.
 
 El motor recibe únicamente el contexto normal: dos equipos y la plantilla completa. `whistleKeywords` genera las mismas pistas de eventos, nombres y dorsales que en un partido. Los objetivos de la tabla solo se consultan al evaluar después del reconocimiento o de la corrección.
 
@@ -49,10 +53,10 @@ Solo se persiste `handball-voice-practice-v1 = seen/done`, además de las prefer
 
 ## Validación y límites
 
-159 pruebas unitarias en 32 archivos; catorce específicas comprueban los cuatro ejemplos y la introducción en siete idiomas con el intérprete real, equivalencia nombre/dorsal, roles opuestos, campos erróneos válidos, requisitos reales, posición, metadatos, traducciones y evaluación sin mutaciones. B comprueba explícitamente equipo 1, goleadora #7 y asistente #9; C, equipo 2, infractor #12 y beneficiaria #9.
+160 pruebas unitarias en 32 archivos; quince específicas comprueban los cuatro ejemplos y la introducción en siete idiomas con el intérprete real, equivalencia nombre/dorsal, roles opuestos, campos erróneos válidos, requisitos reales, posición, metadatos, traducciones y evaluación sin mutaciones. Todas las frases identifican evento literalmente y equipo explícito, sin recurrir al valor por defecto. B comprueba equipo 1, goleadora #7 y asistente #9; C, equipo 2, infractor #12 y beneficiaria #9. Se verifican los nombres locales en plantilla/keywords y que un nombre real de otro idioma y su transcripción permanezcan intactos.
 
-40 casos de navegador validados para el cambio a Marta/Elena en Chromium móvil emulado y escritorio: 32 sobre la compilación de producción y ocho de componentes/origen. Incluyen captura real con cuatro WAV sintéticos, funcionamiento offline tras preparar una vez, cancelación durante una grabación con cierre de todas las pistas, ausencia de datos ficticios en ZIP, primer arranque saltable, permisos/silencio con dobles identificados, cancelación tardía, editor completo, corrección D, retorno al partido activo con reloj en marcha y regresión de contadores. La matriz cubre 320/390/430 px, siete idiomas, claro/oscuro, texto al 200 %, foco y controles táctiles; se revisan capturas de introducción y de B con ambos roles.
+44 casos de navegador validados para ejemplos/nombres locales en Chromium móvil emulado y escritorio: 36 sobre la compilación de producción y ocho de componentes/origen. Incluyen interfaz y voz en idiomas distintos, cambio de idioma actualizando ejemplo/plantilla/editor, captura real con cuatro WAV sintéticos españoles, funcionamiento offline tras preparar una vez, cierre de pistas, ZIP sin datos ficticios, primer arranque saltable, permisos/silencio con dobles identificados, cancelación tardía, editor completo, D, retorno al partido activo y contadores. La matriz cubre 320/390/430 px, siete idiomas, claro/oscuro, texto al 200 %, foco y controles táctiles.
 
-Los WAV se generaron con Piper para probar el recorrido, no para medir precisión humana; se regenera `assist.wav` con «Gol nuestro de Marta, pase de Elena». Whistle devuelve ambos nombres en B: escritorio interpreta «Hol Nuestro de Marta, Pase de Elena» y da verde; móvil interpreta «Hoy nuestro de Marta pase de Elena.» y necesita corregir el evento. A no reconoce el gol en estas dos ejecuciones; C conserva el infractor #12 pero no identifica Elena. Se conservan los resultados reales antes de corregir con el editor. D mantiene la exclusión sin dorsal y pasa a verde al completar #8. No se alteran modelo, configuración ni parser para hacer pasar las muestras, y no se atribuye mejora de reconocimiento al tutorial. No se ha probado micrófono físico, ruido de pista, Safari/iOS ni Android real.
+Los WAV españoles de Piper prueban el recorrido, no la precisión humana, y no se modifican en esta adaptación. En la última ejecución A y B dan verde con transcripciones imperfectas («Bol nuestro», «Hol Nuestro de Marta…»); C conserva el infractor #12 pero omite Elena y requiere corrección. D queda deliberadamente amarillo sin dorsal y pasa a verde con #8. Se conservan los resultados reales antes de editar. No se alteran modelo, configuración ni parser para hacer pasar las muestras, y no se atribuye mejora de reconocimiento al tutorial. No se ha probado audio de los otros seis idiomas, micrófono físico, ruido de pista, Safari/iOS ni Android real.
 
-[Capturas y resultados actuales](evidencias/entrenamiento-nombres/README.md); [evidencia histórica de la entrega inicial](evidencias/entrenamiento-voz/README.md). Compilación regenerada en `dist`. Entrega autorizada en `main`, sin esperar al despliegue.
+[Capturas y resultados actuales](evidencias/entrenamiento-idiomas/README.md); [cambio previo a dos nombres](evidencias/entrenamiento-nombres/README.md); [entrega inicial](evidencias/entrenamiento-voz/README.md). Compilación regenerada en `dist`. Entrega autorizada en `main`, sin esperar al despliegue.

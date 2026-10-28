@@ -1,6 +1,10 @@
-import { tr } from '../../i18n';
+import { languages, tr } from '../../i18n';
 import type { Language } from '../../i18n';
-import { practiceGoalExample, practicePhrases } from '../../voice/practice/challenges';
+import {
+  practiceExpressions,
+  practiceGoalExample,
+  practicePhrases,
+} from '../../voice/practice/challenges';
 
 export function PracticeGrammar({ language }: { language: Language }) {
   const pieces = [
@@ -9,6 +13,7 @@ export function PracticeGrammar({ language }: { language: Language }) {
     ['Jugador 1', 'Quién realiza la acción.', 'Opcional'],
     ['Jugador 2', 'Quién asiste o provoca, según el evento.', 'Si aplica'],
   ];
+  const expressions = practiceExpressions[language];
   return (
     <>
       <p className="eyebrow">{tr('ANTES DE HABLAR')}</p>
@@ -28,6 +33,9 @@ export function PracticeGrammar({ language }: { language: Language }) {
           </li>
         ))}
       </ol>
+      <p className="caption practice-example-language">
+        {tr('Ejemplos en {language}', { language: languages[language] })}
+      </p>
       <div className="practice-tokens" aria-label={tr('Ejemplo de voz')} lang={language}>
         {practiceGoalExample[language].map((text, index) => (
           <span key={index}>
@@ -37,10 +45,16 @@ export function PracticeGrammar({ language }: { language: Language }) {
         ))}
       </div>
       <p>{tr('Usa nombre o dorsal. Para reconocer un nombre debe estar en la plantilla.')}</p>
-      <p>{tr('En esta práctica, «nuestro» es el equipo 1 y «ellos» el equipo 2.')}</p>
+      <p>
+        {tr('En esta práctica, «{own}» es el equipo 1 y «{other}» el equipo 2.', {
+          own: practiceGoalExample[language][1],
+          other: expressions.opponent,
+        })}
+      </p>
       <p>
         {tr(
-          'Di los jugadores en ese orden. El papel del segundo depende del evento; «pase de» y «provocado por» ayudan a expresarlo.',
+          'Di los jugadores en ese orden. El papel del segundo depende del evento; «{assist}» y «{beneficiary}» ayudan a expresarlo.',
+          { assist: expressions.assist, beneficiary: expressions.beneficiary },
         )}
       </p>
       <p className="practice-notice">

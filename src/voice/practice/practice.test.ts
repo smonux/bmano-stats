@@ -7,28 +7,39 @@ import { practiceContext, emptyPracticeDraft, practiceIds } from './context';
 import { practiceChallenges, practiceGoalExample, practicePhrases } from './challenges';
 import { evaluatePractice } from './evaluate';
 import { voicePracticeMessages } from '../../i18n/voice-practice';
+import { practiceNames } from './names';
 
 const data = practiceContext();
 const match = data.matches[0];
-function interpret(text: string, language: Language = 'es') {
+function interpretation(text: string, language: Language = 'es') {
+  const data = practiceContext(language);
   const players = data.players.map((player) => ({
     name: player.name,
     dorsal: player.dorsal,
     team: player.teamId === match.localTeamId ? ('equipo1' as const) : ('equipo2' as const),
   }));
-  const result = interpretCommand(
+  return interpretCommand(
     text,
     language,
     data.teams.map((team) => team.name),
     players,
   );
-  return toVoiceDraft(text, result.proposal, captureContext(match, data)).draft;
+}
+function interpret(text: string, language: Language = 'es') {
+  return toVoiceDraft(
+    text,
+    interpretation(text, language).proposal,
+    captureContext(match, practiceContext(language)),
+  ).draft;
 }
 
 describe('practice phrases through the real text interpreter (no acoustic accuracy claim)', () => {
   for (const language of Object.keys(languages) as Language[])
     it(`${language}: all four phrases preserve event, perspective and participant roles`, () => {
+      const data = practiceContext(language);
       for (const [index, text] of practicePhrases[language].entries()) {
+        expect(interpretation(text, language).defaultTeamApplied, text).toBe(false);
+        expect(interpretation(text, language).eventMatch, text).toBe('literal');
         const draft = interpret(text, language);
         const evaluation = evaluatePractice(draft, practiceChallenges[index], data, false);
         expect(evaluation, `${index}: ${text} -> ${JSON.stringify(draft)}`).toMatchObject({
@@ -69,6 +80,20 @@ describe('practice phrases through the real text interpreter (no acoustic accura
         evaluatePractice(interpret(introduction, language), practiceChallenges[1], data, false)
           .state,
       ).toBe('green');
+      const names = practiceNames[language];
+      expect(data.players.filter((player) => player.teamId === practiceIds.own)).toMatchObject([
+        { dorsal: 7, name: names.scorer },
+        { dorsal: 9, name: names.assistant },
+      ]);
+      const keywords = whistleKeywords(
+        language,
+        data.teams.map((team) => team.name),
+        data.players,
+      );
+      expect(keywords).toEqual(expect.arrayContaining([names.scorer, names.assistant]));
+      expect(practicePhrases[language][1]).toContain(names.scorer);
+      expect(practicePhrases[language][1]).toContain(names.assistant);
+      expect(practicePhrases[language][2]).toContain(names.assistant);
     });
   it('names and shirt numbers of the same identity are semantically interchangeable', () => {
     for (const text of ['Gol nuestro Marta Elena', 'Gol nuestro siete nueve', 'Gol nuestro 07 09'])
@@ -90,6 +115,39 @@ describe('practice phrases through the real text interpreter (no acoustic accura
     expect(data.players.map(({ dorsal }) => dorsal)).not.toContain(15);
     expect(keywords).not.toContain(practicePhrases.es[1]);
     expect(keywords).not.toContain(practicePhrases.es[2]);
+  });
+  it('keeps user names and the transcript unchanged when recognition uses another language', () => {
+    const userData = practiceContext('en');
+    userData.players[0] = { ...userData.players[0], name: 'Marta Álvarez', dorsal: 27 };
+    userData.players[1] = { ...userData.players[1], name: 'Elena López', dorsal: 18 };
+    const before = structuredClone(userData);
+    const text = 'Goal for us by Marta Álvarez, assisted by Elena López';
+    const result = interpretCommand(
+      text,
+      'en',
+      userData.teams.map((team) => team.name),
+      userData.players.map((player) => ({
+        name: player.name,
+        dorsal: player.dorsal,
+        team: player.teamId === practiceIds.own ? 'equipo1' : 'equipo2',
+      })),
+    );
+    const draft = toVoiceDraft(text, result.proposal, captureContext(match, userData)).draft;
+    expect(draft).toMatchObject({
+      type: 'goal',
+      primaryDorsal: '27',
+      relatedDorsal: '18',
+      rawText: text,
+    });
+    expect(userData).toEqual(before);
+    const hints = whistleKeywords(
+      'en',
+      userData.teams.map((team) => team.name),
+      userData.players,
+    );
+    expect(hints).toEqual(expect.arrayContaining(['Marta Álvarez', 'Elena López']));
+    expect(hints).not.toContain('Martha');
+    expect(hints).not.toContain('Helen');
   });
 });
 
