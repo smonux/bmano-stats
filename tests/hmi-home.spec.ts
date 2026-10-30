@@ -33,6 +33,10 @@ test('active matches precede navigation and settings distinguish local backups f
   await expect(page.getByRole('button', { name: 'Ver bienvenida', exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Practicar voz', exact: true }).click();
   const guide = page.locator('.voice-practice');
+  await expect(
+    guide.getByRole('heading', { name: 'Registra el partido por voz y gestos.' }),
+  ).toBeVisible();
+  await guide.getByRole('button', { name: 'Continuar a la práctica', exact: true }).click();
   await expect(guide.getByRole('heading', { name: 'Una jugada. Cuatro piezas.' })).toBeVisible();
   await expect(guide.locator('.practice-grammar li')).toHaveCount(4);
   await page.screenshot({ path: info.outputPath('recoverable-guide.png') });

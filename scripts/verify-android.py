@@ -57,6 +57,8 @@ def main():
     apk = ROOT / "android/app/build/outputs/apk/debug/app-debug.apk"
     aab = ROOT / "android/app/build/outputs/bundle/release/app-release.aab"
     version = json.loads((ROOT / "package.json").read_text())["version"]
+    gradle = (ROOT / "android/app/build.gradle").read_text()
+    build = int(re.search(r"versionCode (\d+)", gradle)[1])
     app_id = json.loads((ROOT / "capacitor.config.json").read_text())["appId"]
     allowed = {"android.permission.INTERNET", "android.permission.RECORD_AUDIO",
                "android.permission.MODIFY_AUDIO_SETTINGS",
@@ -87,7 +89,7 @@ def main():
         manifest = ET.fromstring(manifests[kind])
         require(manifest.get("package") == app_id, f"{kind}: unexpected application ID")
         require(manifest.get(ANDROID + "versionName") == version, f"{kind}: version mismatch")
-        require(manifest.get(ANDROID + "versionCode") == "1", f"{kind}: version code mismatch")
+        require(manifest.get(ANDROID + "versionCode") == str(build), f"{kind}: version code mismatch")
         sdk_element = manifest.find("uses-sdk")
         require(sdk_element.get(ANDROID + "minSdkVersion") == "24", f"{kind}: min SDK mismatch")
         require(sdk_element.get(ANDROID + "targetSdkVersion") == "36", f"{kind}: target mismatch")
@@ -144,7 +146,7 @@ def main():
         report["artifacts"][kind] = {
             "source": str(path.relative_to(ROOT)), "sha256": sha256(path),
             "bytes": path.stat().st_size, "variant": "debug" if kind == "apk" else "release",
-            "signing": signing, "appId": app_id, "versionName": version, "versionCode": 1,
+            "signing": signing, "appId": app_id, "versionName": version, "versionCode": build,
             "minSdk": 24, "targetSdk": 36, "permissions": sorted(permissions),
             "debuggable": debuggable, "whistleBytes": len(model), "whistleSha256": MODEL_SHA256,
             "packagedAssetsMatchBuild": True, "nativeLibraries": native_libraries,

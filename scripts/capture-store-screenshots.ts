@@ -1,6 +1,7 @@
 import { chromium, test } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { reportFixture } from '../tests/fixtures/report.ts';
+import { tr } from '../src/i18n';
 
 // These are real app renderings in Chromium, not Android/iOS simulator captures.
 test('authentic browser references, explicitly not native store screenshots', async () => {
@@ -10,7 +11,7 @@ test('authentic browser references, explicitly not native store screenshots', as
   const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
   const manifest: unknown[] = [];
   try {
-    for (const language of ['es', 'en', 'de', 'fr', 'it', 'nl', 'pl']) {
+    for (const language of ['es', 'en', 'de', 'fr', 'it', 'nl', 'pl'] as const) {
       for (const [platform, width, height] of [
         ['android', 360, 640],
         ['iphone', 440, 956],
@@ -48,6 +49,13 @@ test('authentic browser references, explicitly not native store screenshots', as
           ['practice', '/practica-voz', '.practice-tokens'],
         ]) {
           await page.goto(`http://127.0.0.1:4175/#${route}`);
+          if (screen === 'practice')
+            await page
+              .getByRole('button', {
+                name: tr('Continuar a la práctica', {}, language),
+                exact: true,
+              })
+              .click();
           if (screen === 'statistics') await page.getByRole('heading').first().waitFor();
           else await page.locator(ready).first().waitFor();
           await page.evaluate(() => document.fonts.ready);

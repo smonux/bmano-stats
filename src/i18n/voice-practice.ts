@@ -1,5 +1,63 @@
 /** English, German, French, Italian, Dutch, Polish. */
 export const voicePracticeMessages: Record<string, readonly string[]> = {
+  'Registra el partido por voz y gestos.': [
+    'Record the match with voice and gestures.',
+    'Erfasse das Spiel per Sprache und Gesten.',
+    'Enregistrez le match par la voix et les gestes.',
+    'Registra la partita con voce e gesti.',
+    'Leg de wedstrijd vast met je stem en gebaren.',
+    'Rejestruj mecz głosem i gestami.',
+  ],
+  'Una aplicación para registrar los eventos de un partido de balonmano mientras ocurre.': [
+    'An app for recording handball match events as they happen.',
+    'Eine App, um Ereignisse eines Handballspiels direkt während des Spiels zu erfassen.',
+    'Une application pour saisir les événements d’un match de handball au fil du jeu.',
+    'Un’app per registrare gli eventi di una partita di pallamano mentre si svolge.',
+    'Een app om gebeurtenissen tijdens een handbalwedstrijd direct vast te leggen.',
+    'Aplikacja do zapisywania zdarzeń meczu piłki ręcznej na bieżąco.',
+  ],
+  'Con la voz': ['By voice', 'Per Sprache', 'Par la voix', 'Con la voce', 'Met je stem', 'Głosem'],
+  'Mantén pulsado para decir la jugada y suelta para revisarla.': [
+    'Hold to describe the play, then release to review it.',
+    'Halte die Taste gedrückt, beschreibe die Aktion und lasse los, um sie zu prüfen.',
+    'Maintenez le bouton pour dicter l’action, puis relâchez pour la vérifier.',
+    'Tieni premuto per descrivere l’azione, poi rilascia per verificarla.',
+    'Houd ingedrukt om de actie te beschrijven en laat los om deze te controleren.',
+    'Przytrzymaj przycisk, opisz akcję i puść, aby ją sprawdzić.',
+  ],
+  'Con gestos y toques': [
+    'With gestures and taps',
+    'Mit Gesten und Tippen',
+    'Par gestes et touches',
+    'Con gesti e tocchi',
+    'Met gebaren en tikken',
+    'Gestami i dotknięciami',
+  ],
+  'Elige eventos y jugadores en pantalla y desliza las ruedas para ajustar los datos.': [
+    'Choose events and players on screen, and swipe the wheels to adjust the details.',
+    'Wähle Ereignisse und Spieler auf dem Bildschirm und passe die Angaben mit den Auswahlrädern an.',
+    'Choisissez les événements et les joueurs à l’écran, puis faites défiler les sélecteurs pour ajuster les données.',
+    'Scegli eventi e giocatori sullo schermo e scorri le ruote per regolare i dati.',
+    'Kies gebeurtenissen en spelers op het scherm en veeg over de keuzewielen om de gegevens aan te passen.',
+    'Wybierz zdarzenia i zawodników na ekranie, a następnie przesuń kółka wyboru, aby dostosować dane.',
+  ],
+  'La práctica te enseña qué decir y cómo revisar cada jugada para introducir los datos con más precisión durante el partido.':
+    [
+      'Practice shows you what to say and how to review each play, helping you enter match data more accurately.',
+      'Das Training zeigt dir, was du sagen und wie du jede Aktion prüfen kannst, um Spieldaten genauer zu erfassen.',
+      'L’entraînement vous montre quoi dire et comment vérifier chaque action pour saisir les données du match avec plus de précision.',
+      'La pratica ti insegna cosa dire e come verificare ogni azione per inserire i dati della partita con maggiore precisione.',
+      'De oefening laat zien wat je kunt zeggen en hoe je elke actie controleert, zodat je wedstrijdgegevens nauwkeuriger invoert.',
+      'Ćwiczenie pokazuje, co mówić i jak sprawdzać każdą akcję, aby dokładniej wprowadzać dane podczas meczu.',
+    ],
+  'Continuar a la práctica': [
+    'Continue to practice',
+    'Weiter zum Training',
+    'Continuer vers l’entraînement',
+    'Continua con la pratica',
+    'Doorgaan naar de oefening',
+    'Przejdź do ćwiczenia',
+  ],
   '«{example}» ya sirve; completar después es normal.': [
     '“{example}” is enough; filling in details later is normal.',
     '„{example}“ reicht; später zu ergänzen ist normal.',

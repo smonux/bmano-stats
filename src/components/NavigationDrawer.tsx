@@ -11,6 +11,7 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { tr } from '../i18n';
+import { buildInfo } from '../build-info';
 import { voicePracticeRoute } from './voice-practice/VoicePracticeEntry';
 const destinations = [
   {
@@ -119,6 +120,12 @@ export function NavigationDrawer({
         {portrait.locked ? <LockKeyhole size={20} /> : <Smartphone size={20} />}
         {tr(portrait.locked ? 'Orientación vertical fijada' : 'Fijar vertical')}
       </button>
+      <div className="drawer-build" role="group" aria-label={tr('Versión de la aplicación')}>
+        <span>v{buildInfo.version}</span>
+        <small>
+          commit <code>{buildInfo.commit}</code>
+        </small>
+      </div>
     </dialog>
   );
 }

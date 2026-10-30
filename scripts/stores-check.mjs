@@ -24,8 +24,18 @@ const version = JSON.parse(await readFile('package.json', 'utf8')).version;
 assert.equal(listings.version, version);
 const gradle = await readFile('android/app/build.gradle', 'utf8');
 assert(gradle.includes(`versionName "${version}"`), 'Android version mismatch');
+const build = gradle.match(/versionCode (\d+)/)?.[1];
+assert(build, 'Missing Android versionCode');
 const xcode = await readFile('ios/App/App.xcodeproj/project.pbxproj', 'utf8');
 assert(xcode.includes(`MARKETING_VERSION = ${version};`), 'iOS version mismatch');
+const iosBuilds = [...xcode.matchAll(/CURRENT_PROJECT_VERSION = (\d+);/g)];
+assert(
+  iosBuilds.length > 0 && iosBuilds.every((match) => match[1] === build),
+  'iOS/Android build number mismatch',
+);
+const lock = JSON.parse(await readFile('package-lock.json', 'utf8'));
+assert.equal(lock.version, version);
+assert.equal(lock.packages[''].version, version);
 assert.equal(config.webDir, 'dist-native');
 assert(!config.server.url, 'Never ship a remote website URL');
 assert(!config.server.allowNavigation, 'External navigation must not be whitelisted');

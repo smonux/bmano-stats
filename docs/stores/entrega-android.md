@@ -1,4 +1,6 @@
-# Entrega Android · 2026-10-28
+# Entrega Android 0.1.0 · histórica · 2026-10-28
+
+Este informe conserva los datos de los binarios iniciales 0.1.0; no se renombran con cada actualización. Para la versión actual, consultar `artifacts/mobile/manifest.json` y su informe de verificación, generados de nuevo al compilar.
 
 El usuario autorizó expresamente aceptar la licencia necesaria del SDK Android como excepción al encargo inicial. Se aceptó únicamente `android-sdk-license` (texto fechado 16-01-2019) en la instalación de Platform 36, Build Tools 35.0.0 y Platform Tools. No se ejecutó una aceptación global de licencias ni se aceptaron términos de las tiendas.
 

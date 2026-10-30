@@ -44,6 +44,20 @@ for (const [width, language, scale, dark] of [
     }, scale);
     const t = (source: string) => tr(source, {}, language);
     await expect(
+      page.getByRole('heading', { name: t('Registra el partido por voz y gestos.') }),
+    ).toBeFocused();
+    await expect(page.locator('.practice-methods li')).toHaveCount(2);
+    await expect(page.locator('.voice-practice')).toContainText(
+      t(
+        'La práctica te enseña qué decir y cómo revisar cada jugada para introducir los datos con más precisión durante el partido.',
+      ),
+    );
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+      true,
+    );
+    await page.screenshot({ path: info.outputPath('welcome.png'), fullPage: true });
+    await page.getByRole('button', { name: t('Continuar a la práctica'), exact: true }).click();
+    await expect(
       page.getByRole('heading', { name: t('Una jugada. Cuatro piezas.') }),
     ).toBeVisible();
     await expect(page.locator('.practice-grammar li')).toHaveCount(4);
@@ -105,6 +119,7 @@ for (const [ui, spoken, nextSpoken] of [
     await page.goto('/#/practica-voz?desde=%2Fajustes');
     const t = (source: string) => tr(source, {}, ui);
     const practice = page.locator('.voice-practice');
+    await practice.getByRole('button', { name: t('Continuar a la práctica'), exact: true }).click();
     const checkIntroduction = async (language: Language) => {
       await expect(practice.locator('.practice-tokens')).toHaveAttribute('lang', language);
       await expect(practice.locator('.practice-tokens strong')).toHaveText([
@@ -216,6 +231,7 @@ test('REAL Whistle: four synthetic utterances use the production recording pipel
     timeout: 60000,
   });
   await page.getByRole('button', { name: 'Practicar voz', exact: true }).click();
+  await page.getByRole('button', { name: 'Continuar a la práctica', exact: true }).click();
   await page.getByRole('button', { name: 'Entendido · Vamos a practicar', exact: true }).click();
   const observed: unknown[] = [];
   for (const [index, file] of [
@@ -301,6 +317,7 @@ test('REAL Whistle: four synthetic utterances use the production recording pipel
   await expect(page.getByText('PRÁCTICA COMPLETADA', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Volver a la aplicación', exact: true }).click();
   await page.getByRole('button', { name: 'Practicar voz', exact: true }).click();
+  await page.getByRole('button', { name: 'Continuar a la práctica', exact: true }).click();
   await page.getByRole('button', { name: 'Entendido · Vamos a practicar', exact: true }).click();
   await page.evaluate(() =>
     Object.assign(window, { practiceFile: 'goal.wav', practiceAudioDone: false }),

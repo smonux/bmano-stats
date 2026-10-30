@@ -1,5 +1,8 @@
 Implementa el entrenamiento de voz que el usuario ha aprobado en ChatGPT. No es una petición de plan: intégralo en /shared/src/bmano-stats. Referencia aprobada: docs/ui-hmi/voz-entrenamiento.html. Es una demo de UX: sus resultados son simulados y su formulario es reducido; NO copies esas limitaciones a producción.
 
+ACTUALIZACIÓN APROBADA · 1.0.0 (30-10-2026)
+Antes de la pantalla de gramática descrita a continuación, mostrar una presentación de la aplicación: registro de eventos de balonmano por voz y gestos y beneficio de practicar para introducir datos con más precisión. «Continuar a la práctica» lleva a la gramática existente; mantener salida, idiomas y aislamiento. Este paso también precede a la práctica abierta desde Ajustes o el menú.
+
 OBJETIVO Y ALCANCE
 El usuario prefiere invertir en enseñar la gramática antes de tocar algoritmos de reconocimiento. Añade una introducción didáctica, seguida de 4 retos prácticos con voz real, estados verde/amarillo/rojo y corrección. Reutiliza motor de voz, intérprete, validadores y editor actuales. No cambies el reconocedor ni amplíes arbitrariamente la gramática para acomodar la demo; verifica las frases y documenta cualquier ajuste necesario.
 

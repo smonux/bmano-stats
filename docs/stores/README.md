@@ -1,14 +1,14 @@
-# Paquetes y tiendas · preparación 2026-10-28
+# Paquetes y tiendas · actualización 1.0.0 · 2026-10-30
 
-Esta entrega prepara Android/iOS con Capacitor 8.6.0 y la app local; no publica ni envía a revisión. Tras autorización expresa del usuario se ha aceptado **solo** `android-sdk-license` para instalar el SDK y compilar. La excepción no autoriza contratos de tiendas ni otros términos. La web conserva su compilación habitual. Identificador **provisional**: `io.github.smonux.bmanostats`; versión `0.1.0`, build/versionCode `1`. Confirmar titular e identificador antes de reservarlos en las tiendas.
+Esta entrega prepara Android/iOS con Capacitor 8.6.0 y la app local; no publica ni envía a revisión. Tras autorización expresa del usuario se ha aceptado **solo** `android-sdk-license` para instalar el SDK y compilar. La excepción no autoriza contratos de tiendas ni otros términos. La web conserva su compilación habitual. Identificador **provisional**: `io.github.smonux.bmanostats`; versión `1.0.0`, build/versionCode `2`. Confirmar titular e identificador antes de reservarlos en las tiendas. La [política de versiones](../versionado.md) sincroniza las plataformas; la [entrega inicial 0.1.0](entrega-android.md) conserva sus datos históricos.
 
 ## Estado real
 
 | Entregable | Estado |
 | --- | --- |
 | Proyecto Android | Compilado; minSdk 24, compile/target 36; permisos finales de APK y AAB auditados |
-| APK de prueba | Generado y firma debug verificada; 21.500.685 bytes. No instalado ni probado en dispositivo |
-| AAB release | Generado y validado por bundletool; 20.180.317 bytes; **sin firma**, no listo para subir a Play |
+| APK de prueba | Generado y firma debug verificada; versión, bytes y hash en el manifest de artefactos. No instalado ni probado en dispositivo |
+| AAB release | Generado y validado por bundletool; versión, bytes y hash en el manifest de artefactos; **sin firma**, no listo para subir a Play |
 | Proyecto Xcode iPhone | Generado con SPM, iconos, lanzamiento, privacidad y micrófono en 7 idiomas |
 | Archive / IPA | No generado: entorno Linux sin macOS/Xcode/firma |
 | App local + Whistle | Incluidos en `dist-native`; un Whistle de 16.919.407 bytes para los siete idiomas; no se incluyen modelos Needle |
@@ -21,7 +21,7 @@ Las rutas exactas, tamaños y SHA-256 de los archivos producidos se enumeran en 
 ## Índice
 
 - [Compilar, firmar y preparar beta](compilacion-y-entrega.md).
-- [Paquetes Android obtenidos, firma y verificaciones](entrega-android.md).
+- [Entrega Android inicial 0.1.0, firma y verificaciones](entrega-android.md); el recibo actual se genera en `artifacts/mobile/manifest.json`.
 - [Auditoría técnica, pruebas y límites](validacion.md).
 - [Fuentes oficiales y requisitos fechados](fuentes.md).
 - [Textos localizados](listings.json), validados por `npm run stores:check`: título/Google breve/subtítulo/descr./keywords/novedades. Los nombres de marca no cambian.

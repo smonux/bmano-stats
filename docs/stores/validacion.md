@@ -2,6 +2,8 @@
 
 Fecha de trabajo: 2026-10-28. Rama de trabajo `main`; ningún envío a tiendas. Los logs y archivos grandes se entregan fuera de git en `artifacts/`.
 
+Actualización 1.0.0 (30-10-2026): presentación antes de la gramática en siete idiomas y versión/commit en el menú. 166 unitarias y 38 recorridos web pertinentes correctos, incluidos voz real, móvil/escritorio, 320/390/430 px y texto ampliado; dos recorridos del bundle local/offline correctos. Tras plegar el selector de idioma se repiten correctamente los seis recorridos de primer uso, incluido cambio de idioma por teclado y cero peticiones de micrófono. El incremento 1.0.0 → 1.1.0 se comprueba en una copia temporal, junto con la idempotencia y el rechazo de versiones inválidas sin escrituras. También se rechaza empaquetar el APK 0.1.0 con un informe antiguo bajo la versión 1.0.0. Los tamaños concretos de la sección Android siguiente corresponden a la entrega inicial 0.1.0; versión, bytes y hashes actuales quedan en `artifacts/mobile/manifest.json`.
+
 ## Comprobaciones terminadas
 
 | Comprobación | Resultado real |

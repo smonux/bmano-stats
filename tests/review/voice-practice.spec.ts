@@ -104,6 +104,7 @@ async function startFromSettings(page: Page) {
   });
   await fakeCapture(page);
   await page.getByRole('button', { name: 'Practicar voz', exact: true }).click();
+  await page.getByRole('button', { name: 'Continuar a la práctica', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Una jugada. Cuatro piezas.' })).toBeVisible();
   await page.getByRole('button', { name: 'Entendido · Vamos a practicar', exact: true }).click();
 }
@@ -200,7 +201,9 @@ test('FAKE capture/ASR: four semantic challenges, real editor, grammar return an
   expect(await snapshot(page)).toBe(before);
   await page.screenshot({ path: info.outputPath('practice-complete.png') });
   await page.getByRole('button', { name: 'Volver a practicar', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Una jugada. Cuatro piezas.' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Registra el partido por voz y gestos.' }),
+  ).toBeVisible();
   await page.getByRole('button', { name: 'Salir de la práctica', exact: true }).click();
   await expect(page).toHaveURL(/#\/ajustes$/);
   await expect(page.getByRole('button', { name: 'Practicar voz', exact: true })).toBeFocused();
@@ -260,6 +263,7 @@ test('missing model: optional entry, manual practice, actual red/green validatio
   await page.goto('/#/ajustes');
   const before = await snapshot(page);
   await page.getByRole('button', { name: 'Practicar voz', exact: true }).click();
+  await page.getByRole('button', { name: 'Continuar a la práctica', exact: true }).click();
   await page.getByRole('button', { name: 'Entendido · Vamos a practicar', exact: true }).click();
   await expect(page.locator('.hold-to-talk')).toBeDisabled();
   await page.getByRole('button', { name: 'Completar manualmente', exact: true }).click();
@@ -300,7 +304,9 @@ test('return from practice restores the running match, clock, events and counter
   const before = await snapshot(page);
   await page.getByRole('button', { name: 'Abrir menú', exact: true }).click();
   await page.getByRole('link', { name: 'Practicar voz', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Una jugada. Cuatro piezas.' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Registra el partido por voz y gestos.' }),
+  ).toBeVisible();
   await page.clock.fastForward(5000);
   await page.getByRole('button', { name: 'Salir de la práctica', exact: true }).click();
   await expect(page).toHaveURL(/#\/partidos\/report-match$/);

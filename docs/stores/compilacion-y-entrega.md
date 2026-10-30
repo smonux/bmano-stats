@@ -16,7 +16,7 @@ npm run stores:check
 
 `mobile:assets` usa Chromium (`CHROMIUM_PATH` si ya está instalado). `mobile:build` descarga Whistle solo si no está en `WHISTLE_MODEL_PATH` o `node_modules/.cache/voice-models/whistle.cact`; comprueba tamaño y SHA-256. Necesita Internet en la máquina de compilación si falta el modelo. No se descargan pesos al ejecutar la app nativa. `dist` y `dist-native` están separados; la web conserva su SW, el bundle móvil lo omite. No usar `cap add` otra vez sobre estos proyectos.
 
-Identificador provisional `io.github.smonux.bmanostats`, versión 0.1.0/build 1. Antes de registrar la app, confirmar identificador y titular. Cambiarlo después crea otra app y otro almacenamiento. No alterar el origen local `localhost` ni el nombre/esquema Dexie en actualizaciones sin migración probada.
+Identificador provisional `io.github.smonux.bmanostats`, versión 1.0.0/build 2. [Política y comandos de versión](../versionado.md). Antes de registrar la app, confirmar identificador y titular. Cambiarlo después crea otra app y otro almacenamiento. No alterar el origen local `localhost` ni el nombre/esquema Dexie en actualizaciones sin migración probada.
 
 ## Android
 

@@ -18,6 +18,14 @@ export const translationLanguages = ['en', 'de', 'fr', 'it', 'nl', 'pl'] as cons
 
 // Order: English, German, French, Italian, Dutch, Polish. Spanish keys are the source text.
 export const catalog: Record<string, readonly string[]> = {
+  'Versión de la aplicación': [
+    'App version',
+    'App-Version',
+    'Version de l’application',
+    'Versione dell’app',
+    'App-versie',
+    'Wersja aplikacji',
+  ],
   ...nativeMessages,
   ...voicePracticeMessages,
   ...mejoras2Messages,

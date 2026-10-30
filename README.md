@@ -1,6 +1,6 @@
 # Handball Stats
 
-Primera versión web de registro local de estadísticas de balonmano. React, TypeScript, Vite e IndexedDB (Dexie). Interfaz en español, adaptada a móvil y escritorio.
+Aplicación de registro local de estadísticas de balonmano. React, TypeScript, Vite e IndexedDB (Dexie), con siete idiomas y adaptación a móvil y escritorio. Versión **1.0.0**: el menú lateral muestra versión y commit corto de compilación. Cada cambio posterior incrementa la versión menor, salvo indicación expresa; consulta la [política de versiones](docs/versionado.md).
 
 ## Arranque
 
@@ -68,9 +68,9 @@ Los proyectos Android/iOS y el material de Google Play/App Store se documentan e
 
 La interfaz y la voz pueden usar idiomas distintos: español, inglés, alemán, francés, italiano, neerlandés y polaco. El idioma de la interfaz se cambia en Ajustes o en el primer arranque; el de captura, en la preparación previa al partido. El reconocimiento se prepara la primera vez y se restaura desde archivos locales en las siguientes visitas; durante el juego el botón Voz es push to talk directo, sin panel adicional. Los siete comparten el mismo Whistle descargado.
 
-En el primer arranque aparece directamente el entrenamiento de voz, que sustituye a la bienvenida general. Permite elegir idioma y salir en cualquier momento. Si ya habías cerrado la bienvenida anterior o visto la práctica, la actualización respeta esa elección.
+En el primer arranque aparece una presentación de Handball Stats: registro de eventos de balonmano por voz y gestos, y cómo la práctica ayuda a introducir los datos con mayor precisión. «Continuar a la práctica» abre la explicación de la gramática y después los cuatro retos. Permite elegir idioma y salir en cualquier momento. Si ya habías cerrado la bienvenida anterior o visto la práctica, la actualización respeta esa elección.
 
-«Practicar voz», en Ajustes y el menú lateral, enseña primero Evento + Equipo + Jugador 1 + Jugador 2 y propone cuatro retos con reconocimiento real. El ejemplo completo es «Gol nuestro de Marta, pase de Elena»: Marta #7 marca y Elena #9 asiste. Otro reto combina rival #12 por número y nuestra Elena por nombre. Los resultados indican acierto, detalles pendientes o datos por revisar; el editor habitual permite corregirlos. Usa equipos ficticios y borradores en memoria, sin escribir en tus partidos ni copias. Es opcional y se puede completar manualmente si la voz no está disponible. Consulta la [práctica guiada](docs/ui-hmi/entrenamiento-voz.md).
+«Practicar voz», en Ajustes y el menú lateral, comienza con esa presentación, enseña Evento + Equipo + Jugador 1 + Jugador 2 y propone cuatro retos con reconocimiento real. El ejemplo completo es «Gol nuestro de Marta, pase de Elena»: Marta #7 marca y Elena #9 asiste. Otro reto combina rival #12 por número y nuestra Elena por nombre. Los resultados indican acierto, detalles pendientes o datos por revisar; el editor habitual permite corregirlos. Usa equipos ficticios y borradores en memoria, sin escribir en tus partidos ni copias. Es opcional y se puede completar manualmente si la voz no está disponible. Consulta la [práctica guiada](docs/ui-hmi/entrenamiento-voz.md).
 
 Las frases y los nombres ficticios siguen el idioma de voz: por ejemplo, «Goal for us by Martha, assisted by Helen» en inglés y «But pour nous de Marthe, passe décisive d’Hélène» en francés. Los nombres y datos que introduzcas en tus equipos y partidos se conservan tal cual, sin traducción.
 

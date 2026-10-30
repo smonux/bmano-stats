@@ -1,6 +1,6 @@
 {
   "status": "Prepared copy; native device QA, owner/contact/privacy URLs and store declarations must be completed before submission",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "locales": {
     "es-ES": {
       "title": "Handball Stats",

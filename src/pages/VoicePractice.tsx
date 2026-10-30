@@ -8,6 +8,7 @@ import { VoicePreparation } from '../components/VoicePreparation';
 import { PushToTalkButton } from '../components/voice/PushToTalkButton';
 import { useVoiceCapture } from '../components/voice/useVoiceCapture';
 import { PracticeGrammar } from '../components/voice-practice/PracticeGrammar';
+import { PracticeWelcome } from '../components/voice-practice/PracticeWelcome';
 import { PracticeResult } from '../components/voice-practice/PracticeResult';
 import {
   markVoicePracticeSeen,
@@ -33,7 +34,7 @@ export function VoicePractice({
   const setup = useVoiceSetup();
   const spokenLanguage = setup.languageChosen ? setup.language : interfaceLanguage;
   const data = useMemo(() => practiceContext(spokenLanguage), [interfaceLanguage, spokenLanguage]);
-  const [screen, setScreen] = useState<'intro' | 'challenge' | 'finish'>('intro');
+  const [screen, setScreen] = useState<'welcome' | 'intro' | 'challenge' | 'finish'>('welcome');
   const [index, setIndex] = useState(0);
   const [started, setStarted] = useState(false);
   const [draft, setDraft] = useState<EventDraft | null>(null);
@@ -97,11 +98,19 @@ export function VoicePractice({
       </header>
       <div className="practice-content">
         <div ref={heading} className="practice-heading">
-          {screen === 'intro' ? (
-            <>
-              {onboarding && <LanguagePicker />}
-              <PracticeGrammar language={spokenLanguage} />
-            </>
+          {onboarding && screen === 'welcome' && (
+            <details className="practice-language">
+              <summary>
+                {tr('Idioma')} · {languages[interfaceLanguage]}
+              </summary>
+              <LanguagePicker />
+            </details>
+          )}
+          {onboarding && screen === 'intro' && <LanguagePicker />}
+          {screen === 'welcome' ? (
+            <PracticeWelcome />
+          ) : screen === 'intro' ? (
+            <PracticeGrammar language={spokenLanguage} />
           ) : screen === 'finish' ? (
             <>
               <CircleCheck className="practice-finish-icon" size={64} aria-hidden="true" />
@@ -213,7 +222,11 @@ export function VoicePractice({
         )}
       </div>
       <footer className="practice-footer">
-        {screen === 'intro' ? (
+        {screen === 'welcome' ? (
+          <button className="primary full" onClick={() => setScreen('intro')}>
+            {tr('Continuar a la práctica')}
+          </button>
+        ) : screen === 'intro' ? (
           <button
             className="primary full"
             onClick={() => {
@@ -233,7 +246,7 @@ export function VoicePractice({
               className="full"
               onClick={() => {
                 capture.cancel();
-                setScreen('intro');
+                setScreen('welcome');
                 setStarted(false);
                 setIndex(0);
                 setOutcomes([]);

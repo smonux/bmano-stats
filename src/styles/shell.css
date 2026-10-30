@@ -203,6 +203,22 @@
   color: white;
   border: 1px solid #555;
 }
+.drawer-build {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 12px;
+  margin-top: 24px;
+  padding-top: 14px;
+  border-top: 1px solid #555;
+  font-size: 0.875rem;
+  color: #eee;
+}
+.drawer-build small {
+  font-size: 0.75rem;
+  color: #bcbcbc;
+}
 .orientation-notice {
   display: flex;
   gap: 8px;

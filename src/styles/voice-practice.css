@@ -41,8 +41,38 @@
 .practice-heading > .language-picker {
   margin-bottom: 20px;
 }
+.practice-language {
+  margin-bottom: 20px;
+}
+.practice-language summary {
+  min-height: 44px;
+  align-content: center;
+}
+.practice-language .language-picker {
+  margin-top: 12px;
+}
 .practice-heading h1 {
   margin-block: 8px 12px;
+}
+.practice-methods {
+  display: grid;
+  gap: 18px;
+  margin: 24px 0;
+  padding: 0;
+  list-style: none;
+}
+.practice-methods li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.practice-methods svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--selection-line);
+}
+.practice-methods li p {
+  margin-block: 4px 0;
 }
 .practice-grammar {
   margin: 20px 0;

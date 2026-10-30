@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { choose } from './editor-helpers';
+import { selectWheelOption } from './wheel-helpers';
 
 test('a fresh launch starts voice training, can be skipped by keyboard and stays dismissed after reload', async ({
   page,
@@ -15,6 +16,38 @@ test('a fresh launch starts voice training, can be skipped by keyboard and stays
   });
   await page.goto('/');
   const practice = page.locator('.voice-practice');
+  await expect(
+    practice.getByRole('heading', { name: 'Registra el partido por voz y gestos.' }),
+  ).toBeFocused();
+  await expect(
+    practice.getByRole('heading', { name: 'Registra el partido por voz y gestos.' }),
+  ).toBeInViewport({ ratio: 1 });
+  const language = practice.locator('.practice-language summary');
+  await language.focus();
+  await language.press('Enter');
+  await selectWheelOption(
+    practice.getByRole('listbox', { name: 'Idioma', exact: true }),
+    'English',
+  );
+  await expect(
+    practice.getByRole('heading', { name: 'Record the match with voice and gestures.' }),
+  ).toBeVisible();
+  await selectWheelOption(
+    practice.getByRole('listbox', { name: 'Language', exact: true }),
+    'Español',
+  );
+  await language.press('Enter');
+  await expect(practice.locator('.practice-grammar')).toHaveCount(0);
+  await expect(practice).toContainText('introducir los datos con más precisión');
+  const continueButton = practice.getByRole('button', {
+    name: 'Continuar a la práctica',
+    exact: true,
+  });
+  await continueButton.focus();
+  await expect(continueButton).toBeInViewport({ ratio: 1 });
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: info.outputPath('first-launch-welcome.png'), fullPage: true });
+  await continueButton.press('Enter');
   await expect(practice.getByRole('heading', { name: 'Una jugada. Cuatro piezas.' })).toBeVisible();
   await expect(practice.locator('.practice-grammar li')).toHaveText([
     /Evento/,
@@ -30,7 +63,9 @@ test('a fresh launch starts voice training, can be skipped by keyboard and stays
     );
   expect(await microphoneRequests()).toBe(0);
   await page.reload();
-  await expect(practice).toBeVisible();
+  await expect(
+    practice.getByRole('heading', { name: 'Registra el partido por voz y gestos.' }),
+  ).toBeVisible();
   await page.screenshot({ path: info.outputPath('first-launch-training.png'), fullPage: true });
   const skip = practice.getByRole('button', { name: 'Salir de la práctica', exact: true });
   await skip.focus();
@@ -53,6 +88,7 @@ test('first-launch training can finish all four challenges manually without voic
   await page.addInitScript(() => localStorage.setItem('handball-language', 'es'));
   await page.goto('/');
   const practice = page.locator('.voice-practice');
+  await practice.getByRole('button', { name: 'Continuar a la práctica', exact: true }).click();
   await practice
     .getByRole('button', { name: 'Entendido · Vamos a practicar', exact: true })
     .click();

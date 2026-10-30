@@ -63,6 +63,11 @@ test('PACKAGED-ASSET BROWSER HARNESS: first launch without cache or internet loa
     };
   });
   await page.goto('/');
+  await expect(
+    page.getByRole('heading', { name: 'Registra el partido por voz y gestos.' }),
+  ).toBeVisible();
+  expect(await page.evaluate(() => (window as unknown as { micCalls: number }).micCalls)).toBe(0);
+  await page.getByRole('button', { name: 'Continuar a la práctica', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Una jugada. Cuatro piezas.' })).toBeVisible();
   expect(await page.evaluate(() => (window as unknown as { micCalls: number }).micCalls)).toBe(0);
   expect(await page.evaluate(() => caches.keys())).toEqual([]);

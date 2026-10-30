@@ -2,6 +2,9 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile, stat, readdir, rm, copyFile } from 'node:fs/promises';
 const version = JSON.parse(await readFile('package.json', 'utf8')).version;
+const androidBuild = Number(
+  (await readFile('android/app/build.gradle', 'utf8')).match(/versionCode (\d+)/)?.[1],
+);
 await mkdir('artifacts/mobile', { recursive: true });
 let androidVerification;
 try {
@@ -39,6 +42,8 @@ for (const [kind, source, expectedEntry, suffix] of [
   const verified = androidVerification?.artifacts[kind];
   if (
     !verified ||
+    verified.versionName !== version ||
+    verified.versionCode !== androidBuild ||
     verified.bytes !== bytes.length ||
     verified.sha256 !== createHash('sha256').update(bytes).digest('hex')
   )
@@ -80,6 +85,9 @@ const archives = [
       'handball-stats-icon.svg',
       'LICENSE',
       'README.md',
+      'AGENTS.md',
+      'docs/versionado.md',
+      'docs/ui-hmi/entrenamiento-voz.md',
       '.prettierrc.json',
     ],
     excludes: [
@@ -98,7 +106,7 @@ const archives = [
   },
   {
     name: `handball-stats-store-material-${version}.zip`,
-    inputs: ['docs/stores', 'artifacts/stores/screenshots'],
+    inputs: ['docs/stores', 'docs/versionado.md', 'artifacts/stores/screenshots'],
     excludes: [],
   },
 ];
