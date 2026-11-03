@@ -1,6 +1,6 @@
-# Paquetes y tiendas · actualización 1.0.0 · 2026-10-30
+# Paquetes y tiendas
 
-Esta entrega prepara Android/iOS con Capacitor 8.6.0 y la app local; no publica ni envía a revisión. Tras autorización expresa del usuario se ha aceptado **solo** `android-sdk-license` para instalar el SDK y compilar. La excepción no autoriza contratos de tiendas ni otros términos. La web conserva su compilación habitual. Identificador **provisional**: `io.github.smonux.bmanostats`; versión `1.0.0`, build/versionCode `2`. Confirmar titular e identificador antes de reservarlos en las tiendas. La [política de versiones](../versionado.md) sincroniza las plataformas; la [entrega inicial 0.1.0](entrega-android.md) conserva sus datos históricos.
+Esta entrega prepara Android/iOS con Capacitor 8.6.0 y la app local; no publica ni envía a revisión. Tras autorización expresa del usuario se ha aceptado **solo** `android-sdk-license` para instalar el SDK y compilar. La excepción no autoriza contratos de tiendas ni otros términos. La web conserva su compilación habitual. Identificador **provisional**: `io.github.smonux.bmanostats`. La versión actual de las fuentes se consulta en `package.json`; su número de build nativo está sincronizado en Android/iOS y se comprueba con `stores:check`. Confirmar titular e identificador antes de reservarlos en las tiendas. La [política de versiones](../versionado.md) sincroniza las plataformas; la [entrega inicial 0.1.0](entrega-android.md) conserva sus datos históricos.
 
 ## Estado real
 

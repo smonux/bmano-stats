@@ -1,6 +1,6 @@
 # Handball Stats
 
-Aplicación de registro local de estadísticas de balonmano. React, TypeScript, Vite e IndexedDB (Dexie), con siete idiomas y adaptación a móvil y escritorio. Versión **1.0.0**: el menú lateral muestra versión y commit corto de compilación. Cada cambio posterior incrementa la versión menor, salvo indicación expresa; consulta la [política de versiones](docs/versionado.md).
+Aplicación de registro local de estadísticas de balonmano. React, TypeScript, Vite e IndexedDB (Dexie), con siete idiomas y adaptación a móvil y escritorio. Desde **1.0.0**, el menú lateral muestra versión y commit corto de compilación. Cada cambio posterior incrementa el último número (1.0.1 → 1.0.2 → 1.0.3), salvo indicación expresa; consulta la [política de versiones](docs/versionado.md).
 
 ## Arranque
 

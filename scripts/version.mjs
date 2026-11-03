@@ -14,11 +14,16 @@ const contents = await Promise.all(
 const [packageText, lockText, android, ios, listingsText] = contents;
 const manifest = JSON.parse(packageText);
 const request = process.argv[2];
-const [major, minor] = manifest.version.split('.').map(Number);
-const version = request === 'minor' ? `${major}.${minor + 1}.0` : request;
+const [major, minor, patch] = manifest.version.split('.').map(Number);
+const version =
+  request === 'patch'
+    ? `${major}.${minor}.${patch + 1}`
+    : request === 'minor'
+      ? `${major}.${minor + 1}.0`
+      : request;
 assert(
   version && /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(version),
-  'Use version.mjs minor or version.mjs MAJOR.MINOR.PATCH',
+  'Use version.mjs patch, version.mjs minor or version.mjs MAJOR.MINOR.PATCH',
 );
 assert.match(android, /versionCode \d+/);
 assert.match(android, /versionName "[^"]+"/);

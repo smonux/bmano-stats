@@ -1,10 +1,11 @@
 {
   "name": "handball-stats",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "private": true,
   "type": "module",
   "scripts": {
+    "version:patch": "node scripts/version.mjs patch",
     "version:minor": "node scripts/version.mjs minor",
     "version:set": "node scripts/version.mjs",
     "dev": "vite --host 0.0.0.0",
