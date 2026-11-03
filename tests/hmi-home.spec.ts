@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { reportFixture } from './fixtures/report';
+import { continuePracticeAudio } from './practice-helpers';
 
 test('active matches precede navigation and settings distinguish local backups from sharing', async ({
   page,
@@ -37,6 +38,7 @@ test('active matches precede navigation and settings distinguish local backups f
     guide.getByRole('heading', { name: 'Registra el partido por voz y gestos.' }),
   ).toBeVisible();
   await guide.getByRole('button', { name: 'Continuar a la práctica', exact: true }).click();
+  await continuePracticeAudio(page);
   await expect(guide.getByRole('heading', { name: 'Una jugada. Cuatro piezas.' })).toBeVisible();
   await expect(guide.locator('.practice-grammar li')).toHaveCount(4);
   await page.screenshot({ path: info.outputPath('recoverable-guide.png') });

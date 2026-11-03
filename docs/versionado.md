@@ -1,6 +1,6 @@
 # Versión visible y política de entregas
 
-La entrega que añade la presentación previa a la práctica y la versión del menú es **1.0.0** (Android/iOS build 2). La precisión posterior del usuario establece incrementos de **revisión (patch, último número)** una vez por entrega: 1.0.0 → 1.0.1 → 1.0.2 → 1.0.3, salvo indicación expresa. Las ediciones, comprobaciones y commits internos de una misma entrega no generan nuevas versiones. La corrección de esta política es la versión **1.0.1** (build 3).
+La entrega que añade la presentación previa a la práctica y la versión del menú es **1.0.0** (Android/iOS build 2). La precisión posterior del usuario establece incrementos de **revisión (patch, último número)** una vez por entrega: 1.0.0 → 1.0.1 → 1.0.2 → 1.0.3, salvo indicación expresa. Las ediciones, comprobaciones y commits internos de una misma entrega no generan nuevas versiones. La corrección de esta política y la pantalla propia de configuración de audio forman la entrega **1.0.1** (build 3).
 
 ```sh
 npm run version:patch

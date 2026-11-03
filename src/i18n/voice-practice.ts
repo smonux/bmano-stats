@@ -1,5 +1,62 @@
 /** English, German, French, Italian, Dutch, Polish. */
 export const voicePracticeMessages: Record<string, readonly string[]> = {
+  'Configura el audio de la práctica': [
+    'Set up practice audio',
+    'Audio für das Training einrichten',
+    'Configurez l’audio de l’entraînement',
+    'Configura l’audio della pratica',
+    'Stel de audio voor de oefening in',
+    'Skonfiguruj dźwięk do ćwiczenia',
+  ],
+  'Elige el idioma, carga el reconocimiento y comprueba el micrófono. También puedes practicar manualmente.':
+    [
+      'Choose a language, load recognition and check the microphone. You can also practise manually.',
+      'Wähle die Sprache, lade die Spracherkennung und prüfe das Mikrofon. Du kannst auch manuell üben.',
+      'Choisissez la langue, chargez la reconnaissance et vérifiez le microphone. Vous pouvez aussi vous entraîner manuellement.',
+      'Scegli la lingua, carica il riconoscimento e verifica il microfono. Puoi anche esercitarti manualmente.',
+      'Kies een taal, laad de herkenning en controleer de microfoon. Je kunt ook handmatig oefenen.',
+      'Wybierz język, załaduj rozpoznawanie i sprawdź mikrofon. Możesz też ćwiczyć ręcznie.',
+    ],
+  'Idioma y reconocimiento de voz': [
+    'Language and speech recognition',
+    'Sprache und Spracherkennung',
+    'Langue et reconnaissance vocale',
+    'Lingua e riconoscimento vocale',
+    'Taal en spraakherkenning',
+    'Język i rozpoznawanie mowy',
+  ],
+  'Configurar audio': [
+    'Audio setup',
+    'Audio einrichten',
+    'Configurer l’audio',
+    'Configura audio',
+    'Audio instellen',
+    'Ustawienia dźwięku',
+  ],
+  'Continuar a la gramática': [
+    'Continue to the speaking pattern',
+    'Weiter zum Sprachschema',
+    'Continuer vers la structure des phrases',
+    'Continua con lo schema della frase',
+    'Doorgaan naar het spreekpatroon',
+    'Przejdź do schematu wypowiedzi',
+  ],
+  'Volver a la presentación': [
+    'Back to the introduction',
+    'Zurück zur Einführung',
+    'Retour à la présentation',
+    'Torna alla presentazione',
+    'Terug naar de introductie',
+    'Wróć do wprowadzenia',
+  ],
+  'Continuar manualmente': [
+    'Continue manually',
+    'Manuell fortfahren',
+    'Continuer manuellement',
+    'Continua manualmente',
+    'Handmatig doorgaan',
+    'Kontynuuj ręcznie',
+  ],
   'Registra el partido por voz y gestos.': [
     'Record the match with voice and gestures.',
     'Erfasse das Spiel per Sprache und Gesten.',

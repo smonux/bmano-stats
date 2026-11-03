@@ -105,6 +105,7 @@ async function startFromSettings(page: Page) {
   await fakeCapture(page);
   await page.getByRole('button', { name: 'Practicar voz', exact: true }).click();
   await page.getByRole('button', { name: 'Continuar a la práctica', exact: true }).click();
+  await page.locator('.practice-footer').getByRole('button').first().click();
   await expect(page.getByRole('heading', { name: 'Una jugada. Cuatro piezas.' })).toBeVisible();
   await page.getByRole('button', { name: 'Entendido · Vamos a practicar', exact: true }).click();
 }
@@ -264,6 +265,7 @@ test('missing model: optional entry, manual practice, actual red/green validatio
   const before = await snapshot(page);
   await page.getByRole('button', { name: 'Practicar voz', exact: true }).click();
   await page.getByRole('button', { name: 'Continuar a la práctica', exact: true }).click();
+  await page.locator('.practice-footer').getByRole('button').first().click();
   await page.getByRole('button', { name: 'Entendido · Vamos a practicar', exact: true }).click();
   await expect(page.locator('.hold-to-talk')).toBeDisabled();
   await page.getByRole('button', { name: 'Completar manualmente', exact: true }).click();

@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { choose } from './editor-helpers';
 import { selectWheelOption } from './wheel-helpers';
+import { continuePracticeAudio } from './practice-helpers';
 
 test('a fresh launch starts voice training, can be skipped by keyboard and stays dismissed after reload', async ({
   page,
@@ -48,6 +49,7 @@ test('a fresh launch starts voice training, can be skipped by keyboard and stays
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: info.outputPath('first-launch-welcome.png'), fullPage: true });
   await continueButton.press('Enter');
+  await continuePracticeAudio(page);
   await expect(practice.getByRole('heading', { name: 'Una jugada. Cuatro piezas.' })).toBeVisible();
   await expect(practice.locator('.practice-grammar li')).toHaveText([
     /Evento/,
@@ -89,6 +91,7 @@ test('first-launch training can finish all four challenges manually without voic
   await page.goto('/');
   const practice = page.locator('.voice-practice');
   await practice.getByRole('button', { name: 'Continuar a la práctica', exact: true }).click();
+  await continuePracticeAudio(page);
   await practice
     .getByRole('button', { name: 'Entendido · Vamos a practicar', exact: true })
     .click();

@@ -16,9 +16,11 @@ import { VoicePracticeEntry } from './voice-practice/VoicePracticeEntry';
 export function VoicePreparation({
   live = false,
   practiceEntry = 'first',
+  title = 'Prepara la voz antes del partido',
 }: {
   live?: boolean;
   practiceEntry?: 'first' | 'always' | 'none';
+  title?: string;
 }) {
   const setup = useVoiceSetup();
   const { mic, error, testMic } = useMicrophoneCheck();
@@ -31,7 +33,7 @@ export function VoicePreparation({
   return (
     <section className="voice-preparation" aria-label={tr('Preparación de voz')}>
       <div className="section-heading">
-        <h2>{tr('Prepara la voz antes del partido')}</h2>
+        <h2>{tr(title)}</h2>
         {setup.phase === 'ready' && (
           <span className="badge live">
             <Check size={12} /> {tr('Reconocimiento listo')}

@@ -38,6 +38,9 @@
 .practice-heading {
   scroll-margin-top: 80px;
 }
+.practice-heading .field-label {
+  color: var(--practice-text);
+}
 .practice-heading > .language-picker {
   margin-bottom: 20px;
 }
@@ -243,14 +246,6 @@
   flex-wrap: wrap;
   gap: 8px;
   margin-block: 12px;
-}
-.practice-preparation {
-  margin-top: 20px;
-}
-.practice-preparation > summary {
-  min-height: 48px;
-  padding-block: 10px;
-  cursor: pointer;
 }
 .practice-finish-icon {
   color: light-dark(#217642, #8be5aa);

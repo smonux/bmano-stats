@@ -2,6 +2,7 @@ import { chromium, test } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { reportFixture } from '../tests/fixtures/report.ts';
 import { tr } from '../src/i18n';
+import { continuePracticeAudio } from '../tests/practice-helpers';
 
 // These are real app renderings in Chromium, not Android/iOS simulator captures.
 test('authentic browser references, explicitly not native store screenshots', async () => {
@@ -49,13 +50,15 @@ test('authentic browser references, explicitly not native store screenshots', as
           ['practice', '/practica-voz', '.practice-tokens'],
         ]) {
           await page.goto(`http://127.0.0.1:4175/#${route}`);
-          if (screen === 'practice')
+          if (screen === 'practice') {
             await page
               .getByRole('button', {
                 name: tr('Continuar a la práctica', {}, language),
                 exact: true,
               })
               .click();
+            await continuePracticeAudio(page, language);
+          }
           if (screen === 'statistics') await page.getByRole('heading').first().waitFor();
           else await page.locator(ready).first().waitFor();
           await page.evaluate(() => document.fonts.ready);

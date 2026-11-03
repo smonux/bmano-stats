@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { CircleCheck, LoaderCircle } from 'lucide-react';
+import { CircleCheck, LoaderCircle, Settings2 } from 'lucide-react';
 import { tr, languages, useLanguage } from '../i18n';
 import { LanguagePicker } from '../components/LanguagePicker';
 import type { EventDraft } from '../data/database';
 import { EventEditor } from '../components/EventEditor';
-import { VoicePreparation } from '../components/VoicePreparation';
 import { PushToTalkButton } from '../components/voice/PushToTalkButton';
 import { useVoiceCapture } from '../components/voice/useVoiceCapture';
 import { PracticeGrammar } from '../components/voice-practice/PracticeGrammar';
 import { PracticeWelcome } from '../components/voice-practice/PracticeWelcome';
+import { PracticeAudioSetup } from '../components/voice-practice/PracticeAudioSetup';
 import { PracticeResult } from '../components/voice-practice/PracticeResult';
 import {
   markVoicePracticeSeen,
@@ -34,7 +34,9 @@ export function VoicePractice({
   const setup = useVoiceSetup();
   const spokenLanguage = setup.languageChosen ? setup.language : interfaceLanguage;
   const data = useMemo(() => practiceContext(spokenLanguage), [interfaceLanguage, spokenLanguage]);
-  const [screen, setScreen] = useState<'welcome' | 'intro' | 'challenge' | 'finish'>('welcome');
+  const [screen, setScreen] = useState<'welcome' | 'intro' | 'audio' | 'challenge' | 'finish'>(
+    'welcome',
+  );
   const [index, setIndex] = useState(0);
   const [started, setStarted] = useState(false);
   const [draft, setDraft] = useState<EventDraft | null>(null);
@@ -111,6 +113,8 @@ export function VoicePractice({
             <PracticeWelcome />
           ) : screen === 'intro' ? (
             <PracticeGrammar language={spokenLanguage} />
+          ) : screen === 'audio' ? (
+            <PracticeAudioSetup live={live} />
           ) : screen === 'finish' ? (
             <>
               <CircleCheck className="practice-finish-icon" size={64} aria-hidden="true" />
@@ -182,6 +186,16 @@ export function VoicePractice({
               <button disabled={busy} onClick={() => setEditing(true)}>
                 {tr(draft ? 'Completar o corregir' : 'Completar manualmente')}
               </button>
+              <button
+                disabled={busy}
+                onClick={() => {
+                  capture.cancel();
+                  setScreen('audio');
+                }}
+              >
+                <Settings2 size={18} aria-hidden="true" />
+                {tr('Configurar audio')}
+              </button>
               {(draft || capture.error) && (
                 <button
                   disabled={busy}
@@ -207,23 +221,12 @@ export function VoicePractice({
                 resultRef={resultRef}
               />
             )}
-            <details className="practice-preparation" open={!capture.ready || undefined}>
-              <summary>{tr('Preparar o cambiar idioma de voz')}</summary>
-              {live && (
-                <p>
-                  {tr(
-                    'Hay un partido en curso. Puedes usar la voz local preparada o practicar manualmente.',
-                  )}
-                </p>
-              )}
-              <VoicePreparation live={live} practiceEntry="none" />
-            </details>
           </>
         )}
       </div>
       <footer className="practice-footer">
         {screen === 'welcome' ? (
-          <button className="primary full" onClick={() => setScreen('intro')}>
+          <button className="primary full" onClick={() => setScreen('audio')}>
             {tr('Continuar a la práctica')}
           </button>
         ) : screen === 'intro' ? (
@@ -237,6 +240,26 @@ export function VoicePractice({
           >
             {tr(started ? 'Volver a mi jugada' : 'Entendido · Vamos a practicar')}
           </button>
+        ) : screen === 'audio' ? (
+          <>
+            <button
+              className="primary full"
+              onClick={() => {
+                setScreen(started ? 'challenge' : 'intro');
+              }}
+            >
+              {tr(
+                started
+                  ? 'Volver a mi jugada'
+                  : capture.ready
+                    ? 'Continuar a la gramática'
+                    : 'Continuar manualmente',
+              )}
+            </button>
+            <button className="full" onClick={() => setScreen(started ? 'intro' : 'welcome')}>
+              {tr(started ? 'Recordar la gramática' : 'Volver a la presentación')}
+            </button>
+          </>
         ) : screen === 'finish' ? (
           <>
             <button className="primary full" onClick={exit}>

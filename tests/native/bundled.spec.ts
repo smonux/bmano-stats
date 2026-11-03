@@ -5,6 +5,7 @@ import { unzipSync, strFromU8 } from 'fflate';
 import { reportFixture } from '../fixtures/report';
 import { choose } from '../editor-helpers';
 import { selectWheelOption } from '../wheel-helpers';
+import { continuePracticeAudio } from '../practice-helpers';
 
 test('PACKAGED-ASSET BROWSER HARNESS: first launch without cache or internet loads Whistle and cancels audio on background', async ({
   page,
@@ -68,14 +69,18 @@ test('PACKAGED-ASSET BROWSER HARNESS: first launch without cache or internet loa
   ).toBeVisible();
   expect(await page.evaluate(() => (window as unknown as { micCalls: number }).micCalls)).toBe(0);
   await page.getByRole('button', { name: 'Continuar a la práctica', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Una jugada. Cuatro piezas.' })).toBeVisible();
   expect(await page.evaluate(() => (window as unknown as { micCalls: number }).micCalls)).toBe(0);
   expect(await page.evaluate(() => caches.keys())).toEqual([]);
-  await page.getByRole('button', { name: 'Entendido · Vamos a practicar', exact: true }).click();
   await selectWheelOption(
     page.getByRole('listbox', { name: 'Idioma de voz', exact: true }),
     'Español',
   );
+  await expect(page.getByText('Reconocimiento listo', { exact: true })).toBeVisible({
+    timeout: 60000,
+  });
+  await continuePracticeAudio(page);
+  await expect(page.getByRole('heading', { name: 'Una jugada. Cuatro piezas.' })).toBeVisible();
+  await page.getByRole('button', { name: 'Entendido · Vamos a practicar', exact: true }).click();
   const talk = page.locator('.hold-to-talk');
   try {
     await expect(talk).toBeEnabled({ timeout: 60000 });

@@ -4,6 +4,8 @@ ACTUALIZACIÓN APROBADA · 1.0.0 (30-10-2026)
 Antes de la pantalla de gramática descrita a continuación, mostrar una presentación de la aplicación: registro de eventos de balonmano por voz y gestos y beneficio de practicar para introducir datos con más precisión. «Continuar a la práctica» lleva a la gramática existente; mantener salida, idiomas y aislamiento. Este paso también precede a la práctica abierta desde Ajustes o el menú.
 
 OBJETIVO Y ALCANCE
+Actualización 1.0.1 (03-11-2026): la preparación de audio tiene su propia pantalla antes de la gramática, para que sus ejemplos usen el idioma de voz elegido. Recorrido: presentación → audio → gramática → retos. Mantener salida manual y acceso «Configurar audio» desde los retos, conservando borrador y progreso. No incrustar el formulario de preparación dentro de una jugada.
+
 El usuario prefiere invertir en enseñar la gramática antes de tocar algoritmos de reconocimiento. Añade una introducción didáctica, seguida de 4 retos prácticos con voz real, estados verde/amarillo/rojo y corrección. Reutiliza motor de voz, intérprete, validadores y editor actuales. No cambies el reconocedor ni amplíes arbitrariamente la gramática para acomodar la demo; verifica las frases y documenta cualquier ajuste necesario.
 
 1. INTRODUCCIÓN ANTES DE LOS RETOS
