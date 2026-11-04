@@ -60,32 +60,28 @@ describe('exclusion expiry sound', () => {
     expect(alert.play()).toBe(true);
   });
 
-  it('plays the opening jota melody with its quarter/eighth rhythm over five seconds', async () => {
+  it('plays three descending ding-dong pairs with a gentle decay over five seconds', async () => {
     const audio = fakeAudio();
     const alert = new ExclusionAlert(audio.createContext);
     await alert.prepare();
     alert.play();
-    const frequencies = [
-      440, 587.33, 659.26, 739.99, 739.99, 783.99, 739.99, 783.99, 739.99, 659.26, 587.33,
-    ];
-    const beats = [0, 1, 2, 3, 4, 4.5, 5, 5.5, 6, 7, 8];
-    expect(audio.notes).toHaveLength(11);
+    expect(audio.notes).toHaveLength(6);
+    const offsets = [0, 0.65, 1.8, 2.45, 3.6, 4.25];
     for (const [index, note] of audio.notes.entries()) {
-      expect(note.type).toBe('triangle');
-      expect(note.frequency.value).toBeCloseTo(frequencies[index], 2);
-      expect(note.start.mock.calls[0][0]).toBeCloseTo(12 + beats[index] * (5 / 9));
-      const end = note.stop.mock.calls[0][0];
-      expect(end).toBeGreaterThan(note.start.mock.calls[0][0] + 0.01);
-      if (index < audio.notes.length - 1) {
-        expect(end).toBeCloseTo(12 + beats[index + 1] * (5 / 9) - 0.025);
-      } else {
-        expect(end).toBe(17);
-      }
+      expect(note.type).toBe('sine');
+      expect(note.frequency.value).toBe(index % 2 === 0 ? 660 : 523.25);
+      expect(note.start.mock.calls[0][0]).toBeCloseTo(12 + offsets[index]);
+      expect(note.stop.mock.calls[0][0]).toBeGreaterThan(note.start.mock.calls[0][0]);
+      expect(note.stop.mock.calls[0][0]).toBeLessThanOrEqual(17);
     }
+    expect(audio.notes.at(-1)!.stop).toHaveBeenCalledWith(17);
     for (const volume of audio.volumes) {
-      expect(volume.gain.setValueAtTime.mock.calls[0][0]).toBe(0);
-      expect(volume.gain.linearRampToValueAtTime.mock.calls[0][0]).toBe(0.16);
-      expect(volume.gain.exponentialRampToValueAtTime.mock.calls[0][0]).toBe(0.001);
+      expect(volume.gain.setValueAtTime).toHaveBeenCalledWith(0, expect.any(Number));
+      expect(volume.gain.linearRampToValueAtTime).toHaveBeenCalledWith(0.16, expect.any(Number));
+      expect(volume.gain.exponentialRampToValueAtTime).toHaveBeenCalledWith(
+        0.001,
+        expect.any(Number),
+      );
     }
   });
 
@@ -95,10 +91,10 @@ describe('exclusion expiry sound', () => {
     await alert.prepare();
     alert.play();
     expect(alert.play()).toBe(true);
-    expect(audio.notes).toHaveLength(11);
+    expect(audio.notes).toHaveLength(6);
     audio.context.currentTime += 6;
     alert.play();
-    expect(audio.notes).toHaveLength(22);
+    expect(audio.notes).toHaveLength(12);
   });
 
   it('silences scheduled notes immediately, disconnects them and releases the audio context', async () => {
@@ -115,7 +111,7 @@ describe('exclusion expiry sound', () => {
     expect(audio.volumes.every((volume) => volume.disconnect.mock.calls.length === 1)).toBe(true);
     // Muting must cancel even the notes that have not started yet; unmuting can replay.
     expect(alert.play()).toBe(true);
-    expect(audio.notes).toHaveLength(22);
+    expect(audio.notes).toHaveLength(12);
     await alert.close();
     await alert.close();
     expect(audio.context.close).toHaveBeenCalledOnce();

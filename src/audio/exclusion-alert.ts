@@ -1,32 +1,15 @@
 const ALERT_SECONDS = 5;
-const BEAT_SECONDS = 60 / 108;
-const NOTE_GAP_SECONDS = 0.025;
-const PITCH_HZ = {
-  A4: 440,
-  D5: 440 * 2 ** (5 / 12),
-  E5: 440 * 2 ** (7 / 12),
-  'F#5': 440 * 2 ** (9 / 12),
-  G5: 440 * 2 ** (10 / 12),
-} as const;
-
-// Oudrid, El sitio de Zaragoza: opening three bars of the jota theme marked A.
-// Melody only; our own synthesized rendition, with nine quarter-note beats at 108 BPM.
-// Score: https://www.el-atril.com/partituras/varios/El%20sitio%20de%20Zaragoza.pdf, p. 4.
-const JOTA_PHRASE = [
-  { pitch: 'A4', beats: 1 },
-  { pitch: 'D5', beats: 1 },
-  { pitch: 'E5', beats: 1 },
-  { pitch: 'F#5', beats: 1 },
-  { pitch: 'F#5', beats: 0.5 },
-  { pitch: 'G5', beats: 0.5 },
-  { pitch: 'F#5', beats: 0.5 },
-  { pitch: 'G5', beats: 0.5 },
-  { pitch: 'F#5', beats: 1 },
-  { pitch: 'E5', beats: 1 },
-  { pitch: 'D5', beats: 1 },
+// Three gentle two-tone doorbell chimes, including the final decay.
+const CHIMES = [
+  { frequency: 660, offset: 0, duration: 0.6 },
+  { frequency: 523.25, offset: 0.65, duration: 0.95 },
+  { frequency: 660, offset: 1.8, duration: 0.6 },
+  { frequency: 523.25, offset: 2.45, duration: 0.95 },
+  { frequency: 660, offset: 3.6, duration: 0.6 },
+  { frequency: 523.25, offset: 4.25, duration: 0.75 },
 ] as const;
 
-/** A five-second jota excerpt; simultaneous expiries share the same alert. */
+/** A five-second ding-dong; simultaneous expiries share the same alert. */
 export class ExclusionAlert {
   private context: AudioContext | null = null;
   private playingUntil = 0;
@@ -56,16 +39,13 @@ export class ExclusionAlert {
     const start = context.currentTime;
     const end = start + ALERT_SECONDS;
     this.playingUntil = end;
-    let beat = 0;
-    for (const [index, note] of JOTA_PHRASE.entries()) {
-      const noteStart = start + beat * BEAT_SECONDS;
-      beat += note.beats;
-      const noteEnd =
-        index === JOTA_PHRASE.length - 1 ? end : start + beat * BEAT_SECONDS - NOTE_GAP_SECONDS;
+    for (const chime of CHIMES) {
+      const noteStart = start + chime.offset;
+      const noteEnd = Math.min(end, noteStart + chime.duration);
       const oscillator = context.createOscillator();
       const volume = context.createGain();
-      oscillator.type = 'triangle';
-      oscillator.frequency.value = PITCH_HZ[note.pitch];
+      oscillator.type = 'sine';
+      oscillator.frequency.value = chime.frequency;
       volume.gain.setValueAtTime(0, noteStart);
       volume.gain.linearRampToValueAtTime(0.16, noteStart + 0.01);
       volume.gain.exponentialRampToValueAtTime(0.001, noteEnd);

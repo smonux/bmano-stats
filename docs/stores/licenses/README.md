@@ -14,7 +14,7 @@
 | Iconos de eventos | Lucide, licencia del paquete incluida. |
 | Fuentes PDF | DejaVu; texto ya existente `public/third-party/DejaVu-fonts-LICENSE.txt`, incluido al copiar public. Los nombres de archivo handball-sans no cambian su licencia. |
 | Balón y lanzamiento | Vector aprobado del proyecto, reutilizado sin sustituirlo por una ilustración de Capacitor. El titular debe confirmar derechos de marca/autor antes de publicar. Homenaje a La Jota no implica afiliación oficial. |
-| Sonido de exclusión | Adaptación sintética breve propia de la composición de Cristóbal Oudrid, sin grabación de tercero. Revisar jurisdicciones/derechos aplicables con el titular; no se distribuye la partitura como material gráfico. |
+| Sonido de exclusión | Timbre «ding-dong» sintetizado con Web Audio: tres pares de tonos sinusoidales durante cinco segundos, sin melodías ni grabaciones de terceros. |
 | WAV de tests | Piper, solo en tests; excluidos del bundle móvil y de fichas públicas. No se incluyen en binarios como ejemplos de voz del usuario. |
 
 El bundle móvil incorpora `licenses/` (inventario y textos NPM, Apache/NOTICE de Cactus y MIT del proyecto) y conserva `third-party/` de la web. La herramienta verifica el tamaño/hash del modelo y elimina variantes Needle copiadas desde public, evitando 47 MB innecesarios y copias adicionales del modelo dentro de cada paquete.
